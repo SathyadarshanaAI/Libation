@@ -1,0 +1,113 @@
+/* style.css */
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #134e4a 100%);
+  color: #e0f2fe;
+  margin: 0;
+  padding: 0;
+}
+nav {
+  display: flex;
+  justify-content: center;
+  gap: .5rem;
+  background: rgba(13, 23, 42, 0.82);
+  padding: 1rem 0.5rem;
+}
+nav a {
+  color: #38bdf8;
+  text-decoration: none;
+  padding: .5rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+nav a:hover, nav a:focus {
+  background: #38bdf8;
+  color: #0f172a;
+}
+.logo-animated {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 110px;
+  width: 110px;
+  margin: 0 auto;
+  background: radial-gradient(circle at 60% 40%, #7dd3fc99, #0ea5e944 65%, transparent 100%);
+  border-radius: 50%;
+}
+header {
+  text-align: center;
+  padding: 2.5rem 1rem 1.5rem;
+}
+h1 {
+  color: #7dd3fc;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+@media (min-width: 700px) {
+  .features-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.8rem;
+  }
+}
+.feature-card {
+  background: rgba(13,34,55,0.38);
+  border-radius: 1.3rem;
+  box-shadow: 0 4px 32px #0ea5e933;
+  border: 1.5px solid #134e4a33;
+  padding: 2.2rem 1.3rem 1.3rem;
+  text-align: center;
+  transition: transform .18s;
+  cursor: pointer;
+}
+.feature-card:hover, .feature-card:focus {
+  transform: translateY(-6px) scale(1.033);
+  box-shadow: 0 8px 38px #38bdf899;
+}
+.feature-icon {
+  font-size: 2.85rem;
+  margin-bottom: .6rem;
+}
+.feature-title {
+  font-size: 1.23rem;
+  color: #7dd3fc;
+  font-weight: 700;
+  margin-bottom: .31rem;
+}
+.feature-desc {
+  font-size: 1.01rem;
+  color: #b6e2f8;
+  margin-bottom: .5rem;
+  line-height: 1.6;
+}
+.feature-link {
+  display: inline-block;
+  margin-top: .5rem;
+  padding: .32rem 1.1rem;
+  border-radius: 8px;
+  background: #38bdf8;
+  color: #0f172a;
+  font-weight: 600;
+  text-decoration: none;
+}
+footer {
+  width: 100%;
+  background: rgba(15,23,42,0.96);
+  padding: 1.7rem .9rem .8rem;
+  text-align: center;
+  font-size: .95rem;
+  color: #64748b;
+  margin-top: auto;
+}
+.footer-bless {
+  color: #38bdf8;
+  font-weight: 600;
+  margin-top: .47rem;
+  display: block;
+  font-size: 1.09rem;
+}

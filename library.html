@@ -1,92 +1,301 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Astrologe | Spiritual & Scientific Astrology Engine</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="main.css">
-  <!-- Add your stylesheets and libraries here (Bootstrap, Chart.js, etc.) -->
+  <title>Global Free eBook Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      min-height: 100vh;
+      background: #111827;
+      background-attachment: fixed;
+      color: #e0f2fe;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+    .container {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: #1e293b;
+      border-radius: 1.2rem;
+      padding: 2.2rem 1.5rem 2.5rem 1.5rem;
+      box-shadow: 0 4px 24px #0f172a55;
+      position: relative;
+    }
+    h1, h2, h3 {
+      color: #38bdf8;
+      margin-top: 0;
+      font-weight: 700;
+    }
+    .home-btn {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: #38bdf8;
+      color: #0f172a;
+      padding: 0.5rem 1rem;
+      border-radius: 1.5rem;
+      font-size: 1.1em;
+      font-weight: bold;
+      text-decoration: none;
+      z-index: 30;
+      box-shadow: 0 2px 12px #0f172a44;
+      border: none;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .home-btn:hover {
+      background: #0ea5e9;
+      color: #e0f2fe;
+    }
+    input, button {
+      font-size: 1.07em;
+      padding: 0.6em;
+      margin: 0.2em 0.2em 0.2em 0;
+      border-radius: 0.6em;
+      border: none;
+      outline: none;
+    }
+    input {
+      width: 70%;
+      max-width: 350px;
+    }
+    button {
+      cursor: pointer;
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #0ea5e9;
+      color: #e0f2fe;
+    }
+    .result-links ul {
+      list-style: none;
+      padding: 0;
+      margin: 0.7em 0;
+    }
+    .result-links li {
+      margin: 0.7em 0;
+    }
+    .book-list {
+      margin-top: 2em;
+    }
+    .book-list li {
+      margin-bottom: 0.7em;
+    }
+    .book-iframe-container {
+      margin-top: 2em;
+      display: none;
+    }
+    .book-iframe {
+      width: 100%;
+      height: 400px;
+      border: 2px solid #38bdf8;
+      border-radius: 0.7em;
+      background: #0f172a;
+    }
+    .close-iframe-btn {
+      margin-bottom: 0.6em;
+      background: #f87171;
+      color: #fff;
+      border: none;
+      border-radius: 0.6em;
+      padding: 0.3em 1em;
+      cursor: pointer;
+      font-weight: bold;
+      float: right;
+    }
+    .translated-title {
+      margin-top: 1em;
+      color: #fbbf24;
+      font-weight: bold;
+    }
+    .tariff-section {
+      background: #334155;
+      border-radius: 0.7rem;
+      padding: 1.2rem;
+      color: #bae6fd;
+      margin-top: 2.2em;
+    }
+    .tariff-section .free {
+      color: #38bdf8;
+      font-weight: bold;
+    }
+    .tariff-section .paid {
+      color: #fbbf24;
+      font-weight: bold;
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 1rem 0.4rem 1.2rem 0.4rem;
+      }
+      input {
+        width: 98%;
+        max-width: none;
+      }
+      .book-iframe {
+        height: 260px;
+      }
+      .home-btn {
+        top: 0.5rem;
+        left: 0.3rem;
+        font-size: 1em;
+        padding: 0.4em 1em;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Astrologe</h1>
-    <p>Spiritual & Scientific Astrology Engine</p>
-    <nav>
+  <a href="index.html" class="home-btn" title="Go Home">🏠 Home</a>
+  <div class="container">
+    <h1 id="library-title">🌏 Global Free eBook Library</h1>
+    <input type="text" id="searchInput" placeholder="Type any book name or subject...">
+    <button onclick="showSites()"><span id="site-btn-label">Show eBook Sites</span></button>
+    <button onclick="searchOpenLibrary()"><span id="ol-btn-label">Show Books (Open Library)</span></button>
+    <div id="siteLinks" class="result-links"></div>
+    <div id="bookResults" class="book-list"></div>
+    <div id="translatedTitle" class="translated-title"></div>
+    <div class="book-iframe-container" id="iframeContainer">
+      <button class="close-iframe-btn" onclick="closeIframe()">✖ Close Book</button>
+      <iframe id="bookIframe" class="book-iframe" src="" loading="lazy"></iframe>
+    </div>
+    <div class="tariff-section">
+      <h2 id="tariff-title">📢 Tariff Plan</h2>
       <ul>
-        <li><a href="#birth-report">Birth Report</a></li>
-        <li><a href="#kp-sub">KP Sub Lord</a></li>
-        <li><a href="#aura">Aura Vision</a></li>
-        <li></li>
-        <li><a href="#vedic-astro">Vedic Astro</a></li>
-        <li><a href="#research">Research Lab</a></li>
+        <li><span class="free" id="free-plan-label">Free:</span> <span id="free-plan-desc">Online reading, translation, and basic AI narration for all users.</span></li>
+        <li><span class="paid" id="paid-plan-label">Paid:</span> <span id="paid-plan-desc">Advanced voice reading (multiple languages), offline access, premium AI insights, narrated PDFs.</span></li>
+        <li><span class="paid" id="plan-price-label">Plans:</span> <span id="plan-price-desc">$3/month or $20/year for premium AI & voice features.</span></li>
+        <li><span class="paid" id="pdf-note">PDF downloads with AI-powered narration and support also require a small fee.</span></li>
       </ul>
-    </nav>
-  </header>
-
-  <main>
-    <!-- Birth Report Module -->
-    <section id="birth-report">
-      <iframe src="birth-report.html" width="100%" height="600" frameborder="0"></iframe>
-    </section>
-
-    <!-- KP Sub Lord Module -->
-    <section id="kp-sub">
-      <iframe src="kp-sub.html" width="100%" height="600" frameborder="0"></iframe>
-    </section>
-
-    <!-- Aura Vision Module -->
-    <section id="aura">
-      <iframe src="aura.html" width="100%" height="600" frameborder="0"></iframe>
-    </section>
-
-    <!-- Palmistry Module -->
-    <section id="palmistry">
-      <iframe src="palmistry.html" width="100%" height="600" frameborder="0"></iframe>
-    </section>
-
-    <!-- Numerology Module -->
-    <section id="numerology">
-      <iframe src="numerology.html" width="100%" height="600" frameborder="0"></iframe>
-    </section>
-
-    <!-- Vedic Astro Module -->
-    <section id="vedic-astro">
-      <iframe src="vedic-astro.html" width="100%" height="600" frameborder="0"></iframe>
-    </section>
-
-    <!-- Research Lab Module -->
-    <section id="research">
-      <iframe src="astrologe-research.html" width="100%" height="600" frameborder="0"></iframe>
-    </section>
-
-    <!-- Spiritual/Seed Intelligence (Optional) -->
-    <section id="wisdom">
-      <h2>Wisdom & Dharma</h2>
-      <div class="wisdom-quotes">
-        <blockquote>“සත්‍යය හෙවත් බුද්ධිය සදා නවතා තබා ගන්නා සුළුයි.”</blockquote>
-        <blockquote>“අධ්‍යාත්මික හා විද්‍යාත්මක දෘෂ්ටියෙන් එකට.”</blockquote>
-      </div>
-    </section>
-
-    <!-- User Feedback & Analytics -->
-    <section id="analytics">
-      <h2>Service Usage & Feedback</h2>
-      <div id="usage-stats"></div>
-      <form id="feedback-form">
-        <label for="feedback">ඔබගේ අදහස:</label>
-        <textarea id="feedback" name="feedback"></textarea>
-        <button type="submit">යවන්න</button>
-      </form>
-    </section>
-  </main>
-
-  <footer>
-    <p>© 2025 Astrologe | Spiritual & Scientific Astrology Engine</p>
-    <p>සියලු දත්ත සුරක්ෂිතව තබා ගැනේ | Data encrypted & protected</p>
-  </footer>
-
-  <!-- JS scripts for analytics, feedback, security, etc. -->
-  <script src="main.js"></script>
-  <!-- Example: Chart.js, feedback handler, scroll behavior, etc. -->
+      <p>
+        <span class="free">Free</span>: <span id="free-mini">Basic online reading, translation</span><br>
+        <span class="paid">Paid</span>: <span id="paid-mini">Premium voice/AI, offline, PDF with narration</span>
+      </p>
+    </div>
+    <p style="margin-top:2.3rem; font-size:1em; color:#94a3b8; text-align:center;">
+      <span style="opacity:0.8;">
+        <span id="footer-desc">This free eBook service is powered by 4 major global repositories:</span><br>
+        <span style="color:#38bdf8;" id="repo-list">Internet Archive, Project Gutenberg, Sacred Texts, Open Library</span>
+      </span>
+    </p>
+    <div id="google_translate_element" style="margin-top:1.5em; text-align:right;"></div>
+  </div>
+  <script>
+    // -- Book Sites Search
+    function showSites() {
+      var book = document.getElementById('searchInput').value.trim();
+      var links = [
+        { name: "Internet Archive", url: "https://archive.org/search.php?query=" + encodeURIComponent(book) },
+        { name: "Project Gutenberg", url: "https://www.gutenberg.org/ebooks/search/?query=" + encodeURIComponent(book) },
+        { name: "Sacred Texts Archive", url: "https://www.sacred-texts.com/search/search.php?query=" + encodeURIComponent(book) },
+        { name: "Open Library", url: "https://openlibrary.org/search?q=" + encodeURIComponent(book) }
+      ];
+      var html = '<h3>'+translateLabel('eBook Sites:')+'</h3><ul>';
+      links.forEach(function(link){
+        html += '<li><a href="'+link.url+'" target="_blank">'+link.name+' – "'+ book +'"</a></li>';
+      });
+      html += '</ul>';
+      document.getElementById('siteLinks').innerHTML = html;
+    }
+    // -- Open Library Search + iframe book view
+    function searchOpenLibrary() {
+      var book = document.getElementById('searchInput').value.trim();
+      if(!book) {
+        document.getElementById('bookResults').innerHTML = '<span style="color:#f87171;">'+translateLabel('Please enter a book name or subject.')+'</span>';
+        return;
+      }
+      document.getElementById('bookResults').innerHTML = '<span style="color:#38bdf8;">'+translateLabel('Searching Open Library...')+'</span>';
+      fetch('https://openlibrary.org/search.json?q=' + encodeURIComponent(book))
+      .then(response => response.json())
+      .then(data => {
+        if(!data.docs.length) {
+          document.getElementById('bookResults').innerHTML = '<span style="color:#f87171;">'+translateLabel('No books found.')+'</span>';
+          return;
+        }
+        var html = '<h3>'+translateLabel('Books from Open Library:')+'</h3><ul>';
+        data.docs.slice(0,8).forEach(function(doc){
+          var url = "https://openlibrary.org"+doc.key;
+          html += `<li>
+            <a href="#" onclick="showBookIframe('${url}');return false;">${doc.title}</a>
+            <button onclick="translateTitle('${doc.title.replace(/'/g,"\\'")}')">${translateLabel('Auto Translate to Sinhala')}</button>
+          </li>`;
+        });
+        html += '</ul><small style="color:#94a3b8;">'+translateLabel('Click "Auto Translate to Sinhala" to view the book title in Sinhala.')+'</small>';
+        document.getElementById('bookResults').innerHTML = html;
+        document.getElementById('translatedTitle').innerHTML = '';
+      });
+    }
+    // -- Book Iframe Open/Close
+    function showBookIframe(url) {
+      var iframe = document.getElementById('bookIframe');
+      document.getElementById('iframeContainer').style.display = 'block';
+      iframe.src = url;
+      iframe.focus();
+      window.scrollTo({top: document.getElementById('iframeContainer').offsetTop - 20, behavior:'smooth'});
+    }
+    function closeIframe() {
+      document.getElementById('iframeContainer').style.display = 'none';
+      document.getElementById('bookIframe').src = '';
+    }
+    // -- Auto Translate Book Title
+    function translateTitle(title) {
+      var url = 'https://translate.google.com/?sl=auto&tl=si&text=' + encodeURIComponent(title) + '&op=translate';
+      document.getElementById('translatedTitle').innerHTML =
+        translateLabel('Sinhala translation of') + ` "<span style='color:#38bdf8;'>${title}</span>": ` +
+        `<a href="${url}" target="_blank" style="color:#38bdf8; text-decoration:underline;">${translateLabel('View in Google Translate')}</a>`;
+    }
+    // -- Simple Label Translator (for UI)
+    function translateLabel(label) {
+      // Sinhala/Tamil/English basic labels (for demonstration)
+      var lang = window.selectedLang || 'en';
+      var labels = {
+        'eBook Sites:': {si:'eBook අඩවි:', ta:'eBook தளங்கள்:', en:'eBook Sites:'},
+        'Please enter a book name or subject.': {si:'පොත් නමක් හෝ විෂයයක් ඇතුල් කරන්න.', ta:'புத்தகப் பெயர் அல்லது தலைப்பை உள்ளிடவும்.', en:'Please enter a book name or subject.'},
+        'Searching Open Library...': {si:'Open Library සෙවීම...', ta:'Open Library தேடுகிறது...', en:'Searching Open Library...'},
+        'No books found.': {si:'පොත් හමු නොවීය.', ta:'புத்தகங்கள் இல்லை.', en:'No books found.'},
+        'Books from Open Library:': {si:'Open Library වෙතින් පොත්:', ta:'Open Library இலிருந்து புத்தகங்கள்:', en:'Books from Open Library:'},
+        'Auto Translate to Sinhala': {si:'සිංහලට පරිවර්තනය කරන්න', ta:'சிங்களமாக மொழிபெயர்க்க', en:'Auto Translate to Sinhala'},
+        'Click "Auto Translate to Sinhala" to view the book title in Sinhala.': {si:'සිංහල නාමය බැලීමට පරිවර්තනය කරන්න ඔබන්න.', ta:'சிங்களம் பெயரைப் பார்க்க மொழிபெயர்ப்பு அழுத்தவும்.', en:'Click "Auto Translate to Sinhala" to view the book title in Sinhala.'},
+        'Sinhala translation of': {si:'සිංහල පරිවර්තනය:', ta:'சிங்கள மொழிபெயர்ப்பு:', en:'Sinhala translation of'},
+        'View in Google Translate': {si:'Google Translate එකෙන් බලන්න', ta:'Google Translate இல் பார்க்க', en:'View in Google Translate'}
+      };
+      return labels[label] && labels[label][lang] ? labels[label][lang] : label;
+    }
+    // -- Google Translate Widget Integration
+    function setLangFromGoogle(selectedLang) {
+      window.selectedLang = selectedLang;
+      // force re-render of basic UI labels
+      document.getElementById('site-btn-label').innerText = translateLabel('Show eBook Sites');
+      document.getElementById('ol-btn-label').innerText = translateLabel('Show Books (Open Library)');
+      document.getElementById('library-title').innerText = translateLabel('🌏 Global Free eBook Library');
+      document.getElementById('tariff-title').innerText = translateLabel('📢 Tariff Plan');
+    }
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+      // listen for language change
+      setTimeout(function(){
+        var observer = new MutationObserver(function() {
+          var sel = document.querySelector('.goog-te-combo');
+          if(sel) sel.onchange = function(e){ setLangFromGoogle(e.target.value); }
+        });
+        observer.observe(document.getElementById('google_translate_element'), {childList:true, subtree:true});
+      }, 700);
+    }
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

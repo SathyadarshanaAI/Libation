@@ -5,131 +5,33 @@
   <title>Global Free eBook Library</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      background: linear-gradient(to right, #0f172a, #1e293b);
-      color: #e0f2fe;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 680px;
-      margin: 2rem auto;
-      background: #1e293b;
-      border-radius: 1.2rem;
-      padding: 2.2rem 1.5rem 2.5rem 1.5rem;
-      box-shadow: 0 4px 24px #0f172a55;
-    }
-    h1, h2, h3 {
-      color: #38bdf8;
-      margin-top: 0;
-      font-weight: 700;
-    }
-    h1 {
-      font-size: 2rem;
-      letter-spacing: 0.02em;
-    }
-    p {
-      color: #bae6fd;
-      font-size: 1.07em;
-    }
-    input, select, button {
-      font-size: 1.07em;
-      padding: 0.6em;
-      margin: 0.2em 0.2em 0.2em 0;
-      border-radius: 0.6em;
-      border: none;
-      outline: none;
-    }
-    input, select {
-      width: 70%;
-      max-width: 350px;
-    }
-    button {
-      cursor: pointer;
-      background: #38bdf8;
-      color: #0f172a;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    button.translate {
-      background: #60a5fa;
-    }
-    button:hover {
-      background: #0ea5e9;
-      color: #e0f2fe;
-    }
-    .result-links ul {
-      list-style: none;
-      padding: 0;
-      margin: 0.7em 0;
-    }
-    .result-links a {
-      color: #38bdf8;
-      text-decoration: underline;
-      font-weight: 500;
-    }
-    .result-links li {
-      margin: 0.7em 0;
-    }
-    .tariff-section {
-      background: #334155;
-      border-radius: 0.7rem;
-      padding: 1.2rem;
-      color: #bae6fd;
-      margin-top: 2.2em;
-    }
-    .tariff-section ul {
-      margin: 0 0 0.6em 0;
-      padding-left: 1.2em;
-    }
-    .tariff-section li {
-      margin-bottom: 0.4em;
-    }
-    .tariff-section .free {
-      color: #38bdf8;
-      font-weight: bold;
-    }
-    .tariff-section .paid {
-      color: #fbbf24;
-      font-weight: bold;
-    }
-    @media (max-width: 480px) {
-      .container {
-        padding: 1rem 0.4rem 1.2rem 0.4rem;
-      }
-      input, select {
-        width: 98%;
-        max-width: none;
-      }
-    }
+    body { background: linear-gradient(to right, #0f172a, #1e293b); color: #e0f2fe; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; }
+    .container { max-width: 680px; margin: 2rem auto; background: #1e293b; border-radius: 1.2rem; padding: 2.2rem 1.5rem 2.5rem 1.5rem; box-shadow: 0 4px 24px #0f172a55; }
+    h1, h2, h3 { color: #38bdf8; margin-top: 0; font-weight: 700; }
+    input, button { font-size: 1.07em; padding: 0.6em; margin: 0.2em 0.2em 0.2em 0; border-radius: 0.6em; border: none; outline: none; }
+    input { width: 70%; max-width: 350px; }
+    button { cursor: pointer; background: #38bdf8; color: #0f172a; font-weight: bold; transition: background 0.2s; }
+    button:hover { background: #0ea5e9; color: #e0f2fe; }
+    .result-links ul { list-style: none; padding: 0; margin: 0.7em 0; }
+    .result-links li { margin: 0.7em 0; }
+    .book-list { margin-top: 2em; }
+    .book-list li { margin-bottom: 0.4em; }
+    .translated-title { margin-top: 1em; color: #fbbf24; font-weight: bold; }
+    .tariff-section { background: #334155; border-radius: 0.7rem; padding: 1.2rem; color: #bae6fd; margin-top: 2.2em; }
+    .tariff-section .free { color: #38bdf8; font-weight: bold; }
+    .tariff-section .paid { color: #fbbf24; font-weight: bold; }
+    @media (max-width: 480px) { .container { padding: 1rem 0.4rem 1.2rem 0.4rem; } input { width: 98%; max-width: none; } }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🌏 Global Free eBook Library</h1>
-    <p>
-      Children, youth, adults — educational, spiritual, fiction, science, medical, arts, and more.<br>
-      Access any free eBook in the world as PDF or online reading; <strong>read and translate for free</strong>.
-    </p>
-    <div>
-      <input type="text" id="anyBookInput" placeholder="Type any book name or subject...">
-      <select id="targetLang">
-        <option value="en">English</option>
-        <option value="si">Sinhala</option>
-        <option value="ta">Tamil</option>
-        <option value="hi">Hindi</option>
-        <option value="fr">French</option>
-        <option value="es">Spanish</option>
-        <option value="zh-CN">Chinese</option>
-        <option value="de">German</option>
-        <!-- Add more languages as needed -->
-      </select>
-      <button onclick="anyBookSearch()">Search</button>
-      <button class="translate" onclick="translateInput()">Translate</button>
-    </div>
-    <div id="translatedText" style="margin-top:1rem;"></div>
-    <div id="anyBookResults" class="result-links"></div>
+    <input type="text" id="searchInput" placeholder="Type any book name or subject...">
+    <button onclick="showSites()">Show eBook Sites</button>
+    <button onclick="searchOpenLibrary()">Show Books (Open Library)</button>
+    <div id="siteLinks" class="result-links"></div>
+    <div id="bookResults" class="book-list"></div>
+    <div id="translatedTitle" class="translated-title"></div>
 
     <div class="tariff-section">
       <h2>📢 Tariff Plan</h2>
@@ -152,49 +54,54 @@
     </p>
   </div>
   <script>
-    function anyBookSearch() {
-      var book = document.getElementById('anyBookInput').value.trim();
-      if(!book) {
-        document.getElementById('anyBookResults').innerHTML = '<span style="color:#f87171;">Please enter a book name or subject.</span>';
-        return;
-      }
+    function showSites() {
+      var book = document.getElementById('searchInput').value.trim();
       var links = [
-        {
-          name: "Internet Archive (PDF/ePub/Audio)",
-          url: "https://archive.org/search.php?query=" + encodeURIComponent(book)
-        },
-        {
-          name: "Project Gutenberg (Public Domain eBooks)",
-          url: "https://www.gutenberg.org/ebooks/search/?query=" + encodeURIComponent(book)
-        },
-        {
-          name: "Sacred Texts Archive",
-          url: "https://www.sacred-texts.com/search/search.php?query=" + encodeURIComponent(book)
-        },
-        {
-          name: "Open Library",
-          url: "https://openlibrary.org/search?q=" + encodeURIComponent(book)
-        }
+        { name: "Internet Archive", url: "https://archive.org/search.php?query=" + encodeURIComponent(book) },
+        { name: "Project Gutenberg", url: "https://www.gutenberg.org/ebooks/search/?query=" + encodeURIComponent(book) },
+        { name: "Sacred Texts Archive", url: "https://www.sacred-texts.com/search/search.php?query=" + encodeURIComponent(book) },
+        { name: "Open Library", url: "https://openlibrary.org/search?q=" + encodeURIComponent(book) }
       ];
-      var html = '<h3>🔎 Search for your eBook on these 4 free sites:</h3><ul>';
+      var html = '<h3>eBook Sites:</h3><ul>';
       links.forEach(function(link){
         html += '<li><a href="'+link.url+'" target="_blank">'+link.name+' – "'+ book +'"</a></li>';
       });
       html += '</ul>';
-      html += '<p style="margin-top:1.2em; color:#38bdf8; font-size:0.98em;">PDF, ePub, and online reading — thousands of options!</p>';
-      document.getElementById('anyBookResults').innerHTML = html;
+      document.getElementById('siteLinks').innerHTML = html;
     }
 
-    function translateInput() {
-      var text = document.getElementById('anyBookInput').value.trim();
-      var targetLang = document.getElementById('targetLang').value;
-      if(!text) {
-        document.getElementById('translatedText').innerHTML = '<span style="color:#f87171;">Please enter text to translate.</span>';
+    function searchOpenLibrary() {
+      var book = document.getElementById('searchInput').value.trim();
+      if(!book) {
+        document.getElementById('bookResults').innerHTML = '<span style="color:#f87171;">Please enter a book name or subject.</span>';
         return;
       }
-      var url = 'https://translate.google.com/?sl=auto&tl=' + targetLang + '&text=' + encodeURIComponent(text) + '&op=translate';
-      var langName = document.getElementById('targetLang').options[document.getElementById('targetLang').selectedIndex].text;
-      document.getElementById('translatedText').innerHTML = '<a href="' + url + '" target="_blank" style="color:#38bdf8; text-decoration:underline;">View Translation in ' + langName + '</a>';
+      document.getElementById('bookResults').innerHTML = '<span style="color:#38bdf8;">Searching Open Library...</span>';
+      fetch('https://openlibrary.org/search.json?q=' + encodeURIComponent(book))
+      .then(response => response.json())
+      .then(data => {
+        if(!data.docs.length) {
+          document.getElementById('bookResults').innerHTML = '<span style="color:#f87171;">No books found.</span>';
+          return;
+        }
+        var html = '<h3>Books from Open Library:</h3><ul>';
+        data.docs.slice(0,8).forEach(function(doc){
+          html += `<li>
+            <a href="https://openlibrary.org${doc.key}" target="_blank">${doc.title}</a>
+            <button onclick="translateTitle('${doc.title.replace(/'/g,"\\'")}')">Translate to Sinhala</button>
+          </li>`;
+        });
+        html += '</ul><small style="color:#94a3b8;">Click "Translate to Sinhala" to view the book title in Sinhala.</small>';
+        document.getElementById('bookResults').innerHTML = html;
+        document.getElementById('translatedTitle').innerHTML = '';
+      });
+    }
+
+    function translateTitle(title) {
+      var url = 'https://translate.google.com/?sl=auto&tl=si&text=' + encodeURIComponent(title) + '&op=translate';
+      document.getElementById('translatedTitle').innerHTML =
+        `Sinhala translation of "<span style="color:#38bdf8;">${title}</span>": 
+        <a href="${url}" target="_blank" style="color:#38bdf8; text-decoration:underline;">View in Google Translate</a>`;
     }
   </script>
 </body>

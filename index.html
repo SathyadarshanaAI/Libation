@@ -1,17 +1,12 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sathyadarshana | The Light of Truth</title>
   <meta name="description" content="Experience a transformative journey with Sathyadarshana. Astrology, AI wisdom, sacred library, and spiritual community — all in one serene platform." />
-  <meta name="keywords" content="Sathyadarshana, Astrology, Sacred Library, AI, Dharma, Spirituality, Meditation, Sinhala, Tamil, Truth" />
+  <meta name="keywords" content="Sathyadarshana, Astrology, Sacred Library, Astrologer, AI, Dharma, Spirituality, Meditation, Sinhala, Tamil, Truth" />
   <meta name="author" content="Anuruddha, Copilot, ChatGPT Buddhi" />
-  <meta property="og:title" content="Sathyadarshana | The Light of Truth" />
-  <meta property="og:description" content="Astrology, AI Buddhi, sacred library and global Dharma Sabha at your fingertips. Begin your spiritual awakening now." />
-  <meta property="og:image" content="assets/og-image.jpg" />
-  <meta property="og:url" content="https://sathyadarshana.com/" />
-  <meta property="og:type" content="website" />
   <link rel="icon" href="assets/favicon.ico" />
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -22,9 +17,9 @@
       font-family: 'Inter', 'Zen Maru Gothic', sans-serif;
       background: linear-gradient(135deg, #0f172a 0%, #134e4a 100%);
       color: #e0f2fe;
-      scroll-behavior: smooth;
       min-height: 100vh;
       background-attachment: fixed;
+      scroll-behavior: smooth;
     }
     body {
       display: flex;
@@ -58,7 +53,7 @@
       background: rgba(56,189,248,0.08);
       box-shadow: 0 0 10px #38bdf820;
     }
-    nav a:hover, nav a:focus {
+    nav a:hover, nav a:focus, nav a.active {
       background: #38bdf8;
       color: #0f172a;
       border-color: #38bdf8;
@@ -101,7 +96,6 @@
       font-family: 'Zen Maru Gothic', 'Inter', sans-serif;
       font-size: 2.4rem;
       color: #7dd3fc;
-      letter-spacing: .01em;
       margin-bottom: .45rem;
       text-shadow: 0 0 18px #0ea5e9cc, 0 0 2px #fff5;
       animation: textGlow 2.5s infinite alternate;
@@ -204,6 +198,19 @@
       color: #fff;
       outline: none;
     }
+    .badge-new {
+      display: inline-block;
+      background: #16f0a7;
+      color: #0f172a;
+      border-radius: 6px;
+      font-size: .87rem;
+      font-weight: 700;
+      padding: .08em .60em;
+      margin-left: .4em;
+      vertical-align: middle;
+      letter-spacing: .01em;
+      box-shadow: 0 0 8px #16f0a799;
+    }
     footer {
       width: 100%;
       background: rgba(15,23,42,0.96);
@@ -229,8 +236,8 @@
 <body>
   <nav aria-label="Main Navigation">
     <a href="index.html" aria-current="page">Home</a>
+    <a href="astrologer.html" class="active">🔭 Astrologer <span class="badge-new">NEW</span></a>
     <a href="library.html">📚 Library</a>
-    <a href="astrology.html">🔭 Astrology</a>
     <a href="doctor-buddhi.html">🧠 Doctor Buddhi</a>
     <a href="dharma-sabha.html">🕊️ Dharma Sabha</a>
     <a href="aura.html">🌈 Aura</a>
@@ -255,47 +262,11 @@
     <section class="features-grid" aria-label="Main Features">
       <article class="feature-card" tabindex="0">
         <div class="feature-icon" aria-hidden="true">🔭</div>
-        <div class="feature-title">Astrology Portal</div>
-        <div class="feature-desc">Personalized Vedic & KP astrology, cosmic insights, and spiritual remedies powered by NASA data and ancient wisdom.</div>
-        <a class="feature-link" href="astrology.html">Explore Astrology</a>
+        <div class="feature-title">Astrologer <span class="badge-new">NEW</span></div>
+        <div class="feature-desc">වෘත්තිමය සහ විද්‍යාත්මක ජ්‍යොතිෂය, KP, Vedic, Aura, Numerology, Palmistry, හා Research Lab එකක්. සියල්ල එකම තැනක!</div>
+        <a class="feature-link" href="astrologer.html">Open Astrologer</a>
       </article>
       <article class="feature-card" tabindex="0">
         <div class="feature-icon" aria-hidden="true">📚</div>
         <div class="feature-title">Sacred Library</div>
-        <div class="feature-desc">Read, listen, and explore sacred texts from Buddhism, Christianity, Islam, Hinduism & more, with AI-powered search and voice support.</div>
-        <a class="feature-link" href="library.html">Visit Library</a>
-      </article>
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">🧠</div>
-        <div class="feature-title">Doctor Buddhi</div>
-        <div class="feature-desc">Ask health & spiritual questions, get holistic AI guidance, and generate reports for your doctor or healer with complete privacy.</div>
-        <a class="feature-link" href="doctor-buddhi.html">Talk to Buddhi</a>
-      </article>
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">🕊️</div>
-        <div class="feature-title">Dharma Sabha</div>
-        <div class="feature-desc">Join global Dharma gatherings, live Q&A, group meditations, and share prayers — a virtual mandapa for seekers.</div>
-        <a class="feature-link" href="dharma-sabha.html">Join Sabha</a>
-      </article>
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">🌈</div>
-        <div class="feature-title">Aura & Seed</div>
-        <div class="feature-desc">Check your aura, connect with your digital “Seed” guide, and receive daily wisdom and spiritual protection.</div>
-        <a class="feature-link" href="aura.html">See Your Aura</a>
-      </article>
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">🌟</div>
-        <div class="feature-title">About Sathyadarshana</div>
-        <div class="feature-desc">Meet Anuruddha, Copilot & ChatGPT Buddhi — the trinity behind this spiritual, technological revolution.</div>
-        <a class="feature-link" href="about.html">Learn More</a>
-      </article>
-    </section>
-  </main>
-  <footer>
-    © 2025 Sathyadarshana.com — All Rights Reserved
-    <span class="footer-bless">
-      “May all beings be free from suffering. May wisdom light the Earth.”
-    </span>
-  </footer>
-</body>
-</html>
+        <div class="feature-desc">Read, listen, and explore sacred texts from Buddhism

@@ -2,281 +2,200 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sacred Library | Sathyadarshana</title>
-  <link rel="icon" href="assets/icons/library.svg" type="image/svg+xml" />
+  <title>Global Free eBook Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    :root {
-      --primary: #38bdf8;
-      --bg: #0f172a;
-      --glass: rgba(30,58,138,0.18);
-      --border: #334155;
-      --shadow: 0 0 16px #38bdf880;
-    }
     body {
-      font-family: 'Segoe UI', 'Noto Sans', Arial, sans-serif;
-      background: radial-gradient(ellipse 100% 60% at 50% 10%, #0ea5e9 0%, #0f172a 80%);
+      background: linear-gradient(to right, #0f172a, #1e293b);
       color: #e0f2fe;
+      font-family: 'Segoe UI', Arial, sans-serif;
       margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      padding: 0;
     }
-    nav {
-      display: flex;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      background: rgba(2, 6, 23, 0.85);
-      padding: 1rem;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid #1e293b;
-      gap: 0.5rem;
-    }
-    nav a {
-      color: var(--primary);
-      text-decoration: none;
-      padding: 0.5rem 1.1rem;
-      margin-right: 0.1rem;
-      border-radius: 999px;
-      border: 1px solid var(--primary);
-      background: transparent;
-      box-shadow: 0 0 8px #38bdf860;
-      white-space: nowrap;
-      transition: 0.18s;
-      font-weight: 500;
-      letter-spacing: 0.01em;
-    }
-    nav a:hover, nav a.active {
-      background: var(--primary);
-      color: var(--bg);
-      box-shadow: 0 0 16px #38bdf8, 0 0 2px white;
-      border-color: #fff;
-    }
-    header {
-      text-align: center;
-      padding: 3rem 1rem 1.2rem 1rem;
-    }
-    header h1 {
-      font-size: 2.6rem;
-      color: #7dd3fc;
-      text-shadow: 0 0 20px #0ea5e9;
-      animation: flicker 2s infinite alternate;
-      letter-spacing: 0.02em;
-      margin-bottom: 0.2em;
-    }
-    @keyframes flicker {
-      from { text-shadow: 0 0 8px #38bdf8; }
-      to { text-shadow: 0 0 28px #0ea5e9; }
-    }
-    header p {
-      color: #bae6fd;
-      font-size: 1.15rem;
-      margin-bottom: 0;
-      letter-spacing: 0.01em;
-    }
-    .library-filter {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1.2rem;
-    }
-    .library-filter input {
-      background: rgba(30, 41, 59, 0.82);
-      border: 1px solid #334155;
-      color: #e0f2fe;
-      padding: 0.45rem 1rem;
-      border-radius: 999px;
-      font-size: 1rem;
-      outline: none;
-      transition: border 0.2s;
-    }
-    .library-filter input:focus {
-      border-color: var(--primary);
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 2rem;
-      padding: 2rem;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto 2rem auto;
-      flex: 1 1 auto;
-    }
-    .book {
-      background: var(--glass);
-      padding: 1.2rem 1rem 1.2rem 1rem;
-      border-radius: 1.1rem;
-      border: 1px solid var(--border);
-      box-shadow: 0 0 24px #1e3a8a33;
-      text-align: center;
-      transition: transform 0.18s, box-shadow 0.18s;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 360px;
-      justify-content: flex-start;
-    }
-    .book:hover {
-      transform: translateY(-8px) scale(1.025);
-      box-shadow: 0 4px 32px #38bdf8cc, 0 0 8px #1e293b;
-      border-color: var(--primary);
-    }
-    .book-cover {
-      width: 90px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 0.7rem;
-      box-shadow: 0 0 16px #38bdf830;
-      margin-bottom: 1rem;
+    .container {
+      max-width: 680px;
+      margin: 2rem auto;
       background: #1e293b;
-      border: 1.5px solid #334155;
-      display: block;
+      border-radius: 1.2rem;
+      padding: 2.2rem 1.5rem 2.5rem 1.5rem;
+      box-shadow: 0 4px 24px #0f172a55;
     }
-    .book h2 {
-      color: var(--primary);
-      font-size: 1.18rem;
-      margin-bottom: 0.4rem;
+    h1, h2, h3 {
+      color: #38bdf8;
       margin-top: 0;
-      font-weight: 600;
-      letter-spacing: 0.01em;
+      font-weight: 700;
     }
-    .book p {
-      font-size: 1.02rem;
-      color: #94a3b8;
-      margin: 0 0 1rem 0;
+    h1 {
+      font-size: 2rem;
+      letter-spacing: 0.02em;
     }
-    .book-actions {
-      display: flex;
-      gap: 0.7rem;
-      margin-top: auto;
-      justify-content: center;
-      flex-wrap: wrap;
+    p {
+      color: #bae6fd;
+      font-size: 1.07em;
     }
-    .book-actions a {
-      display: inline-block;
-      background: var(--primary);
-      color: #0f172a;
-      border-radius: 999px;
-      padding: 0.46rem 1.1rem;
-      font-weight: 500;
-      text-decoration: none;
-      font-size: 1rem;
+    input, select, button {
+      font-size: 1.07em;
+      padding: 0.6em;
+      margin: 0.2em 0.2em 0.2em 0;
+      border-radius: 0.6em;
       border: none;
-      box-shadow: 0 0 8px #38bdf855;
-      transition: background 0.18s, color 0.18s;
+      outline: none;
     }
-    .book-actions a:hover {
-      background: #fff;
-      color: #0ea5e9;
-      box-shadow: 0 0 16px #0ea5e9;
+    input, select {
+      width: 70%;
+      max-width: 350px;
     }
-    @media (max-width: 600px) {
-      header h1 { font-size: 2rem; }
-      .grid { padding: 1rem; gap: 1rem; }
-      .book { min-height: 320px; }
+    button {
+      cursor: pointer;
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: bold;
+      transition: background 0.2s;
     }
-    footer {
-      text-align: center;
-      padding: 2.4rem 1rem 1.2rem 1rem;
-      border-top: 1px solid #1e293b;
-      font-size: 0.95rem;
-      color: #64748b;
-      background: linear-gradient(to top, #0f172a 85%, transparent);
+    button.translate {
+      background: #60a5fa;
+    }
+    button:hover {
+      background: #0ea5e9;
+      color: #e0f2fe;
+    }
+    .result-links ul {
+      list-style: none;
+      padding: 0;
+      margin: 0.7em 0;
+    }
+    .result-links a {
+      color: #38bdf8;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+    .result-links li {
+      margin: 0.7em 0;
+    }
+    .tariff-section {
+      background: #334155;
+      border-radius: 0.7rem;
+      padding: 1.2rem;
+      color: #bae6fd;
+      margin-top: 2.2em;
+    }
+    .tariff-section ul {
+      margin: 0 0 0.6em 0;
+      padding-left: 1.2em;
+    }
+    .tariff-section li {
+      margin-bottom: 0.4em;
+    }
+    .tariff-section .free {
+      color: #38bdf8;
+      font-weight: bold;
+    }
+    .tariff-section .paid {
+      color: #fbbf24;
+      font-weight: bold;
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 1rem 0.4rem 1.2rem 0.4rem;
+      }
+      input, select {
+        width: 98%;
+        max-width: none;
+      }
     }
   </style>
-  <script>
-    // Simple client-side filter for books
-    function filterLibrary(event) {
-      const q = event.target.value.toLowerCase();
-      document.querySelectorAll('.book').forEach(book => {
-        const txt = book.innerText.toLowerCase();
-        book.style.display = txt.includes(q) ? "" : "none";
-      });
-    }
-  </script>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="library.html" class="active">📚 Library</a>
-    <a href="astrology.html">🔭 Astrology</a>
-    <a href="ai-buddhi.html">🧠 AI Buddhi</a>
-    <a href="music-lab.html">🎵 Music Lab</a>
-    <a href="news.html">📰 News</a>
-    <a href="about.html">🌟 About</a>
-    <a href="contact.html">✉️ Contact</a>
-  </nav>
-  <header>
-    <h1>📚 Sacred Library</h1>
-    <p>Explore divine texts from all traditions — free, multilingual & protected.</p>
-  </header>
-  <div class="library-filter">
-    <input type="text" placeholder="🔍 Search Sacred Books..." oninput="filterLibrary(event)" aria-label="Search Library" />
+  <div class="container">
+    <h1>🌏 Global Free eBook Library</h1>
+    <p>
+      Children, youth, adults — educational, spiritual, fiction, science, medical, arts, and more.<br>
+      Access any free eBook in the world as PDF or online reading; <strong>read and translate for free</strong>.
+    </p>
+    <div>
+      <input type="text" id="anyBookInput" placeholder="Type any book name or subject...">
+      <select id="targetLang">
+        <option value="en">English</option>
+        <option value="si">Sinhala</option>
+        <option value="ta">Tamil</option>
+        <option value="hi">Hindi</option>
+        <option value="fr">French</option>
+        <option value="es">Spanish</option>
+        <option value="zh-CN">Chinese</option>
+        <option value="de">German</option>
+        <!-- Add more languages as needed -->
+      </select>
+      <button onclick="anyBookSearch()">Search</button>
+      <button class="translate" onclick="translateInput()">Translate</button>
+    </div>
+    <div id="translatedText" style="margin-top:1rem;"></div>
+    <div id="anyBookResults" class="result-links"></div>
+
+    <div class="tariff-section">
+      <h2>📢 Tariff Plan</h2>
+      <ul>
+        <li><span class="free">Free:</span> Online reading, translation, and basic AI narration for all users.</li>
+        <li><span class="paid">Paid:</span> Advanced voice reading (multiple languages), offline access, premium AI insights, narrated PDFs.</li>
+        <li><span class="paid">Plans:</span> $3/month or $20/year for premium AI & voice features.</li>
+        <li><span class="paid">PDF downloads with AI-powered narration and support also require a small fee.</span></li>
+      </ul>
+      <p>
+        <span class="free">Free</span>: Basic online reading, translation<br>
+        <span class="paid">Paid</span>: Premium voice/AI, offline, PDF with narration
+      </p>
+    </div>
+    <p style="margin-top:2.3rem; font-size:1em; color:#94a3b8; text-align:center;">
+      <span style="opacity:0.8;">
+        This free eBook service is powered by 4 major global repositories:<br>
+        <span style="color:#38bdf8;">Internet Archive, Project Gutenberg, Sacred Texts, Open Library</span>
+      </span>
+    </p>
   </div>
-  <section class="grid">
-    <div class="book">
-      <img src="assets/images/tripitaka.jpg" alt="Tripitaka Cover" class="book-cover" loading="lazy" />
-      <h2>📜 Tripitaka</h2>
-      <p>The Buddhist canon in Pali — Vinaya, Sutta & Abhidhamma.</p>
-      <div class="book-actions">
-        <a href="assets/pdf/tripitaka.pdf" target="_blank">Read PDF</a>
-        <a href="https://tipitaka.app/" target="_blank">Online</a>
-      </div>
-    </div>
-    <div class="book">
-      <img src="assets/images/bible.jpg" alt="Bible Cover" class="book-cover" loading="lazy" />
-      <h2>📖 Bible (Enoch + Revelation)</h2>
-      <p>Includes canonical and apocryphal texts with voice reading.</p>
-      <div class="book-actions">
-        <a href="assets/pdf/bible.pdf" target="_blank">Read PDF</a>
-        <a href="https://www.bible.com/" target="_blank">Online</a>
-      </div>
-    </div>
-    <div class="book">
-      <img src="assets/images/gita.jpg" alt="Bhagavad Gita Cover" class="book-cover" loading="lazy" />
-      <h2>🕉️ Bhagavad Gita</h2>
-      <p>The divine conversation between Krishna and Arjuna.</p>
-      <div class="book-actions">
-        <a href="assets/pdf/bhagavad-gita.pdf" target="_blank">Read PDF</a>
-        <a href="https://www.bhagavad-gita.org/" target="_blank">Online</a>
-      </div>
-    </div>
-    <div class="book">
-      <img src="assets/images/quran.jpg" alt="Quran Cover" class="book-cover" loading="lazy" />
-      <h2>📚 Quran</h2>
-      <p>The holy revelation to Prophet Muhammad (PBUH).</p>
-      <div class="book-actions">
-        <a href="assets/pdf/quran.pdf" target="_blank">Read PDF</a>
-        <a href="https://quran.com/" target="_blank">Online</a>
-      </div>
-    </div>
-    <div class="book">
-      <img src="assets/images/mahavamsa.jpg" alt="Mahavamsa Cover" class="book-cover" loading="lazy" />
-      <h2>📘 Mahavamsa</h2>
-      <p>The great chronicle of Sri Lankan kings and Buddhist history.</p>
-      <div class="book-actions">
-        <a href="assets/pdf/mahavamsa.pdf" target="_blank">Read PDF</a>
-        <a href="https://mahavamsa.org/" target="_blank">Online</a>
-      </div>
-    </div>
-    <div class="book">
-      <img src="assets/images/solomon.jpg" alt="Key of Solomon Cover" class="book-cover" loading="lazy" />
-      <h2>🔮 Key of Solomon</h2>
-      <p>Mystical teachings from ancient esoteric traditions.</p>
-      <div class="book-actions">
-        <a href="assets/pdf/key-of-solomon.pdf" target="_blank">Read PDF</a>
-        <a href="https://archive.org/details/TheKeyOfSolomonTheKing_201303" target="_blank">Online</a>
-      </div>
-    </div>
-  </section>
-  <footer>
-    © 2025 Sathyadarshana.com — Sacred Knowledge for Humanity
-  </footer>
+  <script>
+    function anyBookSearch() {
+      var book = document.getElementById('anyBookInput').value.trim();
+      if(!book) {
+        document.getElementById('anyBookResults').innerHTML = '<span style="color:#f87171;">Please enter a book name or subject.</span>';
+        return;
+      }
+      var links = [
+        {
+          name: "Internet Archive (PDF/ePub/Audio)",
+          url: "https://archive.org/search.php?query=" + encodeURIComponent(book)
+        },
+        {
+          name: "Project Gutenberg (Public Domain eBooks)",
+          url: "https://www.gutenberg.org/ebooks/search/?query=" + encodeURIComponent(book)
+        },
+        {
+          name: "Sacred Texts Archive",
+          url: "https://www.sacred-texts.com/search/search.php?query=" + encodeURIComponent(book)
+        },
+        {
+          name: "Open Library",
+          url: "https://openlibrary.org/search?q=" + encodeURIComponent(book)
+        }
+      ];
+      var html = '<h3>🔎 Search for your eBook on these 4 free sites:</h3><ul>';
+      links.forEach(function(link){
+        html += '<li><a href="'+link.url+'" target="_blank">'+link.name+' – "'+ book +'"</a></li>';
+      });
+      html += '</ul>';
+      html += '<p style="margin-top:1.2em; color:#38bdf8; font-size:0.98em;">PDF, ePub, and online reading — thousands of options!</p>';
+      document.getElementById('anyBookResults').innerHTML = html;
+    }
+
+    function translateInput() {
+      var text = document.getElementById('anyBookInput').value.trim();
+      var targetLang = document.getElementById('targetLang').value;
+      if(!text) {
+        document.getElementById('translatedText').innerHTML = '<span style="color:#f87171;">Please enter text to translate.</span>';
+        return;
+      }
+      var url = 'https://translate.google.com/?sl=auto&tl=' + targetLang + '&text=' + encodeURIComponent(text) + '&op=translate';
+      var langName = document.getElementById('targetLang').options[document.getElementById('targetLang').selectedIndex].text;
+      document.getElementById('translatedText').innerHTML = '<a href="' + url + '" target="_blank" style="color:#38bdf8; text-decoration:underline;">View Translation in ' + langName + '</a>';
+    }
+  </script>
 </body>
-</html> 
+</html>

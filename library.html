@@ -88,10 +88,10 @@
         data.docs.slice(0,8).forEach(function(doc){
           html += `<li>
             <a href="https://openlibrary.org${doc.key}" target="_blank">${doc.title}</a>
-            <button onclick="translateTitle('${doc.title.replace(/'/g,"\\'")}')">Translate to Sinhala</button>
+            <button onclick="translateTitle('${doc.title.replace(/'/g,"\\'")}')">Auto Translate to Sinhala</button>
           </li>`;
         });
-        html += '</ul><small style="color:#94a3b8;">Click "Translate to Sinhala" to view the book title in Sinhala.</small>';
+        html += '</ul><small style="color:#94a3b8;">Click "Auto Translate to Sinhala" to view the book title in Sinhala.</small>';
         document.getElementById('bookResults').innerHTML = html;
         document.getElementById('translatedTitle').innerHTML = '';
       });

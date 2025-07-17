@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KP Sub Lord Calculation Engine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background:#161821; color:#e0e7ef; font-family:sans-serif; }
+    .container { max-width:480px; margin:40px auto; background:#232946; border-radius:12px; box-shadow:0 6px 24px #0002; padding:2em;}
+    h1 { color:#a5b4fc; text-align:center;}
+    label { display:block; margin-top:1.2em; color:#7dd3fc; }
+    input { width:100%; font-size:1.1em; border-radius:6px; border:none; padding:0.6em; margin-top:0.4em; background:#222; color:#fff;}
+    button { margin-top:2em; width:100%; background:#7c3aed; color:#fff; font-size:1.15em; padding:0.7em; border:none; border-radius:6px; cursor:pointer;}
+    button:hover { background:#5b21b6; }
+    .result { margin-top:2em; background:#18181b; padding:1.2em; border-radius:8px; color:#c4b5fd;}
+    .footer { text-align:center; color:#64748b; font-size:0.9em; margin-top:3em;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>KP Sub Lord Calculation Engine</h1>
+    <form id="kpForm">
+      <label>Seed Degree (0° - 360°)</label>
+      <input type="number" id="degree" min="0" max="360" step="0.0001" placeholder="e.g. 215.3725" required>
+      <button type="submit">Calculate Sub Lord</button>
+    </form>
+    <div class="result" id="kpResult" style="display:none;"></div>
+  </div>
+  <div class="footer">
+    KP Sub Lord Calculator &copy; SathyadarshanaAI
+  </div>
+  <script>
+    // KP Nakshatra Lords in order (starting from 0 Aries)
+    const starLords = [
+      "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"
+    ];
+    // Sub lord order is same as star lord order, recursively
+    const subLords = starLords;
+
+    // Each Nakshatra = 13°20' = 13.3333°
+    // Total 27 Nakshatra, each divided into 9 unequal subs (Vimshottari Dasa proportion)
+    // Sub lord lengths (in degrees) per Nakshatra (proportional to dasa years)
+    const dasaYears = [7, 20, 6, 10, 7, 18, 16, 19, 17]; // Ketu to Mercury
+    const dasaTotal = 120; // total years
+    function getSubLengths(nakshatraLength = 13.333333) {
+      return dasaYears.map(y => nakshatraLength * (y/dasaTotal));
+    }
+
+    function calculateKPNakshatraInfo(degree) {
+      // Normalize degree (0-360)
+      if (degree < 0) degree = 0;
+      if (degree >= 360) degree = degree % 360;
+
+      // 1. Which Nakshatra
+      const nakshatraLength = 13.333333;
+      const nakshatraNum = Math.floor(degree / nakshatraLength); // 0-indexed: 0-26
+      const nakshatraLord = starLords[nakshatraNum % 9];
+
+      // 2. Sub Lord Calculation
+      // Within Nakshatra, find which sub (proportional)
+      const startDeg = nakshatraNum * nakshatraLength;
+      const posInNakshatra = degree - startDeg;
+
+      // Each sub lord's length within nakshatra (array of 9)
+      const subLengths = getSubLengths(nakshatraLength);
+
+      // Find which sub
+      let sum = 0, subIndex = -1;
+      for (let i = 0; i < subLengths.length; ++i) {
+        sum += subLengths[i];
+        if (posInNakshatra < sum) {
+          subIndex = i;
+          break;
+        }
+      }
+      if (subIndex === -1) subIndex = 8; // fallback
+
+      const subLord = subLords[(nakshatraNum + subIndex) % 9];
+
+      // Nakshatra names (optional)
+      const nakshatraNames = [
+        "Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra","Punarvasu","Pushya","Ashlesha",
+        "Magha","Purva Phalguni","Uttara Phalguni","Hasta","Chitra","Swati","Vishakha","Anuradha","Jyeshtha",
+        "Mula","Purva Ashadha","Uttara Ashadha","Shravana","Dhanishta","Shatabhisha","Purva Bhadrapada","Uttara Bhadrapada","Revati"
+      ];
+
+      return {
+        nakshatraNum: nakshatraNum + 1, // 1-indexed
+        nakshatraName: nakshatraNames[nakshatraNum],
+        nakshatraLord,
+        subLord
+      };
+    }
+
+    document.getElementById('kpForm').onsubmit = function(e) {
+      e.preventDefault();
+      const degree = parseFloat(document.getElementById('degree').value);
+
+      if (isNaN(degree) || degree < 0 || degree >= 360) {
+        alert("Please enter a valid degree (0° - 360°)");
+        return;
+      }
+
+      const info = calculateKPNakshatraInfo(degree);
+      document.getElementById('kpResult').style.display = "block";
+      document.getElementById('kpResult').innerHTML =
+        `<b>Nakshatra:</b> <span style="color:#7dd3fc;">${info.nakshatraName}</span> (#${info.nakshatraNum})<br>
+         <b>Star Lord:</b> <span style="color:#fbbf24;">${info.nakshatraLord}</span><br>
+         <b>Sub Lord:</b> <span style="color:#c4b5fd;">${info.subLord}</span>`;
+    };
+  </script>
+</body>
+</html>

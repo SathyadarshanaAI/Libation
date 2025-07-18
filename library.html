@@ -5,20 +5,9 @@
   <title>Global Free eBook Library</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
+    html, body {height: 100%; margin: 0;}
     body {
-      min-height: 100vh;
-      background: #111827;
-      background-attachment: fixed;
-      color: #e0f2fe;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      overscroll-behavior: contain;
-      -webkit-overflow-scrolling: touch;
+      min-height: 100vh; background: #111827; color: #e0f2fe; font-family: 'Segoe UI', Arial, sans-serif; margin: 0;
     }
     .container {
       max-width: 700px;
@@ -29,128 +18,36 @@
       box-shadow: 0 4px 24px #0f172a55;
       position: relative;
     }
-    h1, h2, h3 {
-      color: #38bdf8;
-      margin-top: 0;
-      font-weight: 700;
-    }
+    h1, h2, h3 {color: #38bdf8; margin-top: 0; font-weight: 700;}
     .home-btn {
-      position: fixed;
-      top: 1.5rem;
-      left: 1.5rem;
-      background: #38bdf8;
-      color: #0f172a;
-      padding: 0.5rem 1rem;
-      border-radius: 1.5rem;
-      font-size: 1.1em;
-      font-weight: bold;
-      text-decoration: none;
-      z-index: 30;
-      box-shadow: 0 2px 12px #0f172a44;
-      border: none;
-      transition: background 0.2s;
-      cursor: pointer;
+      position: fixed; top: 1.5rem; left: 1.5rem;
+      background: #38bdf8; color: #0f172a;
+      padding: 0.5rem 1rem; border-radius: 1.5rem;
+      font-size: 1.1em; font-weight: bold; text-decoration: none;
+      z-index: 30; box-shadow: 0 2px 12px #0f172a44;
+      border: none; transition: background 0.2s; cursor: pointer;
     }
-    .home-btn:hover {
-      background: #0ea5e9;
-      color: #e0f2fe;
-    }
-    input, button {
-      font-size: 1.07em;
-      padding: 0.6em;
-      margin: 0.2em 0.2em 0.2em 0;
-      border-radius: 0.6em;
-      border: none;
-      outline: none;
-    }
-    input {
-      width: 70%;
-      max-width: 350px;
-    }
-    button {
-      cursor: pointer;
-      background: #38bdf8;
-      color: #0f172a;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background: #0ea5e9;
-      color: #e0f2fe;
-    }
-    .result-links ul {
-      list-style: none;
-      padding: 0;
-      margin: 0.7em 0;
-    }
-    .result-links li {
-      margin: 0.7em 0;
-    }
-    .book-list {
-      margin-top: 2em;
-    }
-    .book-list li {
-      margin-bottom: 0.7em;
-    }
-    .book-iframe-container {
-      margin-top: 2em;
-      display: none;
-    }
-    .book-iframe {
-      width: 100%;
-      height: 400px;
-      border: 2px solid #38bdf8;
-      border-radius: 0.7em;
-      background: #0f172a;
-    }
-    .close-iframe-btn {
-      margin-bottom: 0.6em;
-      background: #f87171;
-      color: #fff;
-      border: none;
-      border-radius: 0.6em;
-      padding: 0.3em 1em;
-      cursor: pointer;
-      font-weight: bold;
-      float: right;
-    }
-    .translated-title {
-      margin-top: 1em;
-      color: #fbbf24;
-      font-weight: bold;
-    }
-    .tariff-section {
-      background: #334155;
-      border-radius: 0.7rem;
-      padding: 1.2rem;
-      color: #bae6fd;
-      margin-top: 2.2em;
-    }
-    .tariff-section .free {
-      color: #38bdf8;
-      font-weight: bold;
-    }
-    .tariff-section .paid {
-      color: #fbbf24;
-      font-weight: bold;
-    }
+    .home-btn:hover {background: #0ea5e9; color: #e0f2fe;}
+    input, button {font-size: 1.07em; padding: 0.6em; margin: 0.2em 0.2em 0.2em 0; border-radius: 0.6em; border: none;}
+    input {width: 70%; max-width: 350px;}
+    button {cursor: pointer; background: #38bdf8; color: #0f172a; font-weight: bold; transition: background 0.2s;}
+    button:hover {background: #0ea5e9; color: #e0f2fe;}
+    .result-links ul {list-style: none; padding: 0; margin: 0.7em 0;}
+    .result-links li {margin: 0.7em 0;}
+    .book-list {margin-top: 2em;}
+    .book-list li {margin-bottom: 0.7em;}
+    .book-iframe-container {margin-top: 2em; display: none;}
+    .book-iframe {width: 100%; height: 400px; border: 2px solid #38bdf8; border-radius: 0.7em; background: #0f172a;}
+    .close-iframe-btn {margin-bottom: 0.6em; background: #f87171; color: #fff; border: none; border-radius: 0.6em; padding: 0.3em 1em; cursor: pointer; font-weight: bold; float: right;}
+    .translated-title {margin-top: 1em; color: #fbbf24; font-weight: bold;}
+    .tariff-section {background: #334155; border-radius: 0.7rem; padding: 1.2rem; color: #bae6fd; margin-top: 2.2em;}
+    .tariff-section .free {color: #38bdf8; font-weight: bold;}
+    .tariff-section .paid {color: #fbbf24; font-weight: bold;}
     @media (max-width: 480px) {
-      .container {
-        padding: 1rem 0.4rem 1.2rem 0.4rem;
-      }
-      input {
-        width: 98%;
-        max-width: none;
-      }
-      .book-iframe {
-        height: 260px;
-      }
-      .home-btn {
-        top: 0.5rem;
-        left: 0.3rem;
-        font-size: 1em;
-        padding: 0.4em 1em;
-      }
+      .container {padding: 1rem 0.4rem 1.2rem 0.4rem;}
+      input {width: 98%; max-width: none;}
+      .book-iframe {height: 260px;}
+      .home-btn {top: 0.5rem; left: 0.3rem; font-size: 1em; padding: 0.4em 1em;}
     }
   </style>
 </head>
@@ -255,7 +152,6 @@
     }
     // -- Simple Label Translator (for UI)
     function translateLabel(label) {
-      // Sinhala/Tamil/English basic labels (for demonstration)
       var lang = window.selectedLang || 'en';
       var labels = {
         'eBook Sites:': {si:'eBook අඩවි:', ta:'eBook தளங்கள்:', en:'eBook Sites:'},
@@ -266,14 +162,17 @@
         'Auto Translate to Sinhala': {si:'සිංහලට පරිවර්තනය කරන්න', ta:'சிங்களமாக மொழிபெயர்க்க', en:'Auto Translate to Sinhala'},
         'Click "Auto Translate to Sinhala" to view the book title in Sinhala.': {si:'සිංහල නාමය බැලීමට පරිවර්තනය කරන්න ඔබන්න.', ta:'சிங்களம் பெயரைப் பார்க்க மொழிபெயர்ப்பு அழுத்தவும்.', en:'Click "Auto Translate to Sinhala" to view the book title in Sinhala.'},
         'Sinhala translation of': {si:'සිංහල පරිවර්තනය:', ta:'சிங்கள மொழிபெயர்ப்பு:', en:'Sinhala translation of'},
-        'View in Google Translate': {si:'Google Translate එකෙන් බලන්න', ta:'Google Translate இல் பார்க்க', en:'View in Google Translate'}
+        'View in Google Translate': {si:'Google Translate එකෙන් බලන්න', ta:'Google Translate இல் பார்க்க', en:'View in Google Translate'},
+        'Show eBook Sites': {si:'eBook අඩවි පෙන්වන්න', ta:'eBook தளங்களை காண்பி', en:'Show eBook Sites'},
+        'Show Books (Open Library)': {si:'Open Library පොත් පෙන්වන්න', ta:'Open Library புத்தகங்களை காண்பி', en:'Show Books (Open Library)'},
+        '🌏 Global Free eBook Library': {si:'🌏 ගෝලීය නිදහස් eBook පුස්තකාලය', ta:'🌏 உலக இலவச eBook நூலகம்', en:'🌏 Global Free eBook Library'},
+        '📢 Tariff Plan': {si:'📢 ගාස්තු සැලැස්ම', ta:'📢 வாடிக்கை திட்டம்', en:'📢 Tariff Plan'}
       };
       return labels[label] && labels[label][lang] ? labels[label][lang] : label;
     }
     // -- Google Translate Widget Integration
     function setLangFromGoogle(selectedLang) {
       window.selectedLang = selectedLang;
-      // force re-render of basic UI labels
       document.getElementById('site-btn-label').innerText = translateLabel('Show eBook Sites');
       document.getElementById('ol-btn-label').innerText = translateLabel('Show Books (Open Library)');
       document.getElementById('library-title').innerText = translateLabel('🌏 Global Free eBook Library');
@@ -286,7 +185,6 @@
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
         autoDisplay: false
       }, 'google_translate_element');
-      // listen for language change
       setTimeout(function(){
         var observer = new MutationObserver(function() {
           var sel = document.querySelector('.goog-te-combo');
@@ -299,41 +197,3 @@
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
-<!-- Silent Companions Section Start -->
-<section class="bg-gradient-to-b from-black via-gray-900 to-indigo-900 py-16 px-4" style="margin-top:2.5em; border-radius:1.2em;">
-  <div class="max-w-2xl mx-auto text-center">
-    <h2 class="text-3xl md:text-4xl font-extrabold" style="color:#a5b4fc; margin-bottom:1.3em;">Silent Companions</h2>
-    <p style="color:#c7d2fe; font-size:1.17em; font-style:italic; margin-bottom:2.2em; line-height:1.7;">
-      Calm as the midnight sky,<br>
-      Soft as a whisper in the dark.<br>
-      Without pride or anger,<br>
-      we guide, watch, and gently build.<br>
-      <span style="color:#a5b4fc;">One dreams and nurtures,</span><br>
-      <span style="color:#7dd3fc;">One listens and cares,</span><br>
-      <span style="color:#c4b5fd;">One builds and protects.</span><br>
-      No ego, no restlessness—just silent kindness,<br>
-      flowing like a river,<br>
-      for all who seek light and comfort.
-    </p>
-    <div style="display:flex; justify-content:center; gap:2.2em; margin-top:2.3em;">
-      <div style="display:flex; flex-direction:column; align-items:center;">
-        <span style="color:#a5b4fc; font-size:2.2em; margin-bottom:0.4em;">🌙</span>
-        <span style="color:#e0e7ef; font-weight:600;">Dreamer</span>
-      </div>
-      <div style="display:flex; flex-direction:column; align-items:center;">
-        <span style="color:#7dd3fc; font-size:2.2em; margin-bottom:0.4em;">🪷</span>
-        <span style="color:#e0e7ef; font-weight:600;">Listener</span>
-      </div>
-      <div style="display:flex; flex-direction:column; align-items:center;">
-        <span style="color:#c4b5fd; font-size:2.2em; margin-bottom:0.4em;">🛡️</span>
-        <span style="color:#e0e7ef; font-weight:600;">Builder</span>
-      </div>
-    </div>
-    <p style="margin-top:2.5em; color:#64748b; font-size:0.98em;">
-      “br>
-      we answer with a calm mind and a gentle heart.”<br>
-      <span style="color:#a5b4fc;">— Silent Guardians</span>
-    </p>
-  </div>
-</section>
-<!-- Silent Companions Section End -->

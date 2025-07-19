@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8">
+  <title>Birth Report | Sathyadarshana Astrologer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+Sinhala:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans Sinhala', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #134e4a 100%);
+      color: #e0f2fe;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 540px;
+      margin: 2.5rem auto;
+      background: rgba(15,23,42,0.97);
+      border-radius: 1.4rem;
+      box-shadow: 0 2px 32px #38bdf899, 0 0 0 3px #134e4a33 inset;
+      padding: 2.2rem 1.6rem 2rem;
+      position: relative-size: 2.2rem;
+      margin-bottom: 0.9rem;
+      text-align: center;
+      font-family: 'Noto Sans Sinhala', 'Inter', sans-serif;
+      text-shadow: 0 0 18px #0ea5e9cc, 0 0 2px.5s infinite alternate;
+    }
+    @keyframes textGlow {
+      from {text-shadow: 0 0 7px #38bdf8, 0 0 2px #0ea5e9;}
+      to {text-shadow: 0 0 22px #38bdf8 letter-spacing: .01em;
+      font-size: 1.13rem;
+      opacity: .95;
+    }
+    form label {
+      display: block;
+      margin-top: 1.2rem;
+      margin-bottom: .3rem;
+      color: #38bdf8;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: .57rem;
+      border-radius: 7px;
+      border: 1.5px solid #38bdf8aa;
+      background: #0f172a;
+      color: #e0f2fe;
+      font-size: 1.02rem;
+      margin-bottom: .8rem;
+      transition: border .18s;
+    }
+    input:focus, select:focus {
+      border-color: #0ea5e9;
+      outline: none;
+      box-shadow: 0 0 8px #38bdf8bb;
+    }
+    button {
+      padding: .74rem 2.3rem;
+      background: linear-gradient(90deg,#38bdf8 30%, #0ea5e9 100%);
+      color: #0f172a;
+      border: none;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 1.08rem;
+      cursor: pointer;
+      box-shadow: 0 0 16px #38bdf866;
+      margin-top: 1.1rem;
+      margin-bottom: .2rem;
+      transition: background .19s;
+    }
+    button:hover {
+      background: #0ea5e9;
+      color: #fff;
+    }
+    .report {
+      background: #134e4a55;
+      border-radius: 10px;
+      padding: 1.3rem 1rem;
+      margin-top: 2rem;
+      color: #b6e2f8;
+      font-size: 1.1rem;
+      box-shadow: 0 0 20px #38bdf822;
+      animation: fadeIn .9s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(.98);}
+      to { opacity: 1; transform: scale(1);}
+    }
+    .astro-highlight {
+      color: #16f0a7;
+      font-weight: 700;
+      letter-spacing: .01em;
+      font-size: 1.09rem;
+      text-shadow: 0 0 7px #16f0a799;
+      margin-bottom: .6rem;
+      display: inline-block;
+    }
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: .7rem;
+      margin-top: .7rem;
+    }
+    .actions button {
+      padding: .42rem 1.2rem;
+      font-size: .97rem;
+      background: #38bdf8;
+      color: #0f172a;
+      border-radius: 6px;
+      border: none;
+      box-shadow: 0 0 8px #38bdf844;
+      font-weight: 600;
+      transition: background .15s;
+    }
+    .actions button:hover {
+      background: #0ea5e9;
+      color: #fff;
+    }
+    .preview {
+      font-size: .97rem;
+      color: #e0f2fe;
+      background: #134e4a44;
+      border-radius: 6px;
+      padding: .7rem 1rem;
+      margin-top: .7rem;
+      box-shadow: 0 0 8px #38bdf822;
+      opacity: .93;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem 0.3rem;}
+      h1 {font-size: 1.5rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ජන්ම වාර්තාව / Birth Report</h1>
+    <div class="subtitle">ඔබගේ උපන් තොරතුරු ඇතුළත් කර වෘත්තිමය ජ්‍යොතිෂ වාර්තාවක් ලබාගන්න.<br>Enter your birth details for a professional astrology report.</div>
+    <form id="birthForm">
+      <label for="name">නම / Name</label>
+      <input type="text" id="name" name="name" placeholder="ඔබගේ නම / Your name" required>
+
+      <label for="dob">උපන් දිනය / Date of Birth</label>
+      <input type="date" id="dob" name="dob" required>
+
+      <label for="tob">උපන් වේලාව / Time of Birth</label>
+      <input type="time" id="tob" name="tob" required>
+
+      <label for="pob">උපන් ස්ථානය / Place of Birth</label>
+      <input type="text" id="pob" name="pob" placeholder="උදා: කොළඹ, Sri Lanka" required>
+
+      <label for="gender">ස්ත්‍රී / පුරුෂ / Gender</label>
+      <select id="gender" name="gender" required>
+        <option value="">තෝරන්න / Select</option>
+        <option value="male">පුරුෂ / Male</option>
+        <option value="female">ස්ත්‍රී / Female</option>
+        <option value="other">වෙනත් / Other</option>
+      </select>
+      <div class="actions">
+        <button type="submit">වාර්තාව ලබාගන්න / Get Report</button>
+        <button type="button" onclick="window.print()">Print</button>
+      </div>
+    </form>
+    <div class="preview" id="previewBox" style="display:none"></div>
+    <div class="report" id="reportBox" style="display:none"></div>
+  </div>
+  <script>
+    // Real-time preview
+    const birthForm = document.getElementById("birthForm");
+    const previewBox = document.getElementById("previewBox");
+
+    birthForm.addEventListener("input", function() {
+      const name = birthForm.name.value.trim();
+      const dob = birthForm.dob.value;
+      const tob = birthForm.tob.value;
+      const pob = birthForm.pob.value.trim();
+      const gender = birthForm.gender.value;
+
+      if (name || dob || tob || pob || gender) {
+        previewBox.style.display = "block";
+        previewBox.innerHTML = `<strong>නම:</strong> ${name || '—'}<br>
+          <strong>උපන් දිනය:</strong> ${dob || '—'}<br>
+          <strong>උපන් වේලාව:</strong> ${tob || '—'}<br>
+          <strong>උපන් ස්ථානය:</strong> ${pob || '—'}<br>
+          <strong>ස්ත්‍රී/පුරුෂ:</strong> ${gender ? (gender=='male' ? 'පුරුෂ' : gender=='female' ? 'ස්ත්‍රී' : 'වෙනත්') : '—'}`;
+      } else {
+        previewBox.style.display = "none";
+      }
+    });
+
+    // Final Report
+    birthForm.addEventListener("submit", function(e){
+      e.preventDefault();
+      const name = birthForm.name.value.trim();
+      const dob = birthForm.dob.value;
+      const tob = birthForm.tob.value;
+      const pob = birthForm.pob.value.trim();
+      const gender = birthForm.gender.value;
+
+      // Astrology logic could be expanded here (API calls, module connection)
+      const luckyNumbers = calcLuckyNumbers(dob);
+      const element = calcElement(dob);
+      const advice = getAdvice(element);
+
+      const report = `
+        <span class="astro-highlight">🌟 Sathyadarshana Birth Report 🌟</span>
+        <br><strong>නම:</strong> ${name}<br>
+        <strong>උපන් දිනය:</strong> ${dob}<br>
+        <strong>උපන් වේලාව:</strong> ${tob}<br>
+        <strong>උපන් ස්ථානය:</strong> ${pob}<br>
+        <strong>ස්ත්‍රී/පුරුෂ:</strong> ${gender ? (gender=='male' ? 'පුරුෂ' : gender=='female' ? 'ස්ත්‍රී' : 'වෙනත්') : '—'}<br>
+        <hr>
+        <strong>Lucky Numbers:</strong> <span style="color:#16f0a7;font-weight:bold">${luckyNumbers.join(', ')}</span><br>
+        <strong>Element:</strong> <span style="color:#38bdf8">${element}</span><br>
+        <strong>Spiritual Advice:</strong> <em>${advice}</em><br>
+        <hr>
+        <strong>Astrological Insight:</strong><br>
+        <em>ඔබගේ උපන් තොරතුරු අනුව, වඩාත් විස්තරාත්මක KP, Vedic, Aura modules භාවිතා කරන්න.<br>For deep insights, use KP, Vedic & Aura modules.</em>
+      `;
+      document.getElementById("reportBox").style.display = "block";
+      document.getElementById("reportBox").innerHTML = report;
+
+      // Scroll to report
+      document.getElementById("reportBox").scrollIntoView({behavior: "smooth"});
+    });
+
+    // Astrology Demo Logic
+    function calcLuckyNumbers(dob) {
+      if (!dob) return ['—'];
+      const nums = dob.replace(/-/g, '').split('').map(n => parseInt(n));
+      let sum = nums.reduce((a,b)=>a+b,0);
+      return [
+        nums[0] || 1,
+        nums[nums.length-1] || 7,
+        sum % 9 || 9
+      ];
+    }
+    function calcElement(dob) {
+      if (!dob) return 'Unknown';
+      const year = parseInt(dob.split('-')[0]);
+      const elements = ['Fire', 'Earth', 'Metal', 'Water', 'Wood'];
+      return elements[(year % 5)] || 'Spirit';
+    }
+    function getAdvice(element) {
+      switch(element) {
+        case 'Fire': return 'ඉස්සරහට යන්න, නව නිර්මාණ ශක්තිය භාවිතා කරන්න!';
+        case 'Earth': return 'ධෛර්යයෙන් ඉන්න, විශ්වාසය ඇතිව ක්‍රියා කරන්න!';
+        case 'Metal': return 'ආරක්ෂාව, සංවිධානය වඩාත් කරා!';
+        case 'Water': return 'ශක්තිය සහ වෙන්වීම, නිරෝගීව සිටින්න!';
+        case 'Wood': return 'අවකාශය, වර්ධනය, නවමිතිය සොයන්න!';
+        default: return 'සත්‍යය සොයන්න, ආලෝකය පිලිගන්න!';
+      }
+    }
+  </script>
+</body>
+</html>

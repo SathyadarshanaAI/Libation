@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vedic Astrology | Sathyadarshana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 30% 20%, #0f172a 0%, #000 100%);
+      color: #e0f2fe;
+      text-align: center;
+      min-height: 100vh;
+      padding: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      scroll-behavior: smooth;
+    }
+    h1 {
+      font-size: 2.5em;
+      color: #7dd3fc;
+      margin-bottom: 1em;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 0 14px #38bdfkeyframes textGlow {
+      from {text-shadow: 0 0 7px #38bdf8;}
+      to {text-shadow: 0 0 20px #38bdf8bb;}
+    }
+    form {
+      background: rgba(2, 6, 23, 0.93);
+      padding: 2em 1.3em;
+      border-radius: 1em;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 0 25px #7dd3fc44;
+      margin-bottom: 1.7em;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+      font-weight: 600;
+ padding: 0.55em;
+      margin-top: 0.25em;
+      border: none;
+      border-radius: 0.5em;
+      background: #1e293b;
+      color: #e0f2fe;
+      font-size: 1em;
+      margin-bottom: .5focus {
+      outline: none;
+      border: 2px solid #38bdf8;
+      box-shadow: 0 0 10px #38bdf8bb;
+    }
+    button {
+      margin-top: 1.4em;
+      padding: 0.8em 1.5em0ea5e9);
+      color: white;
+      font-weight: bold;
+      font-size: 1.08em;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      box-shadow: 0 0 10px #38bdf888;
+      letter0ea5e9, #38bdf8);
+      color: #0f172a;
+    }
+    .output-box {
+      margin-top: 2em;
+      padding: 1.5em 1.1em;
+      border-radius: 1em;
+      max-width: 540px;
+     : 1.09em;
+      animation: fadeIn .9s;
+      display: none;
+      position: relative;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(.97);}
+      to { opacity: 1; transform: scale(1);}
+    }
+    .vedic-highlight {
+      color: #16f0a7;
+      font-weight: 700;
+      letter-spacing: .02em;
+      font-size: 1.09em;
+      text-shadow: 0 0 7px #16f0a799;
+      margin-bottom: .6em;
+      display: inline-block;
+    }
+    .vedic-chart {
+      display: flex.2em 0 .8em 0;
+    }
+    .vedic-box {
+      width: 70px;
+      height: 70px;
+      background: #1e293b;
+      color: #16f0a7;
+      border: 2px solid #38bdf8;
+      border;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.18em;
+      box-shadow: 0 0 10px #38bdf822;
+      flex: 1 1 70px;
+    }
+    .tips {
+      margin-top: 1.5em;
+      font-size: .97em;
+      color: #; height: 25vw; min-width: 48px; min-height: 48px;}
+    }
+  </style>
+</head>
+<body>
+  <h1>Vedic Astrology Report</h1>
+  <form id="vedicForm">
+    <label for="fullname">Full Name</label>
+    Anuruddha Perera" required>
+    <label for="dob">Date of Birth</label>
+    <input type="date" id="dob" name="dob" required>
+    <label for="tob">Time of Birth</label>
+    <input type="time" id="tob" namepob" placeholder="e.g. Colombo, Sri Lanka" required>
+    <button type="submit">Get Vedic Report</button>
+  </form>
+  <div class="output-box" id="outputBox">
+    <div class="vedic-highlight">🌟 Vedic Chart Overview 🌟</div>
+    <divdiv>
+    <div class="tips">Note: This is a demo. Final version will provide advanced planetary positions and Dasha analysis.</div>
+  </div>
+  <script>
+    // Demo Vedic chart logic
+    function calcDemoChart(dob, tob) {
+      // Returns 12 dummy signs for ","Pisces"];
+      let base = (new Date(dob + "T" + tob).getHours() + new Date(dob + "T" + tob).getDate()) % 12;
+      let chart = [];
+      for (let i = 0; i < 12; i++) {
+        chart.push(signs[(base + i) % 12]);
+      }
+      return chart;
+    }
+    function getVedicMeaning(sign) {
+      const meanings = {
+        "Aries": "Initiative, energy, leadership.",
+        "Taurus": "Stability, patience, abundance.",
+        "Gemini": "Communication, intellect, adaptability.",
+        "Cancer": "Emotion, nurturing, intuition.",
+        "Leo": "Confidence, creativity, drama.",
+        "Virgo": "Analysis, detail, service.",
+        "Libra": "Harmony, partnership, aesthetics.",
+        "Scorpio": "Transformation, depth, mystery.",
+        "Sagittarius": "Expansion, wisdom, travel.",
+        "Capricorn": "Discipline, ambition, legacy.",
+        "Aquarius": "Innovation, vision, community.",
+        "Pisces": "Spirituality, empathy, imagination."
+      };
+      return meanings[sign] || "";
+    }
+    document.getElementById("vedicForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const name = document.getElementById("fullname").value.trim();
+      const dob = document.getElementById("dob").value;
+      const tob = document.getElementById("tob").value;
+      const pob = document.getElementById("pob").value.trim();
+      const chart = calcDemoChart(dob, tob);
+
+      // Render chart {
+        chartHtml += `<div class="vedic-box">${s}</div>`;
+      });
+      document.getElementById("vedicChart").innerHTML = chartHtml;
+
+      // Report
+      let mainSign = chart[0];
+      let report = `
+        <strong>Main Sign:</strong> <span style="color:#16f0a7">${mainSign}</span><br>
+        <strong>Meaning:</ ${name}<br>
+        <strong>Date/Time/Place:</strong> ${dob}, ${tob}, ${pob}<br>
+        <hr>
+        <strong>Astrological Insight:</strong> <span style="color:#7dd3fc">This demo chart suggests influence of ${mainSign.toLowerCase()} in your ascendant. Final version will calculate exact houses, planetary positions, and Dasha periods.</span>
+      `;
+      document.getElementById("outputBox").style.display = "block";
+      document.getElementById("vedicReport").innerHTML = report;
+      document.getElementById("outputBox").scrollIntoView({behavior:"smooth"});
+    });
+  </script>
+</body>
+</html>

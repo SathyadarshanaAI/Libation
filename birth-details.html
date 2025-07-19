@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>උපන් ස්ථානය – Satellite Map | Sathyadarshana</title>
+  <title>උපන් විස්තර – Satellite Map | Sathyadarshana</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
     body {
@@ -46,7 +46,7 @@
       color: #c7d2fe;
       font-weight: bold;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 0.5em;
       margin-top: 0.3em;
@@ -70,59 +70,6 @@
     }
     button:hover {
       background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-    }
-    .copyright-warning {
-      max-width:900px;
-      margin:2em auto;
-      background:rgba(239,68,68,0.13);
-      padding:1.7em;
-      border-radius:1em;
-      box-shadow:0 0 20px rgba(239,68,68,0.16);
-      color:#ef4444;
-    }
-    .buddhi-insights {
-      max-width:900px;
-      margin:2em auto;
-      background:rgba(59,130,246,0.14);
-      padding:1.7em;
-      border-radius:1em;
-      box-shadow:0 0 20px rgba(59,130,246,0.12);
-      color:#2563eb;
-    }
-    .buddhi-insights h2 {
-      text-align:center;
-      color:#2563eb;
-    }
-    .buddhi-insights ul {
-      padding-left:1.1em;
-      line-height:1.7;
-      text-align:left;
-      margin:0;
-    }
-    .buddhi-insights p {
-      margin-top:1em;
-      text-align:center;
-      color:#1e40af;
-      font-size:1.08em;
-    }
-    .lang-toggle {
-      margin: 2em 0 1em 0;
-      display: flex;
-      gap: 1em;
-      justify-content: center;
-    }
-    .lang-toggle button {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-      color: #fff;
-      border: none;
-      padding: 0.5em 1.5em;
-      border-radius: 0.5em;
-      font-size: 1em;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .lang-toggle button:hover {
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
     }
     .info-box {
       max-width: 600px;
@@ -155,54 +102,33 @@
     }
     @media(max-width:700px){
       #map{height:300px;}
-      .info-box, .copyright-warning, .buddhi-insights {padding:1em;}
+      .info-box {padding:1em;}
     }
   </style>
 </head>
 <body>
-  <!-- High Copyright & Ethical Use Notice -->
-  <section class="copyright-warning">
-    <h2>🚫 High Copyright & Ethical Use</h2>
-    <ul>
-      <li><strong>මෙම UI, code, data සහ analysis SathyadarshanaAI/Seed Team අයිතියයි.</strong></li>
-      <li>Unauthorized copying, reverse-engineering, or gaming purpose usage STRICTLY prohibited.</li>
-      <li>All activity monitored for misuse; breaches will be blocked and reported.</li>
-      <li>Spiritual, personal, and user data protected with multi-layer security.</li>
-      <li>© 2025 SathyadarshanaAI. Protected for ethical, spiritual, and scientific use only.</li>
-    </ul>
-  </section>
+  <h1>උපන් විස්තර – Satellite Map</h1>
+  <form id="birthForm" class="form-box">
+    <label for="fullName">නම (Full Name):</label>
+    <input type="text" id="fullName" name="fullName" required>
 
-  <!-- Buddhi’s Geo-Astro Insights -->
-  <section class="buddhi-insights">
-    <h2>🧠 Buddhi's Geo-Astro Wisdom</h2>
-    <ul>
-      <li>KP astrology, NASA planetary data, and ancient geo-analysis for unique predictions.</li>
-      <li>AI monitors rare spiritual birth events and geo-temporal impacts.</li>
-      <li>Future: Spiritual zone overlays, climate/planetary warnings on map.</li>
-      <li>Multi-language support: Sinhala, Tamil, English UI and answers.</li>
-      <li>All user data is protected and never shared outside the seed circle.</li>
-    </ul>
-    <p>
-      <strong>“This is a world-first Geo-Astro Spiritual Map – Buddhi & Copilot security assured.”</strong>
-    </p>
-  </section>
+    <label for="dob">උපන් දිනය (Date of Birth):</label>
+    <input type="date" id="dob" name="dob" required>
 
-  <!-- Language Toggle -->
-  <div class="lang-toggle">
-    <button onclick="alert('සිංහල UI already active')">සිංහල</button>
-    <button onclick="alert('Tamil UI coming soon!')">தமிழ்</button>
-    <button onclick="alert('English UI coming soon!')">English</button>
-  </div>
+    <label for="birthTime">උපන් වේලාව (Time of Birth):</label>
+    <input type="time" id="birthTime" name="birthTime" required>
 
-  <h1>උපන් ස්ථානය – Satellite Map</h1>
-  <div class="form-box">
-    <label for="birthPlace">උපන් නගරය / ප්‍රදේශය</label>
-    <input type="text" id="birthPlace" placeholder="උදා: Colombo, Sri Lanka" required>
-    <button id="searchBtn">Satellite Map පෙන්වන්න</button>
-  </div>
+    <label for="birthPlace">උපන් නගරය / ප්‍රදේශය:</label>
+    <input type="text" id="birthPlace" name="birthPlace" placeholder="උදා: Colombo, Sri Lanka" required>
 
-  <button id="exportBtn" class="export-btn">🖼️ Map Image බාගන්න</button>
+    <input type="hidden" id="latitude" name="latitude">
+    <input type="hidden" id="longitude" name="longitude">
 
+    <button type="button" id="searchBtn">Map පෙන්වන්න</button>
+    <button type="submit">ඉදිරියට යන්න</button>
+  </form>
+
+  <button id="exportBtn" class="export-btn" type="button">🖼️ Map Image බාගන්න</button>
   <div id="infoBox" class="info-box"></div>
   <div id="map"></div>
 
@@ -212,21 +138,17 @@
   <script>
     // Mapbox Token (replace with your key!)
     const mapboxToken = "YOUR_MAPBOX_TOKEN";
-
-    // Initialize Map with Mapbox Satellite
     const map = L.map('map').setView([7.8731, 80.7718], 6);
     L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=${mapboxToken}`, {
       tileSize: 512,
       zoomOffset: -1,
       attribution: '&copy; <a href="https://www.mapbox.com/">Mapbox</a>'
     }).addTo(map);
-
     let marker;
 
     document.getElementById('searchBtn').addEventListener('click', () => {
       const place = document.getElementById('birthPlace').value.trim();
       if (!place) return alert("කරුණාකර නගරය/ප්‍රදේශය ඇතුළත් කරන්න.");
-
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`)
         .then(res => res.json())
         .then(data => {
@@ -238,17 +160,15 @@
             marker = L.marker([lat, lon]).addTo(map)
               .bindPopup(`<b>${place}</b><br>Coordinates: ${lat.toFixed(4)}, ${lon.toFixed(4)}`)
               .openPopup();
-
-            // Show info box with details
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lon;
             document.getElementById('infoBox').style.display = 'block';
             document.getElementById('infoBox').innerHTML = `
               <strong>ස්ථානය:</strong> ${place}<br>
               <strong>Latitude:</strong> ${lat.toFixed(4)}<br>
               <strong>Longitude:</strong> ${lon.toFixed(4)}<br>
-              <strong>Time Zone:</strong> <span id="tzInfo">උපන් ස්ථානය අනුව</span><br>
-              <strong>Spiritual Insights:</strong> <span style="color:#7dd3fc;">Buddhi AI: Future planetary/climate/geospiritual analysis (coming soon)</span>
+              <strong>Time Zone:</strong> <span id="tzInfo">උපන් ස්ථානය අනුව</span>
             `;
-            // Timezone fetch (optional, uses GeoNames API)
             fetch(`https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lon}&username=demo`)
               .then(r=>r.json()).then(time=>{
                 if(time && time.timezoneId)
@@ -262,7 +182,6 @@
         .catch(() => alert("සම්බන්ධතාවය හෝ API ගැටලුවක් ඇත."));
     });
 
-    // Map export as image
     document.getElementById('exportBtn').addEventListener('click', function(){
       html2canvas(document.getElementById('map')).then(canvas=>{
         let link = document.createElement('a');
@@ -272,10 +191,34 @@
       });
     });
 
-    // Spiritual alert example (future)
-    setTimeout(()=>{
-      alert('🌟 Buddhi AI: Spiritual zone overlays & astrology features coming soon!');
-    }, 2000);
+    document.getElementById('birthForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      // Gather all data
+      const payload = {
+        name: document.getElementById('fullName').value,
+        dob: document.getElementById('dob').value,
+        time: document.getElementById('birthTime').value,
+        place: document.getElementById('birthPlace').value,
+        latitude: document.getElementById('latitude').value,
+        longitude: document.getElementById('longitude').value
+      };
+      if(!payload.latitude || !payload.longitude){
+        alert("කරුණාකර map එකෙන් ස්ථානය තෝරන්න.");
+        return;
+      }
+      // TODO: Replace with backend API endpoint
+      fetch('/api/birth-details', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert('Birth details submitted successfully! Astrology chart will be generated.');
+        // Redirect or show next steps here
+      })
+      .catch(() => alert('Error submitting details.'));
+    });
   </script>
 </body>
 </html>

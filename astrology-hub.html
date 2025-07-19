@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sathyadarshana Astrology Hub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
+      scroll-behavior: smooth;
+    }
+    header {
+      text-align: center;
+      padding: 2em 1em;
+      background: rgba(2, 6, 23, 0.85);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    header h1 {
+      font-size: 2.5em;
+      color: #7dd3fc;
+    }
+    section {
+      padding: 3em 1em;
+      max-width: 900px;
+      margin: 0 auto;
+      border-bottom: 1px solid rgba(125, 211, 252, 0.2);
+    }
+    section h2 {
+      color: #a5b4fc;
+      font-size: 2em;
+      margin-bottom: 1em;
+      text-align: center;
+    }
+    form, .module-box {
+      background: rgba(2, 6, 23, 0.85);
+      padding: 2em;
+      border-radius: 1em;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
+      max-width: 500px;
+      margin: 1.5em auto;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+      font-weight: bold;
+      color: #c7d2fe;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.3em;
+      border: none;
+      border-radius: 0.5em;
+      background: #1e293b;
+      color: #e0f2fe;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 1.5em;
+      padding: 0.8em 1.5em;
+      border: none;
+      border-radius: 0.5em;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    }
+    video, canvas {
+      width: 100%;
+      border-radius: 1em;
+      margin-top: 1em;
+    }
+    .output-box {
+      margin-top: 1.5em;
+      padding: 1em;
+      border-radius: 1em;
+      background: rgba(30, 41, 59, 0.8);
+      color: #f1f5f9;
+      display: none;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+    }
+    /* Limitations section styles */
+    #limitations .module-box {
+      background: rgba(239,68,68,0.12);
+      color: #ef4444;
+      box-shadow: 0 0 25px rgba(239,68,68,0.12);
+    }
+    #limitations ul {
+      line-height: 1.7;
+      font-size: 1.08em;
+      padding-left: 1.3em;
+    }
+    #limitations h2 {
+      color: #ef4444;
+      margin-bottom: 0.7em;
+    }
+    #limitations p {
+      color: #b91c1c;
+      margin-top: 1em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sathyadarshana Astrology Hub</h1>
+    <p>All-in-One KP, NASA Data, Palmistry & Numerology Research</p>
+  </header>
+
+  <!-- Birth Report -->
+  <section id="birth-report">
+    <h2>Birth Report Generator</h2>
+    <form id="birthForm">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" required>
+      <label for="dob">Date of Birth</label>
+      <input type="date" id="dob" required>
+      <label for="time">Time of Birth</label>
+      <input type="time" id="time" required>
+      <label for="place">Place of Birth</label>
+      <input type="text" id="place" required>
+      <button type="submit">Generate Report</button>
+    </form>
+    <div id="birthOutput" class="output-box"></div>
+  </section>
+
+  <!-- Palmistry -->
+  <section id="palmistry">
+    <h2>Palmistry Scanner</h2>
+    <div class="module-box">
+      <video id="palmVideo" autoplay></video>
+      <div id="scanLine" style="position:absolute; height:3px; background:#38bdf8;"></div>
+      <button id="palmScanBtn">Scan Hand</button>
+      <div id="palmOutput" class="output-box"></div>
+    </div>
+  </section>
+
+  <!-- Aura -->
+  <section id="aura">
+    <h2>Aura Energy Scanner</h2>
+    <div class="module-box">
+      <video id="auraVideo" autoplay></video>
+      <div id="auraRing" style="position:absolute; border:3px solid #7dd3fc; border-radius:50%; width:220px; height:220px;"></div>
+      <button id="auraScanBtn">Start Aura Scan</button>
+      <div id="auraOutput" class="output-box"></div>
+    </div>
+  </section>
+
+  <!-- Numerology -->
+  <section id="numerology">
+    <h2>Numerology Report</h2>
+    <form id="numForm">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" required>
+      <label for="numDob">Date of Birth</label>
+      <input type="date" id="numDob" required>
+      <button type="submit">Generate Numerology</button>
+    </form>
+    <div id="numOutput" class="output-box"></div>
+  </section>
+
+  <!-- Vedic Astrology -->
+  <section id="vedic">
+    <h2>Vedic Astrology Chart</h2>
+    <form id="vedicForm">
+      <label for="vName">Full Name</label>
+      <input type="text" id="vName" required>
+      <label for="vDob">Date of Birth</label>
+      <input type="date" id="vDob" required>
+      <label for="vTime">Time of Birth</label>
+      <input type="time" id="vTime" required>
+      <label for="vPlace">Place of Birth</label>
+      <input type="text" id="vPlace" required>
+      <button type="submit">Generate Chart</button>
+    </form>
+    <canvas id="vedicCanvas" width="300" height="300"></canvas>
+  </section>
+
+  <!-- Research -->
+  <section id="research">
+    <h2>Astrology Research Module</h2>
+    <form id="researchForm">
+      <label for="rDob">Date of Birth</label>
+      <input type="date" id="rDob" required>
+      <label for="rTime">Time of Birth</label>
+      <input type="time" id="rTime" required>
+      <label for="rPlace">Place of Birth</label>
+      <input type="text" id="rPlace" required>
+      <button type="submit">Analyze</button>
+    </form>
+    <div id="researchOutput" class="output-box"></div>
+  </section>
+
+  <!-- KP Planetary Lords -->
+  <section id="kp-planets">
+    <h2>KP Planetary Lords</h2>
+    <form id="kpForm">
+      <label for="planet">Select Planet</label>
+      <select id="planet" required>
+        <option value="">-- Choose Planet --</option>
+        <option value="Sun">Sun</option><option value="Moon">Moon</option>
+        <option value="Mercury">Mercury</option><option value="Venus">Venus</option>
+        <option value="Mars">Mars</option><option value="Jupiter">Jupiter</option>
+        <option value="Saturn">Saturn</option><option value="Rahu">Rahu</option>
+        <option value="Ketu">Ketu</option>
+      </select>
+      <button type="submit">Find Lords</button>
+    </form>
+    <div id="kpOutput" class="output-box"></div>
+  </section>
+
+  <!-- KP Sub-Lord -->
+  <section id="kp-sublord">
+    <h2>KP Sub-Lord Calculator</h2>
+    <form id="kpSubForm">
+      <label for="sDob">Date of Birth</label>
+      <input type="date" id="sDob" required>
+      <label for="sTime">Time of Birth</label>
+      <input type="time" id="sTime" required>
+      <label for="sPlace">Place of Birth</label>
+      <input type="text" id="sPlace" required>
+      <button type="submit">Calculate Sub-Lord</button>
+    </form>
+    <div id="kpSubOutput" class="output-box"></div>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="dashboard">
+    <h2>Astrology Research Dashboard</h2>
+    <button id="timeTwinBtn">Run Time Twin Scan</button>
+    <div id="timeTwinResult" class="output-box"></div>
+    <button id="palmistryBtn">Scan Palmistry Patterns</button>
+    <div id="palmistryResult" class="output-box"></div>
+    <button id="dbBtn">Load Research Data</button>
+    <div id="dbResult" class="output-box"></div>
+  </section>
+
+  <!-- Limitations -->
+  <section id="limitations">
+    <h2>අඩුපාඩු / Limitations</h2>
+    <div class="module-box">
+      <ul>
+        <li><strong>Backend/API Integration නැහැ:</strong> NASA/KP/AI logic දැක්කාට, නියම results/planetary positions ලබාදෙන්නේ නැහැ.</li>
+        <li><strong>Palmistry/Aura Modules:</strong> Real scan/AI detection logic අඩුයි. Simulation පමණයි.</li>
+        <li><strong>Mobile Responsiveness:</strong> Small screens වල view/scroll/zoom issues ඇතිවිය හැක.</li>
+        <li><strong>Multi-language Support:</strong> Sinhala/Tamil/English switcher/translation අඩුයි.</li>
+        <li><strong>Data Security & Privacy:</strong> Advanced encryption/database protection logic නැහැ.</li>
+        <li><strong>User Profile/Authentication:</strong> Personalized reports/history/login/logout system එකක් නැහැ.</li>
+        <li><strong>Copyright/Footer/Branding:</strong> Unauthorized use warning/footer minimal.</li>
+        <li><strong>Visualization Tools:</strong> Interactive charts/graphs/cluster analysis අඩුයි.</li>
+        <li><strong>Accessibility/Usability:</strong> Screen reader/keyboard navigation/contrast improvements නැහැ.</li>
+        <li><strong>Error Handling/Validation:</strong> Advanced validation/loading/progress indicators නැහැ.</li>
+      </ul>
+      <p>
+        <strong>Upgrade Ideas:</strong> Backend/API, mobile CSS, multi-language, security, user login, charts, copyright, accessibility.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    // Demo logic for outputs (placeholder only)
+    document.getElementById('birthForm').onsubmit = function(e) {
+      e.preventDefault();
+      document.getElementById('birthOutput').innerHTML =
+        `<h3>Demo Birth Report</h3>
+         <p>This is a demonstration. Real astrological data will be integrated soon.</p>`;
+      document.getElementById('birthOutput').style.display = 'block';
+    };
+
+    document.getElementById('palmScanBtn').onclick = function() {
+      document.getElementById('palmOutput').innerHTML =
+        `<h3>Palmistry Scan Result</h3>
+         <p>Simulated scan result. Real hand line analysis coming soon.</p>`;
+      document.getElementById('palmOutput').style.display = 'block';
+    };
+
+    document.getElementById('auraScanBtn').onclick = function() {
+      document.getElementById('auraOutput').innerHTML =
+        `<h3>Aura Scan Result</h3>
+         <p>Simulated aura scan. Energy analysis will be integrated soon.</p>`;
+      document.getElementById('auraOutput').style.display = 'block';
+    };
+
+    document.getElementById('numForm').onsubmit = function(e) {
+      e.preventDefault();
+      document.getElementById('numOutput').innerHTML =
+        `<h3>Numerology Report</h3>
+         <p>Demo numerology result. Advanced calculations coming soon.</p>`;
+      document.getElementById('numOutput').style.display = 'block';
+    };
+
+    document.getElementById('vedicForm').onsubmit = function(e) {
+      e.preventDefault();
+      document.getElementById('vedicCanvas').getContext('2d').fillText('Demo Chart', 100, 150);
+    };
+
+    document.getElementById('researchForm').onsubmit = function(e) {
+      e.preventDefault();
+      document.getElementById('researchOutput').innerHTML =
+        `<h3>Research Analysis</h3>
+         <p>Demo research output. AI-based clustering will be added soon.</p>`;
+      document.getElementById('researchOutput').style.display = 'block';
+    };
+
+    document.getElementById('kpForm').onsubmit = function(e) {
+      e.preventDefault();
+      const planet = document.getElementById('planet').value;
+      document.getElementById('kpOutput').innerHTML =
+        `<h3>${planet} Lords</h3>
+         <p>Demo KP planetary lord result.</p>`;
+      document.getElementById('kpOutput').style.display = 'block';
+    };
+
+    document.getElementById('kpSubForm').onsubmit = function(e) {
+      e.preventDefault();
+      document.getElementById('kpSubOutput').innerHTML =
+        `<h3>KP Sub-Lord Result</h3>
+         <p>Demo sub-lord result. Real calculation logic will be added soon.</p>`;
+      document.getElementById('kpSubOutput').style.display = 'block';
+    };
+
+    document.getElementById('timeTwinBtn').onclick = function() {
+      document.getElementById('timeTwinResult').innerHTML =
+        "<p>Time Twin Scan initiated... (AI pattern matching coming soon).</p>";
+      document.getElementById('timeTwinResult').style.display = 'block';
+    };
+    document.getElementById('palmistryBtn').onclick = function() {
+      document.getElementById('palmistryResult').innerHTML =
+        "<p>Palmistry line scan simulation running. Data clustering will be integrated.</p>";
+      document.getElementById('palmistryResult').style.display = 'block';
+    };
+    document.getElementById('dbBtn').onclick = function() {
+      document.getElementById('dbResult').innerHTML =
+        "<p>Loading encrypted research dataset... (visualization tools coming soon).</p>";
+      document.getElementById('dbResult').style.display = 'block';
+    };
+  </script>
+</body>
+</html>

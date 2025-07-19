@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Numerology Report | Sathyadarshana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #0f172a, #1e293b);
+      color: #e0f2fe;
+      text-align: center;
+      min-height: 100vh;
+      padding: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      scroll-behavior: smooth;
+    }
+    h1 {
+      font-size: 2.5em;
+      color: #7dd3fc;
+      margin-bottom: 1em;
+      font-family: 'Inter', sans-serif;
+      text-shadow: 0 0 14px #38bdf8cc;
+      animation: textGlow 2.5s infinite alternate;
+    }
+    @keyframes textGlow {
+      from {text-shadow: 0 0 7px #38bdf8;}
+      to {text-shadow: 0 0 20px #38bdf8bb;}
+    }
+ {
+      display: block;
+      margin-top: 1em;
+      font-weight: 600;
+      color: #7dd3fc;
+      text-align: left;
+    }
+    input {
+      width: 100%;
+      padding: 0.55em;
+      margin-top: 0.25em;
+      border: none;
+      border-radius: 0.5em;
+      background: #1e293b;
+      color: #e0f2fe;
+      font-size: 1em;
+      margin-bottom: .5em;
+      box-shadow: 0 0 8px #38bdf822;
+    }
+    input:focus {
+      outline: none;
+      border: 2px solid #38bdf8;
+      box-shadow: 0 0 10px #38bdf8bb;
+    }
+    button {
+      margin-top: 1.4em;
+      padding: 0.8em 1.5em;
+      border: none;
+      border-radius: 0.5em;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      color: white;
+      font-weight: bold;
+      font-size: 1.08em;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      box-shadow: 0 0 10px #38bdf888;
+      letter-spacing: .01em;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      color: #0f172a;
+    }
+    .output-box {
+      margin-top: 2em;
+      padding: 1.5em 1.1em;
+      border-radius: 1em;
+      max-width: 500px;
+      width: 100%;
+      background: rgba(30, 41, 59, 0.93);
+      color: #f1f5f9;
+      box-shadow: 0 0 22px #38bdf844;
+      font-size: 1.09em;
+      animation: fadeIn .9s;
+      display: none;
+      position: relative;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(.97);}
+      to-weight: 700;
+      letter-spacing: .02em;
+      font-size: 1.09em;
+      text-shadow: 0 0 7px #16f0a799;
+      margin-bottom: .6em;
+      display: inline-block;
+    }
+    .tips {
+      margin-top:  </style>
+</head>
+<body>
+  <h1>Numerology Report</h1>
+  <form id="numForm">
+    <label for="fullname">Full Name</label>
+    <input type="text" id="fullname" name="fullname" placeholder="e.g. Anuruddha Perera" required>
+    <label for="dob">Date of Birth</label>
+    <input type="date" id="dob" name="dob" required>
+    <button type="submit">Get Numerology Report</button>
+  </form>
+  <div class="output-box" id="outputBox">
+) {
+        let val = (letters.indexOf(ch) % 9) + 1;
+        sum += val;
+      }
+      // Reduce to single digit
+      while (sum > 9 && sum !== 11 && sum !== 22) {
+        sum = sum.toString().split('').reduce((a, let nums = dob.replace(/-/g, '').split('').map(n => parseInt(n));
+      let sum = nums.reduce((a,b)=>a+b,0);
+      while (sum > 9 && sum !== 11 && sum !== 22) {
+        sum = sum.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+      }
+      return sum;
+    }
+    function getMeaning(num) {
+      const meanings = {
+        1: "Leadership, independence, originality.",
+        2: "Partnership, harmony, sensitivity.",
+        3: "Creativity, expression, joy.",
+        4: "Stability, practicality,.",
+        6: "Responsibility, nurturing, care.",
+        7: "Spirituality, analysis, wisdom.",
+        8: "Power, ambition, success.",
+        9: "Humanitarianism, compassion, completion.",
+        11: "Intuition, inspiration, enlightenment.",
+        22: "Master builder, vision, achievement."
+      };
+      return meanings[num] || "Unique, mysterious vibration.";
+    }
+    document.getElementById("numForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const name = document.getElementById("fullname").value.trim();
+      const dob = document.getElementById("dob").value;
+      const nameNum = nameToNumber(name);
+      const birthNum = birthToNumber(dob);
+      const nameMean = getMeaning(nameNum);
+      const birthMean = getMeaning(birthNum);
+      const report = `
+        <strong>Name Number:</strong> <span style="color:#16f0a7">${nameNum}</span><br>
+        <strong>Name Meaning:</strong> <em>${nameMean}</em><br>
+        <strong>Birth Number:</strong> <span style="color:#38bdf8">${birthNum}</span><br>
+        <strong>Birth Meaning:</strong> <em>${birthMean}</em><br>
+        <hr>
+        <strong>Combined Insight:</strong> <span style="color:#7dd3fc">Your numbers suggest a path of ${nameMean.toLowerCase()} and ${birthMean.toLowerCase()}.</span>
+      `;
+      document.getElementById("outputBox").style.display = "block";
+      document.getElementById("numReport").innerHTML = report;
+      document.getElementById("outputBox").scrollIntoView({behavior:"smooth"});
+    });
+  </script>
+</body>
+</html>

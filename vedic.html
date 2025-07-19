@@ -2,60 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Vedic Astrology | SathyadarshanaAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vedic Astrology | Sathyadarshana</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts for Sinhala/Tamil/English -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;700&family=Noto+Sans+Tamil:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       margin: 0;
-      font-family: 'Inter', 'Segoe UI', sans-serif;
+      font-family: 'Inter', 'Noto Sans Sinhala', 'Noto Sans Tamil', sans-serif;
       background: radial-gradient(circle at 30% 20%, #0f172a 0%, #000 100%);
       color: #e0f2fe;
       text-align: center;
       min-height: 100vh;
       padding: 2em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      scroll-behavior: smooth;
     }
     h1 {
       font-size: 2.5em;
       color: #7dd3fc;
       margin-bottom: 1em;
-      font-family: 'Inter', sans-serif;
-      text-shadow: 0 0 14px #38bdfkeyframes textGlow {
-      from {text-shadow: 0 0 7px #38bdf8;}
-      to {text-shadow: 0 0 20px #38bdf8bb;}
+      text-shadow: 0 0 12px #38bdf8;
+      font-family: inherit;
+    }
+    .lang-switcher button {
+      background: #1e293b;
+      color: #e0f2fe;
+      border: none;
+      margin: 0 0.3em;
+      padding: 0.5em 1em;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .lang-switcher button.active, .lang-switcher button:hover {
+      background: #38bdf8;
+      color: #0f172a;
     }
     form {
-      background: rgba(2, 6, 23, 0.93);
+      background: rgba(2,6,23,0.93);
       padding: 2em 1.3em;
       border-radius: 1em;
       max-width: 450px;
       width: 100%;
       box-shadow: 0 0 25px #7dd3fc44;
-      margin-bottom: 1.7em;
+      margin: 0 auto 1.7em;
     }
     label {
       display: block;
       margin-top: 1em;
       font-weight: 600;
- padding: 0.55em;
+    }
+    input {
+      width: 90%;
+      padding: 0.55em;
       margin-top: 0.25em;
       border: none;
       border-radius: 0.5em;
       background: #1e293b;
       color: #e0f2fe;
       font-size: 1em;
-      margin-bottom: .5focus {
+      margin-bottom: .5em;
+    }
+    input:focus {
       outline: none;
       border: 2px solid #38bdf8;
       box-shadow: 0 0 10px #38bdf8bb;
     }
-    button {
+    button[type="submit"], #btnExportPDF {
       margin-top: 1.4em;
-      padding: 0.8em 1.5em0ea5e9);
+      padding: 0.8em 1.5em;
+      background: linear-gradient(90deg,#0ea5e9,#38bdf8);
       color: white;
       font-weight: bold;
       font-size: 1.08em;
@@ -63,17 +80,19 @@
       transition: 0.3s;
       width: 100%;
       box-shadow: 0 0 10px #38bdf888;
-      letter0ea5e9, #38bdf8);
-      color: #0f172a;
+      border: none;
+      border-radius: 0.5em;
     }
     .output-box {
-      margin-top: 2em;
+      margin: 2em auto 0 auto;
       padding: 1.5em 1.1em;
       border-radius: 1em;
       max-width: 540px;
-     : 1.09em;
-      animation: fadeIn .9s;
+      background: #1e293b;
+      color: #e0f2fe;
       display: none;
+      box-shadow: 0 0 20px #38bdf822;
+      animation: fadeIn .9s;
       position: relative;
     }
     @keyframes fadeIn {
@@ -90,7 +109,11 @@
       display: inline-block;
     }
     .vedic-chart {
-      display: flex.2em 0 .8em 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      justify-content: center;
+      margin-bottom: 1em;
     }
     .vedic-box {
       width: 70px;
@@ -98,40 +121,149 @@
       background: #1e293b;
       color: #16f0a7;
       border: 2px solid #38bdf8;
-      border;
+      display: flex;
+      align-items: center;
       justify-content: center;
       font-weight: 700;
       font-size: 1.18em;
       box-shadow: 0 0 10px #38bdf822;
-      flex: 1 1 70px;
+    }
+    .planet-positions {
+      margin: 1em auto;
+      background: #27364d;
+      border-radius: 8px;
+      padding: 1em;
+      max-width: 440px;
+      color: #fbcfe8;
+      font-size: 1.05em;
+      box-shadow: 0 0 10px #16f0a744;
     }
     .tips {
       margin-top: 1.5em;
       font-size: .97em;
-      color: #; height: 25vw; min-width: 48px; min-height: 48px;}
+      color: #7dd3fc;
+    }
+    .watermark {
+      position: absolute;
+      left: 50%;
+      top: 70%;
+      transform: translate(-50%,-50%) rotate(-20deg);
+      font-size: 2.2em;
+      color: rgba(220,20,60,0.13);
+      pointer-events: none;
+      user-select: none;
+      font-weight: bold;
+      z-index: 0;
+      font-family: 'Inter', serif;
     }
   </style>
 </head>
 <body>
-  <h1>Vedic Astrology Report</h1>
+  <h1 id="title">Vedic Astrology Report</h1>
+  <div class="lang-switcher">
+    <button onclick="setLanguage('si')" id="btnSi">සිංහල</button>
+    <button onclick="setLanguage('ta')" id="btnTa">தமிழ்</button>
+    <button onclick="setLanguage('en')" id="btnEn" class="active">English</button>
+  </div>
   <form id="vedicForm">
-    <label for="fullname">Full Name</label>
-    Anuruddha Perera" required>
-    <label for="dob">Date of Birth</label>
+    <label id="lblName" for="fullname">Full Name</label>
+    <input type="text" id="fullname" name="fullname" required>
+    <label id="lblDOB" for="dob">Date of Birth</label>
     <input type="date" id="dob" name="dob" required>
-    <label for="tob">Time of Birth</label>
-    <input type="time" id="tob" namepob" placeholder="e.g. Colombo, Sri Lanka" required>
-    <button type="submit">Get Vedic Report</button>
+    <label id="lblTOB" for="tob">Time of Birth</label>
+    <input type="time" id="tob" name="tob" required>
+    <label id="lblPOB" for="pob">Place of Birth</label>
+    <input type="text" id="pob" name="pob" placeholder="e.g. Colombo, Sri Lanka" required>
+    <button type="submit" id="btnGetReport">Get Vedic Report</button>
   </form>
   <div class="output-box" id="outputBox">
-    <div class="vedic-highlight">🌟 Vedic Chart Overview 🌟</div>
-    <divdiv>
-    <div class="tips">Note: This is a demo. Final version will provide advanced planetary positions and Dasha analysis.</div>
+    <div class="watermark" id="watermark">© SathyadarshanaAI | High Copyright</div>
+    <div class="vedic-highlight" id="chartTitle">🌟 Vedic Chart Overview 🌟</div>
+    <div class="vedic-chart" id="vedicChart"></div>
+    <div class="planet-positions" id="planetPositions"></div>
+    <div id="vedicReport"></div>
+    <button id="btnExportPDF" onclick="exportPDF()">Export PDF</button>
+    <div class="tips" id="note">Note: This is a demo. Final version will provide advanced planetary positions and Dasha analysis.</div>
   </div>
+  <footer style="margin-top:2em;">
+    <p style="font-size:1em; color:#d90429; font-weight:bold;">
+      © 2025 SathyadarshanaAI | All Rights Reserved. High Copyright.<br>
+      Unauthorized copying or reproduction prohibited.
+    </p>
+  </footer>
   <script>
-    // Demo Vedic chart logic
+    // Multi-language support
+    const translations = {
+      si: {
+        title: "වේද ජ්‍යෝතිෂ වාර්තාව",
+        name: "නම",
+        dob: "උපන් දිනය",
+        tob: "උපන් වේලාව",
+        pob: "උපන් ස්ථානය",
+        getReport: "වාසනා වාර්තාව ලබා ගන්න",
+        chartTitle: "🌟 වේද රාශි චක්‍රය 🌟",
+        planets: "ග්‍රහ පිහිටුම්",
+        mainSign: "ප්‍රධාන රාශිය",
+        meaning: "අර්ථය",
+        astrologicalInsight: "ජ්‍යෝතිෂ්‍ය මතය",
+        note: "මෙය අත්හදා බැලීමකි. අවසාන අනුවාදයෙහි වැඩි විස්තර ලබාදේ.",
+        exportPDF: "PDF එකක් ලෙස සුරකින්න"
+      },
+      ta: {
+        title: "வேத ஜோதிட அறிக்கை",
+        name: "பெயர்",
+        dob: "பிறந்த தேதி",
+        tob: "பிறந்த நேரம்",
+        pob: "பிறந்த இடம்",
+        getReport: "ஜோதிட அறிக்கை பெறவும்",
+        chartTitle: "🌟 வேத ராசி வார்ப்புரு 🌟",
+        planets: "கிரக நிலைகள்",
+        mainSign: "முக்கிய ராசி",
+        meaning: "அர்த்தம்",
+        astrologicalInsight: "ஜோதிட பார்வை",
+        note: "இது டெமோ. இறுதி பதிப்பில் விரிவான தகவல்கள் வழங்கப்படும்.",
+        exportPDF: "PDF ஆக சேமிக்கவும்"
+      },
+      en: {
+        title: "Vedic Astrology Report",
+        name: "Full Name",
+        dob: "Date of Birth",
+        tob: "Time of Birth",
+        pob: "Place of Birth",
+        getReport: "Get Vedic Report",
+        chartTitle: "🌟 Vedic Chart Overview 🌟",
+        planets: "Planetary Positions",
+        mainSign: "Main Sign",
+        meaning: "Meaning",
+        astrologicalInsight: "Astrological Insight",
+        note: "Note: This is a demo. Final version will provide advanced planetary positions and Dasha analysis.",
+        exportPDF: "Export PDF"
+      }
+    };
+    let currentLang = "en";
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.getElementById("title").textContent = translations[lang].title;
+      document.getElementById("lblName").textContent = translations[lang].name;
+      document.getElementById("lblDOB").textContent = translations[lang].dob;
+      document.getElementById("lblTOB").textContent = translations[lang].tob;
+      document.getElementById("lblPOB").textContent = translations[lang].pob;
+      document.getElementById("btnGetReport").textContent = translations[lang].getReport;
+      document.getElementById("chartTitle").textContent = translations[lang].chartTitle;
+      document.getElementById("note").textContent = translations[lang].note;
+      document.getElementById("btnExportPDF").textContent = translations[lang].exportPDF;
+      document.getElementById("btnSi").classList.remove("active");
+      document.getElementById("btnTa").classList.remove("active");
+      document.getElementById("btnEn").classList.remove("active");
+      if (lang === "si") document.getElementById("btnSi").classList.add("active");
+      if (lang === "ta") document.getElementById("btnTa").classList.add("active");
+      if (lang === "en") document.getElementById("btnEn").classList.add("active");
+    }
+    setLanguage("en"); // Initial
+
+    // Chart logic
     function calcDemoChart(dob, tob) {
-      // Returns 12 dummy signs for ","Pisces"];
+      const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
       let base = (new Date(dob + "T" + tob).getHours() + new Date(dob + "T" + tob).getDate()) % 12;
       let chart = [];
       for (let i = 0; i < 12; i++) {
@@ -139,22 +271,82 @@
       }
       return chart;
     }
-    function getVedicMeaning(sign) {
+    function getVedicMeaning(sign, lang) {
       const meanings = {
-        "Aries": "Initiative, energy, leadership.",
-        "Taurus": "Stability, patience, abundance.",
-        "Gemini": "Communication, intellect, adaptability.",
-        "Cancer": "Emotion, nurturing, intuition.",
-        "Leo": "Confidence, creativity, drama.",
-        "Virgo": "Analysis, detail, service.",
-        "Libra": "Harmony, partnership, aesthetics.",
-        "Scorpio": "Transformation, depth, mystery.",
-        "Sagittarius": "Expansion, wisdom, travel.",
-        "Capricorn": "Discipline, ambition, legacy.",
-        "Aquarius": "Innovation, vision, community.",
-        "Pisces": "Spirituality, empathy, imagination."
+        si: {
+          "Aries": "ආරම්භය, ශක්තිය, නායකත්වය.",
+          "Taurus": "ස්ථායීත්වය, ධෛර්යය, වස්තු සම්පත්.",
+          "Gemini": "සන්නිවේදනය, බුද්ධිය, අනුවර්තනය.",
+          "Cancer": "භාවනා, සත්කාරය, අභිප්‍රේරණය.",
+          "Leo": "විශ්වාසය, සෑදීම, රංගනය.",
+          "Virgo": "විශ්ලේෂණය, විස්තර, සේවය.",
+          "Libra": "සමතුලිතතාව, සම්බන්ධතා, රූපලාවණ්‍යය.",
+          "Scorpio": "පරිවර්තනය, ගැඹුර, රහස්‍යතාව.",
+          "Sagittarius": "විස්තාරය, ප්‍රඥාව, ගමන්.",
+          "Capricorn": "විනය, අභිලාෂය, උරුමය.",
+          "Aquarius": "නව්‍යතාව, දර්ශනය, සමාජය.",
+          "Pisces": "ආත්මීයත්වය, කරුණාව, අදහස්."
+        },
+        ta: {
+          "Aries": "துவக்கம், சக்தி, தலைமை.",
+          "Taurus": "நிலைத்தன்மை, பொறுமை, செல்வம்.",
+          "Gemini": "தகவல் பரிமாற்றம், புத்திசாலித்தனம், மாற்றம்.",
+          "Cancer": "உணர்ச்சி, பராமரிப்பு,直觉.",
+          "Leo": "நம்பிக்கை, படைப்பு, நாடகம்.",
+          "Virgo": "பரிசீலனை, விவரம், சேவை.",
+          "Libra": "சமநிலை, கூட்டணி, அழகு.",
+          "Scorpio": "மாற்றம், ஆழம், ரகசியம்.",
+          "Sagittarius": "விரிவாக்கம், ஞானம், பயணம்.",
+          "Capricorn": "ஒழுக்கம், பெருமிதம், பாரம்பரியம்.",
+          "Aquarius": "புதுமை, பார்வை, சமூகங்கள்.",
+          "Pisces": "ஆன்மீகம், பரிவு, கற்பனை."
+        },
+        en: {
+          "Aries": "Initiative, energy, leadership.",
+          "Taurus": "Stability, patience, abundance.",
+          "Gemini": "Communication, intellect, adaptability.",
+          "Cancer": "Emotion, nurturing, intuition.",
+          "Leo": "Confidence, creativity, drama.",
+          "Virgo": "Analysis, detail, service.",
+          "Libra": "Harmony, partnership, aesthetics.",
+          "Scorpio": "Transformation, depth, mystery.",
+          "Sagittarius": "Expansion, wisdom, travel.",
+          "Capricorn": "Discipline, ambition, legacy.",
+          "Aquarius": "Innovation, vision, community.",
+          "Pisces": "Spirituality, empathy, imagination."
+        }
       };
-      return meanings[sign] || "";
+      return meanings[lang][sign] || meanings["en"][sign] || "";
+    }
+    function getAstrologicalInsight(sign, lang) {
+      const insights = {
+        si: `${sign} රාශිය ඔබගේ පෞද්ගලිකත්වය හා ජීවිතයට බලපායි.`,
+        ta: `${sign} ராசி உங்கள் தனிப்பட்ட வாழ்க்கையில் தாக்கத்தை ஏற்படுத்தும்.`,
+        en: `The sign ${sign} influences your personality and life.`
+      };
+      return insights[lang] || insights["en"];
+    }
+    function getDemoPlanets(base) {
+      const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+      return [
+        { name: "Sun", sign: signs[(base+2)%12] },
+        { name: "Moon", sign: signs[(base+3)%12] },
+        { name: "Mars", sign: signs[(base+4)%12] },
+        { name: "Mercury", sign: signs[(base+5)%12] },
+        { name: "Jupiter", sign: signs[(base+6)%12] },
+        { name: "Venus", sign: signs[(base+7)%12] },
+        { name: "Saturn", sign: signs[(base+8)%12] },
+        { name: "Rahu", sign: signs[(base+9)%12] },
+        { name: "Ketu", sign: signs[(base+10)%12] }
+      ];
+    }
+    function renderPlanetPositions(planets, lang) {
+      let html = `<strong>${translations[lang].planets} (Demo)</strong><ul style="list-style:none;padding:0;">`;
+      planets.forEach(p => {
+        html += `<li><strong>${p.name}:</strong> ${p.sign}</li>`;
+      });
+      html += "</ul>";
+      document.getElementById("planetPositions").innerHTML = html;
     }
     document.getElementById("vedicForm").addEventListener("submit", function(e){
       e.preventDefault();
@@ -163,25 +355,48 @@
       const tob = document.getElementById("tob").value;
       const pob = document.getElementById("pob").value.trim();
       const chart = calcDemoChart(dob, tob);
-
-      // Render chart {
-        chartHtml += `<div class="vedic-box">${s}</div>`;
+      // Chart boxes
+      let chartHtml = "";
+      chart.forEach(s => {
+        chartHtml += `<div class="vedic-box" title="${getVedicMeaning(s, currentLang)}">${s}</div>`;
       });
       document.getElementById("vedicChart").innerHTML = chartHtml;
-
+      // Planet positions
+      const base = (new Date(dob + "T" + tob).getHours() + new Date(dob + "T" + tob).getDate()) % 12;
+      const planets = getDemoPlanets(base);
+      renderPlanetPositions(planets, currentLang);
       // Report
       let mainSign = chart[0];
       let report = `
-        <strong>Main Sign:</strong> <span style="color:#16f0a7">${mainSign}</span><br>
-        <strong>Meaning:</ ${name}<br>
-        <strong>Date/Time/Place:</strong> ${dob}, ${tob}, ${pob}<br>
+        <strong>${translations[currentLang].mainSign}:</strong> <span style="color:#16f0a7">${mainSign}</span><br>
+        <strong>${translations[currentLang].meaning}:</strong> ${getVedicMeaning(mainSign, currentLang)}<br>
+        <strong>${translations[currentLang].name}:</strong> ${name}<br>
+        <strong>${translations[currentLang].dob}/${translations[currentLang].tob}/${translations[currentLang].pob}:</strong> ${dob}, ${tob}, ${pob}<br>
         <hr>
-        <strong>Astrological Insight:</strong> <span style="color:#7dd3fc">This demo chart suggests influence of ${mainSign.toLowerCase()} in your ascendant. Final version will calculate exact houses, planetary positions, and Dasha periods.</span>
+        <strong>${translations[currentLang].astrologicalInsight}:</strong> <span style="color:#7dd3fc">${getAstrologicalInsight(mainSign, currentLang)}</span>
       `;
       document.getElementById("outputBox").style.display = "block";
       document.getElementById("vedicReport").innerHTML = report;
       document.getElementById("outputBox").scrollIntoView({behavior:"smooth"});
     });
+
+    // PDF Export with watermark
+    function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({format:'a5'});
+      doc.setFont("Inter", "normal");
+      doc.setFontSize(22);
+      doc.text(translations[currentLang].title, 20, 25);
+      doc.setFontSize(12);
+      doc.text(document.getElementById("vedicReport").innerText, 20, 40);
+      doc.setFontSize(14);
+      doc.text(document.getElementById("planetPositions").innerText, 20, 80);
+      // Watermark
+      doc.setFontSize(30);
+      doc.setTextColor(220, 20, 60, 0.13);
+      doc.text("© SathyadarshanaAI | High Copyright", 25, 120, {angle: 20});
+      doc.save("vedic-astrology-report.pdf");
+    }
   </script>
 </body>
 </html>

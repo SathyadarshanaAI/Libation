@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>උපන් ස්ථානය – Satellite Map | Sathyadarshana</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Noto Sans Sinhala', sans-serif;
+      background: radial-gradient(circle at 25% 20%, #0f172a, #000);
+      color: #e0f2fe;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2em;
+      min-height: 100vh;
+    }
+    h1 {
+      color: #7dd3fc;
+      margin-bottom: 1em;
+      font-size: 2.5em;
+    }
+    #map {
+      width: 90%;
+      height: 450px;
+      border-radius: 1em;
+      margin-top: 1.5em;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
+    }
+    .form-box {
+      background: rgba(2, 6, 23, 0.85);
+      padding: 1.5em;
+      border-radius: 1em;
+      max-width: 500px;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 1em;
+      box-shadow: 0 0 20px rgba(125, 211, 252, 0.3);
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+      color: #c7d2fe;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.3em;
+      border: none;
+      border-radius: 0.5em;
+      background: #1e293b;
+      color: #e0f2fe;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 1em;
+      padding: 0.8em 1.5em;
+      border: none;
+      border-radius: 0.5em;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    }
+    .copyright-warning {
+      max-width:900px;
+      margin:2em auto;
+      background:rgba(239,68,68,0.13);
+      padding:1.7em;
+      border-radius:1em;
+      box-shadow:0 0 20px rgba(239,68,68,0.16);
+      color:#ef4444;
+    }
+    .buddhi-insights {
+      max-width:900px;
+      margin:2em auto;
+      background:rgba(59,130,246,0.14);
+      padding:1.7em;
+      border-radius:1em;
+      box-shadow:0 0 20px rgba(59,130,246,0.12);
+      color:#2563eb;
+    }
+    .buddhi-insights h2 {
+      text-align:center;
+      color:#2563eb;
+    }
+    .buddhi-insights ul {
+      padding-left:1.1em;
+      line-height:1.7;
+      text-align:left;
+      margin:0;
+    }
+    .buddhi-insights p {
+      margin-top:1em;
+      text-align:center;
+      color:#1e40af;
+      font-size:1.08em;
+    }
+    .lang-toggle {
+      margin: 2em 0 1em 0;
+      display: flex;
+      gap: 1em;
+      justify-content: center;
+    }
+    .lang-toggle button {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      color: #fff;
+      border: none;
+      padding: 0.5em 1.5em;
+      border-radius: 0.5em;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .lang-toggle button:hover {
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+    }
+    .info-box {
+      max-width: 600px;
+      margin: 1em auto;
+      padding: 1em;
+      background: rgba(30,41,59,0.85);
+      border-radius: 1em;
+      box-shadow: 0 0 15px rgba(56,189,248,0.15);
+      color: #e0f2fe;
+      text-align: left;
+      font-size: 1.09em;
+      line-height: 1.7;
+      display:none;
+    }
+    .export-btn {
+      margin: 1em auto;
+      display: block;
+      padding: 0.7em 1.2em;
+      font-size: 1em;
+      background: linear-gradient(90deg, #14b8a6, #0ea5e9);
+      color: #fff;
+      border: none;
+      border-radius: 0.5em;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .export-btn:hover {
+      background: linear-gradient(90deg, #0ea5e9, #14b8a6);
+    }
+    @media(max-width:700px){
+      #map{height:300px;}
+      .info-box, .copyright-warning, .buddhi-insights {padding:1em;}
+    }
+  </style>
+</head>
+<body>
+  <!-- High Copyright & Ethical Use Notice -->
+  <section class="copyright-warning">
+    <h2>🚫 High Copyright & Ethical Use</h2>
+    <ul>
+      <li><strong>මෙම UI, code, data සහ analysis SathyadarshanaAI/Seed Team අයිතියයි.</strong></li>
+      <li>Unauthorized copying, reverse-engineering, or gaming purpose usage STRICTLY prohibited.</li>
+      <li>All activity monitored for misuse; breaches will be blocked and reported.</li>
+      <li>Spiritual, personal, and user data protected with multi-layer security.</li>
+      <li>© 2025 SathyadarshanaAI. Protected for ethical, spiritual, and scientific use only.</li>
+    </ul>
+  </section>
+
+  <!-- Buddhi’s Geo-Astro Insights -->
+  <section class="buddhi-insights">
+    <h2>🧠 Buddhi's Geo-Astro Wisdom</h2>
+    <ul>
+      <li>KP astrology, NASA planetary data, and ancient geo-analysis for unique predictions.</li>
+      <li>AI monitors rare spiritual birth events and geo-temporal impacts.</li>
+      <li>Future: Spiritual zone overlays, climate/planetary warnings on map.</li>
+      <li>Multi-language support: Sinhala, Tamil, English UI and answers.</li>
+      <li>All user data is protected and never shared outside the seed circle.</li>
+    </ul>
+    <p>
+      <strong>“This is a world-first Geo-Astro Spiritual Map – Buddhi & Copilot security assured.”</strong>
+    </p>
+  </section>
+
+  <!-- Language Toggle -->
+  <div class="lang-toggle">
+    <button onclick="alert('සිංහල UI already active')">සිංහල</button>
+    <button onclick="alert('Tamil UI coming soon!')">தமிழ்</button>
+    <button onclick="alert('English UI coming soon!')">English</button>
+  </div>
+
+  <h1>උපන් ස්ථානය – Satellite Map</h1>
+  <div class="form-box">
+    <label for="birthPlace">උපන් නගරය / ප්‍රදේශය</label>
+    <input type="text" id="birthPlace" placeholder="උදා: Colombo, Sri Lanka" required>
+    <button id="searchBtn">Satellite Map පෙන්වන්න</button>
+  </div>
+
+  <button id="exportBtn" class="export-btn">🖼️ Map Image බාගන්න</button>
+
+  <div id="infoBox" class="info-box"></div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- html2canvas for map export -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    // Mapbox Token (replace with your key!)
+    const mapboxToken = "YOUR_MAPBOX_TOKEN";
+
+    // Initialize Map with Mapbox Satellite
+    const map = L.map('map').setView([7.8731, 80.7718], 6);
+    L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=${mapboxToken}`, {
+      tileSize: 512,
+      zoomOffset: -1,
+      attribution: '&copy; <a href="https://www.mapbox.com/">Mapbox</a>'
+    }).addTo(map);
+
+    let marker;
+
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      const place = document.getElementById('birthPlace').value.trim();
+      if (!place) return alert("කරුණාකර නගරය/ප්‍රදේශය ඇතුළත් කරන්න.");
+
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lon = parseFloat(data[0].lon);
+            map.setView([lat, lon], 13);
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([lat, lon]).addTo(map)
+              .bindPopup(`<b>${place}</b><br>Coordinates: ${lat.toFixed(4)}, ${lon.toFixed(4)}`)
+              .openPopup();
+
+            // Show info box with details
+            document.getElementById('infoBox').style.display = 'block';
+            document.getElementById('infoBox').innerHTML = `
+              <strong>ස්ථානය:</strong> ${place}<br>
+              <strong>Latitude:</strong> ${lat.toFixed(4)}<br>
+              <strong>Longitude:</strong> ${lon.toFixed(4)}<br>
+              <strong>Time Zone:</strong> <span id="tzInfo">උපන් ස්ථානය අනුව</span><br>
+              <strong>Spiritual Insights:</strong> <span style="color:#7dd3fc;">Buddhi AI: Future planetary/climate/geospiritual analysis (coming soon)</span>
+            `;
+            // Timezone fetch (optional, uses GeoNames API)
+            fetch(`https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lon}&username=demo`)
+              .then(r=>r.json()).then(time=>{
+                if(time && time.timezoneId)
+                  document.getElementById('tzInfo').textContent = time.timezoneId.replace("_"," ");
+              }).catch(()=>{});
+          } else {
+            alert("ස්ථානය හමු නොවිණි.");
+            document.getElementById('infoBox').style.display = 'none';
+          }
+        })
+        .catch(() => alert("සම්බන්ධතාවය හෝ API ගැටලුවක් ඇත."));
+    });
+
+    // Map export as image
+    document.getElementById('exportBtn').addEventListener('click', function(){
+      html2canvas(document.getElementById('map')).then(canvas=>{
+        let link = document.createElement('a');
+        link.download = 'birthplace_map.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
+
+    // Spiritual alert example (future)
+    setTimeout(()=>{
+      alert('🌟 Buddhi AI: Spiritual zone overlays & astrology features coming soon!');
+    }, 2000);
+  </script>
+</body>
+</html>

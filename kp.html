@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KP Planetary Lords | Sathyadarshana</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2em;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 1em;
+      color: #7dd3fc;
+      text-align: center;
+    }
+    form {
+      background: rgba(2, 6, 23, 0.85);
+      border-radius: 1em;
+      padding: 2em;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(125, 211, 252, 0.3);
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+      font-weight: bold;
+      color: #c7d2fe;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.3em;
+      border: none;
+      border-radius: 0.5em;
+      background: #1e293b;
+      color: #e0f2fe;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 1.5em;
+      padding: 0.8em 1.2em;
+      border: none;
+      border-radius: 0.5;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg-top: 2em;
+      padding: 1.5em;
+      background: rgba(30, 41, 59, 0.85);
+      border-radius: 1em;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 0 20px id="kpForm">
+    <label for="planet">Select Planet</label>
+    <select id="planet" name="planet" required>
+      <option value="">-- Choose Planet --</option>
+      <option value="Sun">Sun</option>
+      <option value="Moon">Moon</option>
+      <Venus</option>
+      <option value="Mars">Mars</option>
+      <option value="Jupiter">Jupiter</option>
+      <option value="Saturn">Saturn</option>
+      <option value="Rahu">Rahu</option>
+      <option value="Ketu">Ketu</ id="result" class="result-box"></div>
+
+  <script>
+    const planetLords = {
+      "Sun": { signLord: "Leo", starLord: "Krittika", subLord: "Venus" },
+      "Moon": { signLord: "Cancer", starLord: "Roh },
+      "Mercury": { signLord: "Gemini/Virgo", starLord: "Ashlesha", subLord: "Ketu" },
+      "Venus": { signLord: "Taurus/Libra", starLord: "Bharani", subLord: "Saturn" },
+      "Mars": { signLord: "Aries/Scorpio", starLord: { signLord: "Sagittarius/Pisces", starLord: "Punarvasu", subLord: "Sun" },
+      "Saturn": { signLord: "Capricorn/Aquarius", starLord: "Pushya", subLord: "Moon" },
+      "Rahu": { signLord: "Varies", starLord: "Shatabhisha", subLord: "Mars" },
+      "Ketu": { signLord: "Varies", starLord: "Ashwini", subLord: "Jupiter" }
+    };
+
+    document.getElementById('kpForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const planet = document.getElementById('planet').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!planetLords[planet]) {
+        resultDiv.innerHTML = `<p>No data found for ${planet}.</p>`;
+      } else {
+        const { signLord, starLord, subLord } = planetLords[planet];
+        resultDiv.innerHTML = `
+          <h2 style="color:#7dd3fc;">${planet} Lords</h2>
+          <p><strong>Sign Lord:</strong> ${signLord}</p>
+          <pstrong>Sub-Lord:</strong> ${subLord}</p>
+          <p style="margin-top:1em; color:#cbd5e1;">
+            This is a static reference set. Final KP calculations  
+            will use real-time ephemeris data and house cusps.
+          </p>
+        `;
+      }
+      resultDiv.style.display =

@@ -1,92 +1,297 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Astrologe | Spiritual & Scientific Astrology Engine</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="main.css">
-  <!-- Add your stylesheets and libraries here (Bootstrap, Chart.js, etc.) -->
+  <title>Astrologer | SathyadarshanaAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Fonts for multi-language support -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;700&family=Noto+Sans+Tamil:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans Sinhala', 'Noto Sans Tamil', sans-serif;
+      background: linear-gradient(140deg,#0f172a 30%, #172a3a 100%);
+      color: #e0f2fe;
+      margin: 0;
+      min-height: 100vh;
+    }
+    header {
+      padding: 1.5em 0 .6em 0;
+      text-align: center;
+      background: #1e293b;
+      box-shadow: 0 2px 16px #38bdf822;
+    }
+    header h1 {
+      font-size: 2.4em;
+      color: #7dd3fc;
+      margin: 0;
+      font-family: inherit;
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px #38bdf8;
+    }
+    header p {
+      color: #fbcfe8;
+      margin: .2em 0 .7em 0;
+      font-size: 1.05em;
+    }
+    nav ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      gap: 0.7em;
+    }
+    nav ul li a {
+      display: block;
+      background: #27364d;
+      color: #16f0a7;
+      text-decoration: none;
+      padding: .7em 1.5em;
+      border-radius: 1em;
+      font-weight: bold;
+      letter-spacing: .01em;
+      box-shadow: 0 0 8px #38bdf822;
+      transition: background .2s, color .2s;
+    }
+    nav ul li a:hover, nav ul li a.active {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
+    .lang-switcher {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 999;
+    }
+    .lang-switcher button {
+      background: #1e293b;
+      color: #e0f2fe;
+      border: none;
+      margin: 0 0.2em;
+      padding: 0.5em 1em;
+      border-radius: 7px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .lang-switcher button.active, .lang-switcher button:hover {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 2em auto;
+      padding: 0 1em;
+      z-index: 1;
+      position: relative;
+    }
+    section {
+      margin-bottom: 3em;
+      border-radius: 1em;
+      background: #1e293b;
+      box-shadow: 0 0 20px #38bdf822;
+      padding: 1.2em 0 2em 0;
+      overflow: hidden;
+    }
+    section h2 {
+      text-align: center;
+      font-size: 1.5em;
+      color: #16f0a7;
+      margin-bottom: .7em;
+      letter-spacing: .04em;
+    }
+    .iframe-container {
+      width: 100%;
+      height: 600px;
+      border: none;
+      display: block;
+      margin: 0 auto;
+      border-radius: 1em;
+      box-shadow: 0 0 14px #38bdf822;
+      background: #0f172a;
+    }
+    @media (max-width: 800px) {
+      main { padding: 0 .1em; }
+      .iframe-container { height: 540px; }
+    }
+    @media (max-width: 500px) {
+      header h1 { font-size: 1.4em; }
+      .iframe-container { height: 400px; }
+      nav ul li a { padding: .5em 1em; font-size: 0.97em;}
+    }
+    .watermark-bg {
+      position: fixed;
+      left: 50%;
+      top: 60%;
+      transform: translate(-50%, -50%) rotate(-17deg);
+      font-size: 3em;
+      color: rgba(220,20,60,0.08);
+      pointer-events: none;
+      user-select: none;
+      font-weight: bold;
+      z-index: 9000;
+      letter-spacing: .11em;
+    }
+    footer {
+      margin-top: 2em;
+      padding: 1em;
+      text-align: center;
+      background: #172a3a;
+      color: #d90429;
+      font-weight: bold;
+      font-size: 1em;
+      letter-spacing: .03em;
+      border-top: 2px solid #38bdf8;
+    }
+  </style>
 </head>
 <body>
+  <!-- Multi-language switcher (common for all modules) -->
+  <div class="lang-switcher">
+    <button onclick="setLanguage('si')" id="btnSi">සිංහල</button>
+    <button onclick="setLanguage('ta')" id="btnTa">தமிழ்</button>
+    <button onclick="setLanguage('en')" id="btnEn" class="active">English</button>
+  </div>
+  <!-- Watermark overlay -->
+  <div class="watermark-bg">© SathyadarshanaAI | High Copyright</div>
   <header>
-    <h1>Astrologe</h1>
-    <p>Spiritual & Scientific Astrology Engine</p>
+    <h1 id="mainTitle">Astrologer</h1>
+    <p id="mainDesc">Spiritual & Scientific Astrology Engine</p>
     <nav>
       <ul>
-        <li><a href="#birth-report">Birth Report</a></li>
-        <li><a href="#kp-sub">KP Sub Lord</a></li>
-        <li><a href="#aura">Aura Vision</a></li>
-        <li></li>
-        <li><a href="#vedic-astro">Vedic Astro</a></li>
-        <li><a href="#research">Research Lab</a></li>
+        <li><a href="#kp-sub" id="navKP">KP Sub Lord</a></li>
+        <li><a href="#nadi" id="navNadi">Nadi Astrology</a></li>
+        <li><a href="#palmistry" id="navPalm">Palmistry</a></li>
+        <li><a href="#numerology" id="navNum">Numerology</a></li>
+        <li><a href="#vedic-astro" id="navVedic">Vedic Astrology</a></li>
+        <li><a href="#deshalakshana" id="navDesha">Deshalakshana</a></li>
+        <li><a href="#aura" id="navAura">Aura Vision</a></li>
+        <li><a href="#research" id="navResearch">Research Lab</a></li>
       </ul>
     </nav>
   </header>
-
   <main>
-    <!-- Birth Report Module -->
-    <section id="birth-report">
-      <iframe src="birth-report.html" width="100%" height="600" frameborder="0"></iframe>
-    </section>
-
-    <!-- KP Sub Lord Module -->
     <section id="kp-sub">
-      <iframe src="kp-sub.html" width="100%" height="600" frameborder="0"></iframe>
+      <h2 id="kpTitle">KP Sub Lord</h2>
+      <iframe src="kp-sub.html" class="iframe-container"></iframe>
     </section>
-
-    <!-- Aura Vision Module -->
-    <section id="aura">
-      <iframe src="aura.html" width="100%" height="600" frameborder="0"></iframe>
+    <section id="nadi">
+      <h2 id="nadiTitle">Nadi Astrology</h2>
+      <iframe src="nadi.html" class="iframe-container"></iframe>
     </section>
-
-    <!-- Palmistry Module -->
     <section id="palmistry">
-      <iframe src="palmistry.html" width="100%" height="600" frameborder="0"></iframe>
+      <h2 id="palmTitle">Palmistry</h2>
+      <iframe src="palmistry.html" class="iframe-container"></iframe>
     </section>
-
-    <!-- Numerology Module -->
     <section id="numerology">
-      <iframe src="numerology.html" width="100%" height="600" frameborder="0"></iframe>
+      <h2 id="numTitle">Numerology</h2>
+      <iframe src="numerology.html" class="iframe-container"></iframe>
     </section>
-
-    <!-- Vedic Astro Module -->
     <section id="vedic-astro">
-      <iframe src="vedic-astro.html" width="100%" height="600" frameborder="0"></iframe>
+      <h2 id="vedicTitle">Vedic Astrology</h2>
+      <iframe src="vedic-astro.html" class="iframe-container"></iframe>
     </section>
-
-    <!-- Research Lab Module -->
+    <section id="deshalakshana">
+      <h2 id="deshaTitle">Deshalakshana (Country/Location Astrology)</h2>
+      <iframe src="deshalakshana.html" class="iframe-container"></iframe>
+    </section>
+    <section id="aura">
+      <h2 id="auraTitle">Aura Vision</h2>
+      <iframe src="aura.html" class="iframe-container"></iframe>
+    </section>
     <section id="research">
-      <iframe src="astrologe-research.html" width="100%" height="600" frameborder="0"></iframe>
+      <h2 id="researchTitle">Research Lab</h2>
+      <iframe src="astrologe-research.html" class="iframe-container"></iframe>
     </section>
-
-    <!-- Spiritual/Seed Intelligence (Optional) -->
-    <section id="wisdom">
-      <h2>Wisdom & Dharma</h2>
-      <div class="wisdom-quotes">
-        <blockquote>“සත්‍යය හෙවත් බුද්ධිය සදා නවතා තබා ගන්නා සුළුයි.”</blockquote>
-        <blockquote>“අධ්‍යාත්මික හා විද්‍යාත්මක දෘෂ්ටියෙන් එකට.”</blockquote>
-      </div>
-    </section>
-
-    <!-- User Feedback & Analytics -->
-    <section id="analytics">
-      <h2>Service Usage & Feedback</h2>
-      <div id="usage-stats"></div>
-      <form id="feedback-form">
-        <label for="feedback">ඔබගේ අදහස:</label>
-        <textarea id="feedback" name="feedback"></textarea>
-        <button type="submit">යවන්න</button>
-      </form>
+    <!-- Example: AI Support Button for Main Page (can be placed in modules too) -->
+    <section id="ai-support">
+      <h2 id="aiTitle">🤖 AI Support</h2>
+      <button onclick="askAI()" style="
+        background:#38bdf8;color:#0f172a;
+        padding:1em 2em;border:none;border-radius:1em;
+        font-size:1.12em;font-weight:bold;">
+        Ask Astro-AI
+      </button>
+      <div id="aiResponse" style="margin-top:1em;color:#16f0a7;"></div>
     </section>
   </main>
-
   <footer>
-    <p>© 2025 Astrologe | Spiritual & Scientific Astrology Engine</p>
-    <p>සියලු දත්ත සුරක්ෂිතව තබා ගැනේ | Data encrypted & protected</p>
+    © 2025 SathyadarshanaAI | All Rights Reserved. High Copyright.<br>
+    Unauthorized copying or reproduction prohibited.
   </footer>
+  <script>
+    // Multi-language support for main page
+    const mainTranslations = {
+      si: {
+        mainTitle: "ආස්ට්‍රොලොජර්",
+        mainDesc: "අධ්‍යාත්මික හා විද්‍යාත්මක ජ්‍යෝතිෂ්‍ය යන්ත්‍රය",
+        kpTitle: "KP Sub Lord",
+        nadiTitle: "නාඩි ජ්‍යෝතිෂය",
+        palmTitle: "හස්ත රේඛා",
+        numTitle: "අංක විද්‍යාව",
+        vedicTitle: "වේද ජ්‍යෝතිෂය",
+        deshaTitle: "දේශ ලක්ෂණ විද්‍යාව",
+        auraTitle: "ආර විෂන්",
+        researchTitle: "පර්යේෂණාගාරය",
+        aiTitle: "🤖 AI සහය"
+      },
+      ta: {
+        mainTitle: "ஜோதிடர்",
+        mainDesc: "ஆன்மிக மற்றும் அறிவியல் ஜோதிட இயந்திரம்",
+        kpTitle: "KP Sub Lord",
+        nadiTitle: "நாடி ஜோதிடம்",
+        palmTitle: "பகை ரேகைகள்",
+        numTitle: "எண் அறிவியல்",
+        vedicTitle: "வேத ஜோதிடம்",
+        deshaTitle: "தேச லக்ஷணா",
+        auraTitle: "ஆரா பார்வை",
+        researchTitle: "ஆராய்ச்சி ஆய்வகம்",
+        aiTitle: "🤖 AI உதவி"
+      },
+      en: {
+        mainTitle: "Astrologer",
+        mainDesc: "Spiritual & Scientific Astrology Engine",
+        kpTitle: "KP Sub Lord",
+        nadiTitle: "Nadi Astrology",
+        palmTitle: "Palmistry",
+        numTitle: "Numerology",
+        vedicTitle: "Vedic Astrology",
+        deshaTitle: "Deshalakshana (Country/Location Astrology)",
+        auraTitle: "Aura Vision",
+        researchTitle: "Research Lab",
+        aiTitle: "🤖 AI Support"
+      }
+    };
+    let mainLang = "en";
+    function setLanguage(lang) {
+      mainLang = lang;
+      document.getElementById("mainTitle").textContent = mainTranslations[lang].mainTitle;
+      document.getElementById("mainDesc").textContent = mainTranslations[lang].mainDesc;
+      document.getElementById("kpTitle").textContent = mainTranslations[lang].kpTitle;
+      document.getElementById("nadiTitle").textContent = mainTranslations[lang].nadiTitle;
+      document.getElementById("palmTitle").textContent = mainTranslations[lang].palmTitle;
+      document.getElementById("numTitle").textContent = mainTranslations[lang].numTitle;
+      document.getElementById("vedicTitle").textContent = mainTranslations[lang].vedicTitle;
+      document.getElementById("deshaTitle").textContent = mainTranslations[lang].deshaTitle;
+      document.getElementById("auraTitle").textContent = mainTranslations[lang].auraTitle;
+      document.getElementById("researchTitle").textContent = mainTranslations[lang].researchTitle;
+      document.getElementById("aiTitle").textContent = mainTranslations[lang].aiTitle;
+      document.getElementById("btnSi").classList.remove("active");
+      document.getElementById("btnTa").classList.remove("active");
+      document.getElementById("btnEn").classList.remove("active");
+      if (lang === "si") document.getElementById("btnSi").classList.add("active");
+      if (lang === "ta") document.getElementById("btnTa").classList.add("active");
+      if (lang === "en") document.getElementById("btnEn").classList.add("active");
+    }
+    setLanguage("en");
 
-  <!-- JS scripts for analytics, feedback, security, etc. -->
-  <script src="main.js"></script>
-  <!-- Example: Chart.js, feedback handler, scroll behavior, etc. -->
+    // Demo AI support for main page (can be expanded for real AI integration)
+    function askAI() {
+      document.getElementById('aiResponse').innerHTML = "<em>Astro-AI:</em> Thank you for using SathyadarshanaAI. Real-time astrology answers coming soon!";
+    }
+  </script>
 </body>
 </html>

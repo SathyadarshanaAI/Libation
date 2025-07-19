@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astrology Dashboard | Sathyadarshana</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
+      min-height: 100vh;
+      padding: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 1em;
+      color: #7dd3fc;
+      text-align: center;
+    }
+    .section {
+      background: rgba(2, 6, 23, 0.85);
+      border-radius: 1em;
+      padding: 1.5em;
+      max-width: 900px;
+      width: 100%;
+      margin-top: 1.5em;
+      box-shadow: 0 0 25px rgba(125, 211, 252, 0.3);
+    }
+    h2 {
+      color: #a5b: #cbd5e1;
+    }
+    button {
+      margin-top: 1em;
+      padding: 0.8em 1.2em;
+      border: none;
+      border-radius: 0.5em;
+      background: linear-gradient(90deg, #38bdf8, #0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    }
+    .output-box {
+      margin-top: 1em;
+      padding: 1em;
+      background: rgba(30, 41, 59<body>
+  <h1>Astrology Research Dashboard</h1>
+
+  <div class="section">
+    <h2>Time Twin Analysis</h2>
+    <p>
+      Find and compare individuals born at the exact same time to study shared
+      traits, behaviors, and palmistry correlations. The AI module <div id="timeTwinResult" class="output-box"></div>
+  </div>
+
+  <div class="section">
+    <h2>Palmistry Pattern Recognition</h2>
+    <p>
+      The system will detect unique hand line shapes (breaks, forks, overlaps)
+      and cluster data with birth="output-box"></div>
+  </div>
+
+  <div class="section">
+    <h2>AI Research Database</h2>
+    <p>
+      All analyzed data will feed into a secure encrypted database.  
+      Researchers can use this dashboard to view live statistics,  
+      cluster results, and generate predictions.
+   >
+    document.getElementById('timeTwinBtn').addEventListener('click', () => {
+      const div = document.getElementById('timeTwinResult');
+      div.innerHTML = "<p>Time Twin Scan initiated... (AI pattern matching coming soon).</p>";
+      div.style.display = 'block';
+   ('palmistryResult');
+      div.innerHTML = "<p>Palmistry line scan simulation running. Data clustering will be integrated.</p>";
+      div.style.display = 'block';
+    });
+
+    document.getElementById('dbBtn').addEventListener('click', () => {
+      const div = document.getElementById('dbResult');
+      div.innerHTML = "<p>Loading encrypted research dataset... (visualization tools coming soon).</p>";
+      div.style.display = 'block';
+    });
+  </script>
+</body>
+</html>

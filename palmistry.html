@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palmistry | Sathyadarshana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Zen+Maru+Gothic:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', 'Zen Maru Gothic', sans-serif;
+      background: linear-gradient(120deg, #0f172a, #1e293b);
+      color: #e0f2fe;
+      text-align: center;
+      padding:2em;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 1em;
+      color: #7dd3fc;
+      font-family: '-shadow: 0 0 14px #38bdf8cc;
+      animation: textGlow 2.5s infinite alternate;
+    }
+    @keyframes textGlow {
+      from {text-shadow: 0 0 6px #38bdf8;}
+      to {text-shadow: 0       color: #cbd5e1;
+      line-height: 1.7;
+      margin-bottom: 1.1em;
+      opacity: .97;
+    }
+    #scanner {
+      margin-top: 2em;
+      width: 340px;
+      height: 260px;
+      border:-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 32px #38bdf844;
+    }
+    #video {
+      width: 100%;
+      height: auto;
+      border-radius: 1.2em;
+      object #0f172a;
+      box-shadow: 0 0 22px #38bdf822;
+    }
+    #scanLine {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      animation: scan 2.2s infinite alternate;
+      z-index: 2;
+    }
+    @keyframes scan {
+      from { top: 10px; }
+      to { top: calc(100% - 12px); }
+    }
+    .btn-group {
+      margin-top: 1.5em;
+      display: flex;
+      justify-content: center;
+      gap: 1.1em;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 0.8em 1.6em;
+      border: none;
+      border-radius: 0.52em;
+      background: linear-gradient(90deg, #38bdf8 30%, #0ea5e9 80%);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1em;
+      transition: 0.25;
+      letter-spacing: .01em;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9 30%, #38bdf8 80%);
+      color: #0f172a;
+    }
+    .result-box {
+      margin-top: 2em;
+     );
+      padding: 1.5em 1.2em;
+      border-radius: 1.2em;
+      max-width: 540px;
+      color: #f1f5f9;
+      line-height: 1.68;
+      display: none;
+      box-shadow: 0 0 .9s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(.97);}
+      to { opacity: 1; transform: scale(1);}
+    }
+    .result-title {
+      color: #16f0a7;
+      font-size: 1.18em;
+      font-weight: 700;
+      margin-bottom: 0.6em;
+      letter-spacing: .02em;
+      text-shadow: 0 0 7px #16f0a799;
+    }
+    .tips {
+      margin-top: 1.5em;
+      font-size: .1.2em;
+      box-shadow: 0 0 10px #38bdf855;
+      border: 2px solid #16f0a7;
+    }
+    @media (max-width: 460px) {
+      #scanner { width: 98vw; }
+      .result-box { max-width: 99vw; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Palmistry Scanner</h1>
+  <p>
+    Place your hand in front of the camera and let the system scan your palm lines.<br>
+    This tool is part of the <strong>Sathyadarshana Seed Project</strong>.<br>
+    <span style="color:#16f0a7">Final version will use AI-powered line detection & KP Sub-Lord analysis.</span>
+  </p>
+  <div id="scanner">
+    <video id="video" autoplay playsinline></video>
+    <div id="scanLine"></div>
+  </div>
+  <div class="btn-group">
+    <button id="startScan">Start Camera</button>
+    <button id="captureBtn" disabled>Capture Palm</button>
+    <button id="resetBtn" disabled>Reset</button>
+  </div>
+  <div class="result-box" id="resultBox">
+    <div class="result-title">Palm Reading Result</div>
+    <img id="scanImg" class="scan-img" style="display:none" alt="Palm Capture" />
+    <div id="resultDetails"></div>
+    <div class="tips">Note: This is a demo. Final version will provide detailed AI-based palm line & astrology analysis.</div>
+  </div>
+  <script>
+    const video = document.getElementById('video');
+    const scanLine = document.getElementById('scanLine');
+    const startScanBtn = document.getElementById('startScan');
+    const captureBtn = document.getElementById('captureBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultBox = document.getElementById('resultBox');
+    const scanImg = document.getElementById('scanImg');
+    const resultDetails = document.getElementById('resultDetails');
+    let stream = null;
+
+    startScanBtn.onclick = async () => {
+      if (stream) return;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        captureBtn.disabled = false;
+        resetBtn.disabled = false;
+        startScanBtn.disabled = true;
+      } catch (err) {
+        alert("Camera access denied or not available!");
+      }
+    };
+
+    captureBtn.onclick = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 340;
+      canvas.height = video.videoHeight || 260;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataURL = canvas.toDataURL('image/png');
+      scanImg.src = dataURL;
+      scanImg.style.display = "block";
+      showPalmResult(dataURL);
+    };
+
+    resetBtn.onclick = () => {
+      scanImg.src = "";
+      scanImg.style.display = "none";
+      resultDetails.innerHTML = "";
+      resultBox.style.display = "none";
+.display = "block";
+      // Demo palm line reading (future: AI/ML backend)
+      const demoResult = `
+        <strong>Major Lines Detected:</strong><br>
+        <ul>
+          <li><span style="color:#38bdf8">Life Line</span>: Indicates vitality and life journey.</li>
+          <.</li>
+          <li><span style="color:#16f0a7">Head Line</span>: Intelligence, mental clarity.</li>
+          <li><span style="color:#f1f5f9">Fate Line</span>: Destiny, career path.</li>
+        </ul>
+        <strong>KP Sub-Lord Demo:</strong> <em>Gemini | Mercury</em><br>
+        <strong>Overall Insight:</strong> <span style="color:#16f0a7">Balanced personality, spiritual growth possible.</span>
+        <hr>
+        <span style="color:#38bdf8">For a full reading, upgrade to AI palmistry module (coming soon).</span>
+      `;
+      resultDetails.innerHTML = demoResult;
+    }
+  </script>
+</body>
+</html>

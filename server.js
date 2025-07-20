@@ -1,15 +1,41 @@
 const express = require('express');
-const app = express();
-app.use(express.json());
+const multer = require('multer');
+const path = require('path');
 
-app.post('/api/birth-report', (req, res) => {
-  const { name, dob, tob, pob, gender } = req.body;
-  res.json({
-    name, dob, tob, pob, gender,
-    luckyNumbers: [3, 5, 8],
-    element: 'Earth',
-    advice: 'සාර්ථකත්වයට උපරිම උත්සාහයෙන් ක්‍රියා කරන්න.'
-  });
+const app = express();
+const port = 3000;
+
+// Set up multer for file uploads
+const upload = multer({ dest: 'uploads/' });
+
+app.use(express.urlencoded({ extended: true }));
+
+// Main route to serve HTML file
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'register.html'));
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+// Form submit route
+app.post('/submit', upload.fields([
+  { name: 'palm_img', maxCount: 1 },
+  { name: 'aura_img', maxCount: 1 },
+  { name: 'face_img', maxCount: 1 }
+]), (req, res) => {
+  // Access text fields
+  const { name, nic, dob, birth_time, birth_place, astro_type } = req.body;
+
+  // Access uploaded files
+  const palmImage = req.files['palm_img']?.[0];
+  const auraImage = req.files['aura_img']?.[0];
+  const faceImage = req.files['face_img']?.[0];
+
+  // For demo: print data
+  console.log({ name, nic, dob, birth_time, birth_place, astro_type });
+  console.log({ palmImage, auraImage, faceImage });
+
+  res.send('Data received! Backend route connected successfully.');
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});

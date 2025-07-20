@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8">
+  <title>Birth Report Registration</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+    label { display: block; margin-top: 16px; }
+    input, select { width: 100%; padding: 8px; margin-top: 4px; }
+    button { margin-top: 24px; padding: 12px 24px; }
+  </style>
+</head>
+<body>
+  <h2>පෞරුෂික විස්තර සහ ඡායාරූප ලබාදීම</h2>
+  <form action="/submit" method="POST" enctype="multipart/form-data">
+    <label>නම:
+      <input type="text" name="name" required>
+    </label>
+    <label>ජාතික හැඳුනුම්පත් අංකය (NIC/ID):
+      <input type="text" name="nic" required>
+    </label>
+    <label>උපන් දිනය:
+      <input type="date" name="dob" required>
+    </label>
+    <label>උපන් වේලාව:
+      <input type="time" name="birth_time" required>
+    </label>
+    <label>උපන් ස්ථානය:
+      <input type="text" name="birth_place" required>
+    </label>
+    <label>ජ්‍යෝතිෂ්‍ය වර්ගය:
+      <select name="astro_type" required>
+        <option value="kp">KP Astrology</option>
+        <option value="western">Western Astrology</option>
+      </select>
+    </label>
+    <label>හස්ත රේඛා ඡායාරූපය (Palm Image):
+      <input type="file" name="palm_img" accept="image/*">
+    </label>
+    <label>Aura ඡායාරූපය:
+      <input type="file" name="aura_img" accept="image/*">
+    </label>
+    <label>මුහුණේ ඡායාරූපය (Face Photo):
+      <input type="file" name="face_img" accept="image/*">
+    </label>
+    <button type="submit">යවන්න</button>
+  </form>
+</body>
+</html>

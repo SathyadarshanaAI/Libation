@@ -1,81 +1,107 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sathyadarshana | ප්‍රධාන පිටුව</title>
+  <title>Sathyadarshana | Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      background: #0f172a; color: #e0f2fe; font-family: 'Segoe UI', 'Noto Sans Sinhala', 'Inter', sans-serif;
-      margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(140deg,#0f172a 30%, #172a3a 100%);
+      header h1 {
+      font-size: 2.4em;
+      color: #7dd3fc;
+      margin: 0;
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px #38bdf8;
     }
-    h1 {
-      text-align: center; color: #7dd3fc; margin-top: 2rem;
-      text-shadow: 0 0 17px #38bdf877;
+    nav ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      gap: 0.7em;
     }
-    nav {
-      display: flex; justify-content: center; gap: 1.4rem;
-      background: #134e4aee; padding: 1.2rem 0; box-shadow: 0 3px 17px #38bdf855;
-      border-bottom: 1.5px solid #38bdf844;
-      font-size: 1.11rem;
-    }
-    nav a {
-      color: #38bdf8;
+    nav ul li a {
+      display: block;
+      background: #27364d;
+      color: #16f0a7;
       text-decoration: none;
-      padding: .5em 1.6em;
-      border-radius: 999px;
-      background: rgba(56,189,248,0.08);
-      font-weight: 600;
-      transition: all .18s;
-      border: 1.2px solid transparent;
-    }
-    nav a:hover, nav a:focus {
-      background: #38bdf8;
-      color: #0f172a;
-      border-color: #38bdf8;
-      box-shadow: 0 0 17px #38bdf8cc;
-      outline: none;
-    }
-    .desc {
-      max-width: 600px;
-      margin: 2.2em auto 1.5em;
-      color: #b6e2f8;
-      text-align: center;
-      font-size: 1.13rem;
-      line-height: 1.7;
-      background: #1e293bee;
+      padding: .7em 1.5em;
       border-radius: 1em;
-      padding: 1.5em 2em;
-      box-shadow: 0 0 24px #38bdf822;
+      font-weight: bold;
+      letter-spacing: .01em;
+      box-shadow: 0 0 8px #38bdf822;
+      transition: background .2s, color .2s;
+    }
+    nav ul li a:hover, nav;
+      text-align: left;
+      max-width: 440px;
+      margin: 1.2em auto 0;
+      padding-left: 1.3em;
+    }
+    .watermark-bg {
+      position: fixed;
+      left: 50%;
+      top: 60%;
+      transform: translate(-50%, -50%) rotate(-17deg);
+      font-size: 3em;
+      color: rgba(220,20,60,0.08);
+      pointer-events: none;
+      user-select: none;
+      font-weight: bold;
+      z-index: 9000;
+      letter-spacing: .11em;
     }
     footer {
-      text-align: center; color: #38bdf8aa; margin-top: auto; padding: 2em 0 1.2em;
-      font-size: 1.02rem;
+      margin-top: 2em;
+      padding: 1em;
+      text-align: center;
+      background: #172a3a;
+      color: #d90429;
+      font-weight: bold;
+      font-size: 1em;
+      letter-spacing: .03em;
+      border-top: 2px solid #38bdf8;
+    }
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.2em; }
+      .card { padding: 1em; }
     }
   </style>
 </head>
 <body>
-  <h1>Sathyadarshana <span style="font-size:1.1rem;color:#a5f3fc;">| ප්‍රධාන පිටුව</span></h1>
-  <nav>
-    <a href="astrologer.html">🔭 ජ්යොතිෂ්‍ය (Astrologer)</a>
-    <a href="vedic-astro.html">📜 වේද ජ්‍යෝතිෂය (Vedic Astrology)</a>
-    <a href="nadi.html">🌿 නාඩි ජ්‍යෝතිෂය (Nadi)</a>
-    <a href="desha-lakshana-vidyava.html">🌏 දේශ ලක්ෂණ විද්‍යාව</a>
-    <a href="library.html">📚 පුස්තකාලය (Library)</a>
-  </nav>
-  <div class="desc">
-    <b>ඔබ කැමති සේවාව තෝරන්න:</b> ඉහත menu එකෙන් පිටුවක් තෝරන්න.  
-    <br><br>
-    <span style="color:#7dd3fc;">"not found" error එනවා නම්:</span>  
-    <ul style="color:#bae6fd;text-align:left;max-width:440px;margin:1.2em auto 0;padding-left:1.3em;">
-      <li>සියලුම <b>file names</b> (astrologer.html, vedic-astro.html, nadi.html, desha-lakshana-vidyava.html, library.html) <b>root folder එකේ</b> තියෙන්න ඕන.</li>
-      <li>Link එකේ නම සහ file name එක <b>exact match</b> වෙන්න ඕන.</li>
-      <li>File name එකේ සිංහල අකුරු/space නැතිව ඉංග්‍රීසි (latin) අකුරු භාවිතා කරන්න.</li>
-    </ul>
-  </div>
+  <div class="watermark-bg">© SathyadarshanaAI | High Copyright</div>
+  <header>
+    <h1>Sathyadarshana | Home</h1>
+    <nav>
+      <ul>
+        <li><a href="astrologer.html">Astrolog">Nadi Astrology</a></li>
+        <li><a href="desha-lakshana-vidyava.html">Desha Lakshana</a></li>
+        <li><a href="birth-report.html">Birth Report</a></li>
+        <li><a href="library.html">Library</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="card">
+      <div class="desc">
+        <b>Select your preferred service:</b> Choose a page from the menu above.<br><br>
+        <span style="color:#7dd3fc;">If you get a "not found" error:</span>
+      </div>
+      <ul class="info-list">
+        <li>All <b>file names</b> (astrologer.html, vedic-astro.html, nadi.html, desha-lakshana-vidyava.html, birth-report.html, library.html) must be in the root folder.</li>
+        <li>Menu link and file name must be an <b>exact match</b>.</li>
+        <li>Use <b>English (latin) characters</b> for file names (no Sinhala/space).</li>
+      </ul>
+    </div>
+  </main>
   <footer>
-    © 2025 SathyadarshanaAI | Powered by Buddhi <br>
-    <span class="footer-bless">සත්‍යය ඔබට ආලෝකය වේවා 🌼</span>
+    © 2025 SathyadarshanaAI | Powered by Buddhi<br>
+    Truth will light your way 🌼
   </footer>
 </body>
 </html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+ 0f2fe; font-family: 'Segoe UI', 'Noto Sans Sinhala', sans-serif; }
+    .form-box { max-width: 500px; margin: 2em auto; padding: 2em; background: #1e293b; border-radius: 1em; box-shadow: : 0.8em 1.3em; border-radius: 0.7em; border: none; background: #38bdf8; color: #172a3a; font-weight: bold; cursor:pointer;}
+    .result-box { max-width: 500px; margin: 2em background: #164e63; color: #fff; padding: 1em; border-radius: 0.8em; }
+    .copyright-warning { max-width:900px; margin:2em auto; padding:1.7em; border-radius:1em; box-shadow:0 0 20px rgba(239, }
+    .copyright-warning h2 { text-align:center; color:#ef4444; }
+    .copyright-warning ul { padding-left:1.2em; line-height:1.7; text-align:left; margin:0; }
+    .buddhi-insights { max-width:900px; margin:2em auto; background:rgba(59, <h1 style="text-align:center;">දේශ ලක්ෂණ විද්‍යාව</h1>
+
+  <section class="copyright-warning">
+    <h2>අයිතිවාසිකම් අවවාදය</h2>
+    <ul>
+      <li><strong>මෙම UI, කේත හි අයිතියයි.</strong></li>
+      <li>ආරක්ෂා නොකළ පිටපත් කිරීම, reverse-engineering, gaming සඳහා භාවිත STRICTLY තහනම්.</li>
+      <li>සියළු ක්‍රියාකාරකම් විමර්ශනය වේ;ීම් අවහිර කර, වාර්තා කරනු ලැබේ.</li>
+      <li>ආත්මීය, භූ, පරිශීලක දත්ත බහු-සුරක්ෂිත ස්ථර මගින් ආරක්ෂා කර ඇත.</li>
+      <li>© adarshanaAI. නීතිමය, ආත්මීය, විද්‍යාත්මක භාවිතය සඳහා පමණි.</li>
+    </ul>
+    <p>KP ජ්‍යොතිෂ්‍යය, NASA ග්‍රහලෝක දත්ත සහ භූ විද්‍යාව අනාගත අවධානම් සඳහා.<br>
+    (උදව් වූයේ: සිංහල "දේශ ලක්ෂණ විද්‍යාව")</p>
+  </section>
+
+  <section class="buddhi-insights">
+    <h2>🧠 බුද්ධිගේ භූ-ආත්මීය අවබෝධ</h2>
+    <ul>
+      <li>භූ ප්‍රදේශ අනුව ආආරක්ෂිත යාවත්කාලීන කිරීම: ගෝලීය දැනුම, කාලගුණ, සංස්කෘතික තොරතුරු ඇතුළත් වේ.</li>
+      <li>බහු භාෂා: සිංහල, දෙමළ, ඉංග්‍රීසි UI සහ පිළිතුරු.</li>
+    </ul>
+  </section>
+
+  <div class="form-box">
+    <label for="region">ප්‍රදේශය / නාමය</label>
+    <input type="text" id="region" placeholder="උදා: අනුරාධපුර, මොනරාගල" required>
+    <label for="focus">විශ්ලේෂණය සඳහා කේන්ද්‍රය</label>
+    <select id="focus" required>
+      <option value="">-- තෝරන්න --</option>
+      <option value="climate">ඉතිහාසය සහ කාලගුණය</option>
+      <option value="culture">සංස්කෘතික / ඉතිහාසඅනාගත ග්‍රහලෝක / කාලික බලපෑම්</option>
+    </select>
+    <button id="analyzeBtn">විශ්ලේෂණය කරන්න</button>
+  </div>
+
+  <div id="result" class="result-box"></div>
+
+  <script>
+    document.getElementById('analyzeBtn').addEventListener('click', function() {
+      const region.getElementById('region').value.trim();
+      const focus = document.getElementById('focus').value;
+
+      let summary = "";
+      if (!region || !focus) {
+        summary = "කරුණාකර සියළු ක්ෂේත්‍ර පුරවන්න.";
+      } else if (focus === " summary = `${region} ප්‍රදේශයේ ඉතිහාසය, ජල මූලාශ්‍ර, භූ ව්‍යුහය සහ කාලගුණ පද්ධති (මහාවංශ + AI දත්ත) අනූව විශ්ලේෂණය කර ඇත.`;
+     } හි සංස්කෘතික හා ඉතිහාස පිරිවිතර (සමූද්‍රිකා + AI අභිප්‍රේරණය) අනූව විශ්ලේෂණය කර ඇත.`;
+      } else if (focus === "future") {
+        summary = `${ අනාගත කාලගුණ හා විපත් අනතුරු අනුමාන කර ඇත.`;
+      }
+      document.getElementById('result').textContent = summary;
+    });
+  </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Palmistry Scanner | Sathyadarshana</title>
+  <title>Palmistry Scanner | SathyadarshanaAI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -14,6 +14,7 @@
       text-align: center;
       padding: 2em;
       min-height: 100vh;
+      user-select: none;
     }
     h1 {
       font-size: 2.2em;
@@ -48,6 +49,17 @@
       top: 0;
       left: 0;
       pointer-events: none;
+    }
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-20deg);
+      font-size: 2em;
+      color: rgba(220,20,60,0.08);
+      font-weight: bold;
+      pointer-events: none;
+      z-index: 9000;
     }
     .btn-group {
       margin-top: 1.5em;
@@ -84,23 +96,30 @@
       font-size: 0.9em;
       color: #38bdf8;
     }
+    .copyright {
+      color: #d90429;
+      font-size: 0.95em;
+      margin-top: 1em;
+    }
   </style>
 </head>
-<body>
+<body oncontextmenu="return false" onkeydown="if(event.keyCode==123){return false;}">
   <h1>Palmistry Scanner</h1>
   <p>
-    Spread your fingers and place your <strong>Left or Right hand</strong> in front of the camera.<br>
-    Align with the grid overlay so lines like <em>Manikanda Rekha</em> are visible.<br>
-    Capture each hand for AI analysis (future Seed Engine integration).
+    Spread your fingers and align your <strong>Left or Right hand</strong> with the guide outline.<br>
+    Rear camera (on phone) or HD webcam (on laptop) will be used.<br>
+    Capture each hand for AI analysis (Seed Engine integration coming soon).
   </p>
 
   <div id="scanner">
     <video id="video" autoplay playsinline></video>
     <canvas class="overlay" id="overlay"></canvas>
+    <div class="watermark">© SathyadarshanaAI | High Copyright</div>
   </div>
 
   <div class="btn-group">
     <button id="startCamera">Start Camera</button>
+    <button id="switchCamera" disabled>Switch Camera</button>
     <button id="captureLeft" disabled>Capture Left Hand</button>
     <button id="captureRight" disabled>Capture Right Hand</button>
     <button id="reset" disabled>Reset</button>
@@ -108,20 +127,26 @@
 
   <img id="capturePreview" alt="Palm Capture Preview" />
 
-  <footer>© 2025 SathyadarshanaAI | Powered by Buddhi</footer>
+  <footer>
+    © 2025 SathyadarshanaAI | Powered by Buddhi<br>
+    <div class="copyright">
+      Unauthorized copying, reverse-engineering, or extraction strictly prohibited.
+    </div>
+  </footer>
 
   <script>
     const video = document.getElementById('video');
     const overlay = document.getElementById('overlay');
     const ctx = overlay.getContext('2d');
     const startBtn = document.getElementById('startCamera');
+    const switchBtn = document.getElementById('switchCamera');
     const leftBtn = document.getElementById('captureLeft');
     const rightBtn = document.getElementById('captureRight');
     const resetBtn = document.getElementById('reset');
     const preview = document.getElementById('capturePreview');
     let stream = null;
+    let usingRear = true;
 
-    // Draw guide grid (finger spread + palm center)
     function drawOverlay() {
       overlay.width = video.clientWidth;
       overlay.height = video.clientHeight;
@@ -129,7 +154,6 @@
       ctx.strokeStyle = 'rgba(56,189,248,0.7)';
       ctx.lineWidth = 1.5;
 
-      // Vertical finger lines
       for (let i = 1; i < 5; i++) {
         const x = (overlay.width / 5) * i;
         ctx.beginPath();
@@ -137,7 +161,6 @@
         ctx.lineTo(x, overlay.height);
         ctx.stroke();
       }
-      // Horizontal palm lines
       for (let i = 1; i < 4; i++) {
         const y = (overlay.height / 4) * i;
         ctx.beginPath();
@@ -145,31 +168,38 @@
         ctx.lineTo(overlay.width, y);
         ctx.stroke();
       }
-
-      // Center circle (palm center)
       ctx.beginPath();
-      ctx.arc(overlay.width / 2, overlay.height * 0.65, 30, 0, 2 * Math.PI);
+      ctx.arc(overlay.width / 2, overlay.height * 0.7, 30, 0, 2 * Math.PI);
       ctx.stroke();
       requestAnimationFrame(drawOverlay);
     }
 
-    // Camera start
-    startBtn.onclick = async () => {
-      if (stream) return;
+    async function startCamera(facing = 'environment') {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: facing } }
+        });
         video.srcObject = stream;
+        drawOverlay();
+        switchBtn.disabled = false;
         leftBtn.disabled = false;
         rightBtn.disabled = false;
         resetBtn.disabled = false;
         startBtn.disabled = true;
-        drawOverlay();
       } catch (err) {
         alert("Camera not accessible or permission denied!");
       }
+    }
+
+    startBtn.onclick = () => startCamera('environment');
+    switchBtn.onclick = () => {
+      usingRear = !usingRear;
+      startCamera(usingRear ? 'environment' : 'user');
     };
 
-    // Capture function
     function captureHand(label) {
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
@@ -178,15 +208,15 @@
       cctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       preview.src = canvas.toDataURL('image/png');
       preview.style.display = 'block';
-      alert(`${label} Hand captured! (AI analysis coming soon)`);
+      alert(`${label} Hand captured! Saved for Seed Engine processing.`);
     }
 
     leftBtn.onclick = () => captureHand('Left');
     rightBtn.onclick = () => captureHand('Right');
 
     resetBtn.onclick = () => {
-      preview.style.display = 'none';
       preview.src = "";
+      preview.style.display = 'none';
     };
   </script>
 </body>

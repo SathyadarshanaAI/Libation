@@ -3,173 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura Energy Scanner | SathyadarshanaAI</title>
+  <title>Palm Scanner with Flash | Sathyadarshana</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      height: 100%;
       background: #000;
-      color: #e0f2fe;
+      color: #0ff;
       font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-    }
-    #cameraContainer {
-      position: relative;
-      width: 100%;
-      height: 80vh;
-      overflow: hidden;
-      background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      height: 100vh;
+      text-align: center;
     }
     video {
+      width: 90%;
+      max-width: 400px;
+      border: 2px solid #38bdf8;
+      border-radius: 10px;
+      box-shadow: 0 0 25px #38bdf888;
+    }
+    #flash-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-    }
-    #overlay {
-      position: absolute;
-      width: 80%;
-      height: 60%;
-      border: 2px dashed #38bdf8;
-      border-radius: 10px;
+      background: white;
+      opacity: 0;
       pointer-events: none;
-      z-index: 5;
-    }
-    #controls {
-      margin-top: 15px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
+      transition: opacity 0.2s ease;
+      z-index: 9999;
     }
     button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 6px;
-      background: linear-gradient(90deg, #38bdf8, #16f0a7);
+      margin-top: 1em;
+      padding: 1em 2em;
+      background: #38bdf8;
       color: #000;
       font-weight: bold;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 1em;
-    }
-    button:hover {
-      background: linear-gradient(90deg, #16f0a7, #38bdf8);
-    }
-    #snapshot {
-      margin-top: 10px;
-      max-width: 90%;
-      display: none;
-      border: 2px solid #38bdf8;
-      border-radius: 6px;
     }
   </style>
 </head>
 <body>
-  <h2>Step 5: Capture Aura Image</h2>
-  <div id="cameraContainer">
-    <video id="video" autoplay playsinline></video>
-    <div id="overlay"></div>
-  </div>
-
-  <div id="controls">
-    <button id="startBtn">Start Camera</button>
-    <button id="flipBtn" disabled>Flip Camera</button>
-    <button id="flashBtn" disabled>Flash On</button>
-    <button id="captureBtn" disabled>Capture</button>
-    <button id="stopBtn" disabled>Stop</button>
-  </div>
-
-  <img id="snapshot" alt="Aura Capture Result" />
-
+  <h2>Palm Scanner (with Flash)</h2>
+  <video id="camera" autoplay playsinline></video>
+  <button id="toggleFlash">Flash On</button>
+  <button id="captureBtn">Capture</button>
+  <div id="flash-overlay"></div>
+  <canvas id="snapshot" style="display:none;"></canvas>
   <script>
-    let video = document.getElementById('video');
-    let snapshot = document.getElementById('snapshot');
-    let startBtn = document.getElementById('startBtn');
-    let flipBtn = document.getElementById('flipBtn');
-    let flashBtn = document.getElementById('flashBtn');
-    let captureBtn = document.getElementById('captureBtn');
-    let stopBtn = document.getElementById('stopBtn');
-
-    let stream = null;
-    let usingFrontCamera = true;
-    let track = null;
-    let imageCapture = null;
+    const video = document.getElementById('camera');
+    const toggleFlashBtn = document.getElementById('toggleFlash');
+    const captureBtn = document.getElementById('captureBtn');
+    const overlay = document.getElementById('flash-overlay');
+    const canvas = document.getElementById('snapshot');
+    let stream;
+    let flashOn = false;
+    let track;
 
     async function startCamera() {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: usingFrontCamera ? "user" : "environment" },
-          audio: false
-        });
-        video.srcObject = stream;
-        track = stream.getVideoTracks()[0];
-        imageCapture = new ImageCapture(track);
-
-        flipBtn.disabled = false;
-        flashBtn.disabled = false;
-        captureBtn.disabled = false;
-        stopBtn.disabled = false;
-      } catch (err) {
-        alert("Camera access failed or not supported: " + err);
-      }
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      video.srcObject = stream;
+      track = stream.getVideoTracks()[0];
     }
 
-    function stopCamera() {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        video.srcObject = null;
-        flipBtn.disabled = true;
-        flashBtn.disabled = true;
-        captureBtn.disabled = true;
-        stopBtn.disabled = true;
-      }
-    }
-
-    async function toggleFlash() {
-      try {
-        if (!track) return;
-        const capabilities = track.getCapabilities();
-        if (capabilities.torch) {
-          const settings = track.getSettings();
-          const torchOn = !settings.torch;
-          await track.applyConstraints({ advanced: [{ torch: torchOn }] });
-          flashBtn.textContent = torchOn ? "Flash Off" : "Flash On";
-        } else {
-          alert("Flashlight not supported on this device.");
+    toggleFlashBtn.onclick = async () => {
+      if (!track) return alert("Camera not started!");
+      const capabilities = track.getCapabilities();
+      if (capabilities.torch) {
+        try {
+          flashOn = !flashOn;
+          await track.applyConstraints({ advanced: [{ torch: flashOn }] });
+        } catch (err) {
+          alert("Flash control failed: " + err.message);
         }
-      } catch (err) {
-        alert("Flash control error: " + err);
+      } else {
+        // Fallback: Screen flash simulation
+        overlay.style.opacity = 1;
+        setTimeout(() => { overlay.style.opacity = 0; }, 150);
+        alert("Torch not supported, using screen flash.");
       }
-    }
+    };
 
-    function flipCamera() {
-      usingFrontCamera = !usingFrontCamera;
-      stopCamera();
-      startCamera();
-    }
-
-    function capturePhoto() {
-      const canvas = document.createElement('canvas');
+    captureBtn.onclick = () => {
+      const context = canvas.getContext('2d');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imgData = canvas.toDataURL('image/png');
-      snapshot.src = imgData;
-      snapshot.style.display = "block";
-    }
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageURL = canvas.toDataURL('image/png');
+      const newTab = window.open();
+      newTab.document.write(`<img src="${imageURL}" style="width:100%">`);
+    };
 
-    startBtn.addEventListener('click', startCamera);
-    stopBtn.addEventListener('click', stopCamera);
-    flipBtn.addEventListener('click', flipCamera);
-    flashBtn.addEventListener('click', toggleFlash);
-    captureBtn.addEventListener('click', capturePhoto);
+    startCamera();
   </script>
 </body>
 </html>

@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Aura Scanner | SathyadarshanaAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura Energy Scanner | SathyadarshanaAI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -14,18 +14,19 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       min-height: 100vh;
-      overflow: hidden;
       text-align: center;
+      overflow: hidden;
     }
     header {
       padding: 1rem;
-      background: rgba(2, 6, 23, 0.6);
-      backdrop-filter: blur(8px);
       width: 100%;
       color: #7dd3fc;
-      font-size: 1.6em;
+      font-size: 1.8em;
       text-shadow: 0 0 12px #38bdf8;
+      background: rgba(2,6,23,0.6);
+      backdrop-filter: blur(8px);
     }
     #camera-container {
       position: relative;
@@ -35,11 +36,15 @@
       background: black;
       overflow: hidden;
     }
-    video { width: 100%; height: 100%; object-fit: cover; }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     .overlay {
       position: absolute;
       border: 2px dashed #38bdf8;
-      opacity: 0.8;
+      opacity: 0.7;
       pointer-events: none;
     }
     #palmOverlay { width: 70%; height: 60%; left: 15%; top: 20%; border-radius: 0.3em; }
@@ -101,10 +106,10 @@
   </style>
 </head>
 <body>
-  <header>Aura Scanner - Palm | Face | Body</header>
+  <header>Aura Energy Scanner</header>
 
   <div id="camera-container">
-    <video id="video" autoplay playsinline></video>
+    <video id="video" autoplay playsinline muted></video>
     <div id="palmOverlay" class="overlay"></div>
     <div id="faceOverlay" class="overlay"></div>
     <div id="bodyOverlay" class="overlay"></div>
@@ -139,6 +144,7 @@
       if (stream) stream.getTracks().forEach(t => t.stop());
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: useFront ? 'user' : 'environment' } });
       video.srcObject = stream;
+      video.play();
     }
     startCamera();
 
@@ -167,7 +173,6 @@
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video,0,0,canvas.width,canvas.height);
 
-      // Add watermark
       ctx.font = "48px Arial";
       ctx.fillStyle = "rgba(220,20,60,0.5)";
       ctx.fillText("© SathyadarshanaAI", canvas.width - 500, canvas.height - 50);
@@ -175,9 +180,6 @@
       const imgData = canvas.toDataURL('image/png');
       document.getElementById('capturedImg').src = imgData;
       document.getElementById('previewModal').style.display = 'flex';
-
-      // Auto-save for DB (Seed Engine placeholder)
-      console.log("Saved to DB (NIC) – Pending integration");
     };
 
     document.getElementById('saveBtn').onclick = () => {
@@ -191,7 +193,6 @@
       document.getElementById('previewModal').style.display = 'none';
     };
 
-    // Security: Disable right-click & dev tools
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => { if (e.ctrlKey || e.key === 'F12') e.preventDefault(); });
   </script>

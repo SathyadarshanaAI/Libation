@@ -1,72 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aura Scanner</title>
-    <!-- (Original CSS and JS links or styles, if any, remain unchanged) -->
+  <meta charset="UTF-8">
+  <title>Aura Scanner | SathyadarshanaAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #0f172a, #000);
+      color: #e0f2fe;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      text-align: center;
+    }
+    header {
+      padding: 1rem;
+      background: rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(8px);
+      width: 100%;
+      color: #7dd3fc;
+      font-size: 1.6em;
+      text-shadow: 0 0 12px #38bdf8;
+    }
+    #camera-container {
+      position: relative;
+      width: 100%;
+      max-width: 100vw;
+      height: 70vh;
+      background: black;
+      overflow: hidden;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Overlay guides */
+    .overlay {
+      position: absolute;
+      border: 2px dashed #38bdf8;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    #palmOverlay {
+      width: 70%;
+      height: 60%;
+      left: 15%;
+      top: 20%;
+      border-radius: 0.3em;
+    }
+    #faceOverlay {
+      width: 50%;
+      height: 50%;
+      left: 25%;
+      top: 25%;
+      border-radius: 50%;
+    }
+    #bodyOverlay {
+      width: 40%;
+      height: 80%;
+      left: 30%;
+      top: 10%;
+      border-radius: 0.5em;
+    }
+    /* Controls */
+    #controls {
+      margin: 1rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button {
+      padding: 0.8em 1.6em;
+      border: none;
+      border-radius: 0.5em;
+      background: linear-gradient(90deg,#38bdf8,#16f0a7);
+      color: #0f172a;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 0 15px #38bdf888;
+      transition: 0.25s;
+    }
+    button:hover { transform: scale(1.05); }
+    canvas { display: none; }
+    /* Watermark */
+    #watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(220,20,60,0.4);
+      font-size: 1.2em;
+      font-weight: bold;
+      pointer-events: none;
+      text-shadow: 0 0 6px #000;
+    }
+  </style>
 </head>
 <body>
+  <header>Aura Scanner - Palm | Face | Body</header>
 
-    <h1>Aura Scanner</h1>
+  <div id="camera-container">
+    <video id="video" autoplay playsinline></video>
+    <div id="palmOverlay" class="overlay"></div>
+    <div id="faceOverlay" class="overlay" style="display:none;"></div>
+    <div id="bodyOverlay" class="overlay" style="display:none;"></div>
+    <div id="watermark">© SathyadarshanaAI</div>
+  </div>
 
-    <p>Please select an image to scan your aura.</p>
+  <div id="controls">
+    <button onclick="setMode('palm')">Palm Mode</button>
+    <button onclick="setMode('face')">Face Mode</button>
+    <button onclick="setMode('body')">Full Body Mode</button>
+    <button id="switchCam">Switch Camera</button>
+    <button id="capture">Capture</button>
+  </div>
 
-    <!-- File input and action buttons -->
-    <input type="file" id="imageInput" accept="image/*" hidden />
-    <label for="imageInput">Choose Image</label>
-    <button id="scanButton">Scan</button>
-    <button id="demoButton">Demo Data</button>
+  <canvas id="snapshot"></canvas>
+  <a id="downloadLink" style="display:none;">Download</a>
 
-    <!-- Image preview section -->
-    <div id="previewSection">
-        <!-- The selected image will be displayed here -->
-        <img id="imagePreview" src="" alt="Image Preview" style="display:none; max-width: 100%; height: auto;" />
-    </div>
+  <script>
+    let video = document.getElementById('video');
+    let stream;
+    let useFront = true;
 
-    <!-- Results section -->
-    <div id="resultsSection">
-        <h2>Results</h2>
-        <p id="resultText">Your aura color is Blue. This indicates a calm and peaceful nature.</p>
-    </div>
+    async function startCamera() {
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: useFront ? 'user' : 'environment' } });
+      video.srcObject = stream;
+    }
+    startCamera();
 
-    <!-- JavaScript logic (unchanged except for translated text) -->
-    <script>
-        const imageInput = document.getElementById('imageInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const resultText = document.getElementById('resultText');
+    document.getElementById('switchCam').onclick = () => { useFront = !useFront; startCamera(); };
 
-        // Show selected image preview
-        imageInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    // Overlays toggle
+    function setMode(mode) {
+      document.getElementById('palmOverlay').style.display = (mode === 'palm') ? 'block' : 'none';
+      document.getElementById('faceOverlay').style.display = (mode === 'face') ? 'block' : 'none';
+      document.getElementById('bodyOverlay').style.display = (mode === 'body') ? 'block' : 'none';
+    }
 
-        // Scan button click event
-        document.getElementById('scanButton').addEventListener('click', function() {
-            if (!imageInput.value) {
-                alert("Please select an image first.");
-                return;
-            }
-            // (Scanning logic would go here; using demo data for now)
-            resultText.textContent = "Your aura color is Blue. This indicates a calm and peaceful nature.";
-        });
+    // Flashlight (only on mobiles with torch capability)
+    async function enableFlash() {
+      const track = stream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities();
+      if (capabilities.torch) {
+        try {
+          await track.applyConstraints({ advanced: [{ torch: true }] });
+        } catch (e) { console.log("Torch not supported", e); }
+      }
+    }
 
-        // Demo data button click event
-        document.getElementById('demoButton').addEventListener('click', function() {
-            // (Load or simulate demo data results)
-            imageInput.value = "";  // clear any selected file
-            imagePreview.style.display = 'none';  // hide any previous image preview
-            resultText.textContent = "Your aura color is Blue. This indicates a calm and peaceful nature.";
-        });
-    </script>
+    // Capture + watermark
+    document.getElementById('capture').onclick = async () => {
+      await enableFlash();
+      const canvas = document.getElementById('snapshot');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video,0,0,canvas.width,canvas.height);
 
+      // Add watermark
+      ctx.font = "48px Arial";
+      ctx.fillStyle = "rgba(220,20,60,0.5)";
+      ctx.fillText("© SathyadarshanaAI", canvas.width - 500, canvas.height - 50);
+
+      // Save image (download + DB prep)
+      const dataURL = canvas.toDataURL('image/png');
+      const link = document.getElementById('downloadLink');
+      link.href = dataURL;
+      link.download = `AuraScan_${Date.now()}.png`;
+      link.click();
+
+      // Seed Engine DB save (placeholder)
+      console.log("Saved to DB (NIC link) - Pending integration");
+    };
+
+    // Security: disable right-click & shortcuts
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey || e.key === 'F12') e.preventDefault();
+    });
+  </script>
 </body>
 </html>

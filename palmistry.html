@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Palmistry | Sathyadarshana Seed Engine</title>
+  <title>Palmistry Scanner | Sathyadarshana Seed Engine</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -14,20 +14,17 @@
       text-align: center;
       padding: 1.5em;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
     h1 {
       font-size: 2em;
-      margin-bottom: 1em;
       color: #7dd3fc;
       text-shadow: 0 0 12px #38bdf8;
     }
     #scanner {
       position: relative;
       width: 360px;
-      height: 300px;
+      height: 320px;
+      margin: 1em auto;
       border-radius: 1em;
       overflow: hidden;
       background: #000;
@@ -39,17 +36,15 @@
       object-fit: cover;
       border-radius: 1em;
     }
-    /* Transparent hand outline */
-    .hand-outline {
+    svg#handGuide {
       position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 90%;
-      border: 2px dashed rgba(255,255,255,0.7);
-      border-radius: 1.5em;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
+      stroke: rgba(255,255,255,0.8);
+      fill: none;
     }
     .btn-group {
       margin-top: 1em;
@@ -101,7 +96,7 @@
       pointer-events: none;
     }
     @media (max-width: 500px) {
-      #scanner { width: 95vw; height: 280px; }
+      #scanner { width: 95vw; height: 300px; }
     }
   </style>
 </head>
@@ -109,35 +104,47 @@
   <div class="watermark-bg">© SathyadarshanaAI | High Copyright</div>
 
   <h1>Palmistry Hand Scan</h1>
-  <p>Align your hand inside the outline (fingers spread, wrist at bottom). Capture for Seed Engine analysis.</p>
+  <p>Align your hand with the white guide (fingers & wrist line). Left first, then Right.</p>
 
   <div id="scanner">
     <video id="video" autoplay playsinline></video>
-    <div class="hand-outline"></div>
+    <!-- SVG overlay: five finger slots + palm + wrist line -->
+    <svg id="handGuide" viewBox="0 0 360 320">
+      <!-- Finger slots (approximate lines) -->
+      <line x1="60" y1="30" x2="60" y2="200" />
+      <line x1="110" y1="20" x2="110" y2="200" />
+      <line x1="160" y1="15" x2="160" y2="200" />
+      <line x1="210" y1="20" x2="210" y2="200" />
+      <line x1="260" y1="30" x2="260" y2="200" />
+      <!-- Palm outline -->
+      <rect x="70" y="180" width="220" height="100" rx="20" ry="20" />
+      <!-- Wrist line -->
+      <line x1="70" y1="260" x2="290" y2="260" style="stroke-dasharray:4;" />
+    </svg>
   </div>
 
   <div class="btn-group">
     <button id="startBtn">Start Camera</button>
     <button id="switchBtn">Switch Camera</button>
-    <button id="captureLeft">Capture Left Hand</button>
-    <button id="captureRight">Capture Right Hand</button>
+    <button id="captureBtn">Capture Left Hand</button>
   </div>
 
   <div id="seed-info">
     <h2>Seed Engine Analysis</h2>
-    <p>Your palm scan is stored securely and processed with AI to detect life, head, fate, and wrist (Manikhanda) lines.</p>
-    <p>The analysis integrates KP Sub-Lord astrology, numerology, and cosmic patterns to generate your unique report (saved under NIC).</p>
+    <p>Your palm lines (life, head, fate, and Manikhanda wrist line) will be analyzed.</p>
+    <p>KP Sub-Lord astrology, numerology, and cosmic data will generate your final report, stored securely under your NIC for future access.</p>
   </div>
 
   <script>
     const video = document.getElementById('video');
     const startBtn = document.getElementById('startBtn');
     const switchBtn = document.getElementById('switchBtn');
-    const captureLeft = document.getElementById('captureLeft');
-    const captureRight = document.getElementById('captureRight');
+    const captureBtn = document.getElementById('captureBtn');
     const seedInfo = document.getElementById('seed-info');
+    const handGuide = document.getElementById('handGuide');
     let stream = null;
     let usingFront = false;
+    let leftCaptured = false;
 
     async function startCamera() {
       if (stream) {
@@ -157,19 +164,17 @@
       startCamera();
     };
 
-    function captureHand(side) {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth || 360;
-      canvas.height = video.videoHeight || 300;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      // Future: send to server for Seed Engine
-      seedInfo.style.display = "block";
-      seedInfo.innerHTML += `<p><strong>${side} hand captured.</strong> Seed Engine will process your lines shortly.</p>`;
-    }
-
-    captureLeft.onclick = () => captureHand("Left");
-    captureRight.onclick = () => captureHand("Right");
+    captureBtn.onclick = () => {
+      if (!leftCaptured) {
+        leftCaptured = true;
+        captureBtn.textContent = "Capture Right Hand";
+        handGuide.setAttribute("transform", "scale(-1,1) translate(-360,0)"); // mirror overlay
+      } else {
+        seedInfo.style.display = "block";
+        captureBtn.disabled = true;
+        alert("Both hands captured. Seed Engine will process your report.");
+      }
+    };
   </script>
 </body>
 </html>

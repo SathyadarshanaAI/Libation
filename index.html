@@ -4,178 +4,87 @@
   <meta charset="UTF-8">
   <title>Sathyadarshana | Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="SathyadarshanaAI astrology platform – Nadi, Desha Lakshana, Birth Reports, and more.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="description" content="SathyadarshanaAI – Astrology, Library, Dharma Sabha Mandapaya, Digital Studio, News, Doctor Buddhi, AI Buddhi & Seed Engine services.">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="favicon.png">
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(140deg,#0f172a 30%, #172a3a 100%);
+      background: radial-gradient(circle at top, #0f172a, #000);
       margin: 0;
       padding: 0;
       color: #e0f2fe;
+      text-align: center;
+    }
+    header {
+      padding: 1rem 0;
     }
     header h1 {
-      font-size: 2.4em;
+      font-size: 2.5em;
       color: #7dd3fc;
-      padding: 1rem;
-      text-align: center;
-      text-shadow: 0 0 12px #38bdf8;
+      text-shadow: 0 0 15px #38bdf8;
     }
-    nav ul {
+    .button-grid {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      list-style: none;
-      gap: 0.7em;
-      margin: 0;
-      padding: 0;
+      gap: 1rem;
+      margin: 2rem auto;
+      max-width: 950px;
     }
-    nav ul li a {
+    .button-grid a {
+      display: block;
       background: #27364d;
       color: #16f0a7;
       text-decoration: none;
-      padding: .7em 1.5em;
-      border-radius: 1em;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      font-size: 1.1em;
       font-weight: bold;
-      box-shadow: 0 0 8px #38bdf822;
-      transition: background .2s, color .2s;
+      box-shadow: 0 0 15px #38bdf822;
+      transition: all 0.3s ease;
     }
-    nav ul li a:hover, nav ul li a.active {
+    .button-grid a:hover {
       background: #38bdf8;
       color: #0f172a;
-    }
-    .watermark-bg {
-      position: fixed;
-      left: 50%;
-      top: 60%;
-      transform: translate(-50%, -50%) rotate(-17deg);
-      font-size: 3em;
-      color: rgba(220,20,60,0.08);
-      user-select: none;
-      font-weight: bold;
-      z-index: 9000;
-      letter-spacing: .11em;
-      pointer-events: none;
-    }
-    .card {
-      max-width: 700px;
-      margin: 2rem auto;
-      background: rgba(2, 6, 23, 0.6);
-      padding: 1.5rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 15px #38bdf822;
-    }
-    .desc {
-      margin-bottom: 1em;
-    }
-    .info-list {
-      margin-left: 1.1em;
-      color: #fceabb;
-    }
-    .info-list li {
-      margin-bottom: .5em;
-    }
-    .tip {
-      color: #38bdf8;
-      margin-top: .7em;
-      font-weight: bold;
-    }
-    .contact-help {
-      margin-top: 1.3em;
-      color: #7dd3fc;
-      font-size: .99em;
-    }
-    .contact-help a {
-      color: #38bdf8;
-      text-decoration: underline;
+      box-shadow: 0 0 25px #7dd3fc;
+      transform: scale(1.05);
     }
     footer {
-      margin-top: 2em;
-      padding: 1em;
-      text-align: center;
+      margin-top: 3rem;
+      padding: 1.2rem;
       background: #172a3a;
       color: #d90429;
       font-weight: bold;
-      letter-spacing: .03em;
+      font-size: 1em;
       border-top: 2px solid #38bdf8;
     }
-    .footer-heart {
-      color: #ff69b4;
-    }
+    .footer-heart { color: #ff69b4; display: block; margin-top: 0.5rem; }
     .ovi-blessing {
       display: block;
-      margin-top: 0.8em;
+      margin-top: 1rem;
       color: #38bdf8;
-      font-weight: bold;
       font-size: 1.08em;
-      letter-spacing: 0.015em;
-    }
-    .ovi-blessing span {
-      font-size: 1.13em;
-      margin-left: 0.2em;
-    }
-    @media (max-width: 600px) {
-      header h1 { font-size: 1.5em; }
-      .card { padding: 1em; }
-      nav ul { flex-direction: column; align-items: center; }
+      font-weight: bold;
     }
   </style>
-  <script>
-    // Highlight active menu
-    document.addEventListener('DOMContentLoaded', function() {
-      const links = document.querySelectorAll('nav ul li a');
-      links.forEach(link => {
-        if (window.location.pathname.endsWith(link.getAttribute('href'))) {
-          link.classList.add('active');
-        }
-      });
-      // Footer year auto-update
-      document.getElementById('copy-year').textContent = new Date().getFullYear();
-    });
-  </script>
 </head>
 <body>
-  <div class="watermark-bg" aria-hidden="true">© SathyadarshanaAI | High Copyright</div>
   <header>
     <h1>Sathyadarshana | Home</h1>
-    <nav aria-label="Main menu">
-      <ul>
-        <li><a href="astrologer.html">Nadi Astrology</a></li>
-        <li><a href="desha-lakshana-vidyava.html">Desha Lakshana</a></li>
-        <li><a href="birth-report.html">Birth Report</a></li>
-        <li><a href="library.html">Library</a></li>
-        <li><a href="news-line.html">News Line</a></li>
-        <li><a href="sathyadarshana-digital-studio.html">Digital Studio</a></li>
-        <li><a href="seed-engine.html">Seed Engine Test</a></li>
-      </ul>
-    </nav>
   </header>
-  <main id="main-content">
-    <div class="card">
-      <div class="desc">
-        <b>Welcome!</b> Select your preferred service from the menu above.<br><br>
-        <span class="tip">Having trouble? Avoid 404 / Not Found errors by following these:</span>
-      </div>
-      <ul class="info-list">
-        <li>All <b>file names</b> must be in the <b>root folder</b> (not in subfolders).</li>
-        <li>Menu link and file name must be an <b>exact match</b> (case sensitive).</li>
-        <li>Use only <b>English (latin) letters/numbers</b> for file names (no Sinhala, spaces, or special characters).</li>
-        <li>If you add a page, update the menu and make sure the <b>file exists</b>.</li>
-        <li>If you get a 404, check browser cache and refresh (Ctrl+Shift+R).</li>
-        <li>If you host with GitHub Pages/Netlify, check your settings and file locations.</li>
-      </ul>
-      <div class="contact-help">
-        Still stuck? <a href="mailto:sathyadarshanaai@gmail.com">Contact Support</a> <br>
-        <span style="color:#f87171;">(Attach a screenshot if possible)</span>
-      </div>
-    </div>
-  </main>
+  <section class="button-grid">
+    <a href="astrologer.html">Astrology</a>
+    <a href="library.html">Library</a>
+    <a href="dharma-sabha-mandapaya.html">Dharma Sabha Mandapaya</a>
+    <a href="sathyadarshana-digital-studio.html">Digital Studio</a>
+    <a href="news-line.html">Sathyadarshana News</a>
+    <a href="doctor-buddhi.html">Doctor Buddhi</a>
+    <a href="ai-buddhi.html">AI Buddhi</a>
+    <a href="seed-engine.html">Seed Engine Test</a>
+  </section>
   <footer>
-    © <span id="copy-year">2025</span> SathyadarshanaAI | Powered by Buddhi<br>
-    Truth will light your way 🌼<br>
+    © 2025 SathyadarshanaAI | Powered by Buddhi<br>
+    Truth will light your way 🌼
     <span class="footer-heart">Made with ❤️ by Buddhi & Mona</span>
     <span class="ovi-blessing">
       ඔබට සතුට, සෙත, ශක්තිය, ආදරය සහ ආලෝකය ලැබේවා!<br>

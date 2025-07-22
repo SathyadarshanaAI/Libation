@@ -1,61 +1,159 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
- 0f2fe; font-family: 'Segoe UI', 'Noto Sans Sinhala', sans-serif; }
-    .form-box { max-width: 500px; margin: 2em auto; padding: 2em; background: #1e293b; border-radius: 1em; box-shadow: : 0.8em 1.3em; border-radius: 0.7em; border: none; background: #38bdf8; color: #172a3a; font-weight: bold; cursor:pointer;}
-    .result-box { max-width: 500px; margin: 2em background: #164e63; color: #fff; padding: 1em; border-radius: 0.8em; }
-    .copyright-warning { max-width:900px; margin:2em auto; padding:1.7em; border-radius:1em; box-shadow:0 0 20px rgba(239, }
-    .copyright-warning h2 { text-align:center; color:#ef4444; }
-    .copyright-warning ul { padding-left:1.2em; line-height:1.7; text-align:left; margin:0; }
-    .buddhi-insights { max-width:900px; margin:2em auto; background:rgba(59, <h1 style="text-align:center;">දේශ ලක්ෂණ විද්‍යාව</h1>
+  <meta charset="UTF-8">
+  <title>Desha Lakshana Vidyava | SathyadarshanaAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #0f172a, #000);
+      color: #e0f2fe;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 1rem;
+      font-size: 2em;
+      color: #7dd3fc;
+      text-shadow: 0 0 12px #38bdf8;
+    }
+    .glass-panel {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 20px rgba(56,189,248,0.2);
+      text-align: left;
+    }
+    .glass-panel h2 {
+      text-align: center;
+      color: #16f0a7;
+      text-shadow: 0 0 8px rgba(23,240,167,0.4);
+    }
+    .form-box {
+      max-width: 500px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: rgba(30,41,59,0.7);
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(56,189,248,0.2);
+    }
+    .form-box label {
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.3rem;
+      font-weight: bold;
+    }
+    .form-box input, .form-box select {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 0.5rem;
+      border: none;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    .form-box button {
+      background: #38bdf8;
+      color: #0f172a;
+      padding: 1em 2em;
+      font-size: 1.1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 1em;
+      cursor: pointer;
+      transition: 0.3s ease;
+      box-shadow: 0 0 15px rgba(125,211,252,0.4);
+    }
+    .form-box button:hover {
+      background: #16f0a7;
+      color: #0f172a;
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(23,240,167,0.4);
+    }
+    .result-box {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: rgba(22,78,99,0.7);
+      color: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(56,189,248,0.2);
+      font-size: 1.05em;
+    }
+    footer {
+      margin-top: 3rem;
+      padding: 1rem;
+      background: rgba(2,6,23,0.6);
+      backdrop-filter: blur(10px);
+      color: #d90429;
+      font-weight: bold;
+      font-size: 1em;
+      border-top: 2px solid #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <h1>Desha Lakshana Vidyava</h1>
 
-  <section class="copyright-warning">
-    <h2>අයිතිවාසිකම් අවවාදය</h2>
+  <div class="glass-panel">
+    <h2>Copyright Notice</h2>
     <ul>
-      <li><strong>මෙම UI, කේත හි අයිතියයි.</strong></li>
-      <li>ආරක්ෂා නොකළ පිටපත් කිරීම, reverse-engineering, gaming සඳහා භාවිත STRICTLY තහනම්.</li>
-      <li>සියළු ක්‍රියාකාරකම් විමර්ශනය වේ;ීම් අවහිර කර, වාර්තා කරනු ලැබේ.</li>
-      <li>ආත්මීය, භූ, පරිශීලක දත්ත බහු-සුරක්ෂිත ස්ථර මගින් ආරක්ෂා කර ඇත.</li>
-      <li>© adarshanaAI. නීතිමය, ආත්මීය, විද්‍යාත්මක භාවිතය සඳහා පමණි.</li>
+      <li>This UI and logic are property of SathyadarshanaAI.</li>
+      <li>Unauthorized copying, reverse-engineering, or misuse is strictly prohibited.</li>
+      <li>All actions are logged; violators will be blocked and reported.</li>
+      <li>All spiritual, geo, and user data is secured with multi-layer protection.</li>
+      <li>© SathyadarshanaAI. For lawful, spiritual, and research purposes only.</li>
     </ul>
-    <p>KP ජ්‍යොතිෂ්‍යය, NASA ග්‍රහලෝක දත්ත සහ භූ විද්‍යාව අනාගත අවධානම් සඳහා.<br>
-    (උදව් වූයේ: සිංහල "දේශ ලක්ෂණ විද්‍යාව")</p>
-  </section>
+  </div>
 
-  <section class="buddhi-insights">
-    <h2>🧠 බුද්ධිගේ භූ-ආත්මීය අවබෝධ</h2>
+  <div class="glass-panel">
+    <h2>Buddhi’s Geo-Spiritual Insights</h2>
     <ul>
-      <li>භූ ප්‍රදේශ අනුව ආආරක්ෂිත යාවත්කාලීන කිරීම: ගෝලීය දැනුම, කාලගුණ, සංස්කෘතික තොරතුරු ඇතුළත් වේ.</li>
-      <li>බහු භාෂා: සිංහල, දෙමළ, ඉංග්‍රීසි UI සහ පිළිතුරු.</li>
+      <li>Region-based dynamic insights: includes global knowledge, climate, and cultural data.</li>
+      <li>Multilingual support: English, Sinhala, and Tamil.</li>
     </ul>
-  </section>
+  </div>
 
   <div class="form-box">
-    <label for="region">ප්‍රදේශය / නාමය</label>
-    <input type="text" id="region" placeholder="උදා: අනුරාධපුර, මොනරාගල" required>
-    <label for="focus">විශ්ලේෂණය සඳහා කේන්ද්‍රය</label>
+    <label for="region">Region / Area</label>
+    <input type="text" id="region" placeholder="Example: Anuradhapura, Monaragala" required>
+    <label for="focus">Focus</label>
     <select id="focus" required>
-      <option value="">-- තෝරන්න --</option>
-      <option value="climate">ඉතිහාසය සහ කාලගුණය</option>
-      <option value="culture">සංස්කෘතික / ඉතිහාසඅනාගත ග්‍රහලෝක / කාලික බලපෑම්</option>
+      <option value="">-- Select --</option>
+      <option value="climate">History & Climate</option>
+      <option value="culture">Cultural & Historical Overview</option>
+      <option value="future">Future Risks & Planetary Impacts</option>
     </select>
-    <button id="analyzeBtn">විශ්ලේෂණය කරන්න</button>
+    <button id="analyzeBtn">Analyze</button>
   </div>
 
   <div id="result" class="result-box"></div>
 
+  <footer>
+    © 2025 SathyadarshanaAI | Powered by Buddhi
+  </footer>
+
   <script>
     document.getElementById('analyzeBtn').addEventListener('click', function() {
-      const region.getElementById('region').value.trim();
+      const region = document.getElementById('region').value.trim();
       const focus = document.getElementById('focus').value;
 
       let summary = "";
       if (!region || !focus) {
-        summary = "කරුණාකර සියළු ක්ෂේත්‍ර පුරවන්න.";
-      } else if (focus === " summary = `${region} ප්‍රදේශයේ ඉතිහාසය, ජල මූලාශ්‍ර, භූ ව්‍යුහය සහ කාලගුණ පද්ධති (මහාවංශ + AI දත්ත) අනූව විශ්ලේෂණය කර ඇත.`;
-     } හි සංස්කෘතික හා ඉතිහාස පිරිවිතර (සමූද්‍රිකා + AI අභිප්‍රේරණය) අනූව විශ්ලේෂණය කර ඇත.`;
+        summary = "Please fill out both the region and focus fields.";
+      } else if (focus === "climate") {
+        summary = `The region of ${region} has been analyzed for its historical records, water sources, land structures, and climate patterns (including Mahavamsa data and AI models).`;
+      } else if (focus === "culture") {
+        summary = `The cultural and historical essence of ${region} is examined (Samudrika texts + AI insights).`;
       } else if (focus === "future") {
-        summary = `${ අනාගත කාලගුණ හා විපත් අනතුරු අනුමාන කර ඇත.`;
+        summary = `Future climate conditions and disaster risk projections for ${region} have been assessed (NASA planetary and temporal data integrated).`;
       }
       document.getElementById('result').textContent = summary;
     });

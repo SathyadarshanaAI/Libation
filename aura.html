@@ -1,320 +1,206 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Aura Scanner</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura Scanner - Sinhala</title>
+  <!-- Load modern fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&family=Noto+Sans+Sinhala:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       background: #000;
       color: #fff;
-      font-family: sans-serif;
-      /* Disable text selection for copy-protection */
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
+      font-family: 'Inter', 'Zen Maru Gothic', 'Noto Sans Sinhala', sans-serif;
+      overflow: hidden;
     }
-    #camera-container {
+    #cameraContainer {
       position: relative;
       width: 100%;
       height: 100vh;
       overflow: hidden;
-      background: #000;
     }
-    #camera-container video {
+    video, canvas {
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      z-index: 0;
+      background: #000;
     }
-    /* Overlay guide styles */
-    .overlay-lines {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border: 2px dashed rgba(255, 255, 255, 0.5);
-      z-index: 2;
-    }
-    #overlay-face {
-      width: 30vw;
-      height: 30vw;
-      border-radius: 50%;
+    #cameraFeed {
       display: none;
     }
-    #overlay-body {
-      width: 60vw;
-      height: 80vh;
+    #captureCanvas {
       display: none;
     }
-    /* Watermark text */
-    #watermark {
+    #controlsTop, #controlsBottom {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-30deg);
-      font-size: 5rem;
-      font-weight: bold;
-      color: #fff;
-      opacity: 0.05;
-      z-index: 1;
-      pointer-events: none;
-    }
-    /* Control buttons container */
-    #controls {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      z-index: 3;
+      left: 0;
+      right: 0;
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
-      gap: 5px;
+      gap: 10px;
+      z-index: 2;
     }
-    #controls button {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border: 1px solid #0ff;
-      padding: 10px 15px;
-      margin: 5px;
-      border-radius: 5px;
+    #controlsTop {
+      top: 10px;
+    }
+    #controlsBottom {
+      bottom: 15px;
+    }
+    button {
       font-size: 1rem;
+      padding: 10px 15px;
+      border: 2px solid #0ff;
+      background: rgba(0,0,0,0.3);
+      color: #0ff;
+      border-radius: 5px;
       cursor: pointer;
+      box-shadow: 0 0 8px #00ffff88, 0 0 16px #00ffff44;
+      transition: transform 0.1s;
     }
-    #controls button:disabled {
+    button:active {
+      transform: scale(0.95);
+    }
+    button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      box-shadow: none;
     }
-    /* Footer copyright text */
-    #footer {
+    #resultText {
       position: absolute;
       bottom: 0;
+      left: 0;
       width: 100%;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #888;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 3;
-      padding: 2px 0;
-    }
-    /* Glowing text effect (for headings and result text) */
-    .glow {
-      text-shadow: 
-        0 0 10px #fff,
-        0 0 20px #fff,
-        0 0 30px #0ff,
-        0 0 40px #0ff,
-        0 0 50px #0ff,
-        0 0 60px #0ff,
-        0 0 70px #0ff;
-      animation: neon-glow 1.5s ease-in-out infinite alternate;
-    }
-    @keyframes neon-glow {
-      from {
-        text-shadow: 
-          0 0 5px #fff,
-          0 0 10px #0ff,
-          0 0 20px #0ff,
-          0 0 30px #0ff,
-          0 0 40px #0ff,
-          0 0 50px #0ff,
-          0 0 60px #0ff;
-      }
-      to {
-        text-shadow: 
-          0 0 10px #fff,
-          0 0 20px #0ff,
-          0 0 30px #0ff,
-          0 0 40px #0ff,
-          0 0 50px #0ff,
-          0 0 60px #0ff,
-          0 0 80px #0ff;
-      }
-    }
-    /* Result overlay modal */
-    #result {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      text-align: center;
-      color: #fff;
+      padding: 15px;
+      background: rgba(0,0,0,0.6);
+      font-size: 1.1rem;
+      line-height: 1.5;
       display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 5;
-    }
-    #result img {
-      max-width: 80%;
-      height: auto;
-      border: 2px solid #fff;
-      margin-bottom: 10px;
-    }
-    #closeResult {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-      border: 1px solid #fff;
-      font-size: 1.2rem;
-      border-radius: 3px;
-      padding: 5px 10px;
-      cursor: pointer;
+      z-index: 2;
+      text-shadow: 0 0 5px #fff;
     }
   </style>
 </head>
-<body oncontextmenu="return false">
-  <div id="camera-container">
-    <video id="video" autoplay playsinline></video>
-    <div id="overlay-face" class="overlay-lines"></div>
-    <div id="overlay-body" class="overlay-lines"></div>
-    <div id="watermark">SATHYADARSHANA</div>
-    <div id="controls">
-      <button id="startBtn">Start Camera</button>
-      <button id="switchBtn" disabled>Switch Camera</button>
-      <button id="flashBtn" disabled>Flash</button>
-      <button id="guideBtn">Face/Body Guide</button>
-      <button id="captureBtn" disabled>Capture Aura</button>
+<body>
+  <div id="cameraContainer">
+    <video id="cameraFeed" autoplay playsinline></video>
+    <canvas id="captureCanvas"></canvas>
+    <div id="controlsTop">
+      <button id="btnStart">කැමරාව ආරම්භ කරන්න</button>
+      <button id="btnSwitch" disabled>කැමරාව මාරු කරන්න</button>
+      <button id="btnReset" disabled>යලි සකසන්න</button>
     </div>
-    <div id="footer">© 2025 Sathyadarshana Seed Engine</div>
-    <!-- Result overlay (hidden until capture) -->
-    <div id="result">
-      <button id="closeResult">X</button>
-      <h2 id="result-heading" class="glow">Aura Analysis Results</h2>
-      <img id="result-img" src="" alt="Captured Aura" />
-      <div id="result-text" class="glow"></div>
+    <div id="controlsBottom">
+      <button id="btnCaptureBody" disabled>සම්පූර්ණ ශරීර රූපය ගන්න</button>
+      <button id="btnCaptureFace" disabled>මුහුණ රූපය ගන්න</button>
     </div>
+    <div id="resultText"></div>
   </div>
   <script>
-    const videoElem = document.getElementById('video');
-    const startBtn = document.getElementById('startBtn');
-    const switchBtn = document.getElementById('switchBtn');
-    const flashBtn = document.getElementById('flashBtn');
-    const guideBtn = document.getElementById('guideBtn');
-    const captureBtn = document.getElementById('captureBtn');
-    const overlayFace = document.getElementById('overlay-face');
-    const overlayBody = document.getElementById('overlay-body');
-    const resultOverlay = document.getElementById('result');
-    const resultImg = document.getElementById('result-img');
-    const resultText = document.getElementById('result-text');
-    const closeResultBtn = document.getElementById('closeResult');
+    const video = document.getElementById('cameraFeed');
+    const canvas = document.getElementById('captureCanvas');
+    const ctx = canvas.getContext('2d');
+    const btnStart = document.getElementById('btnStart');
+    const btnSwitch = document.getElementById('btnSwitch');
+    const btnCaptureBody = document.getElementById('btnCaptureBody');
+    const btnCaptureFace = document.getElementById('btnCaptureFace');
+    const btnReset = document.getElementById('btnReset');
+    const resultDiv = document.getElementById('resultText');
     let currentStream = null;
-    let currentFacingMode = 'environment';
-    let torchOn = false;
-    let showingFaceGuide = false;
-    // Toggle face/body guide overlay
-    guideBtn.addEventListener('click', () => {
-      showingFaceGuide = !showingFaceGuide;
-      if (showingFaceGuide) {
-        overlayFace.style.display = 'block';
-        overlayBody.style.display = 'none';
-      } else {
-        overlayFace.style.display = 'none';
-        overlayBody.style.display = 'block';
-      }
-    });
-    // Start camera stream
-    startBtn.addEventListener('click', () => {
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode } })
-        .then(stream => {
-          currentStream = stream;
-          videoElem.srcObject = stream;
-          // Show full-body guide by default
-          overlayBody.style.display = 'block';
-          captureBtn.disabled = false;
-          // Enable switch if multiple cameras
-          navigator.mediaDevices.enumerateDevices().then(devices => {
-            const videoDevices = devices.filter(d => d.kind === 'videoinput');
-            if (videoDevices.length > 1) {
-              switchBtn.disabled = false;
-            }
-          });
-          // Enable flash if torch available
-          const track = stream.getVideoTracks()[0];
-          const capabilities = track.getCapabilities();
-          if (capabilities.torch) {
-            flashBtn.disabled = false;
-          }
-        })
-        .catch(err => {
-          console.error('Camera start failed:', err);
-          alert('Unable to access camera: ' + err.message);
-        });
-    });
-    // Switch front/back camera
-    switchBtn.addEventListener('click', () => {
-      currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
+    let currentFacing = 'user'; // default to front camera
+    
+    async function startCamera() {
       if (currentStream) {
-        currentStream.getTracks().forEach(t => t.stop());
+        currentStream.getTracks().forEach(track => track.stop());
       }
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode } })
-        .then(stream => {
-          currentStream = stream;
-          videoElem.srcObject = stream;
-          // Reset torch state on camera switch
-          torchOn = false;
-          flashBtn.disabled = true;
-          // Check new camera's torch capability
-          const track = stream.getVideoTracks()[0];
-          const capabilities = track.getCapabilities();
-          if (capabilities.torch) {
-            flashBtn.disabled = false;
-          }
-        })
-        .catch(err => {
-          console.error('Camera switch failed:', err);
-          alert('Unable to switch camera: ' + err.message);
-        });
-    });
-    // Toggle flashlight on/off
-    flashBtn.addEventListener('click', () => {
-      const track = currentStream.getVideoTracks()[0];
-      torchOn = !torchOn;
-      track.applyConstraints({ advanced: [{ torch: torchOn }] })
-        .catch(err => console.error('Torch toggle failed:', err));
-    });
-    // Capture aura image
-    captureBtn.addEventListener('click', () => {
-      // Draw current video frame to a canvas
-      const canvas = document.createElement('canvas');
-      canvas.width = videoElem.videoWidth;
-      canvas.height = videoElem.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(videoElem, 0, 0, canvas.width, canvas.height);
-      // Convert to image and display
-      const dataURL = canvas.toDataURL('image/png');
-      resultImg.src = dataURL;
-      // Demo aura analysis text (colors, chakras, meanings)
-      resultText.innerHTML = 'නීල වර්ණය (කණ්ඨ චක්‍රය - සන්නිවේදනය), <br>කොළ වර්ණය (හෘදය චක්‍රය - කරුණාව)';
-      // Show result overlay
-      resultOverlay.style.display = 'flex';
-      // Turn off torch if it was on (to save battery/ not blind user)
-      if (torchOn) {
-        flashBtn.click();
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacing } });
+        currentStream = stream;
+        video.srcObject = stream;
+        video.style.display = 'block';
+        btnSwitch.disabled = false;
+        btnCaptureBody.disabled = false;
+        btnCaptureFace.disabled = false;
+        btnStart.disabled = true;
+      } catch(err) {
+        alert('කැමරාවට ප්‍රවේශ වීම අසාර්ථක විය: ' + err.message);
+        console.error('Camera start error:', err);
       }
-    });
-    // Close result and resume camera view
-    closeResultBtn.addEventListener('click', () => {
-      resultOverlay.style.display = 'none';
-    });
-    // Basic prevention of copy/inspect shortcuts
-    document.addEventListener('keydown', (e) => {
-      if (
-        e.keyCode === 123 || 
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || 
-        (e.ctrlKey && e.keyCode === 85)
-      ) {
-        e.preventDefault();
+    }
+    
+    async function switchCamera() {
+      currentFacing = (currentFacing === 'user') ? 'environment' : 'user';
+      await startCamera();
+    }
+    
+    function capturePhoto(mode) {
+      if (!currentStream) return;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      let resultHTML = '';
+      if (mode === 'face') {
+        resultHTML = 'මුහුණේ සහ හිසේ අවට <span style="color:#0ff">නිල්</span> පැහැති ඕරා දිස් වේ. ' +
+                     'එය විශුද්ධ චක්‍රය සමඟ සම්බන්ධ වන අතර, ඔබේ සන්නිවේදනය සහ අවංකතාව පෙන්වයි.';
+        ctx.save();
+        ctx.fillStyle = '#00ffff';
+        ctx.shadowColor = 'rgba(0, 255, 255, 0.7)';
+        ctx.shadowBlur = 50;
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, canvas.height*0.35, canvas.width * 0.15, 0, 2*Math.PI);
+        ctx.fill();
+        ctx.restore();
+      } else {
+        resultHTML = 'හිස අවට <span style="color:#f0f">දම්</span> පැහැති ඕරා දිස් වේ. ' +
+                     'එය සහස්‍රාර චක්‍රය සමඟ සම්බන්ධ වන අතර, ඔබේ ආධ්‍යාත්මිකත්වය සහ ප්‍රඥාව පෙන්වයි. ' +
+                     'තවද, හදවත අවට <span style="color:#0f0">කොළ</span> පැහැති ඕරා දිස් වේ. ' +
+                     'එය අනාහත චක්‍රය සමඟ සම්බන්ධ වන අතර, ඔබේ ප්‍රේමය සහ කරුණාව පෙන්වයි.';
+        ctx.save();
+        ctx.fillStyle = '#ff00ff';
+        ctx.shadowColor = 'rgba(255, 0, 255, 0.7)';
+        ctx.shadowBlur = 60;
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, canvas.height*0.15, canvas.width * 0.1, 0, 2*Math.PI);
+        ctx.fill();
+        ctx.restore();
+        ctx.save();
+        ctx.fillStyle = '#00ff00';
+        ctx.shadowColor = 'rgba(0, 255, 0, 0.7)';
+        ctx.shadowBlur = 60;
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, canvas.height*0.4, canvas.width * 0.15, 0, 2*Math.PI);
+        ctx.fill();
+        ctx.restore();
       }
-    });
+      video.style.display = 'none';
+      canvas.style.display = 'block';
+      resultDiv.innerHTML = resultHTML;
+      resultDiv.style.display = 'block';
+      btnCaptureBody.disabled = true;
+      btnCaptureFace.disabled = true;
+      btnSwitch.disabled = true;
+      btnReset.disabled = false;
+    }
+    
+    function resetScanner() {
+      resultDiv.style.display = 'none';
+      resultDiv.innerHTML = '';
+      canvas.style.display = 'none';
+      video.style.display = 'block';
+      btnCaptureBody.disabled = false;
+      btnCaptureFace.disabled = false;
+      btnSwitch.disabled = false;
+      btnReset.disabled = true;
+    }
+    
+    btnStart.addEventListener('click', startCamera);
+    btnSwitch.addEventListener('click', switchCamera);
+    btnCaptureBody.addEventListener('click', () => capturePhoto('body'));
+    btnCaptureFace.addEventListener('click', () => capturePhoto('face'));
+    btnReset.addEventListener('click', resetScanner);
   </script>
 </body>
 </html>

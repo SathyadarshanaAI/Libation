@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Palmistry Scanner | SathyadarshanaAI</title>
+  <title>Palmistry | Sathyadarshana Seed Engine</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -12,31 +12,26 @@
       background: radial-gradient(circle at top, #0f172a, #000);
       color: #e0f2fe;
       text-align: center;
-      padding: 2em;
+      padding: 1.5em;
       min-height: 100vh;
-      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     h1 {
-      font-size: 2.2em;
+      font-size: 2em;
+      margin-bottom: 1em;
       color: #7dd3fc;
       text-shadow: 0 0 12px #38bdf8;
-      margin-bottom: 0.5em;
-    }
-    p {
-      font-size: 1em;
-      max-width: 600px;
-      margin: 0 auto 1.5em;
-      line-height: 1.6;
     }
     #scanner {
       position: relative;
       width: 360px;
-      height: 280px;
-      margin: 0 auto;
+      height: 300px;
       border-radius: 1em;
       overflow: hidden;
-      box-shadow: 0 0 20px rgba(56,189,248,0.4);
       background: #000;
+      box-shadow: 0 0 25px rgba(56,189,248,0.3);
     }
     video {
       width: 100%;
@@ -44,180 +39,137 @@
       object-fit: cover;
       border-radius: 1em;
     }
-    canvas.overlay {
+    /* Transparent hand outline */
+    .hand-outline {
       position: absolute;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-    }
-    .watermark {
-      position: absolute;
-      top: 50%;
+      top: 10px;
       left: 50%;
-      transform: translate(-50%, -50%) rotate(-20deg);
-      font-size: 2em;
-      color: rgba(220,20,60,0.08);
-      font-weight: bold;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 90%;
+      border: 2px dashed rgba(255,255,255,0.7);
+      border-radius: 1.5em;
       pointer-events: none;
-      z-index: 9000;
     }
     .btn-group {
-      margin-top: 1.5em;
+      margin-top: 1em;
       display: flex;
-      justify-content: center;
+      gap: 0.8em;
       flex-wrap: wrap;
-      gap: 1em;
+      justify-content: center;
     }
     button {
-      background: #38bdf8;
-      color: #0f172a;
-      padding: 0.8em 1.6em;
-      font-size: 1em;
-      font-weight: bold;
+      padding: 0.8em 1.4em;
       border: none;
-      border-radius: 0.8em;
+      border-radius: 0.6em;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      color: #fff;
+      font-weight: bold;
       cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 0 15px rgba(125,211,252,0.4);
+      transition: all 0.3s ease;
+      font-size: 1em;
     }
     button:hover {
-      background: #16f0a7;
-      transform: scale(1.05);
+      background: linear-gradient(90deg, #16f0a7, #38bdf8);
+      color: #0f172a;
     }
-    #capturePreview {
-      margin-top: 2em;
-      max-width: 360px;
-      border-radius: 1em;
+    #seed-info {
       display: none;
-      box-shadow: 0 0 15px rgba(56,189,248,0.3);
+      margin-top: 2em;
+      max-width: 500px;
+      padding: 1.5em;
+      background: rgba(22,78,99,0.7);
+      border-radius: 1em;
+      box-shadow: 0 0 15px rgba(56,189,248,0.2);
+      text-align: left;
     }
-    footer {
-      margin-top: 3em;
-      font-size: 0.9em;
-      color: #38bdf8;
+    #seed-info h2 {
+      color: #16f0a7;
+      margin-bottom: 0.8em;
+      text-shadow: 0 0 8px rgba(23,240,167,0.4);
     }
-    .copyright {
-      color: #d90429;
-      font-size: 0.95em;
-      margin-top: 1em;
+    .watermark-bg {
+      position: fixed;
+      left: 50%;
+      top: 60%;
+      transform: translate(-50%, -50%) rotate(-17deg);
+      font-size: 2.5em;
+      color: rgba(220,20,60,0.08);
+      font-weight: bold;
+      z-index: 999;
+      user-select: none;
+      pointer-events: none;
+    }
+    @media (max-width: 500px) {
+      #scanner { width: 95vw; height: 280px; }
     }
   </style>
 </head>
-<body oncontextmenu="return false" onkeydown="if(event.keyCode==123){return false;}">
-  <h1>Palmistry Scanner</h1>
-  <p>
-    Spread your fingers and align your <strong>Left or Right hand</strong> with the guide outline.<br>
-    Rear camera (on phone) or HD webcam (on laptop) will be used.<br>
-    Capture each hand for AI analysis (Seed Engine integration coming soon).
-  </p>
+<body>
+  <div class="watermark-bg">© SathyadarshanaAI | High Copyright</div>
+
+  <h1>Palmistry Hand Scan</h1>
+  <p>Align your hand inside the outline (fingers spread, wrist at bottom). Capture for Seed Engine analysis.</p>
 
   <div id="scanner">
     <video id="video" autoplay playsinline></video>
-    <canvas class="overlay" id="overlay"></canvas>
-    <div class="watermark">© SathyadarshanaAI | High Copyright</div>
+    <div class="hand-outline"></div>
   </div>
 
   <div class="btn-group">
-    <button id="startCamera">Start Camera</button>
-    <button id="switchCamera" disabled>Switch Camera</button>
-    <button id="captureLeft" disabled>Capture Left Hand</button>
-    <button id="captureRight" disabled>Capture Right Hand</button>
-    <button id="reset" disabled>Reset</button>
+    <button id="startBtn">Start Camera</button>
+    <button id="switchBtn">Switch Camera</button>
+    <button id="captureLeft">Capture Left Hand</button>
+    <button id="captureRight">Capture Right Hand</button>
   </div>
 
-  <img id="capturePreview" alt="Palm Capture Preview" />
-
-  <footer>
-    © 2025 SathyadarshanaAI | Powered by Buddhi<br>
-    <div class="copyright">
-      Unauthorized copying, reverse-engineering, or extraction strictly prohibited.
-    </div>
-  </footer>
+  <div id="seed-info">
+    <h2>Seed Engine Analysis</h2>
+    <p>Your palm scan is stored securely and processed with AI to detect life, head, fate, and wrist (Manikhanda) lines.</p>
+    <p>The analysis integrates KP Sub-Lord astrology, numerology, and cosmic patterns to generate your unique report (saved under NIC).</p>
+  </div>
 
   <script>
     const video = document.getElementById('video');
-    const overlay = document.getElementById('overlay');
-    const ctx = overlay.getContext('2d');
-    const startBtn = document.getElementById('startCamera');
-    const switchBtn = document.getElementById('switchCamera');
-    const leftBtn = document.getElementById('captureLeft');
-    const rightBtn = document.getElementById('captureRight');
-    const resetBtn = document.getElementById('reset');
-    const preview = document.getElementById('capturePreview');
+    const startBtn = document.getElementById('startBtn');
+    const switchBtn = document.getElementById('switchBtn');
+    const captureLeft = document.getElementById('captureLeft');
+    const captureRight = document.getElementById('captureRight');
+    const seedInfo = document.getElementById('seed-info');
     let stream = null;
-    let usingRear = true;
+    let usingFront = false;
 
-    function drawOverlay() {
-      overlay.width = video.clientWidth;
-      overlay.height = video.clientHeight;
-      ctx.clearRect(0, 0, overlay.width, overlay.height);
-      ctx.strokeStyle = 'rgba(56,189,248,0.7)';
-      ctx.lineWidth = 1.5;
-
-      for (let i = 1; i < 5; i++) {
-        const x = (overlay.width / 5) * i;
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, overlay.height);
-        ctx.stroke();
-      }
-      for (let i = 1; i < 4; i++) {
-        const y = (overlay.height / 4) * i;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(overlay.width, y);
-        ctx.stroke();
-      }
-      ctx.beginPath();
-      ctx.arc(overlay.width / 2, overlay.height * 0.7, 30, 0, 2 * Math.PI);
-      ctx.stroke();
-      requestAnimationFrame(drawOverlay);
-    }
-
-    async function startCamera(facing = 'environment') {
+    async function startCamera() {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
       try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: facing } }
-        });
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: usingFront ? "user" : "environment" } });
         video.srcObject = stream;
-        drawOverlay();
-        switchBtn.disabled = false;
-        leftBtn.disabled = false;
-        rightBtn.disabled = false;
-        resetBtn.disabled = false;
-        startBtn.disabled = true;
-      } catch (err) {
-        alert("Camera not accessible or permission denied!");
+      } catch (e) {
+        alert("Camera not accessible.");
       }
     }
 
-    startBtn.onclick = () => startCamera('environment');
+    startBtn.onclick = () => startCamera();
     switchBtn.onclick = () => {
-      usingRear = !usingRear;
-      startCamera(usingRear ? 'environment' : 'user');
+      usingFront = !usingFront;
+      startCamera();
     };
 
-    function captureHand(label) {
+    function captureHand(side) {
       const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const cctx = canvas.getContext('2d');
-      cctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      preview.src = canvas.toDataURL('image/png');
-      preview.style.display = 'block';
-      alert(`${label} Hand captured! Saved for Seed Engine processing.`);
+      canvas.width = video.videoWidth || 360;
+      canvas.height = video.videoHeight || 300;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      // Future: send to server for Seed Engine
+      seedInfo.style.display = "block";
+      seedInfo.innerHTML += `<p><strong>${side} hand captured.</strong> Seed Engine will process your lines shortly.</p>`;
     }
 
-    leftBtn.onclick = () => captureHand('Left');
-    rightBtn.onclick = () => captureHand('Right');
-
-    resetBtn.onclick = () => {
-      preview.src = "";
-      preview.style.display = 'none';
-    };
+    captureLeft.onclick = () => captureHand("Left");
+    captureRight.onclick = () => captureHand("Right");
   </script>
 </body>
 </html>

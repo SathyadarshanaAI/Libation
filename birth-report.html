@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ජන්ම විස්තර පෝරමය</title>
+  <title>Birth Details Form</title>
   <style>
     body { font-family: sans-serif; background: #f9f9f9; padding: 2em;}
     form { max-width: 400px; margin: auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px #ddd;}
@@ -13,21 +13,21 @@
   </style>
 </head>
 <body>
-  <h2>ජන්ම විස්තර පෝරමය</h2>
+  <h2>Birth Details Form</h2>
   <form id="birthForm">
-    <label>නම: <input type="text" name="name" required></label>
-    <label>උපන් දිනය: <input type="date" name="dob" required></label>
-    <label>උපන් වේලාව: <input type="time" name="tob"></label>
-    <label>උපන් ස්ථානය: <input type="text" name="pob"></label>
-    <label>ස්ත්‍රී/පුරුෂ: 
+    <label>Name: <input type="text" name="name" required></label>
+    <label>Date of Birth: <input type="date" name="dob" required></label>
+    <label>Time of Birth: <input type="time" name="tob"></label>
+    <label>Place of Birth: <input type="text" name="pob"></label>
+    <label>Gender: 
       <select name="gender" required>
-        <option value="">තෝරන්න</option>
-        <option value="male">පුරුෂ</option>
-        <option value="female">ස්ත්‍රී</option>
-        <option value="other">වෙනත්</option>
+        <option value="">Select</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
       </select>
     </label>
-    <button type="submit">වාර්තාව ලබාගන්න</button>
+    <button type="submit">Get Report</button>
   </form>
 
   <div id="reportBox"></div>
@@ -46,7 +46,7 @@
         gender: birthForm.gender.value
       };
 
-      reportBox.innerHTML = "වාර්තාව සකසාගෙන යයි...";
+      reportBox.innerHTML = "Generating report...";
 
       fetch('/api/birth-report', {
         method: 'POST',
@@ -56,19 +56,19 @@
       .then(res => res.json())
       .then(report => {
         reportBox.innerHTML = `
-          <h3>ජන්ම වාර්තාව</h3>
-          <strong>නම:</strong> ${report.name}<br>
-          <strong>උපන් දිනය:</strong> ${report.dob}<br>
-          <strong>උපන් වේලාව:</strong> ${report.tob}<br>
-          <strong>උපන් ස්ථානය:</strong> ${report.pob}<br>
-          <strong>ස්ත්‍රී/පුරුෂ:</strong> ${report.gender}<br>
-          <strong>උදාසුන ලක්ෂ්‍ය:</strong> ${report.luckyNumbers ? report.luckyNumbers.join(', ') : ''}<br>
-          <strong>අංශය:</strong> ${report.element || ''}<br>
-          <strong>උපදෙස්:</strong> ${report.advice || ''}
+          <h3>Birth Report</h3>
+          <strong>Name:</strong> ${report.name}<br>
+          <strong>Date of Birth:</strong> ${report.dob}<br>
+          <strong>Time of Birth:</strong> ${report.tob}<br>
+          <strong>Place of Birth:</strong> ${report.pob}<br>
+          <strong>Gender:</strong> ${report.gender}<br>
+          <strong>Lucky Numbers:</strong> ${report.luckyNumbers ? report.luckyNumbers.join(', ') : ''}<br>
+          <strong>Element:</strong> ${report.element || ''}<br>
+          <strong>Advice:</strong> ${report.advice || ''}
         `;
       })
       .catch(err => {
-        reportBox.innerHTML = "වාර්තාව ලබාගැනීමේ දෝෂයක් ඇතිවිය!";
+        reportBox.innerHTML = "An error occurred while retrieving the report!";
       });
     });
   </script>

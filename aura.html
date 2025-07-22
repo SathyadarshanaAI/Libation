@@ -4,55 +4,37 @@
   <meta charset="UTF-8">
   <title>Aura Scanner | SathyadarshanaAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <style>
+  <meta name="description" content="Scan your palm, face, or body aura with SathyadarshanaAI's smart camera tool.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&    }
     body {
-      margin: 0;
+      min-height: 100vh;
       font-family: 'Inter', sans-serif;
       background: radial-gradient(circle at top, #0f172a, #000);
       color: #e0f2fe;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
-      overflow: hidden;
-      text-align: center;
-    }
-    header {
-      padding: 1rem;
-      background: rgba(2, 6, 23, 0.6);
-      backdrop-filter: blur(8px);
-      width: 100%;
+      text);
+      width: 100vw;
       color: #7dd3fc;
       font-size: 1.6em;
       text-shadow: 0 0 12px #38bdf8;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+    }
+    main {
+      justify-content: flex-start;
     }
     #camera-container {
       position: relative;
-      width: 100%;
-      max-width: 100vw;
-      height: 70vh;
-      background: black;
+      width: 100vw;
+      max-width: 480px;
+      aspect-ratio: 3/4;
+      background: #000;
       overflow: hidden;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    /* Overlay guides */
-    .overlay {
-      position: absolute;
-      border: 2px dashed #38bdf8;
-      opacity: 0.8;
-      pointer-events: none;
-    }
-    #palmOverlay {
-      width: 70%;
-      height: 60%;
-      left: 15%;
-      top: 20%;
-      border-radius: 0.3em;
+      border-radius: 1.2em;
+      margin:0.3em;
+      display: block;
     }
     #faceOverlay {
       width: 50%;
@@ -60,6 +42,7 @@
       left: 25%;
       top: 25%;
       border-radius: 50%;
+      display: none;
     }
     #bodyOverlay {
       width: 40%;
@@ -67,18 +50,12 @@
       left: 30%;
       top: 10%;
       border-radius: 0.5em;
+      display: none;
     }
     /* Controls */
     #controls {
-      margin: 1rem;
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    button {
-      padding: 0.8em 1.6em;
-      border: none;
+      margin: 1em 0 0.7em 0;
+      display: flex border: none;
       border-radius: 0.5em;
       background: linear-gradient(90deg,#38bdf8,#16f0a7);
       color: #0f172a;
@@ -87,106 +64,151 @@
       font-size: 1em;
       box-shadow: 0 0 15px #38bdf888;
       transition: 0.25s;
+      outline: none;
     }
-    button:hover { transform: scale(1.05); }
-    canvas { display: none; }
-    /* Watermark */
-    #watermark {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      color: rgba(220,20,60,0.4);
-      font-size: 1.2em;
+    button:active, button:focus { outline: 2px solid #16f0a7; }
+    button:hover { transform: scale(1.05);: rgba(220,20,60,0.4);
+      font-size: 1.1em;
       font-weight: bold;
       pointer-events: none;
-      text-shadow: 0 0 6px #000;
+      text-shadow: 0 0 7px #000;
+      z-index: 10;
+      user-select: none;
     }
+    /* Feedback message */
+    #message {
+      bold;
+      min-height: 1.7em;
+      font-size: 1.08em;
+      letter-spacing: .02em;
+    }
+    @media (max-width: 750px) {
+      #camera-container { max-width: 98vw; }
+      #controls { flex-direction: column; gap: 0.5rem; }
+    }
+    @media (max-width: 480px) {
+      header { font-size: 1.15em; }
+      #camera-container { border-radius: 0.5em; }
+      button { font-size: 0.94em; }
+      #watermark { font-size: 0.9em; bottom: 8px; right: 10px; }
+    }
+    footer {
+      text-align: center;
+      padding: 1em 0 0.2em 0;
+      background: transparent;
+      color: #38bdf8;
+      font-weight: bold;
+      font-size: 1em;
+      letter-spacing: 0.01em;
+      width: 100vw;
+      line-height: 1.5;
+    }
+    .;
+      font-weight: bold;
+      font-size: 1.03em;
+      letter-spacing: 0.015em;
+      margin-top: 0.3em;
+    }
+    .ovi-blessing span { font-size: 1.07em; margin-left: 0.2em; }
   </style>
 </head>
 <body>
-  <header>Aura Scanner - Palm | Face | Body</header>
-
-  <div id="camera-container">
-    <video id="video" autoplay playsinline></video>
-    <div id="palmOverlay" class="overlay"></div>
-    <div id="faceOverlay" class="overlay" style="display:none;"></div>
-    <div id="bodyOverlay" class="overlay" style="display:none;"></div>
-    <div id="watermark">© SathyadarshanaAI</div>
-  </div>
-
-  <div id="controls">
-    <button onclick="setMode('palm')">Palm Mode</button>
-    <button onclick="setMode('face')">Face Mode</button>
-    <button onclick="setMode('body')">Full Body Mode</button>
-    <button id="switchCam">Switch Camera</button>
-    <button id="capture">Capture</button>
-  </div>
-
-  <canvas id="snapshot"></canvas>
-  <a id="downloadLink" style="display:none;">Download</a>
-
+  <header>
+    <h1 style="margin:0;font-size:1em;font-weight:700;letter-spacing:.01em;">Aura Scanner - Palm | Face | Body</h1>
+  </header>
+  <main>
+    <div id="camera-container="overlay" aria-hidden="true"></div>
+      <div id="watermark" aria-hidden="true">© SathyadarshanaAI</div>
+    </div>
+    <div id="message"></div>
+    <div id="controls">
+      <button onclick="setMode('palm')" aria-label="Palm scan mode">Palm</button>
+      <button onclick="setMode('face')" aria-label="Face scan mode">Face</button>
+      <button onclick="setMode('body')" aria-label="Full body scan mode">Full Body</button>
+      <button id="switchCam" aria-label="button id="capture" aria-label="Capture image">Capture</button>
+    </div>
+    <canvas id="snapshot"></canvas>
+    <a id="downloadLink" style="display:none;">Download</a>
+  </main>
+  <footer>
+    Made with ❤️ by Buddhi & Mona<br>
+    <span class="ovi-blessing">
+      ඔබට සතුට, සෙත, ශක්තිය, ආදරය සහ ආලෝකය ලැබේවා!
+      <span>🙏 ඔවි: ජය වේවා! ❤️</span>
+    </span>
+  </footer>
   <script>
-    let video = document.getElementById('video');
-    let stream;
-    let useFront = true;
-
+    // Camera logic');
     async function startCamera() {
-      if (stream) stream.getTracks().forEach(t => t.stop());
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: useFront ? 'user' : 'environment' } });
-      video.srcObject = stream;
+      message.textContent = "";
+      try {
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: useFront ? 'user' : 'environment', width: {ideal: 720}, height: {ideal: 960} }
+        });
+        video.srcObject = stream;
+      } catch (e) {
+        message.textContent = "Camera access denied or unavailable. Please allow camera permission and reload.";
+      }
     }
     startCamera();
 
-    document.getElementById('switchCam').onclick = () => { useFront = !useFront; startCamera(); };
-
-    // Overlays toggle
-    function setMode(mode) {
-      document.getElementById('palmOverlay').style.display = (mode === 'palm') ? 'block' : 'none';
+    document.getElementById('switchCam === 'palm') ? 'block' : 'none';
       document.getElementById('faceOverlay').style.display = (mode === 'face') ? 'block' : 'none';
       document.getElementById('bodyOverlay').style.display = (mode === 'body') ? 'block' : 'none';
     }
 
-    // Flashlight (only on mobiles with torch capability)
+    // Make Palm the default mode on load
+    setMode('palm');
+
+    // Flashlight (mobile, optional)
     async function enableFlash() {
+      if (!stream) return;
       const track = stream.getVideoTracks()[0];
-      const capabilities = track.getCapabilities();
-      if (capabilities.torch) {
+      if (!track) return;
+      const capabilities = track.getCapabilities?.();
+      if (capabilities && capabilities.torch) {
         try {
           await track.applyConstraints({ advanced: [{ torch: true }] });
-        } catch (e) { console.log("Torch not supported", e); }
+        } catch (e) { /* Torch not supported or error */ }
       }
     }
 
-    // Capture + watermark
+    // Capture logic + responsive watermark
     document.getElementById('capture').onclick = async () => {
+      if (!video.videoWidth) {
+        message.textContent = "Camera not ready!";
+        return;
+      }
       await enableFlash();
       const canvas = document.getElementById('snapshot');
       canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video,0,0,canvas.width,canvas.height);
-
-      // Add watermark
-      ctx.font = "48px Arial";
+      canvas.height = video.videoHeight watermark (bottom right)
+      const wmText = "© SathyadarshanaAI";
+      const fontSize = Math.floor(canvas.width/22);
+      ctx.font = `bold ${fontSize}px Arial, sans-serif`;
       ctx.fillStyle = "rgba(220,20,60,0.5)";
-      ctx.fillText("© SathyadarshanaAI", canvas.width - 500, canvas.height - 50);
+      ctx.textBaseline = "bottom";
+      ctx.textAlign = "right";
+      ctx.fillText(wmText, canvas.width - 30, canvas.height - 18);
 
       // Save image (download + DB prep)
       const dataURL = canvas.toDataURL('image/png');
-      const link = document.getElementById('downloadLink');
+      const link = document.getElementdownloadLink');
       link.href = dataURL;
       link.download = `AuraScan_${Date.now()}.png`;
+      link.style.display = "block";
+      link.textContent = "Download Image";
       link.click();
+      link.style.display = "none";
 
-      // Seed Engine DB save (placeholder)
-      console.log("Saved to DB (NIC link) - Pending integration");
+      // Show DB save placeholder
+      message.textContent = "Image saved! (DB integration coming soon)";
+      setTimeout(() => message.textContent = "", 2500);
     };
 
-    // Security: disable right-click & shortcuts
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('keydown', e => {
-      if (e.ctrlKey || e.key === 'F12') e.preventDefault();
-    });
+    // Restrict right-click only on video/canvas
+    document.getElementById('camera-container').addEventListener('contextmenu', e => e.preventDefault());
   </script>
 </body>
 </html>

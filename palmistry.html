@@ -2,179 +2,162 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Full Screen Palm Scanner | SathyadarshanaAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Palmistry Scanner | Sathyadarshana Seed Engine</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
+    html, body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #0f172a, #000);
-      color: #e0f2fe;
-      text-align: center;
-      padding: 1.5em;
-      min-height: 100vh;
-    }
-    h1 {
-      font-size: 2em;
-      color: #7dd3fc;
-      text-shadow: 0 0 12px #38bdf8;
-    }
-    #scanner {
-      position: relative;
-      width: 360px;
-      height: 320px;
-      margin: 1em auto;
-      border-radius: 1em;
-      overflow: hidden;
+      padding: 0;
+      width: 100%;
+      height: 100%;
       background: #000;
-      box-shadow: 0 0 25px rgba(56,189,248,0.3);
+      overflow: hidden;
     }
     video {
+      position: absolute;
+      top: 0; left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 1em;
+      z-index: 1;
     }
-    svg#handGuide {
+    #overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       pointer-events: none;
-      stroke: rgba(255,255,255,0.8);
-      fill: none;
+      z-index: 2;
     }
-    .btn-group {
-      margin-top: 1em;
+    #controls {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
-      gap: 0.8em;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 10px;
+      z-index: 3;
     }
     button {
-      padding: 0.8em 1.4em;
+      padding: 10px 18px;
+      font-size: 1em;
       border: none;
-      border-radius: 0.6em;
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      color: #fff;
+      border-radius: 8px;
+      background: #38bdf8;
+      color: #000;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 1em;
     }
     button:hover {
-      background: linear-gradient(90deg, #16f0a7, #38bdf8);
-      color: #0f172a;
-    }
-    #seed-info {
-      display: none;
-      margin-top: 2em;
-      max-width: 500px;
-      padding: 1.5em;
-      background: rgba(22,78,99,0.7);
-      border-radius: 1em;
-      box-shadow: 0 0 15px rgba(56,189,248,0.2);
-      text-align: left;
-    }
-    #seed-info h2 {
-      color: #16f0a7;
-      margin-bottom: 0.8em;
-      text-shadow: 0 0 8px rgba(23,240,167,0.4);
-    }
-    .watermark-bg {
-      position: fixed;
-      left: 50%;
-      top: 60%;
-      transform: translate(-50%, -50%) rotate(-17deg);
-      font-size: 2.5em;
-      color: rgba(220,20,60,0.08);
-      font-weight: bold;
-      z-index: 999;
-      user-select: none;
-      pointer-events: none;
-    }
-    @media (max-width: 500px) {
-      #scanner { width: 95vw; height: 300px; }
+      background: #16f0a7;
     }
   </style>
 </head>
 <body>
-  <div class="watermark-bg">© SathyadarshanaAI | High Copyright</div>
-
-  <h1>Palmistry Hand Scan</h1>
-  <p>Align your hand with the white guide (fingers & wrist line). Left first, then Right.</p>
-
-  <div id="scanner">
-    <video id="video" autoplay playsinline></video>
-    <!-- SVG overlay: five finger slots + palm + wrist line -->
-    <svg id="handGuide" viewBox="0 0 360 320">
-      <!-- Finger slots (approximate lines) -->
-      <line x1="60" y1="30" x2="60" y2="200" />
-      <line x1="110" y1="20" x2="110" y2="200" />
-      <line x1="160" y1="15" x2="160" y2="200" />
-      <line x1="210" y1="20" x2="210" y2="200" />
-      <line x1="260" y1="30" x2="260" y2="200" />
-      <!-- Palm outline -->
-      <rect x="70" y="180" width="220" height="100" rx="20" ry="20" />
-      <!-- Wrist line -->
-      <line x1="70" y1="260" x2="290" y2="260" style="stroke-dasharray:4;" />
-    </svg>
+  <video id="camera" autoplay playsinline></video>
+  <canvas id="overlay"></canvas>
+  <div id="controls">
+    <button id="toggleFlash">Flash On</button>
+    <button id="switchHand">Switch Hand</button>
+    <button id="capture">Capture</button>
   </div>
-
-  <div class="btn-group">
-    <button id="startBtn">Start Camera</button>
-    <button id="switchBtn">Switch Camera</button>
-    <button id="captureBtn">Capture Left Hand</button>
-  </div>
-
-  <div id="seed-info">
-    <h2>Seed Engine Analysis</h2>
-    <p>Your palm lines (life, head, fate, and Manikhanda wrist line) will be analyzed.</p>
-    <p>KP Sub-Lord astrology, numerology, and cosmic data will generate your final report, stored securely under your NIC for future access.</p>
-  </div>
-
   <script>
-    const video = document.getElementById('video');
-    const startBtn = document.getElementById('startBtn');
-    const switchBtn = document.getElementById('switchBtn');
-    const captureBtn = document.getElementById('captureBtn');
-    const seedInfo = document.getElementById('seed-info');
-    const handGuide = document.getElementById('handGuide');
+    const video = document.getElementById('camera');
+    const canvas = document.getElementById('overlay');
+    const ctx = canvas.getContext('2d');
     let stream = null;
-    let usingFront = false;
-    let leftCaptured = false;
+    let useRightHand = false;
+    let flashOn = false;
+    let track;
 
-    async function startCamera() {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+    // Resize canvas to match window
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawOverlay();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function drawOverlay() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = 2;
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2 + 50;
+      const fingerSpacing = 60;
+      const handHeight = 180;
+      const wristHeight = 40;
+
+      // Draw 5 vertical finger guides
+      for (let i = -2; i <= 2; i++) {
+        const x = centerX + i * fingerSpacing;
+        ctx.beginPath();
+        ctx.moveTo(x, centerY - handHeight);
+        ctx.lineTo(x, centerY);
+        ctx.stroke();
       }
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: usingFront ? "user" : "environment" } });
-        video.srcObject = stream;
-      } catch (e) {
-        alert("Camera not accessible.");
+
+      // Draw wrist line (rounded rectangle)
+      const rectWidth = fingerSpacing * 5;
+      const rectHeight = wristHeight;
+      ctx.beginPath();
+      ctx.moveTo(centerX - rectWidth/2, centerY);
+      ctx.lineTo(centerX + rectWidth/2, centerY);
+      ctx.lineTo(centerX + rectWidth/2, centerY + rectHeight);
+      ctx.lineTo(centerX - rectWidth/2, centerY + rectHeight);
+      ctx.closePath();
+      ctx.stroke();
+
+      if (useRightHand) {
+        ctx.save();
+        ctx.scale(-1, 1);
+        ctx.restore();
       }
     }
 
-    startBtn.onclick = () => startCamera();
-    switchBtn.onclick = () => {
-      usingFront = !usingFront;
-      startCamera();
+    async function startCamera() {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false
+      });
+      video.srcObject = stream;
+      track = stream.getVideoTracks()[0];
+      resizeCanvas();
+    }
+
+    document.getElementById('switchHand').onclick = () => {
+      useRightHand = !useRightHand;
+      drawOverlay();
     };
 
-    captureBtn.onclick = () => {
-      if (!leftCaptured) {
-        leftCaptured = true;
-        captureBtn.textContent = "Capture Right Hand";
-        handGuide.setAttribute("transform", "scale(-1,1) translate(-360,0)"); // mirror overlay
+    document.getElementById('toggleFlash').onclick = async () => {
+      if (!track) return;
+      const capabilities = track.getCapabilities();
+      if (capabilities.torch) {
+        flashOn = !flashOn;
+        await track.applyConstraints({ advanced: [{ torch: flashOn }] });
+        document.getElementById('toggleFlash').textContent = flashOn ? 'Flash Off' : 'Flash On';
       } else {
-        seedInfo.style.display = "block";
-        captureBtn.disabled = true;
-        alert("Both hands captured. Seed Engine will process your report.");
+        alert("Flash not supported on this device.");
       }
     };
+
+    document.getElementById('capture').onclick = () => {
+      const capCanvas = document.createElement('canvas');
+      capCanvas.width = video.videoWidth;
+      capCanvas.height = video.videoHeight;
+      const capCtx = capCanvas.getContext('2d');
+      capCtx.drawImage(video, 0, 0, capCanvas.width, capCanvas.height);
+      const imgData = capCanvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = imgData;
+      link.download = "palm-capture.png";
+      link.click();
+    };
+
+    startCamera();
   </script>
 </body>
 </html>

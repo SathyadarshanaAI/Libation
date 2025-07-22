@@ -3,89 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <title>Astrologer | SathyadarshanaAI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width.0">
+  <meta name="description" content="SathyadarshanaAI Astrologer - Spiritual & Scientific Astrology step by step. Birth report, palmistry, numerology, aura & more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="pre="image/png" href="favicon.png">
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(140deg,#0f172a 30%, #172a3a 100%);
+      background: radial-gradient(circle at top, #0f172a, #000);
       color: #e0f2fe;
       margin: 0;
-      min-height: 100vh;
-    }
-    header {
-      padding: 1.5em 0 .6em 0;
-      text-align: center;
-      background: #1e293b;
-      box-shadow: 0 2px 16px #38bdf822;
+      padding: 0;
+);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
     }
     header h1 {
-      font-size: 2.4em;
-      color: #7fbcfe8;
-      margin: .2em 0 .7em 0;
-      font-size: 1.05em;
-    }
-    nav ul {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 0;
+      font-size: 2.2em;
+      color: #7dd3fc;
       margin: 0;
-      list-style: none;
-      gap: 0.7em;
+      text-shadow: 0 0 12px #38bdf8;
     }
-    nav ul li a {
-      display: block;
-      background: #27364d;
+    header p {
+      margin: 0.3em 0 0;
       color: #16f0a7;
-      text-decoration: none;
-      padding: .7em 1.5em;
-      border.active {
+      font-size: 1.1em;
+      letter-spacing: 0.03em;
+      text-shadow: 0 0 8px #38bdf8;
+    }
+   (255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56,189,248,0.2);
+      text-align: center;
+    }
+    .step h2 {
+      color: #16f0a7;
+      text-shadow: 0 0 8px rgba(23,167, 0.4);
+      font-size: 0 0 15px rgba(56,189,248,0.15);
+    }
+    .step iframe {
+      min-height: 180px;
+      background: #12223a;
+    }
+    button {
       background: #38bdf8;
       color: #0f172a;
+      padding, 252, 0.4);
+      margin-bottom: 0.7em;
     }
-    main {
-      max-width: 1200px;
-      margin: 2em auto;
-      padding: 0 1em;
-      z-index: 1;
-      position: relative;
-    }
-    section {
-      margin-bottom: 3em;
-      border-radius: 1em;
-      background: #1e text-align: center;
-      font-size: 1.5em;
-      color: #16f0a7;
-      margin-bottom: .7em;
-      letter-spacing: .04em;
-    }
-    .iframe-container {
-      width: 100%;
-      height: 600px;
-      border: none;
-      display: block;
-      margin: 0 auto;
-      border-radius: 1em;
-      box-shadow: 0 0 14px #38bdf822;
-      background: #0f172a;
-    }
-    @media (max-width: 800px) {
-      main { padding: 0 .1em; }
-      .iframe-container { height: 540px; }
-    }
-    @media (max-width: 500px) {
-      header h1 { font-size: 1.4em; }
-      .iframe-container { height: 400px; }
-      nav ul li a { padding: .5em 1em; font-size: 0.97em;}
-    }
-    .watermark-bg {
-      position: fixed;
-      left: 50%;
-      top: 60%;
-      transform: translate(-50%, -50%) rotate(-17deg);
-      font-size: 3em;
-      color: rgba(220,20,60,0.08);
+    button:hover {
+      background: #16f0a7;
+      color: #0f172a;
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(23, 240, 167,,0.08);
       pointer-events: none;
       user-select: none;
       font-weight: bold;
@@ -93,93 +64,79 @@
       letter-spacing: .11em;
     }
     footer {
-      margin-top: 2em;
+      margin-top: 3em;
       padding: 1em;
-      text-align: center;
-      background: #172a3a;
+      background: rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       color: #d90429;
       font-weight: bold;
       font-size: 1em;
-      letter-spacing: .03em;
       border-top: 2px solid #38bdf8;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+      line-height: 1.55;
     }
-  </style>
-</head>
-<body>
-  <div class="watermark-bg">© SathyadarshanaAI | High Copyright</div>
-  <header>
-    <h1>Astrologer</h1>
-    <p>Spiritual & Scientific Astrology Engine</p>
-    <nav>
-      <ul>
-        <li><a href="#kp-sub">KP Sub Lord</a></li>
-        <li><a href="#nadi">Nadi Astrology</a></li>
-        <li><a href="#palmistry">Palmistry</a></li>
-        <li><a href="#numerology">Numerology</a></li>
-        <li><a href="#vedic-astro">Vedic Astrology</a></li>
-        <li><a href="#deshalakshana">Desha Lakshana</a></li>
-        <li><a href="#birth-report">Birth Report</a></li>
-        <li><a href="#aura">Aura Vision</a></li>
-        <li><a href="#research">Research Lab</a></li>
-      </ul>
-    </nav>
-  </header>
-  <main>
-    <section id="kp-sub">
-      <h2>KP Sub Lord</h2>
-      <iframe src="kp-sub.html" class="iframe-container"></iframe>
-    </section>
-    <section id="nadi">
-      <h2>Nadi Astrology</h2>
-      <iframe src="nadi.html" class="iframe-container"></iframe>
-    </section>
-    <section id="palmistry">
-      <h2>Palmistry</h2>
-      <iframe src="palmistry.html" class="iframe-container"></iframe>
-    </section>
-    <section id="numerology">
-      <h2>Numerology</h2>
-      <iframe src="numerology.html" class="iframe-container"></iframe>
-    </section>
-    <section id="vedic-astro">
-      <h2>Vedic Astrology</h2>
-      <iframe src="vedic-astro.html" class="iframe-container"></iframe>
-    </section>
-    <section id="deshalakshana">
-      <h2>Desha Lakshana</h2>
-      <iframe src="desha-lakshana-vidyava.html" class="iframe-container"></iframe>
-    </section>
-    <section id="birth-report">
-      <h2>Birth Report</h2>
-      <iframe src="birth-report.html" class="iframe-container"></iframe>
-    </section>
-    <section id="aura">
-      <h2>Aura Vision</h2>
-      <iframe src="aura.html" class="iframe-container"></iframe>
-    </section>
-    <section id="research">
-      <h2>Research Lab</h2>
-      <iframe src="astrologe-research.html" class="iframe-container"></iframe>
-    </section>
-    <section id="ai-support">
-      <h2>🤖 AI Support</h2>
-      <button onclick="askAI()" style="
-        background:#38bdf8;color:#0f172a;
-        padding:1em 2em;border:none;border-radius:1em;
-        font-size:1.12em;font-weight:bold;">
-        Ask Astro-AI
-      </button>
-      <div id="aiResponse" style="margin-top:1em;color:#16f0a7;"></div>
-    </section>
-  </main>
+    .footer-heart {
+      color: #ff69b4;
+    }
+    .ovi-blessing {
+      display: margin-top: 0.8em;
+      color: #38bdf8;
+      font-weight: bold;
+      font-size: 1.08em;
+      letter-spacing: 0.015em;
+    }
+    .ovi-blessing span {
+      font-size: 1.13em;
+      margin-left: 0.2em;
+    }
+   media (max-width: 750px) {
+      .step { max-width: 99vw; padding: 1em; }
+      .step iframe { width: 99vw; }
+      button { width: 97vw; }
+    }
+    @media (max-width: 500px) {
+      header <!-- STEP 1: Birth Report -->
+  <div class="step">
+    <h2>Step 1: Enter Birth Details</h2>
+    <iframe src="birth-report.html" height="400" title="Birth Report"></iframe>
+  </div>
+
+  <!-- STEP 2: Astrology Type -->
+  <div class="step">
+    <h2>Step 3: Upload Palm Scan</h2>
+    <iframe src="palmistry.html" height="400" title="Palmistry"></iframe>
+  </div>
+
+  <!-- STEP 4: Numerology -->
+  <div class="step">
+    <h2>Step  STEP 5: Aura -->
+  <div class="step">
+    <h2>Step 5: Capture Aura Image</h2>
+    <iframe src="aura.html" height="400" title="Aura Scan"></iframe>
+  </div>
+
+  <!-- STEP 6: Desha Lakshana -->
+  <div class="h2>Step 7: Final Seed Engine Report</h2>
+    <iframe src="astrologe-research.html" height="500" title="Seed Engine Final Report"></iframe>
+    <button onclick="saveReport()">Save Report (by NIC)</button>
+  </div>
+
   <footer>
-    © 2025 SathyadarshanaAI | All Rights Reserved. High Copyright.<br>
-    Unauthorized copying or reproduction prohibited.
+    © <span class="ovi-blessing">
+      ඔබට සතුට, සෙත, ශක්තිය, ආදරය සහ ආලෝකය ලැබේවා!<br>
+      <span>🙏 ඔවි: ජය වේවා! ❤️</span>
+    </span>
   </footer>
+
   <script>
-    function askAI() {
-      document.getElementById('aiResponse').innerHTML = "<em>Astro-AI:</em> Thank you for using SathyadarshanaAI. Real-time astrology answers coming soon!";
+    function saveReport() {
+      alert("Report analyzed and saved under your NIC record. (Database integration coming soon.)");
     }
+    // Footer year auto-update
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('copy-year').textContent = new Date().getFullYear();
+    });
   </script>
 </body>
 </html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Planet Position Test | SathyadarshanaAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #0f172a, #000);
+      color: #e0f2fe;
+      text-align: center;
+      margin: 0;
+      padding: 1.5em;
+    }
+    h1 {
+      font-size: 2em;
+      color: #7dd3fc;
+      text-shadow: 0 0 12px #38bdf8;
+    }
+    form {
+      margin: 1.5em auto;
+      max-width: 400px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 1em;
+      padding: 1.2em;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 20px rgba(56,189,248,0.2);
+    }
+    label {
+      display: block;
+      margin: 0.7em 0 0.3em;
+      text-align: left;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.5em;
+      border-radius: 0.5em;
+      border: none;
+      margin-bottom: 0.5em;
+    }
+    button {
+      margin-top: 1em;
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: bold;
+      padding: 0.8em 1.5em;
+      border: none;
+      border-radius: 1em;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(125,211,252,0.4);
+      transition: 0.3s ease;
+    }
+    button:hover {
+      background: #16f0a7;
+      box-shadow: 0 0 25px rgba(23,240,167,0.4);
+    }
+    #results {
+      margin-top: 2em;
+      background: rgba(22,78,99,0.6);
+      padding: 1.5em;
+      border-radius: 1em;
+      box-shadow: 0 0 20px rgba(56,189,248,0.2);
+      text-align: left;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>NASA Planet Position Test</h1>
+  <form id="planetForm">
+    <label>Date (YYYY-MM-DD)</label>
+    <input type="date" id="date" required>
+    <label>Time (HH:MM)</label>
+    <input type="time" id="time" required>
+    <label>Birthplace (City)</label>
+    <input type="text" id="location" placeholder="e.g., Kandy" required>
+    <button type="submit">Fetch Planet Data</button>
+  </form>
+
+  <div id="results"></div>
+
+  <script>
+    const form = document.getElementById('planetForm');
+    const results = document.getElementById('results');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      results.style.display = 'block';
+      results.innerHTML = "Fetching NASA planetary data...";
+
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const location = document.getElementById('location').value;
+
+      // --- DEMO FETCH (Simulated for now) ---
+      setTimeout(() => {
+        const planets = [
+          { name: "Sun", degree: "Leo 14°22′" },
+          { name: "Moon", degree: "Virgo 02°11′" },
+          { name: "Mars", degree: "Gemini 19°05′" },
+          { name: "Venus", degree: "Cancer 23°48′" },
+          { name: "Saturn", degree: "Pisces 05°39′" },
+        ];
+        let output = `<h3>Planetary Positions (${date} ${time})</h3>`;
+        output += `<strong>Birthplace:</strong> ${location}<br><br>`;
+        output += `<ul>`;
+        planets.forEach(p => {
+          output += `<li><strong>${p.name}:</strong> ${p.degree}</li>`;
+        });
+        output += `</ul>`;
+        output += `<p style="color:#16f0a7;font-weight:bold;">(NASA API live integration coming soon. Data simulated.)</p>`;
+        results.innerHTML = output;
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

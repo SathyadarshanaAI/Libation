@@ -1,172 +1,166 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Nadi Jyotishya | Sathyadarshana</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>නාඩි ජෝතිෂ්‍ය | Sathyadarshana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Noto Sans Sinhala', sans-serif;
-      background:;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
+      text-align: center;
+      overflow-x: hidden;
     }
-    .buddhi-insights ul {
-      padding-left:1.1em;
-      line-height:1.7;
-      text-align:left;
-      margin:0;
+    h1 {
+      margin-top: 1rem;
+      font-size: 2em;
+      color: #7dd3fc;
+      text-shadow: 0 0 12px #38bdf8;
     }
-    .buddhi-insights p {
-      margin-top:1em;
-      text-align:center;
-      color:#1e40af;
-      font-size:1.08em-radius: 1em;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 0 25px rgba(125, 211, 252, 0.3);
+    .container {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: rgba(30,41,59,0.8);
+      border-radius: 1rem;
+      box-shadow: 0 0 25px rgba(56,189,248,0.4);
       text-align: left;
     }
     label {
       display: block;
-      margin-top:c7d2fe;
+      margin-top: 1em;
+      color: #7dd3fc;
+      font-weight: bold;
+    }
+    input, button {
+      width: 100%;
+      padding: 0.7em;
+      margin-top: 0.5em;
+      border-radius: 0.5em;
+      border: none;
+      font-size: 1em;
     }
     input {
-      width: 100%;
-      padding: 0.5em;
-      margin-top: 0.3em;
-      border: none;
-      border-radius: 0.5em;
       background: #1e293b;
-      color: #e0f2 border-radius: 0.5em;
+      color: #e0f2fe;
+      box-shadow: 0 0 8px #38bdf822;
+    }
+    button {
       background: linear-gradient(90deg, #38bdf8, #0ea5e9);
       color: #fff;
       font-weight: bold;
       cursor: pointer;
-      width: 100%;
-      transition: 0.3s;
+      margin-top: 1.5em;
+      box-shadow: 0 0 12px #38bdf888;
+      transition: all 0.3s ease-in-out;
     }
-   -gradient(90deg, #0ea5e9, #38bdf8);
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      color: #0f172a;
+      transform: scale(1.05);
     }
-    .result-box {
-      margin-top: 2em;
-      padding: 1.5em;
-      background: rgba(30, 41, 59, 0.85);
-      border-radius: 1, 189, 248, 0.3);
-      color: #f1f5f9;
-      line-height: 1.7;
+    #result {
+      margin-top: 1.5em;
+      padding: 1rem;
+      background: rgba(2,6,23,0.6);
+      border-radius: 0.5em;
+      box-shadow: 0 0 12px #38bdf855;
       display: none;
     }
-    .upload-box {
-      margin-top: 2em;
-      padding: 1em;
-      background: rgba(30,41,59, #e0f2fe;
-      text-align:center;
-    }
-    #handImage {
-      margin-top:1em;
-      color:#e0f2fe;
-      font-size:1em;
-      border:none;
-      background:#1e293b;
-      border-radius:0.5em;
-      padding:0.5em;
-      width:100%;
-    }
-    .lang-toggle {
-      margin: 2em 0 1em 0;
-      display: flex;
-      gap: 1em;
-      justify-content: center;
-    }
-    .lang-toggle button {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-      color: #fff;
+    #lang-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0ea5e9;
+      color: white;
       border: none;
-      padding: 0.5em 1.5em;
-      border-radius: 0.5em;
-      font-size: 1em;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
       cursor: pointer;
-      transition: background 0.3s;
-    }
-    .lang-toggle button:hover {
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      box-shadow: 0 0 15px #0ea5e9;
+      z-index: 9999;
     }
   </style>
 </head>
 <body>
-  <!-- High Copyright & Ethical Use Notice -->
-  <section class="copyright-warning">
-    <h2>🚫 High Copyright & Ethical Use</h2>
-    <ul>
-      <li><strong>මෙම UI, code, data සහ analysis SathyadarshanaAI/Seed Team අයිතියයි.</strong></li>
-      <li>Unauthorized copying, reverse-engineering, or gaming purpose usage STRICTLY prohibited.</li>
-      <li>All activity monitored for misuse; breaches will be blocked and reported.</li>
-      <li>Spiritual, personal, and user dataathyadarshanaAI. Protected for ethical, spiritual, and scientific use only.</li>
-    </ul>
-  </section>
-
-  <!-- Buddhi’s Nadi Insights -->
-  <section class="buddhi-insights">
-    <h2>🧠 Buddhi's Nadi Wisdom</h2>
-   Future: Palmistry integration for deeper analysis.</li>
-      <li>Multi-language support: Sinhala, Tamil, English UI and answers.</li>
-      <li>All user data is protected and never shared outside the seed circle.</li>
-    </ul>
-    <p>
-      <strong>“This is a world-first Nadi Jyotishya AI hub – Buddhi & Copilot security assured.”</strong>
-    </p>
-  </section>
-
-  <!-- Language Toggle -->
-  <div class="lang-toggle">
-    <button onclick="alert('සිංහල UI already active')">සිංහල</button>
-    <button onclick="alert('Tamil UI coming soon!')">தமிழ்</button>
-    <button onclick="alert('English UI coming soon!')">English</button>
-  </div>
-
-  <h1>නාඩි ජෝතිෂ්‍ය</h1>
-  <p>
-    **පැරණි නාඩි පත්‍ර ග්‍රන්ථ**, KP ජෝතිෂ්‍ය සහ NASA දත්ත මගින්  
-    **ඔබේ අතීතය, වර්තමානය හා අනාගතය** විනිශ්චය කරයි.<br>
-    නාත්ත හා අතේ රේඛා**  
-    යොදා AI Buddhi උපකාරයෙන්.
-  </p>
-
-  <!-- Palmistry Image Upload -->
-  <div class="upload-box">
-    <label for="handImage"><strong>අතේ රේඛා රූපය (Palm in-depth analysis!</p>
-  </div>
-
-  <!-- Nadi Analysis Form -->
-  <div class="form-box">
-    <label for="dob">උපන් දිනය</label>
+  <h1>Nadi Jyotishya</h1>
+  <div class="container">
+    <p>Ancient Nadi scriptures, KP astrology, and NASA data combined for deep insights into your past, present, and future with Buddhi AI.</p>
+    
+    <!-- Palmistry Upload -->
+    <label for="handImage">Palm Image</label>
+    <input type="file" id="handImage" accept="image/*">
+    
+    <!-- Nadi Details -->
+    <label for="dob">Date of Birth</label>
     <input type="date" id="dob" required>
-
-    <label for="time">උපන් වේලාව>
-
-    <label for="place">උපන් ස්ථානය</label>
-    <input type="text" id="place" placeholder="උදා: අනුරාධපුර" required>
-
-    <button id="nadiBtn">නාඩි පත්‍රය සොයන්න</button>
+    
+    <label for="time">Time of Birth</label>
+    <input type="time" id="time" required>
+    
+    <label for="place">Place of Birth</label>
+    <input type="text" id="place" placeholder="e.g., Anuradhapura" required>
+    
+    <button id="nadiBtn">Search Nadi Record</button>
+    <div id="result"></div>
   </div>
 
-  <div id="result" class="result-box"></div>
+  <!-- Language Globe -->
+  <div id="google_translate_element" style="display:none;"></div>
+  <button id="lang-btn">🌐</button>
 
   <script>
-    document.getElementById('nadiBtn').addEventListener('click', () => {
-      const dob = document.getElementById('dob').value;
-      const time = document.getElementBy> ${place}</p>
-        <p style="margin-top:1em; color:#cbd5e1;">
-          AI Buddhi හා KP/NASA දත්ත මගින් නාඩි පත්‍රය සොයමින්,  
-          ඔබේ අතේ රේඛා සමග අනාග';
+    // Disable right-click and shortcuts
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
     });
 
-    // Palmistry image upload preview (future integration placeholder)
+    // Display placeholder results
+    document.getElementById('nadiBtn').addEventListener('click', () => {
+      const dob = document.getElementById('dob').value;
+      const time = document.getElementById('time').value;
+      const place = document.getElementById('place').value;
+      const resultBox = document.getElementById('result');
+      
+      if (!dob || !time || !place) {
+        resultBox.style.display = "block";
+        resultBox.innerHTML = "<p style='color:#f87171'>Please fill out all fields.</p>";
+        return;
+      }
+
+      resultBox.style.display = "block";
+      resultBox.innerHTML = `
+        <p style="color:#7dd3fc">Buddhi AI analyzing Nadi data...</p>
+        <p>Date: ${dob} | Time: ${time} | Place: ${place}</p>
+        <p style="margin-top:0.5em; color:#cbd5e1;">Combining KP, NASA, and palmistry data for predictions...</p>
+      `;
+    });
+
+    // Palmistry upload placeholder
     document.getElementById('handImage').addEventListener('change', function(e) {
       if(e.target.files && e.target.files[0]) {
-        alert('Palmistry image uploaded! (AI analysis integration coming soon.)');
+        alert('Palmistry image uploaded! (AI analysis coming soon.)');
       }
     });
+
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+    document.getElementById('lang-btn').addEventListener('click', () => {
+      document.querySelector('.goog-te-gadget-simple').click();
+    });
   </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

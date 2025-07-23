@@ -8,143 +8,135 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #0f172a, #000);
+      background: radial-gradient(circle at 30% 20%, #0f172a, #000);
       color: #e0f2fe;
-      margin: 0;
-      padding: 1em;
       text-align: center;
+      margin: 0;
+      padding: 1.5em;
     }
     h1 {
       color: #7dd3fc;
-      text-shadow: 0 0 12px #38bdf8;
+      text-shadow: 0 0 14px #38bdf8;
+      font-size: 2.2em;
+      margin-bottom: 1rem;
     }
     form {
+      max-width: 450px;
+      margin: 1.5em auto;
       background: rgba(255,255,255,0.05);
       padding: 1.5em;
-      border-radius: 1em;
-      max-width: 500px;
-      margin: 1.5em auto;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(56,189,248,0.2);
+      border-radius: 1.2em;
+      box-shadow: 0 4px 35px rgba(0,0,0,0.5), 0 0 25px rgba(56,189,248,0.2);
     }
-    label { display: block; margin-top: 1em; text-align: left; }
-    input {
+    label {
+      display: block;
+      margin-top: 1em;
+      text-align: left;
+      font-weight: bold;
+      color: #16f0a7;
+    }
+    input, select {
       width: 100%;
-      padding: 0.7em;
-      border-radius: 0.5em;
-      border: none;
+      padding: 0.8em;
       margin-top: 0.4em;
+      border-radius: 0.6em;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: #e0f2fe;
+      font-size: 1em;
+    }
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.6em;
+      margin-top: 1.5em;
     }
     button {
-      margin-top: 1.5em;
-      padding: 0.8em 1.5em;
-      background: linear-gradient(90deg, #38bdf8, #16f0a7);
-      border: none;
-      border-radius: 0.7em;
+      flex: 1;
+      min-width: 120px;
+      background: #38bdf8;
       color: #0f172a;
+      padding: 0.9em;
+      font-size: 1em;
       font-weight: bold;
+      border: none;
+      border-radius: 1em;
       cursor: pointer;
-      box-shadow: 0 0 15px rgba(56,189,248,0.3);
+      box-shadow: 0 0 15px rgba(125,211,252,0.4);
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #16f0a7;
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(23,240,167,0.4);
     }
     #reportBox {
-      margin-top: 1.5em;
+      max-width: 520px;
+      margin: 2em auto;
+      background: rgba(22,78,99,0.7);
       padding: 1.5em;
-      background: rgba(30,41,59,0.7);
-      border-radius: 1em;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
+      border-radius: 1.2em;
+      box-shadow: 0 0 20px rgba(56,189,248,0.3);
+      color: #fff;
       display: none;
+      line-height: 1.6;
     }
-    table {
-      width: 100%;
-      margin-top: 1em;
-      border-collapse: collapse;
-      color: #fceabb;
-    }
-    th, td {
-      border: 1px solid #38bdf8;
-      padding: 0.5em;
-    }
-    .coming-soon { margin-top: 1em; color: #f87171; font-style: italic; }
   </style>
 </head>
 <body>
-  <h1>Birth Report (NASA Demo)</h1>
+  <h1>Birth Report Generator</h1>
   <form id="birthForm">
-    <label>Name: <input type="text" id="name" required></label>
-    <label>Date of Birth: <input type="date" id="dob" required></label>
-    <label>Time of Birth: <input type="time" id="tob" required></label>
-    <label>Place of Birth (City): <input type="text" id="pob" placeholder="City, Country" required></label>
-    <button type="submit">Generate Report</button>
+    <label>Name <input type="text" name="name" required></label>
+    <label>Date of Birth <input type="date" name="dob" required></label>
+    <label>Time of Birth <input type="time" name="tob"></label>
+    <label>Place of Birth <input type="text" name="pob" placeholder="City, Country"></label>
+    <label>Gender
+      <select name="gender" required>
+        <option value="">Select</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+    </label>
+    <div class="btn-row">
+      <button type="button" id="kpBtn">KP Mode</button>
+      <button type="button" id="vedicBtn">Vedic Mode</button>
+      <button type="submit">Generate</button>
+    </div>
   </form>
 
-  <div id="reportBox">
-    <h2>Your Birth Report</h2>
-    <p id="userData"></p>
-    <h3>Planetary Positions (Demo)</h3>
-    <table id="planetTable">
-      <thead><tr><th>Planet</th><th>Position (°)</th><th>Zodiac</th></tr></thead>
-      <tbody id="planetBody"></tbody>
-    </table>
-    <h3>KP Sub-Lord (Sample)</h3>
-    <p id="kpData">Sun → Mercury (Demo), Moon → Venus (Demo)</p>
-    <h3>Vedic Chart (Sample)</h3>
-    <p id="vedicData">Ascendant: Aries (Demo)</p>
-    <button onclick="downloadPDF()">Download PDF</button>
-    <div class="coming-soon">Full AI-powered prediction via Seed Engine coming soon.</div>
-  </div>
+  <div id="reportBox"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     const birthForm = document.getElementById('birthForm');
     const reportBox = document.getElementById('reportBox');
-    const userData = document.getElementById('userData');
-    const planetBody = document.getElementById('planetBody');
 
-    birthForm.addEventListener("submit", async function(e){
+    document.getElementById('kpBtn').onclick = () => alert("KP Astrology Mode Selected");
+    document.getElementById('vedicBtn').onclick = () => alert("Vedic Astrology Mode Selected");
+
+    birthForm.addEventListener("submit", function(e){
       e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const dob = document.getElementById('dob').value;
-      const tob = document.getElementById('tob').value;
-      const pob = document.getElementById('pob').value.trim();
-
-      userData.innerHTML = `
-        <strong>Name:</strong> ${name}<br>
-        <strong>Date of Birth:</strong> ${dob}<br>
-        <strong>Time of Birth:</strong> ${tob}<br>
-        <strong>Place of Birth:</strong> ${pob}
-      `;
-
-      planetBody.innerHTML = "<tr><td colspan='3'>Loading planetary data...</td></tr>";
-
-      // Simulate NASA API fetch (real API integration next)
-      setTimeout(() => {
-        const planets = [
-          { name: "Sun", degree: 120, zodiac: "Leo" },
-          { name: "Moon", degree: 240, zodiac: "Sagittarius" },
-          { name: "Mars", degree: 45, zodiac: "Taurus" },
-          { name: "Venus", degree: 300, zodiac: "Capricorn" },
-          { name: "Jupiter", degree: 10, zodiac: "Aries" }
-        ];
-        planetBody.innerHTML = planets.map(p => 
-          `<tr><td>${p.name}</td><td>${p.degree}°</td><td>${p.zodiac}</td></tr>`
-        ).join('');
-      }, 1000);
+      const data = {
+        name: birthForm.name.value.trim(),
+        dob: birthForm.dob.value,
+        tob: birthForm.tob.value,
+        pob: birthForm.pob.value.trim(),
+        gender: birthForm.gender.value
+      };
 
       reportBox.style.display = "block";
+      reportBox.innerHTML = `
+        <h3>Birth Report (Preview)</h3>
+        <b>Name:</b> ${data.name}<br>
+        <b>Date of Birth:</b> ${data.dob}<br>
+        <b>Time of Birth:</b> ${data.tob || "N/A"}<br>
+        <b>Place of Birth:</b> ${data.pob || "N/A"}<br>
+        <b>Gender:</b> ${data.gender}<br>
+        <hr>
+        <em>KP & NASA-based planetary data integration coming soon.</em>
+      `;
     });
-
-    function downloadPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.text("SathyadarshanaAI Birth Report (Demo)", 10, 10);
-      doc.text("High Copyright © 2025", 10, 20);
-      doc.text(userData.innerText || userData.textContent, 10, 40);
-      doc.text("Planetary positions and KP/Vedic placeholders included.", 10, 70);
-      doc.save("BirthReport_Demo.pdf");
-    }
   </script>
 </body>
 </html>

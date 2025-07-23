@@ -12,13 +12,29 @@
       background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
       text-align: center;
-      overflow-x: hidden;
     }
-    h1 {
-      margin-top: 1rem;
-      font-size: 2em;
-      color: #7dd3fc;
-      text-shadow: 0 0 12px #38bdf8;
+    nav {
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      background: rgba(2,6,23,0.8);
+      padding: 1rem;
+      box-shadow: 0 0 12px #38bdf8;
+    }
+    nav a {
+      color: #e0f2fe;
+      text-decoration: none;
+      padding: 0.6rem 1rem;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    nav a:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      color: #0f172a;
+      transform: scale(1.05);
     }
     .container {
       max-width: 700px;
@@ -26,49 +42,32 @@
       padding: 1.5rem;
       background: rgba(30,41,59,0.8);
       border-radius: 1rem;
-      box-shadow: 0 0 25px rgba(56,189,248,0.4);
-      text-align: left;
-    }
-    label {
-      display: block;
-      margin-top: 1em;
-      color: #7dd3fc;
-      font-weight: bold;
+      box-shadow: 0 0 20px rgba(56,189,248,0.4);
     }
     input, button {
-      width: 100%;
-      padding: 0.7em;
-      margin-top: 0.5em;
-      border-radius: 0.5em;
+      width: 90%;
+      margin: 0.5rem auto;
+      padding: 0.8rem;
+      border-radius: 0.5rem;
       border: none;
-      font-size: 1em;
-    }
-    input {
-      background: #1e293b;
-      color: #e0f2fe;
-      box-shadow: 0 0 8px #38bdf822;
+      font-size: 1rem;
     }
     button {
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      color: #fff;
-      font-weight: bold;
+      background: linear-gradient(90deg, #16f0a7, #0ea5e9);
+      color: #0f172a;
       cursor: pointer;
-      margin-top: 1.5em;
-      box-shadow: 0 0 12px #38bdf888;
-      transition: all 0.3s ease-in-out;
+      transition: 0.3s;
     }
     button:hover {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-      color: #0f172a;
+      background: linear-gradient(90deg, #0ea5e9, #16f0a7);
       transform: scale(1.05);
     }
-    #result {
-      margin-top: 1.5em;
+    .output-box {
+      margin-top: 1.5rem;
       padding: 1rem;
-      background: rgba(2,6,23,0.6);
-      border-radius: 0.5em;
-      box-shadow: 0 0 12px #38bdf855;
-      display: none;
+      background: rgba(22,78,99,0.7);
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(56,189,248,0.3);
     }
     #lang-btn {
       position: fixed;
@@ -82,73 +81,58 @@
       height: 50px;
       font-size: 20px;
       cursor: pointer;
-      box-shadow: 0 0 15px #0ea5e9;
-      z-index: 9999;
+      box-shadow: 0 0 12px #0ea5e9;
     }
   </style>
 </head>
 <body>
-  <h1>Nadi Jyotishya</h1>
+  <nav>
+    <a href="astrology-hub.html">Hub</a>
+    <a href="astrologer.html">Report Generator</a>
+    <a href="palmistry.html">Palmistry</a>
+    <a href="numerology.html">Numerology</a>
+    <a href="nadi-jyotishya.html">Nadi</a>
+    <a href="geovision.html">GeoVision</a>
+  </nav>
+
   <div class="container">
-    <p>Ancient Nadi scriptures, KP astrology, and NASA data combined for deep insights into your past, present, and future with Buddhi AI.</p>
-    
-    <!-- Palmistry Upload -->
-    <label for="handImage">Palm Image</label>
-    <input type="file" id="handImage" accept="image/*">
-    
-    <!-- Nadi Details -->
-    <label for="dob">Date of Birth</label>
-    <input type="date" id="dob" required>
-    
-    <label for="time">Time of Birth</label>
-    <input type="time" id="time" required>
-    
-    <label for="place">Place of Birth</label>
-    <input type="text" id="place" placeholder="e.g., Anuradhapura" required>
-    
-    <button id="nadiBtn">Search Nadi Record</button>
-    <div id="result"></div>
+    <h1>Nadi Jyotishya Insights</h1>
+    <p>Enter your birth details to explore ancient Nadi records (AI assisted).</p>
+    <input type="date" id="dob">
+    <input type="time" id="tob">
+    <input type="text" id="place" placeholder="Birthplace">
+    <button onclick="generateNadi()">Search Nadi Records</button>
+
+    <div id="result" class="output-box" style="display:none;"></div>
   </div>
 
-  <!-- Language Globe -->
   <div id="google_translate_element" style="display:none;"></div>
   <button id="lang-btn">🌐</button>
 
   <script>
-    // Disable right-click and shortcuts
+    // Disable copy & shortcuts
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
     });
 
-    // Display placeholder results
-    document.getElementById('nadiBtn').addEventListener('click', () => {
+    function generateNadi() {
       const dob = document.getElementById('dob').value;
-      const time = document.getElementById('time').value;
+      const tob = document.getElementById('tob').value;
       const place = document.getElementById('place').value;
-      const resultBox = document.getElementById('result');
-      
-      if (!dob || !time || !place) {
-        resultBox.style.display = "block";
-        resultBox.innerHTML = "<p style='color:#f87171'>Please fill out all fields.</p>";
+
+      if (!dob || !tob || !place) {
+        alert("Please fill all fields.");
         return;
       }
 
-      resultBox.style.display = "block";
-      resultBox.innerHTML = `
-        <p style="color:#7dd3fc">Buddhi AI analyzing Nadi data...</p>
-        <p>Date: ${dob} | Time: ${time} | Place: ${place}</p>
-        <p style="margin-top:0.5em; color:#cbd5e1;">Combining KP, NASA, and palmistry data for predictions...</p>
-      `;
-    });
+      document.getElementById('result').innerHTML =
+        `<h2>Nadi Report</h2>
+         <p>Records for ${dob}, ${tob} at ${place} are being scanned...</p>`;
+      document.getElementById('result').style.display = "block";
+    }
 
-    // Palmistry upload placeholder
-    document.getElementById('handImage').addEventListener('change', function(e) {
-      if(e.target.files && e.target.files[0]) {
-        alert('Palmistry image uploaded! (AI analysis coming soon.)');
-      }
-    });
-
+    // Translate
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'en',

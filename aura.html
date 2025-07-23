@@ -1,103 +1,187 @@
-<!DOCTYPE html>
+.<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Palm Scanner with Flash | Sathyadarshana</title>
+  <title>Aura Energy Scanner (Deep Research)</title>
   <style>
-    body {
-      margin: 0;
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
       background: #000;
-      color: #0ff;
       font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
+      color: #0ff;
+      overflow: hidden;
     }
-    video {
-      width: 90%;
-      max-width: 400px;
-      border: 2px solid #38bdf8;
-      border-radius: 10px;
-      box-shadow: 0 0 25px #38bdf888;
+    video, canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+    #controls {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      z-index: 5;
+    }
+    button {
+      padding: 12px 18px;
+      background: linear-gradient(90deg,#38bdf8,#16f0a7);
+      color: #000; font-weight: bold;
+      border: none; border-radius: 8px;
+      cursor: pointer;
     }
     #flash-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: white;
-      opacity: 0;
-      pointer-events: none;
+      opacity: 0; pointer-events: none;
       transition: opacity 0.2s ease;
-      z-index: 9999;
+      z-index: 10;
     }
-    button {
-      margin-top: 1em;
-      padding: 1em 2em;
-      background: #38bdf8;
-      color: #000;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    #resultOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
+      color: #fff; display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      text-align: center;
+      padding: 1em;
+    }
+    #resultImg {
+      max-width: 90%;
+      max-height: 60%;
+      border: 2px solid #38bdf8;
+      box-shadow: 0 0 25px #38bdf888;
+      margin-bottom: 1em;
+    }
+    .aura-glow {
+      box-shadow: 0 0 40px rgba(56,189,248,0.6);
+      animation: pulse 2s infinite alternate;
+    }
+    @keyframes pulse {
+      from { box-shadow: 0 0 30px rgba(56,189,248,0.3); }
+      to { box-shadow: 0 0 60px rgba(23,240,167,0.7); }
     }
   </style>
 </head>
 <body>
-  <h2>Palm Scanner (with Flash)</h2>
   <video id="camera" autoplay playsinline></video>
-  <button id="toggleFlash">Flash On</button>
-  <button id="captureBtn">Capture</button>
+  <canvas id="captureCanvas" style="display:none;"></canvas>
   <div id="flash-overlay"></div>
-  <canvas id="snapshot" style="display:none;"></canvas>
+
+  <div id="controls">
+    <button id="modeBtn">Mode: Face</button>
+    <button id="flashBtn">Flash</button>
+    <button id="captureBtn">Capture</button>
+    <button id="closeBtn" style="display:none;">Close</button>
+  </div>
+
+  <div id="resultOverlay">
+    <img id="resultImg" class="aura-glow" alt="Aura Scan Result">
+    <div id="auraData"></div>
+    <button onclick="closeResult()">Close</button>
+  </div>
+
   <script>
-    const video = document.getElementById('camera');
-    const toggleFlashBtn = document.getElementById('toggleFlash');
-    const captureBtn = document.getElementById('captureBtn');
-    const overlay = document.getElementById('flash-overlay');
-    const canvas = document.getElementById('snapshot');
-    let stream;
-    let flashOn = false;
-    let track;
+    let video = document.getElementById('camera');
+    let canvas = document.getElementById('captureCanvas');
+    let modeBtn = document.getElementById('modeBtn');
+    let flashBtn = document.getElementById('flashBtn');
+    let captureBtn = document.getElementById('captureBtn');
+    let overlay = document.getElementById('flash-overlay');
+    let resultOverlay = document.getElementById('resultOverlay');
+    let resultImg = document.getElementById('resultImg');
+    let auraData = document.getElementById('auraData');
+
+    let stream, track;
+    let usingFront = true;
+    let torchOn = false;
+    let currentMode = "face"; // face / palm / body
 
     async function startCamera() {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: usingFront ? "user" : "environment" }
+      });
       video.srcObject = stream;
       track = stream.getVideoTracks()[0];
     }
 
-    toggleFlashBtn.onclick = async () => {
-      if (!track) return alert("Camera not started!");
-      const capabilities = track.getCapabilities();
-      if (capabilities.torch) {
-        try {
-          flashOn = !flashOn;
-          await track.applyConstraints({ advanced: [{ torch: flashOn }] });
-        } catch (err) {
-          alert("Flash control failed: " + err.message);
-        }
+    async function toggleFlash() {
+      if (!track) return;
+      const caps = track.getCapabilities();
+      if (caps.torch) {
+        torchOn = !torchOn;
+        await track.applyConstraints({ advanced: [{ torch: torchOn }] });
       } else {
-        // Fallback: Screen flash simulation
+        // screen flash fallback
         overlay.style.opacity = 1;
-        setTimeout(() => { overlay.style.opacity = 0; }, 150);
-        alert("Torch not supported, using screen flash.");
+        setTimeout(() => overlay.style.opacity = 0, 150);
       }
-    };
+    }
 
-    captureBtn.onclick = () => {
-      const context = canvas.getContext('2d');
+    function switchMode() {
+      if (currentMode === "face") {
+        currentMode = "palm";
+        usingFront = false;
+        modeBtn.textContent = "Mode: Palm";
+      } else if (currentMode === "palm") {
+        currentMode = "body";
+        usingFront = false;
+        modeBtn.textContent = "Mode: Body";
+      } else {
+        currentMode = "face";
+        usingFront = true;
+        modeBtn.textContent = "Mode: Face";
+      }
+      startCamera();
+    }
+
+    function capturePhoto() {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageURL = canvas.toDataURL('image/png');
-      const newTab = window.open();
-      newTab.document.write(`<img src="${imageURL}" style="width:100%">`);
-    };
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imgData = canvas.toDataURL('image/png');
+      resultImg.src = imgData;
+      analyzeAura(ctx);
+      resultOverlay.style.display = "flex";
+    }
+
+    function analyzeAura(ctx) {
+      const img = ctx.getImageData(0,0,canvas.width,canvas.height);
+      const pixels = img.data;
+      let red=0,green=0,blue=0,total=0;
+      for (let i=0;i<pixels.length;i+=4){
+        red+=pixels[i]; green+=pixels[i+1]; blue+=pixels[i+2]; total++;
+      }
+      red/=total; green/=total; blue/=total;
+      let domColor = red>green && red>blue ? "Red (Root Chakra)" :
+                     green>red && green>blue ? "Green (Heart Chakra)" :
+                     "Blue (Throat Chakra)";
+      auraData.innerHTML = `<strong>Dominant Aura:</strong> ${domColor}<br>
+        <span style="font-size:0.9em;opacity:0.8;">Deep Research Mode: Aura color stats saved (console)</span>`;
+      console.log({ red, green, blue, mode: currentMode, timestamp: Date.now() });
+    }
+
+    function closeResult() {
+      resultOverlay.style.display = "none";
+    }
+
+    flashBtn.onclick = toggleFlash;
+    captureBtn.onclick = capturePhoto;
+    modeBtn.onclick = switchMode;
 
     startCamera();
   </script>

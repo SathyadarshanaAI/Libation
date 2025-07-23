@@ -92,7 +92,7 @@
 </head>
 <body>
 
-  <!-- Navbar with Scroll Links -->
+  <!-- Navbar -->
   <nav>
     <a href="#report">Report</a>
     <a href="#palmistry">Palmistry</a>
@@ -116,6 +116,11 @@
     <button onclick="downloadPDF()">Download PDF</button>
     <button onclick="playVoice()">Play Voice Summary</button>
     <div id="report-output" style="margin-top:1rem;text-align:left;"></div>
+
+    <!-- KP Birth Chart -->
+    <h2 style="margin-top:2rem;">KP Birth Chart (Preview)</h2>
+    <canvas id="chartCanvas" width="500" height="500" style="background:#0f172a;border-radius:50%;box-shadow:0 0 15px #38bdf8;"></canvas>
+    <p style="margin-top:1rem; color:#7dd3fc;">Mock planetary positions – real NASA data coming soon.</p>
   </section>
 
   <!-- Palmistry -->
@@ -184,6 +189,7 @@
       if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
     });
 
+    // Report logic
     let mode = 'KP';
     function setMode(selected) { mode = selected; alert(mode+" mode selected."); }
     function generateReport() {
@@ -206,12 +212,16 @@
       const utterance = new SpeechSynthesisUtterance(text);
       speechSynthesis.speak(utterance);
     }
+
+    // Numerology
     function generateNumerology() {
       const name = document.getElementById('fullname').value.trim();
       const dob = document.getElementById('dob').value;
       const num = (name.length + dob.replace(/-/g,'').length) % 9 || 9;
       document.getElementById('num-result').innerHTML = `<h2>Your Number: ${num}</h2>`;
     }
+
+    // Nadi
     function generateNadi() {
       const dob = document.getElementById('ndob').value;
       const tob = document.getElementById('ntob').value;
@@ -219,6 +229,8 @@
       document.getElementById('nadi-result').innerHTML =
         `<h2>Nadi Records</h2><p>Searching for ${dob}, ${tob}, ${place}...</p>`;
     }
+
+    // GeoVision Map
     const map = L.map('map').setView([7.8731,80.7718],7);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
     function analyzeRegion() {
@@ -231,6 +243,8 @@
             L.marker([data[0].lat,data[0].lon]).addTo(map).bindPopup(region).openPopup();}
         });
     }
+
+    // Google Translate
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'en', includedLanguages: 'en,si,ta',
@@ -240,6 +254,53 @@
     }
     document.getElementById('lang-btn').addEventListener('click', () => {
       document.querySelector('.goog-te-gadget-simple').click();
+    });
+
+    // KP Birth Chart (Mock Planets)
+    const canvas = document.getElementById('chartCanvas');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 200;
+
+    // Draw 12 houses
+    for (let i = 0; i < 12; i++) {
+      const angle = (i * 30) * Math.PI / 180;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = "#38bdf8";
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = "#16f0a7";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Mock Planets
+    const planets = [
+      { name: 'Sun', deg: 10, color: 'yellow' },
+      { name: 'Moon', deg: 45, color: '#ccc' },
+      { name: 'Mars', deg: 90, color: 'red' },
+      { name: 'Mercury', deg: 150, color: '#0ff' },
+      { name: 'Jupiter', deg: 200, color: 'orange' },
+      { name: 'Saturn', deg: 250, color: '#aaa' },
+      { name: 'Venus', deg: 300, color: 'pink' },
+      { name: 'Rahu', deg: 330, color: 'lime' },
+      { name: 'Ketu', deg: 180, color: 'violet' }
+    ];
+    planets.forEach(p => {
+      const rad = (p.deg - 90) * Math.PI / 180;
+      const px = centerX + (radius - 40) * Math.cos(rad);
+      const py = centerY + (radius - 40) * Math.sin(rad);
+      ctx.beginPath();
+      ctx.arc(px, py, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      ctx.fillText(p.name, px + 8, py);
     });
   </script>
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>

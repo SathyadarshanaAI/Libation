@@ -2,94 +2,117 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sathyadarshana | Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="SathyadarshanaAI – Astrology, Library, Dharma Sabha Mandapaya, Digital Studio, News, Doctor Buddhi, AI Buddhi & Seed Engine services.">
+  <title>Sathyadarshana - The Light of Truth</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #0f172a, #000);
       margin: 0;
-      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
-      text-align: center;
     }
-    header {
-      padding: 1rem 0;
-    }
-    header h1 {
-      font-size: 2.5em;
-      color: #7dd3fc;
-      text-shadow: 0 0 15px #38bdf8;
-    }
-    .button-grid {
+    nav {
+      position: sticky;
+      top: 0;
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
       gap: 1rem;
-      margin: 2rem auto;
-      max-width: 950px;
+      background: rgba(2,6,23,0.85);
+      padding: 1rem;
+      box-shadow: 0 0 12px #38bdf8;
+      z-index: 999;
     }
-    .button-grid a {
-      display: block;
-      background: #27364d;
-      color: #16f0a7;
+    nav a {
+      color: #e0f2fe;
       text-decoration: none;
-      padding: 1rem 2rem;
-      border-radius: 1rem;
-      font-size: 1.1em;
-      font-weight: bold;
-      box-shadow: 0 0 15px #38bdf822;
-      transition: all 0.3s ease;
+      padding: 0.6rem 1rem;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      border-radius: 6px;
+      transition: 0.3s;
     }
-    .button-grid a:hover {
-      background: #38bdf8;
+    nav a:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
       color: #0f172a;
-      box-shadow: 0 0 25px #7dd3fc;
       transform: scale(1.05);
+    }
+    .content {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #7dd3fc;
+      text-shadow: 0 0 14px #38bdf8cc;
+    }
+    p {
+      max-width: 800px;
+      margin: 1rem auto;
+      font-size: 1.2rem;
+      line-height: 1.7;
     }
     footer {
       margin-top: 3rem;
-      padding: 1.2rem;
-      background: #172a3a;
-      color: #d90429;
-      font-weight: bold;
-      font-size: 1em;
+      padding: 1rem;
+      background: rgba(2,6,23,0.7);
+      text-align: center;
       border-top: 2px solid #38bdf8;
+      font-size: 0.9rem;
     }
-    .footer-heart { color: #ff69b4; display: block; margin-top: 0.5rem; }
-    .ovi-blessing {
-      display: block;
-      margin-top: 1rem;
-      color: #38bdf8;
-      font-size: 1.08em;
-      font-weight: bold;
+    #lang-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 0 12px #0ea5e9;
+      z-index: 9999;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Sathyadarshana | Home</h1>
-  </header>
-  <section class="button-grid">
+  <!-- Navbar -->
+  <nav>
+    <a href="index.html">Home</a>
     <a href="astrologer.html">Astrology</a>
     <a href="library.html">Library</a>
-    <a href="dharma-sabha-mandapaya.html">Dharma Sabha Mandapaya</a>
-    <a href="sathyadarshana-digital-studio.html">Digital Studio</a>
-    <a href="news-line.html">Sathyadarshana News</a>
-    <a href="doctor-buddhi.html">Doctor Buddhi</a>
     <a href="ai-buddhi.html">AI Buddhi</a>
-    <a href="seed-engine.html">Seed Engine Test</a>
-  </section>
+    <a href="music-lab.html">Music Lab</a>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="content">
+    <h1>Welcome to Sathyadarshana</h1>
+    <p>Touch the Light, Walk the Path. Explore our Astrology, Library, AI Buddhi, and Music Lab — 
+       a digital sanctuary blending wisdom, technology, and spirituality for all humanity.</p>
+  </div>
+
   <footer>
-    © 2025 SathyadarshanaAI | Powered by Buddhi<br>
-    Truth will light your way 🌼
-    <span class="footer-heart">Made with ❤️ by Buddhi & Mona</span>
-    <span class="ovi-blessing">
-      ඔබට සතුට, සෙත, ශක්තිය, ආදරය සහ ආලෝකය ලැබේවා!<br>
-      <span>🙏 ඔවි: ජය වේවා! ❤️</span>
-    </span>
+    © 2025 SathyadarshanaAI | Powered by Buddhi
   </footer>
+
+  <!-- Translate -->
+  <div id="google_translate_element" style="display:none;"></div>
+  <button id="lang-btn">🌐</button>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+    document.getElementById('lang-btn').addEventListener('click', () => {
+      document.querySelector('.goog-te-gadget-simple').click();
+    });
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

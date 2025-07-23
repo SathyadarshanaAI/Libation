@@ -9,34 +9,55 @@
     body {
       font-family: 'Inter', sans-serif;
       background: radial-gradient(circle at top, #0f172a, #000);
-      color: #e0f2fe; text-align: center;
-      margin: 0; padding: 1em;
+      color: #e0f2fe;
+      margin: 0;
+      padding: 1em;
+      text-align: center;
     }
-    h1 { color: #7dd3fc; text-shadow: 0 0 12px #38bdf8; }
+    h1 {
+      color: #7dd3fc;
+      text-shadow: 0 0 12px #38bdf8;
+    }
     form {
       background: rgba(255,255,255,0.05);
-      padding: 1em; border-radius: 1em;
-      max-width: 500px; margin: 1em auto;
+      padding: 1.5em;
+      border-radius: 1em;
+      max-width: 500px;
+      margin: 1.5em auto;
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(56,189,248,0.2);
     }
-    label { display: block; margin-top: 0.8em; }
+    label { display: block; margin-top: 1em; text-align: left; }
     input, select {
-      width: 100%; padding: 0.6em;
-      border: none; border-radius: 0.5em; margin-top: 0.3em;
+      width: 100%;
+      padding: 0.7em;
+      border-radius: 0.5em;
+      border: none;
+      margin-top: 0.4em;
     }
     button {
-      margin-top: 1em; padding: 0.8em 1.5em;
+      margin-top: 1.5em;
+      padding: 0.8em 1.5em;
       background: linear-gradient(90deg, #38bdf8, #16f0a7);
-      border: none; border-radius: 0.7em; color: #0f172a;
-      font-weight: bold; cursor: pointer;
+      border: none;
+      border-radius: 0.7em;
+      color: #0f172a;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(56,189,248,0.3);
     }
-    #report {
-      margin-top: 1.5em; padding: 1em;
+    #reportBox {
+      margin-top: 1.5em;
+      padding: 1.5em;
       background: rgba(30,41,59,0.7);
-      border-radius: 1em; display: none;
-      max-width: 700px; margin-left: auto; margin-right: auto;
+      border-radius: 1em;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      display: none;
     }
-    .coming-soon { margin-top: 1em; color: #f87171; }
+    .coming-soon { margin-top: 1em; color: #f87171; font-style: italic; }
   </style>
 </head>
 <body>
@@ -44,28 +65,63 @@
   <form id="birthForm">
     <label>Name: <input type="text" id="name" required></label>
     <label>Date of Birth: <input type="date" id="dob" required></label>
-    <label>Time of Birth: <input type="time" id="time" required></label>
-    <label>Place of Birth: <input type="text" id="place" placeholder="City, Country" required></label>
+    <label>Time of Birth: <input type="time" id="tob" required></label>
+    <label>Place of Birth: <input type="text" id="pob" placeholder="City, Country" required></label>
+    <label>Gender:
+      <select id="gender" required>
+        <option value="">Select</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+    </label>
     <button type="submit">Generate Report</button>
   </form>
 
-  <div id="report">
-    <h2>Planetary Positions (Demo)</h2>
-    <p id="planetData">Fetching planetary data...</p>
+  <div id="reportBox">
+    <h2>Your Birth Report</h2>
+    <p id="userData"></p>
+    <h3>Planetary Positions (Demo)</h3>
+    <p id="planetData">Loading...</p>
     <h3>KP Sub-Lord (Sample)</h3>
-    <p>Sun: Leo (Sub-Lord Mercury)<br>Moon: Cancer (Sub-Lord Venus)</p>
+    <p id="kpData">Calculating...</p>
     <h3>Vedic Chart (Sample)</h3>
-    <p>Ascendant: Sagittarius<br>Main planets mapped by demo data.</p>
-    <button onclick="downloadPDF()">Download PDF Report</button>
-    <div class="coming-soon">Full AI-powered prediction coming soon via Seed Engine Lab.</div>
+    <p id="vedicData">Processing...</p>
+    <button onclick="downloadPDF()">Download PDF</button>
+    <div class="coming-soon">Full AI-powered analysis (Seed Engine) coming soon.</div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    document.getElementById('birthForm').addEventListener('submit', async (e) => {
+    const birthForm = document.getElementById('birthForm');
+    const reportBox = document.getElementById('reportBox');
+    const userData = document.getElementById('userData');
+    const planetData = document.getElementById('planetData');
+    const kpData = document.getElementById('kpData');
+    const vedicData = document.getElementById('vedicData');
+
+    birthForm.addEventListener("submit", function(e){
       e.preventDefault();
-      document.getElementById('report').style.display = 'block';
-      document.getElementById('planetData').innerText = "Sun: 120° (Leo), Moon: 240° (Sagittarius) – demo ephemeris.";
+
+      const name = document.getElementById('name').value.trim();
+      const dob = document.getElementById('dob').value;
+      const tob = document.getElementById('tob').value;
+      const pob = document.getElementById('pob').value.trim();
+      const gender = document.getElementById('gender').value;
+
+      userData.innerHTML = `
+        <strong>Name:</strong> ${name}<br>
+        <strong>Date of Birth:</strong> ${dob}<br>
+        <strong>Time of Birth:</strong> ${tob}<br>
+        <strong>Place of Birth:</strong> ${pob}<br>
+        <strong>Gender:</strong> ${gender}
+      `;
+
+      planetData.innerText = "Sun: 120° (Leo), Moon: 240° (Sagittarius) – Demo ephemeris data.";
+      kpData.innerText = "Sun in Leo (Sub-Lord Mercury), Moon in Sagittarius (Sub-Lord Venus)";
+      vedicData.innerText = "Ascendant: Capricorn (Sample Chart)";
+
+      reportBox.style.display = "block";
     });
 
     function downloadPDF() {
@@ -73,8 +129,9 @@
       const doc = new jsPDF();
       doc.text("SathyadarshanaAI Birth Report (Demo)", 10, 10);
       doc.text("High Copyright © 2025", 10, 20);
-      doc.text("Planetary Data (Sample): Sun 120°, Moon 240°", 10, 40);
-      doc.text("Full AI-powered KP/Vedic predictions coming soon.", 10, 60);
+      doc.text(userData.innerText || userData.textContent, 10, 40);
+      doc.text("Planetary Data: Sun 120°, Moon 240°", 10, 80);
+      doc.text("Full KP & AI Analysis Coming Soon (Seed Engine)", 10, 100);
       doc.save("BirthReport_Demo.pdf");
     }
   </script>

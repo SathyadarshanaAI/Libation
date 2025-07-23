@@ -2,199 +2,156 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Astrologer | SathyadarshanaAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <title>Sathyadarshana - Astrologer</title>
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #0f172a, #000);
+      margin: 0;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
-      margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .container {
+      max-width: 700px;
+      margin: 2rem auto;
       text-align: center;
+      padding: 1rem;
+      background: rgba(2, 6, 23, 0.7);
+      border-radius: 12px;
+      box-shadow: 0 0 25px #0ea5e9;
     }
-    header {
-      padding: 1.5em 0 1em;
-      background: rgba(2,6,23,0.6);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(56,189,248,0.2);
-      position: relative;
-    }
-    header h1 {
-      font-size: 2.2em;
-      margin: 0;
-      color: #7dd3fc;
-      text-shadow: 0 0 12px #38bdf8;
-    }
-    header .home-btn {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      background: #38bdf8;
-      color: #0f172a;
-      padding: 0.6em 1.2em;
-      border-radius: 1em;
-      text-decoration: none;
-      font-weight: bold;
-      box-shadow: 0 0 10px #38bdf8;
-      transition: 0.3s ease;
-    }
-    header .home-btn:hover {
-      background: #16f0a7;
-      color: #0f172a;
-      box-shadow: 0 0 20px #16f0a7;
-    }
-    .step {
-      margin: 2em auto;
-      max-width: 900px;
-      padding: 1.5em;
-      border-radius: 1rem;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 20px rgba(56,189,248,0.2);
-      text-align: center;
-    }
-    .step h2 {
-      color: #16f0a7;
-      text-shadow: 0 0 8px rgba(23,240,167,0.4);
-    }
-    .step iframe, .step button {
+    .mode-btn {
       display: block;
-      margin: 1em auto;
-      max-width: 100%;
-      width: 90%;
-      border-radius: 1em;
+      width: 80%;
+      margin: 1rem auto;
+      padding: 1rem;
+      background: #0ea5e9;
+      color: #fff;
+      font-size: 1.2rem;
       border: none;
-      box-shadow: 0 0 15px rgba(56,189,248,0.15);
-    }
-    button {
-      background: #38bdf8;
-      color: #0f172a;
-      padding: 1em 2em;
-      font-size: 1.1em;
-      font-weight: bold;
-      border: none;
-      border-radius: 1em;
+      border-radius: 8px;
       cursor: pointer;
-      transition: 0.3s ease;
-      box-shadow: 0 0 15px rgba(125,211,252,0.4);
+      transition: all 0.3s ease-in-out;
     }
-    button:hover {
-      background: #16f0a7;
+    .mode-btn:hover {
+      background: #38bdf8;
       transform: scale(1.05);
-      box-shadow: 0 0 25px rgba(23,240,167,0.4);
     }
-    .lang-btn {
+    input, select {
+      margin: 0.5rem;
+      padding: 0.7rem;
+      border-radius: 6px;
+      border: none;
+      width: 80%;
+      text-align: center;
+    }
+    #lang-btn {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: #0f172a;
-      color: #38bdf8;
-      padding: 1em;
+      background: #0ea5e9;
+      color: white;
+      border: none;
       border-radius: 50%;
-      box-shadow: 0 0 15px #38bdf8;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
       cursor: pointer;
-      z-index: 10000;
-    }
-    .tariff-box {
-      max-width: 700px;
-      margin: 2em auto;
-      padding: 1.5em;
-      background: rgba(22,78,99,0.8);
-      color: #fff;
-      border-radius: 1rem;
-      font-size: 1.05em;
-      display: none;
-      box-shadow: 0 0 20px #38bdf822;
-    }
-    footer {
-      margin-top: 3em;
-      padding: 1em;
-      background: rgba(2,6,23,0.6);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      color: #d90429;
-      font-weight: bold;
-      font-size: 1em;
-      border-top: 2px solid #38bdf8;
+      box-shadow: 0 0 15px #0ea5e9;
+      z-index: 9999;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Astrologer</h1>
-    <a href="index.html" class="home-btn">Home</a>
-  </header>
+  <div class="container">
+    <h1>Astrology Report Generator</h1>
+    
+    <!-- Birth Details -->
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="text" id="nic" placeholder="NIC (for secure DB)" required>
+    <input type="date" id="birthdate" required>
+    <input type="time" id="birthtime" required>
+    <input type="text" id="birthplace" placeholder="Birth Place" required>
 
-  <!-- Steps -->
-  <div class="step">
-    <h2>Step 1: Enter Birth Details</h2>
-    <iframe src="birth-report.html" height="400"></iframe>
+    <!-- KP or Vedic Selection -->
+    <button class="mode-btn" onclick="setMode('KP')">KP Mode</button>
+    <button class="mode-btn" onclick="setMode('Vedic')">Vedic Mode</button>
+
+    <!-- Generate Report -->
+    <button class="mode-btn" onclick="generateReport()">Generate Astrology Report</button>
+    <button class="mode-btn" onclick="downloadPDF()">Download PDF</button>
+    <button class="mode-btn" onclick="playVoice()">Play Voice Summary</button>
+
+    <!-- Output -->
+    <div id="report-output" style="margin-top:20px; text-align:left;"></div>
   </div>
 
-  <div class="step">
-    <h2>Step 2: Select Astrology Mode</h2>
-    <button onclick="alert('KP Mode Selected')">KP Mode</button>
-    <button onclick="alert('Vedic Mode Selected')">Vedic Mode</button>
-    <button onclick="alert('Generating Report...')">Generate</button>
-  </div>
+  <!-- Language Globe Button -->
+  <div id="google_translate_element" style="display:none;"></div>
+  <button id="lang-btn">🌐</button>
 
-  <div class="step">
-    <h2>Step 3: Upload Palm Scan</h2>
-    <iframe src="palmistry.html" height="400"></iframe>
-  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <div class="step">
-    <h2>Step 4: Numerology</h2>
-    <iframe src="numerology.html" height="400"></iframe>
-  </div>
+  <script type="text/javascript">
+    let mode = 'KP';
 
-  <div class="step">
-    <h2>Step 5: Aura Scan</h2>
-    <iframe src="aura.html" height="400"></iframe>
-  </div>
-
-  <div class="step">
-    <h2>Step 6: GeoVision</h2>
-    <iframe src="geovision.html" height="500"></iframe>
-  </div>
-
-  <div class="step">
-    <h2>Step 7: Final Seed Engine Report</h2>
-    <iframe src="astrologe-research.html" height="500"></iframe>
-    <button onclick="saveReport()">Save Report (by NIC)</button>
-  </div>
-
-  <!-- Tariff -->
-  <div id="tariff" class="tariff-box">
-    <h3>Astrology Service Tariff</h3>
-    <p>Basic readings: Free (limited)</p>
-    <p>Full KP/Vedic Analysis + Seed Engine Report: $5</p>
-    <p>Student & Children Discount: Flexible Donation</p>
-  </div>
-
-  <footer>
-    © <span id="copy-year">2025</span> SathyadarshanaAI | Powered by Buddhi  
-    <br>Truth will light your way 🌼  
-    <br>Made with ❤️ by Buddhi & Mona
-  </footer>
-
-  <div class="lang-btn" onclick="switchLang()">🌐</div>
-
-  <script>
-    function saveReport() {
-      alert("Report analyzed and saved under your NIC. (Secure database coming soon.)");
+    function setMode(selected) {
+      mode = selected;
+      alert(mode + " mode selected.");
     }
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('copy-year').textContent = new Date().getFullYear();
+
+    function generateReport() {
+      const name = document.getElementById('name').value;
+      const nic = document.getElementById('nic').value;
+      const dob = document.getElementById('birthdate').value;
+      const tob = document.getElementById('birthtime').value;
+      const pob = document.getElementById('birthplace').value;
+
+      // Placeholder for KP Sub Lord Calculation (future API logic)
+      const kpResult = "Sub Lord Calculations will be fetched dynamically...";
+
+      const report = `
+        <h2>Astrology Report</h2>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>NIC:</b> ${nic}</p>
+        <p><b>Date of Birth:</b> ${dob}</p>
+        <p><b>Time of Birth:</b> ${tob}</p>
+        <p><b>Place of Birth:</b> ${pob}</p>
+        <p><b>Selected Mode:</b> ${mode}</p>
+        <p><b>KP Sub Lord Result:</b> ${kpResult}</p>
+      `;
+      document.getElementById('report-output').innerHTML = report;
+    }
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+      pdf.text("Sathyadarshana Astrology Report", 10, 10);
+      pdf.text(document.getElementById('report-output').innerText, 10, 20);
+      pdf.save("Astrology_Report.pdf");
+    }
+
+    function playVoice() {
+      const text = document.getElementById('report-output').innerText;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US'; // Sinhala/Tamil support via Google Translate voice later
+      speechSynthesis.speak(utterance);
+    }
+
+    // Google Translate initialization
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+    document.getElementById('lang-btn').addEventListener('click', function(){
+      document.querySelector('.goog-te-gadget-simple').click();
     });
-    function switchLang() {
-      alert("Language switch (Sinhala/Tamil/English) coming soon!");
-    }
   </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

@@ -12,86 +12,62 @@
       background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
       text-align: center;
-      overflow-x: hidden;
-      min-height: 100vh;
-      padding: 2em;
     }
-    h1 {
-      font-size: 2.5em;
-      color: #7dd3fc;
-      margin-bottom: 1em;
-      text-shadow: 0 0 14px #38bdf8cc;
-      animation: textGlow 2.5s infinite alternate;
+    nav {
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      background: rgba(2,6,23,0.8);
+      padding: 1rem;
+      box-shadow: 0 0 12px #38bdf8;
     }
-    @keyframes textGlow {
-      from { text-shadow: 0 0 7px #38bdf8; }
-      to { text-shadow: 0 0 20px #38bdf8bb; }
-    }
-    form {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 1.5em;
-      background: rgba(30,41,59,0.8);
-      border-radius: 1em;
-      box-shadow: 0 0 15px rgba(56,189,248,0.4);
-    }
-    label {
-      display: block;
-      margin-top: 1em;
-      color: #7dd3fc;
-      font-weight: 600;
-      text-align: left;
-    }
-    input {
-      width: 100%;
-      padding: 0.6em;
-      margin-top: 0.3em;
-      border: none;
-      border-radius: 0.5em;
-      background: #1e293b;
+    nav a {
       color: #e0f2fe;
-      font-size: 1em;
-      margin-bottom: .5em;
-      box-shadow: 0 0 8px #38bdf822;
-    }
-    input:focus {
-      outline: none;
-      border: 2px solid #38bdf8;
-      box-shadow: 0 0 10px #38bdf8bb;
-    }
-    button {
-      margin-top: 1.4em;
-      padding: 0.8em 1.5em;
-      border: none;
-      border-radius: 0.5em;
+      text-decoration: none;
+      padding: 0.6rem 1rem;
       background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      color: white;
-      font-weight: bold;
-      font-size: 1.08em;
-      cursor: pointer;
+      border-radius: 6px;
       transition: 0.3s;
-      width: 100%;
-      box-shadow: 0 0 10px #38bdf888;
-      letter-spacing: .01em;
     }
-    button:hover {
+    nav a:hover {
       background: linear-gradient(90deg, #0ea5e9, #38bdf8);
       color: #0f172a;
       transform: scale(1.05);
     }
+    .container {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: rgba(30,41,59,0.8);
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(56,189,248,0.4);
+    }
+    input, button {
+      width: 90%;
+      margin: 0.5rem auto;
+      padding: 0.8rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
+    }
+    button {
+      background: linear-gradient(90deg, #16f0a7, #0ea5e9);
+      color: #0f172a;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #16f0a7);
+      transform: scale(1.05);
+    }
     .output-box {
-      margin-top: 2em;
-      padding: 1.5em 1.1em;
-      border-radius: 1em;
-      max-width: 500px;
-      width: 100%;
-      background: rgba(30, 41, 59, 0.93);
-      color: #f1f5f9;
-      box-shadow: 0 0 22px #38bdf844;
-      font-size: 1.09em;
-      display: none;
-      margin-left: auto;
-      margin-right: auto;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(22,78,99,0.7);
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(56,189,248,0.3);
     }
     #lang-btn {
       position: fixed;
@@ -105,91 +81,67 @@
       height: 50px;
       font-size: 20px;
       cursor: pointer;
-      box-shadow: 0 0 15px #0ea5e9;
-      z-index: 9999;
+      box-shadow: 0 0 12px #0ea5e9;
     }
   </style>
 </head>
 <body>
-  <h1>Numerology Report</h1>
-  <form id="numForm">
-    <label for="fullname">Full Name</label>
-    <input type="text" id="fullname" name="fullname" placeholder="e.g. Anuruddha Perera" required>
-    <label for="dob">Date of Birth</label>
-    <input type="date" id="dob" name="dob" required>
-    <button type="submit">Get Numerology Report</button>
-  </form>
-  <div class="output-box" id="outputBox"></div>
+  <nav>
+    <a href="astrology-hub.html">Hub</a>
+    <a href="astrologer.html">Report Generator</a>
+    <a href="palmistry.html">Palmistry</a>
+    <a href="numerology.html">Numerology</a>
+    <a href="nadi-jyotishya.html">Nadi</a>
+    <a href="geovision.html">GeoVision</a>
+  </nav>
 
-  <!-- Language Globe -->
+  <div class="container">
+    <h1>Numerology Calculator</h1>
+    <input type="text" id="fullname" placeholder="Full Name">
+    <input type="date" id="dob">
+    <button onclick="generateNumerology()">Get Report</button>
+
+    <div id="result" class="output-box" style="display:none;"></div>
+  </div>
+
   <div id="google_translate_element" style="display:none;"></div>
   <button id="lang-btn">🌐</button>
 
   <script>
-    // Disable right-click and shortcuts
+    // Disable copy & shortcuts
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
     });
 
-    function nameToNumber(name) {
-      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      let sum = 0;
-      name = name.toUpperCase().replace(/[^A-Z]/g, '');
-      for (let ch of name) {
-        sum += (letters.indexOf(ch) % 9) + 1;
-      }
-      while (sum > 9 && sum !== 11 && sum !== 22) {
-        sum = sum.toString().split('').reduce((a, b) => a + parseInt(b), 0);
-      }
-      return sum;
-    }
-    function birthToNumber(dob) {
-      const nums = dob.replace(/-/g, '').split('').map(n => parseInt(n));
-      let sum = nums.reduce((a,b)=>a+b,0);
-      while (sum > 9 && sum !== 11 && sum !== 22) {
-        sum = sum.toString().split('').reduce((a,b)=>a+parseInt(b),0);
-      }
-      return sum;
-    }
-    function getMeaning(num) {
-      const meanings = {
-        1: "Leadership, independence, originality.",
-        2: "Partnership, harmony, sensitivity.",
-        3: "Creativity, expression, joy.",
-        4: "Stability, practicality, responsibility.",
-        5: "Freedom, adventure, curiosity.",
-        6: "Responsibility, nurturing, care.",
-        7: "Spirituality, analysis, wisdom.",
-        8: "Power, ambition, success.",
-        9: "Humanitarianism, compassion, completion.",
-        11: "Intuition, inspiration, enlightenment.",
-        22: "Master builder, vision, achievement."
-      };
-      return meanings[num] || "Unique, mysterious vibration.";
-    }
-    document.getElementById("numForm").addEventListener("submit", function(e){
-      e.preventDefault();
-      const name = document.getElementById("fullname").value.trim();
-      const dob = document.getElementById("dob").value;
-      const nameNum = nameToNumber(name);
-      const birthNum = birthToNumber(dob);
-      const nameMean = getMeaning(nameNum);
-      const birthMean = getMeaning(birthNum);
-      const report = `
-        <strong>Name Number:</strong> <span style="color:#16f0a7">${nameNum}</span><br>
-        <strong>Name Meaning:</strong> <em>${nameMean}</em><br>
-        <strong>Birth Number:</strong> <span style="color:#38bdf8">${birthNum}</span><br>
-        <strong>Birth Meaning:</strong> <em>${birthMean}</em><br>
-        <hr>
-        <strong>Combined Insight:</strong> <span style="color:#7dd3fc">Your path combines ${nameMean.toLowerCase()} and ${birthMean.toLowerCase()}.</span>
-      `;
-      const output = document.getElementById("outputBox");
-      output.innerHTML = report;
-      output.style.display = "block";
-      output.scrollIntoView({behavior:"smooth"});
-    });
+    function generateNumerology() {
+      const name = document.getElementById('fullname').value.trim();
+      const dob = document.getElementById('dob').value;
 
+      if (!name || !dob) {
+        alert("Please fill out both fields.");
+        return;
+      }
+
+      const num = (name.length + dob.replace(/-/g, '').length) % 9 || 9;
+      const meanings = {
+        1: "Leadership & originality",
+        2: "Harmony & partnerships",
+        3: "Creativity & joy",
+        4: "Stability & discipline",
+        5: "Adventure & freedom",
+        6: "Care & responsibility",
+        7: "Wisdom & spirituality",
+        8: "Power & ambition",
+        9: "Compassion & completion"
+      };
+
+      document.getElementById('result').innerHTML = 
+        `<h2>Your Number: ${num}</h2><p>${meanings[num]}</p>`;
+      document.getElementById('result').style.display = "block";
+    }
+
+    // Translate
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'en',

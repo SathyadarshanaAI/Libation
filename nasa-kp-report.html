@@ -76,6 +76,13 @@
       padding: 0.5em;
       text-align: center;
     }
+    .chart-btn {
+      margin-top: 1.5em;
+      background: #16f0a7;
+      color: #0f172a;
+      font-size: 1.1em;
+      padding: 0.7em 1.3em;
+    }
   </style>
 </head>
 <body>
@@ -104,8 +111,9 @@
       </thead>
       <tbody id="kpTable"></tbody>
     </table>
+    <button class="chart-btn" onclick="openCharts()">View KP & Navamsa Charts</button>
     <p style="margin-top:1em; color:#f87171; font-style:italic;">
-      (Data currently simulated. Live NASA API + full KP math integration coming.)
+      (Data simulated. Live NASA API + full KP math integration coming.)
     </p>
   </div>
 
@@ -119,11 +127,7 @@
       reportBox.style.display = "block";
       kpTable.innerHTML = `<tr><td colspan="5">Fetching planetary positions...</td></tr>`;
 
-      const dob = document.getElementById('dob').value;
-      const tob = document.getElementById('tob').value;
-      const pob = document.getElementById('pob').value;
-
-      // --- DEMO Planetary Data (Simulated) ---
+      // Simulated planetary positions
       setTimeout(() => {
         const planets = [
           { name: "Sun", deg: "120.5°", zodiac: "Leo", star: "Krittika", sub: "Mercury" },
@@ -137,6 +141,10 @@
         ).join('');
       }, 1200);
     });
+
+    function openCharts() {
+      window.open('kp-navamsa-chart.html', '_blank');
+    }
   </script>
 </body>
 </html>

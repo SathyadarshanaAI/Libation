@@ -20,6 +20,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 0 20px rgba(56,189,248,0.2);
+      position: relative;
     }
     header h1 {
       font-size: 2.2em;
@@ -33,16 +34,41 @@
       font-size: 1.1em;
       text-shadow: 0 0 8px rgba(23,240,167,0.3);
     }
+    .lang-btn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #38bdf8;
+      color: #0f172a;
+      padding: 0.6em 0.9em;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(56,189,248,0.5);
+      z-index: 9999;
+    }
+    .home-btn {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #16f0a7;
+      color: #0f172a;
+      padding: 0.6em 1.2em;
+      border-radius: 1em;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(23,240,167,0.5);
+      z-index: 9999;
+    }
     .step {
       margin: 2em auto;
       max-width: 900px;
       padding: 1.5em;
       border-radius: 1rem;
       background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.2);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 20px rgba(56,189,248,0.2);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
       text-align: center;
     }
     .step h2 {
@@ -76,6 +102,20 @@
       transform: scale(1.05);
       box-shadow: 0 0 25px rgba(23,240,167,0.4);
     }
+    .tariff {
+      margin: 3em auto;
+      max-width: 900px;
+      padding: 1.5em;
+      border-radius: 1rem;
+      background: rgba(30,41,59,0.6);
+      backdrop-filter: blur(10px);
+      color: #e0f2fe;
+      text-align: center;
+      box-shadow: 0 4px 25px rgba(56,189,248,0.2);
+    }
+    .tariff h2 { color: #7dd3fc; }
+    .tariff ul { list-style: none; padding: 0; }
+    .tariff li { margin: 1em 0; font-size: 1.1em; }
     .watermark-bg {
       position: fixed;
       left: 50%;
@@ -110,9 +150,21 @@
       font-size: 1.08em;
     }
   </style>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
 </head>
 <body>
   <div class="watermark-bg">© SathyadarshanaAI | High Copyright</div>
+  <a href="index.html" class="home-btn">Home</a>
+  <div id="google_translate_element" class="lang-btn">🌐</div>
 
   <header>
     <h1>Astrologer</h1>
@@ -155,6 +207,15 @@
     <h2>Step 7: Final Seed Engine Report</h2>
     <iframe src="astrologe-research.html" height="500"></iframe>
     <button onclick="saveReport()">Save Report (by NIC)</button>
+  </div>
+
+  <div class="tariff">
+    <h2>Astrology Tariff Plans</h2>
+    <ul>
+      <li><b>Free Plan:</b> Basic horoscope & numerology (students get extra access)</li>
+      <li><b>Standard Plan ($5):</b> Full KP/Vedic reading + palmistry insights</li>
+      <li><b>Premium Plan ($10):</b> Detailed Seed Engine report (PDF + NASA planetary data)</li>
+    </ul>
   </div>
 
   <footer>

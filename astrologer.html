@@ -16,7 +16,7 @@
     }
     header {
       padding: 1.5em 0 1em;
-      background: rgba(2, 6, 23, 0.6);
+      background: rgba(2,6,23,0.6);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 0 20px rgba(56,189,248,0.2);
@@ -24,41 +24,27 @@
     }
     header h1 {
       font-size: 2.2em;
-      color: #7dd3fc;
       margin: 0;
+      color: #7dd3fc;
       text-shadow: 0 0 12px #38bdf8;
     }
-    header p {
-      margin-top: 0.4em;
-      color: #16f0a7;
-      font-size: 1.1em;
-      text-shadow: 0 0 8px rgba(23,240,167,0.3);
-    }
-    .lang-btn {
-      position: fixed;
+    header .home-btn {
+      position: absolute;
       top: 15px;
-      right: 15px;
+      right: 20px;
       background: #38bdf8;
-      color: #0f172a;
-      padding: 0.6em 0.9em;
-      border-radius: 50%;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 0 15px rgba(56,189,248,0.5);
-      z-index: 9999;
-    }
-    .home-btn {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      background: #16f0a7;
       color: #0f172a;
       padding: 0.6em 1.2em;
       border-radius: 1em;
       text-decoration: none;
       font-weight: bold;
-      box-shadow: 0 0 15px rgba(23,240,167,0.5);
-      z-index: 9999;
+      box-shadow: 0 0 10px #38bdf8;
+      transition: 0.3s ease;
+    }
+    header .home-btn:hover {
+      background: #16f0a7;
+      color: #0f172a;
+      box-shadow: 0 0 20px #16f0a7;
     }
     .step {
       margin: 2em auto;
@@ -66,9 +52,10 @@
       padding: 1.5em;
       border-radius: 1rem;
       background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.2);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 20px rgba(56,189,248,0.2);
       text-align: center;
     }
     .step h2 {
@@ -93,41 +80,36 @@
       border: none;
       border-radius: 1em;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: 0.3s ease;
       box-shadow: 0 0 15px rgba(125,211,252,0.4);
     }
     button:hover {
       background: #16f0a7;
-      color: #0f172a;
       transform: scale(1.05);
       box-shadow: 0 0 25px rgba(23,240,167,0.4);
     }
-    .tariff {
-      margin: 3em auto;
-      max-width: 900px;
-      padding: 1.5em;
-      border-radius: 1rem;
-      background: rgba(30,41,59,0.6);
-      backdrop-filter: blur(10px);
-      color: #e0f2fe;
-      text-align: center;
-      box-shadow: 0 4px 25px rgba(56,189,248,0.2);
-    }
-    .tariff h2 { color: #7dd3fc; }
-    .tariff ul { list-style: none; padding: 0; }
-    .tariff li { margin: 1em 0; font-size: 1.1em; }
-    .watermark-bg {
+    .lang-btn {
       position: fixed;
-      left: 50%;
-      top: 60%;
-      transform: translate(-50%, -50%) rotate(-17deg);
-      font-size: 3em;
-      color: rgba(220,20,60,0.08);
-      pointer-events: none;
-      user-select: none;
-      font-weight: bold;
-      z-index: 9000;
-      letter-spacing: .11em;
+      bottom: 20px;
+      right: 20px;
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 1em;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #38bdf8;
+      cursor: pointer;
+      z-index: 10000;
+    }
+    .tariff-box {
+      max-width: 700px;
+      margin: 2em auto;
+      padding: 1.5em;
+      background: rgba(22,78,99,0.8);
+      color: #fff;
+      border-radius: 1rem;
+      font-size: 1.05em;
+      display: none;
+      box-shadow: 0 0 20px #38bdf822;
     }
     footer {
       margin-top: 3em;
@@ -139,36 +121,13 @@
       font-weight: bold;
       font-size: 1em;
       border-top: 2px solid #38bdf8;
-      box-shadow: 0 0 20px rgba(56,189,248,0.2);
-    }
-    .footer-heart { color: #ff69b4; display: block; margin-top: 0.5rem; }
-    .ovi-blessing {
-      display: block;
-      margin-top: 0.8em;
-      color: #38bdf8;
-      font-weight: bold;
-      font-size: 1.08em;
     }
   </style>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <script>
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,si,ta',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
-    }
-  </script>
 </head>
 <body>
-  <div class="watermark-bg">© SathyadarshanaAI | High Copyright</div>
-  <a href="index.html" class="home-btn">Home</a>
-  <div id="google_translate_element" class="lang-btn">🌐</div>
-
   <header>
     <h1>Astrologer</h1>
-    <p>Step-by-step Spiritual & Scientific Astrology</p>
+    <a href="index.html" class="home-btn">Home</a>
   </header>
 
   <!-- Steps -->
@@ -178,9 +137,10 @@
   </div>
 
   <div class="step">
-    <h2>Step 2: Choose Astrology Type</h2>
-    <button onclick="alert('KP Astrology Selected')">KP Astrology</button>
-    <button onclick="alert('Vedic Astrology Selected')">Vedic Astrology</button>
+    <h2>Step 2: Select Astrology Mode</h2>
+    <button onclick="alert('KP Mode Selected')">KP Mode</button>
+    <button onclick="alert('Vedic Mode Selected')">Vedic Mode</button>
+    <button onclick="alert('Generating Report...')">Generate</button>
   </div>
 
   <div class="step">
@@ -189,17 +149,17 @@
   </div>
 
   <div class="step">
-    <h2>Step 4: Numerology Data</h2>
+    <h2>Step 4: Numerology</h2>
     <iframe src="numerology.html" height="400"></iframe>
   </div>
 
   <div class="step">
-    <h2>Step 5: Capture Aura Image</h2>
+    <h2>Step 5: Aura Scan</h2>
     <iframe src="aura.html" height="400"></iframe>
   </div>
 
   <div class="step">
-    <h2>Step 6: GeoVision Analysis</h2>
+    <h2>Step 6: GeoVision</h2>
     <iframe src="geovision.html" height="500"></iframe>
   </div>
 
@@ -209,32 +169,32 @@
     <button onclick="saveReport()">Save Report (by NIC)</button>
   </div>
 
-  <div class="tariff">
-    <h2>Astrology Tariff Plans</h2>
-    <ul>
-      <li><b>Free Plan:</b> Basic horoscope & numerology (students get extra access)</li>
-      <li><b>Standard Plan ($5):</b> Full KP/Vedic reading + palmistry insights</li>
-      <li><b>Premium Plan ($10):</b> Detailed Seed Engine report (PDF + NASA planetary data)</li>
-    </ul>
+  <!-- Tariff -->
+  <div id="tariff" class="tariff-box">
+    <h3>Astrology Service Tariff</h3>
+    <p>Basic readings: Free (limited)</p>
+    <p>Full KP/Vedic Analysis + Seed Engine Report: $5</p>
+    <p>Student & Children Discount: Flexible Donation</p>
   </div>
 
   <footer>
-    © <span id="copy-year">2025</span> SathyadarshanaAI | Powered by Buddhi<br>
-    Truth will light your way 🌼
-    <span class="footer-heart">Made with ❤️ by Buddhi & Mona</span>
-    <span class="ovi-blessing">
-      ඔබට සතුට, සෙත, ශක්තිය, ආදරය සහ ආලෝකය ලැබේවා!<br>
-      <span>🙏 ඔවි: ජය වේවා! ❤️</span>
-    </span>
+    © <span id="copy-year">2025</span> SathyadarshanaAI | Powered by Buddhi  
+    <br>Truth will light your way 🌼  
+    <br>Made with ❤️ by Buddhi & Mona
   </footer>
+
+  <div class="lang-btn" onclick="switchLang()">🌐</div>
 
   <script>
     function saveReport() {
-      alert("Report analyzed and saved under your NIC record. (Database integration coming soon.)");
+      alert("Report analyzed and saved under your NIC. (Secure database coming soon.)");
     }
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('copy-year').textContent = new Date().getFullYear();
     });
+    function switchLang() {
+      alert("Language switch (Sinhala/Tamil/English) coming soon!");
+    }
   </script>
 </body>
 </html>

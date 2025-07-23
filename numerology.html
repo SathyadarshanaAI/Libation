@@ -2,46 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Numerology Report | Sathyadarshana</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Inter', 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom, #0f172a, #1e293b);
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
       text-align: center;
+      overflow-x: hidden;
       min-height: 100vh;
       padding: 2em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      scroll-behavior: smooth;
     }
     h1 {
       font-size: 2.5em;
       color: #7dd3fc;
       margin-bottom: 1em;
-      font-family: 'Inter', sans-serif;
       text-shadow: 0 0 14px #38bdf8cc;
       animation: textGlow 2.5s infinite alternate;
     }
     @keyframes textGlow {
-      from {text-shadow: 0 0 7px #38bdf8;}
-      to {text-shadow: 0 0 20px #38bdf8bb;}
+      from { text-shadow: 0 0 7px #38bdf8; }
+      to { text-shadow: 0 0 20px #38bdf8bb; }
     }
- {
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 1.5em;
+      background: rgba(30,41,59,0.8);
+      border-radius: 1em;
+      box-shadow: 0 0 15px rgba(56,189,248,0.4);
+    }
+    label {
       display: block;
       margin-top: 1em;
-      font-weight: 600;
       color: #7dd3fc;
+      font-weight: 600;
       text-align: left;
     }
     input {
       width: 100%;
-      padding: 0.55em;
-      margin-top: 0.25em;
+      padding: 0.6em;
+      margin-top: 0.3em;
       border: none;
       border-radius: 0.5em;
       background: #1e293b;
@@ -73,6 +77,7 @@
     button:hover {
       background: linear-gradient(90deg, #0ea5e9, #38bdf8);
       color: #0f172a;
+      transform: scale(1.05);
     }
     .output-box {
       margin-top: 2em;
@@ -84,21 +89,26 @@
       color: #f1f5f9;
       box-shadow: 0 0 22px #38bdf844;
       font-size: 1.09em;
-      animation: fadeIn .9s;
       display: none;
-      position: relative;
+      margin-left: auto;
+      margin-right: auto;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(.97);}
-      to-weight: 700;
-      letter-spacing: .02em;
-      font-size: 1.09em;
-      text-shadow: 0 0 7px #16f0a799;
-      margin-bottom: .6em;
-      display: inline-block;
+    #lang-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 0 15px #0ea5e9;
+      z-index: 9999;
     }
-    .tips {
-      margin-top:  </style>
+  </style>
 </head>
 <body>
   <h1>Numerology Report</h1>
@@ -109,17 +119,36 @@
     <input type="date" id="dob" name="dob" required>
     <button type="submit">Get Numerology Report</button>
   </form>
-  <div class="output-box" id="outputBox">
-) {
-        let val = (letters.indexOf(ch) % 9) + 1;
-        sum += val;
+  <div class="output-box" id="outputBox"></div>
+
+  <!-- Language Globe -->
+  <div id="google_translate_element" style="display:none;"></div>
+  <button id="lang-btn">🌐</button>
+
+  <script>
+    // Disable right-click and shortcuts
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
+    });
+
+    function nameToNumber(name) {
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let sum = 0;
+      name = name.toUpperCase().replace(/[^A-Z]/g, '');
+      for (let ch of name) {
+        sum += (letters.indexOf(ch) % 9) + 1;
       }
-      // Reduce to single digit
-      while (sum > 9 && sum !== 11 && sum !== 22) {
-        sum = sum.toString().split('').reduce((a, let nums = dob.replace(/-/g, '').split('').map(n => parseInt(n));
-      let sum = nums.reduce((a,b)=>a+b,0);
       while (sum > 9 && sum !== 11 && sum !== 22) {
         sum = sum.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+      }
+      return sum;
+    }
+    function birthToNumber(dob) {
+      const nums = dob.replace(/-/g, '').split('').map(n => parseInt(n));
+      let sum = nums.reduce((a,b)=>a+b,0);
+      while (sum > 9 && sum !== 11 && sum !== 22) {
+        sum = sum.toString().split('').reduce((a,b)=>a+parseInt(b),0);
       }
       return sum;
     }
@@ -128,7 +157,8 @@
         1: "Leadership, independence, originality.",
         2: "Partnership, harmony, sensitivity.",
         3: "Creativity, expression, joy.",
-        4: "Stability, practicality,.",
+        4: "Stability, practicality, responsibility.",
+        5: "Freedom, adventure, curiosity.",
         6: "Responsibility, nurturing, care.",
         7: "Spirituality, analysis, wisdom.",
         8: "Power, ambition, success.",
@@ -152,12 +182,26 @@
         <strong>Birth Number:</strong> <span style="color:#38bdf8">${birthNum}</span><br>
         <strong>Birth Meaning:</strong> <em>${birthMean}</em><br>
         <hr>
-        <strong>Combined Insight:</strong> <span style="color:#7dd3fc">Your numbers suggest a path of ${nameMean.toLowerCase()} and ${birthMean.toLowerCase()}.</span>
+        <strong>Combined Insight:</strong> <span style="color:#7dd3fc">Your path combines ${nameMean.toLowerCase()} and ${birthMean.toLowerCase()}.</span>
       `;
-      document.getElementById("outputBox").style.display = "block";
-      document.getElementById("numReport").innerHTML = report;
-      document.getElementById("outputBox").scrollIntoView({behavior:"smooth"});
+      const output = document.getElementById("outputBox");
+      output.innerHTML = report;
+      output.style.display = "block";
+      output.scrollIntoView({behavior:"smooth"});
+    });
+
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+    document.getElementById('lang-btn').addEventListener('click', () => {
+      document.querySelector('.goog-te-gadget-simple').click();
     });
   </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

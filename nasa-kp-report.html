@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NASA KP Report | SathyadarshanaAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #0f172a, #000);
+      color: #e0f2fe;
+      margin: 0;
+      padding: 1.5em;
+      text-align: center;
+    }
+    h1 {
+      color: #7dd3fc;
+      text-shadow: 0 0 12px #38bdf8;
+    }
+    form {
+      margin: 1.5em auto;
+      max-width: 420px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 1em;
+      padding: 1.5em;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 0 25px rgba(56,189,248,0.2);
+    }
+    label {
+      display: block;
+      margin: 0.8em 0 0.3em;
+      text-align: left;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.6em;
+      border-radius: 0.5em;
+      border: none;
+    }
+    button {
+      margin-top: 1.2em;
+      padding: 0.8em 1.5em;
+      border: none;
+      border-radius: 1em;
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(56,189,248,0.4);
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #16f0a7;
+      box-shadow: 0 0 25px rgba(23,240,167,0.4);
+    }
+    #reportBox {
+      margin-top: 2em;
+      background: rgba(22,78,99,0.7);
+      padding: 1.5em;
+      border-radius: 1em;
+      box-shadow: 0 0 20px rgba(56,189,248,0.3);
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      display: none;
+    }
+    table {
+      width: 100%;
+      margin-top: 1em;
+      border-collapse: collapse;
+      color: #fceabb;
+    }
+    th, td {
+      border: 1px solid #38bdf8;
+      padding: 0.5em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>NASA KP Birth Report (Test)</h1>
+  <form id="kpForm">
+    <label>Date of Birth</label>
+    <input type="date" id="dob" required>
+    <label>Time of Birth</label>
+    <input type="time" id="tob" required>
+    <label>Place of Birth (City)</label>
+    <input type="text" id="pob" placeholder="e.g., Colombo" required>
+    <button type="submit">Generate KP Report</button>
+  </form>
+
+  <div id="reportBox">
+    <h2>Planetary Positions & KP Sub-Lords</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Planet</th>
+          <th>Degree (°)</th>
+          <th>Zodiac</th>
+          <th>Star Lord</th>
+          <th>Sub Lord</th>
+        </tr>
+      </thead>
+      <tbody id="kpTable"></tbody>
+    </table>
+    <p style="margin-top:1em; color:#f87171; font-style:italic;">
+      (Data currently simulated. Live NASA API + full KP math integration coming.)
+    </p>
+  </div>
+
+  <script>
+    const form = document.getElementById('kpForm');
+    const reportBox = document.getElementById('reportBox');
+    const kpTable = document.getElementById('kpTable');
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      reportBox.style.display = "block";
+      kpTable.innerHTML = `<tr><td colspan="5">Fetching planetary positions...</td></tr>`;
+
+      const dob = document.getElementById('dob').value;
+      const tob = document.getElementById('tob').value;
+      const pob = document.getElementById('pob').value;
+
+      // --- DEMO Planetary Data (Simulated) ---
+      setTimeout(() => {
+        const planets = [
+          { name: "Sun", deg: "120.5°", zodiac: "Leo", star: "Krittika", sub: "Mercury" },
+          { name: "Moon", deg: "240.1°", zodiac: "Sagittarius", star: "Mula", sub: "Venus" },
+          { name: "Mars", deg: "45.2°", zodiac: "Taurus", star: "Rohini", sub: "Saturn" },
+          { name: "Venus", deg: "300.3°", zodiac: "Capricorn", star: "Shravana", sub: "Moon" },
+          { name: "Jupiter", deg: "10.9°", zodiac: "Aries", star: "Ashwini", sub: "Rahu" },
+        ];
+        kpTable.innerHTML = planets.map(p => 
+          `<tr><td>${p.name}</td><td>${p.deg}</td><td>${p.zodiac}</td><td>${p.star}</td><td>${p.sub}</td></tr>`
+        ).join('');
+      }, 1200);
+    });
+  </script>
+</body>
+</html>

@@ -21,6 +21,34 @@
       color: #7dd3fc;
       text-shadow: 0 0 12px #38bdf8;
     }
+    /* Navbar */
+    nav {
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      background: rgba(2,6,23,0.8);
+      backdrop-filter: blur(10px);
+      padding: 1rem;
+      z-index: 999;
+      box-shadow: 0 0 15px rgba(56,189,248,0.3);
+    }
+    nav a {
+      color: #e0f2fe;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      transition: 0.3s;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      box-shadow: 0 0 8px #0ea5e9;
+    }
+    nav a:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      color: #0f172a;
+      transform: scale(1.05);
+    }
     .container {
       max-width: 800px;
       margin: 2rem auto;
@@ -30,7 +58,7 @@
       box-shadow: 0 0 25px rgba(56,189,248,0.4);
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     .link-btn {
       display: block;
@@ -51,17 +79,6 @@
       background: linear-gradient(90deg, #0ea5e9, #38bdf8);
       color: #0f172a;
       transform: scale(1.05);
-    }
-    section {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5em;
-      color: #7dd3fc;
-      text-align: center;
-      padding: 2rem;
     }
     /* Tariff Section */
     .tariff-box {
@@ -133,9 +150,19 @@
   </style>
 </head>
 <body>
+  <!-- Navbar -->
+  <nav>
+    <a href="astrology-hub.html">Hub</a>
+    <a href="astrologer.html">Report Generator</a>
+    <a href="palmistry.html">Palmistry</a>
+    <a href="numerology.html">Numerology</a>
+    <a href="nadi-jyotishya.html">Nadi</a>
+    <a href="geovision.html">GeoVision</a>
+  </nav>
+
   <h1>Sathyadarshana Astrology Hub</h1>
   <div class="container">
-    <a class="link-btn" href="astrologer.html">Main Astrology Report Generator</a>
+    <a class="link-btn" href="astrologer.html">Astrology Report Generator</a>
     <a class="link-btn" href="palmistry.html">Palmistry (Hand Reading)</a>
     <a class="link-btn" href="numerology.html">Numerology Report</a>
     <a class="link-btn" href="nadi-jyotishya.html">Nadi Jyotishya (Ancient Insights)</a>
@@ -149,13 +176,11 @@
       <h2>Tariff & Packages</h2>
       <div class="tariff-item">
         <strong>Standard Astrology Report:</strong> $5 per KP/NASA-based birth chart with PDF + Voice Summary.
-        <br>
-        <button class="buy-btn">$5 Purchase</button>
+        <br><button class="buy-btn">$5 Purchase</button>
       </div>
       <div class="tariff-item">
         <strong>Premium Extended Reading:</strong> $10 full report + updates + email delivery.
-        <br>
-        <button class="buy-btn">$10 Purchase</button>
+        <br><button class="buy-btn">$10 Purchase</button>
       </div>
       <div class="tariff-item">
         <strong>Lifetime Prediction Package:</strong> $25 (Nadi + KP + Numerology integration).
@@ -170,7 +195,7 @@
     © 2025 SathyadarshanaAI | Powered by Buddhi
   </footer>
 
-  <!-- Translate Globe -->
+  <!-- Google Translate -->
   <div id="google_translate_element" style="display:none;"></div>
   <button id="lang-btn">🌐</button>
 
@@ -180,7 +205,6 @@
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
     });
-
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'en',

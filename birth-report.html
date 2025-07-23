@@ -29,7 +29,7 @@
       box-shadow: 0 0 20px rgba(56,189,248,0.2);
     }
     label { display: block; margin-top: 1em; text-align: left; }
-    input, select {
+    input {
       width: 100%;
       padding: 0.7em;
       border-radius: 0.5em;
@@ -57,24 +57,26 @@
       margin-right: auto;
       display: none;
     }
+    table {
+      width: 100%;
+      margin-top: 1em;
+      border-collapse: collapse;
+      color: #fceabb;
+    }
+    th, td {
+      border: 1px solid #38bdf8;
+      padding: 0.5em;
+    }
     .coming-soon { margin-top: 1em; color: #f87171; font-style: italic; }
   </style>
 </head>
 <body>
-  <h1>Birth Report</h1>
+  <h1>Birth Report (NASA Demo)</h1>
   <form id="birthForm">
     <label>Name: <input type="text" id="name" required></label>
     <label>Date of Birth: <input type="date" id="dob" required></label>
     <label>Time of Birth: <input type="time" id="tob" required></label>
-    <label>Place of Birth: <input type="text" id="pob" placeholder="City, Country" required></label>
-    <label>Gender:
-      <select id="gender" required>
-        <option value="">Select</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select>
-    </label>
+    <label>Place of Birth (City): <input type="text" id="pob" placeholder="City, Country" required></label>
     <button type="submit">Generate Report</button>
   </form>
 
@@ -82,13 +84,16 @@
     <h2>Your Birth Report</h2>
     <p id="userData"></p>
     <h3>Planetary Positions (Demo)</h3>
-    <p id="planetData">Loading...</p>
+    <table id="planetTable">
+      <thead><tr><th>Planet</th><th>Position (°)</th><th>Zodiac</th></tr></thead>
+      <tbody id="planetBody"></tbody>
+    </table>
     <h3>KP Sub-Lord (Sample)</h3>
-    <p id="kpData">Calculating...</p>
+    <p id="kpData">Sun → Mercury (Demo), Moon → Venus (Demo)</p>
     <h3>Vedic Chart (Sample)</h3>
-    <p id="vedicData">Processing...</p>
+    <p id="vedicData">Ascendant: Aries (Demo)</p>
     <button onclick="downloadPDF()">Download PDF</button>
-    <div class="coming-soon">Full AI-powered analysis (Seed Engine) coming soon.</div>
+    <div class="coming-soon">Full AI-powered prediction via Seed Engine coming soon.</div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -96,30 +101,37 @@
     const birthForm = document.getElementById('birthForm');
     const reportBox = document.getElementById('reportBox');
     const userData = document.getElementById('userData');
-    const planetData = document.getElementById('planetData');
-    const kpData = document.getElementById('kpData');
-    const vedicData = document.getElementById('vedicData');
+    const planetBody = document.getElementById('planetBody');
 
-    birthForm.addEventListener("submit", function(e){
+    birthForm.addEventListener("submit", async function(e){
       e.preventDefault();
-
       const name = document.getElementById('name').value.trim();
       const dob = document.getElementById('dob').value;
       const tob = document.getElementById('tob').value;
       const pob = document.getElementById('pob').value.trim();
-      const gender = document.getElementById('gender').value;
 
       userData.innerHTML = `
         <strong>Name:</strong> ${name}<br>
         <strong>Date of Birth:</strong> ${dob}<br>
         <strong>Time of Birth:</strong> ${tob}<br>
-        <strong>Place of Birth:</strong> ${pob}<br>
-        <strong>Gender:</strong> ${gender}
+        <strong>Place of Birth:</strong> ${pob}
       `;
 
-      planetData.innerText = "Sun: 120° (Leo), Moon: 240° (Sagittarius) – Demo ephemeris data.";
-      kpData.innerText = "Sun in Leo (Sub-Lord Mercury), Moon in Sagittarius (Sub-Lord Venus)";
-      vedicData.innerText = "Ascendant: Capricorn (Sample Chart)";
+      planetBody.innerHTML = "<tr><td colspan='3'>Loading planetary data...</td></tr>";
+
+      // Simulate NASA API fetch (real API integration next)
+      setTimeout(() => {
+        const planets = [
+          { name: "Sun", degree: 120, zodiac: "Leo" },
+          { name: "Moon", degree: 240, zodiac: "Sagittarius" },
+          { name: "Mars", degree: 45, zodiac: "Taurus" },
+          { name: "Venus", degree: 300, zodiac: "Capricorn" },
+          { name: "Jupiter", degree: 10, zodiac: "Aries" }
+        ];
+        planetBody.innerHTML = planets.map(p => 
+          `<tr><td>${p.name}</td><td>${p.degree}°</td><td>${p.zodiac}</td></tr>`
+        ).join('');
+      }, 1000);
 
       reportBox.style.display = "block";
     });
@@ -130,8 +142,7 @@
       doc.text("SathyadarshanaAI Birth Report (Demo)", 10, 10);
       doc.text("High Copyright © 2025", 10, 20);
       doc.text(userData.innerText || userData.textContent, 10, 40);
-      doc.text("Planetary Data: Sun 120°, Moon 240°", 10, 80);
-      doc.text("Full KP & AI Analysis Coming Soon (Seed Engine)", 10, 100);
+      doc.text("Planetary positions and KP/Vedic placeholders included.", 10, 70);
       doc.save("BirthReport_Demo.pdf");
     }
   </script>

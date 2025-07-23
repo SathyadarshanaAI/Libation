@@ -5,110 +5,70 @@
   <title>GeoVision | Sathyadarshana</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
     body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top, #0f172a, #000);
-      color: #e0f2fe;
       margin: 0;
-      padding: 0;
-      text-align: center;
-      overflow-x: hidden;
-    }
-    h1 {
-      margin-top: 1rem;
-      font-size: 2em;
-      color: #7dd3fc;
-      text-shadow: 0 0 12px #38bdf8;
-    }
-    .glass-panel {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 1.5rem;
-      border-radius: 1rem;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 20px rgba(56,189,248,0.2);
-      text-align: left;
-    }
-    .glass-panel h2 {
-      text-align: center;
-      color: #16f0a7;
-      text-shadow: 0 0 8px rgba(23,240,167,0.4);
-    }
-    .form-box {
-      max-width: 500px;
-      margin: 2rem auto;
-      padding: 1.5rem;
-      background: rgba(30,41,59,0.7);
-      border-radius: 1rem;
-      box-shadow: 0 0 15px rgba(56,189,248,0.2);
-    }
-    .form-box label {
-      display: block;
-      margin-top: 1rem;
-      margin-bottom: 0.3rem;
-      font-weight: bold;
-      color: #7dd3fc;
-    }
-    .form-box input, .form-box select {
-      width: 100%;
-      padding: 0.7rem;
-      border-radius: 0.5rem;
-      border: none;
-      margin-bottom: 1rem;
-      font-size: 1rem;
-      background: #1e293b;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
-      box-shadow: 0 0 8px #38bdf822;
+      text-align: center;
     }
-    .form-box button {
+    nav {
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      background: rgba(2,6,23,0.8);
+      padding: 1rem;
+      box-shadow: 0 0 12px #38bdf8;
+    }
+    nav a {
+      color: #e0f2fe;
+      text-decoration: none;
+      padding: 0.6rem 1rem;
       background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      color: #fff;
-      padding: 1em 2em;
-      font-size: 1.1em;
-      font-weight: bold;
-      border: none;
-      border-radius: 1em;
-      cursor: pointer;
-      transition: 0.3s ease;
-      box-shadow: 0 0 15px rgba(125,211,252,0.4);
-      width: 100%;
+      border-radius: 6px;
+      transition: 0.3s;
     }
-    .form-box button:hover {
+    nav a:hover {
       background: linear-gradient(90deg, #0ea5e9, #38bdf8);
       color: #0f172a;
       transform: scale(1.05);
     }
-    #map {
-      width: 100%;
-      max-width: 900px;
-      height: 400px;
-      margin: 2rem auto;
-      border-radius: 1rem;
-      box-shadow: 0 0 15px rgba(56,189,248,0.2);
-    }
-    .result-box {
-      max-width: 700px;
-      margin: 2rem auto;
+    .container {
+      max-width: 800px;
+      margin: 1.5rem auto;
       padding: 1.5rem;
-      background: rgba(22,78,99,0.7);
-      color: #fff;
+      background: rgba(30,41,59,0.8);
       border-radius: 1rem;
-      box-shadow: 0 0 15px rgba(56,189,248,0.2);
-      font-size: 1.05em;
+      box-shadow: 0 0 20px rgba(56,189,248,0.4);
     }
-    footer {
-      margin-top: 3rem;
-      padding: 1rem;
-      background: rgba(2,6,23,0.6);
-      backdrop-filter: blur(10px);
-      color: #7dd3fc;
-      font-weight: bold;
-      font-size: 1em;
-      border-top: 2px solid #38bdf8;
+    input, select, button {
+      width: 90%;
+      margin: 0.5rem auto;
+      padding: 0.8rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
+    }
+    button {
+      background: linear-gradient(90deg, #16f0a7, #0ea5e9);
+      color: #0f172a;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #16f0a7);
+      transform: scale(1.05);
+    }
+    #map {
+      width: 90%;
+      height: 400px;
+      margin: 1.5rem auto;
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(56,189,248,0.3);
     }
     #lang-btn {
       position: fixed;
@@ -122,75 +82,68 @@
       height: 50px;
       font-size: 20px;
       cursor: pointer;
-      box-shadow: 0 0 15px #0ea5e9;
-      z-index: 9999;
+      box-shadow: 0 0 12px #0ea5e9;
     }
   </style>
-  <!-- Leaflet (map library) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
-  <h1>GeoVision</h1>
+  <nav>
+    <a href="astrology-hub.html">Hub</a>
+    <a href="astrologer.html">Report Generator</a>
+    <a href="palmistry.html">Palmistry</a>
+    <a href="numerology.html">Numerology</a>
+    <a href="nadi-jyotishya.html">Nadi</a>
+    <a href="geovision.html">GeoVision</a>
+  </nav>
 
-  <div class="glass-panel">
-    <h2>Satellite View & Regional Insights</h2>
-    <p>Analyze historical, cultural, and planetary impact data for any region.</p>
-  </div>
-
-  <div class="form-box">
-    <label for="region">Region / Area</label>
-    <input type="text" id="region" placeholder="Example: Anuradhapura, Monaragala" required>
-    <label for="focus">Focus</label>
-    <select id="focus" required>
-      <option value="">-- Select --</option>
+  <div class="container">
+    <h1>GeoVision - Regional Insights</h1>
+    <p>Search a region for cultural, historical, and planetary analysis.</p>
+    <input type="text" id="region" placeholder="Ex: Anuradhapura">
+    <select id="focus">
+      <option value="">-- Select Focus --</option>
       <option value="climate">History & Climate</option>
-      <option value="culture">Cultural & Historical Overview</option>
-      <option value="future">Future Risks & Planetary Impacts</option>
+      <option value="culture">Cultural Overview</option>
+      <option value="future">Future Planetary Impacts</option>
     </select>
-    <button id="analyzeBtn">Analyze</button>
+    <button onclick="analyzeRegion()">Analyze</button>
+
+    <div id="map"></div>
+    <div id="result" class="container" style="margin-top:1rem;"></div>
   </div>
 
-  <div id="map"></div>
-  <div id="result" class="result-box"></div>
-
-  <footer>
-    © 2025 SathyadarshanaAI | Powered by Buddhi
-  </footer>
-
-  <!-- Translate Globe -->
   <div id="google_translate_element" style="display:none;"></div>
   <button id="lang-btn">🌐</button>
 
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    // Disable right-click and shortcuts
+    // Disable copy & shortcuts
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
     });
 
-    // Map init
     const map = L.map('map').setView([7.8731, 80.7718], 7);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    document.getElementById('analyzeBtn').addEventListener('click', function() {
+    function analyzeRegion() {
       const region = document.getElementById('region').value.trim();
       const focus = document.getElementById('focus').value;
       let summary = "";
 
       if (!region || !focus) {
-        summary = "Please fill out both fields.";
+        summary = "Please fill out region and focus.";
       } else if (focus === "climate") {
-        summary = `Historical and climate data for ${region} analyzed (Mahavamsa + AI).`;
+        summary = `Analyzing historical and climate patterns for ${region}...`;
       } else if (focus === "culture") {
-        summary = `Cultural and historical insights for ${region} (Samudrika texts + AI patterns).`;
+        summary = `Scanning cultural and historical insights for ${region}...`;
       } else if (focus === "future") {
-        summary = `Planetary alignments and projections for ${region} (NASA & AI integration).`;
+        summary = `Projecting planetary and environmental impacts for ${region}...`;
       }
 
-      document.getElementById('result').textContent = summary;
+      document.getElementById('result').innerText = summary;
 
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${region}`)
         .then(res => res.json())
@@ -201,8 +154,9 @@
             L.marker([lat, lon]).addTo(map).bindPopup(`${region}`).openPopup();
           }
         });
-    });
+    }
 
+    // Translate
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'en',

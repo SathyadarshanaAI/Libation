@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sathyadarshana Astrology</title>
+  <title>Sathyadarshana - Astrologer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -39,9 +39,10 @@
       transform: scale(1.05);
     }
     section {
-      padding: 4rem 1.5rem;
-      margin: 0 auto 3rem auto;
+      min-height: 100vh;
       max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem 1.5rem;
       background: rgba(30,41,59,0.8);
       border-radius: 1rem;
       box-shadow: 0 0 25px rgba(56,189,248,0.3);
@@ -65,12 +66,6 @@
       background: linear-gradient(90deg, #0ea5e9, #16f0a7);
       transform: scale(1.05);
     }
-    #map {
-      width: 100%;
-      height: 400px;
-      margin-top: 1rem;
-      border-radius: 1rem;
-    }
     #lang-btn {
       position: fixed;
       bottom: 20px;
@@ -87,12 +82,12 @@
       z-index: 9999;
     }
   </style>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 </head>
 <body>
 
   <!-- Navbar -->
   <nav>
+    <a href="index.html">🏠 Home</a>
     <a href="#report">Report</a>
     <a href="#palmistry">Palmistry</a>
     <a href="#numerology">Numerology</a>
@@ -105,193 +100,61 @@
   <section id="report">
     <h1>Astrology Report Generator</h1>
     <input type="text" id="name" placeholder="Full Name">
+    <select id="gender" required>
+      <option value="">Select Gender</option>
+      <option value="Male">Male (පුරුෂ)</option>
+      <option value="Female">Female (ස්ත්‍රී)</option>
+    </select>
     <input type="text" id="nic" placeholder="NIC">
     <input type="date" id="birthdate">
     <input type="time" id="birthtime">
     <input type="text" id="birthplace" placeholder="Birth Place">
     <button onclick="setMode('KP')">KP Mode</button>
     <button onclick="setMode('Vedic')">Vedic Mode</button>
-    <button onclick="generateReport()">Generate Report</button>
-    <button onclick="downloadPDF()">Download PDF</button>
-    <button onclick="playVoice()">Play Voice Summary</button>
+    <button onclick="generateReport()">Generate Report (PDF)</button>
     <div id="report-output" style="margin-top:1rem;text-align:left;"></div>
-
-    <!-- KP Chart -->
-    <h2 style="margin-top:2rem;">KP Birth Chart (Dynamic Mock)</h2>
-    <canvas id="chartCanvas" width="500" height="500" style="background:#0f172a;border-radius:50%;box-shadow:0 0 15px #38bdf8;"></canvas>
-    <p style="margin-top:1rem; color:#7dd3fc;">Positions update dynamically (mock data). NASA ephemeris coming soon.</p>
-    <button onclick="refreshChart()" style="margin-top:1rem;">Refresh Planet Positions</button>
   </section>
 
-  <!-- Palmistry -->
-  <section id="palmistry">
-    <h1>Palmistry Scanner</h1>
-    <p>Upload a hand image for Buddhi AI (future integration).</p>
-    <input type="file" accept="image/*">
-    <button onclick="alert('Palmistry analysis coming soon!')">Analyze</button>
-  </section>
-
-  <!-- Numerology -->
-  <section id="numerology">
-    <h1>Numerology Calculator</h1>
-    <input type="text" id="fullname" placeholder="Full Name">
-    <input type="date" id="dob">
-    <button onclick="generateNumerology()">Get Numerology Report</button>
-    <div id="num-result" style="margin-top:1rem;"></div>
-  </section>
-
-  <!-- Nadi Jyotishya -->
-  <section id="nadi">
-    <h1>Nadi Jyotishya Insights</h1>
-    <input type="date" id="ndob">
-    <input type="time" id="ntob">
-    <input type="text" id="nplace" placeholder="Birthplace">
-    <button onclick="generateNadi()">Search Nadi Records</button>
-    <div id="nadi-result" style="margin-top:1rem;"></div>
-  </section>
-
-  <!-- GeoVision -->
-  <section id="geo">
-    <h1>GeoVision - Regional Insights</h1>
-    <input type="text" id="region" placeholder="Ex: Anuradhapura">
-    <select id="focus">
-      <option value="">-- Select Focus --</option>
-      <option value="climate">History & Climate</option>
-      <option value="culture">Cultural Overview</option>
-      <option value="future">Future Planetary Impacts</option>
-    </select>
-    <button onclick="analyzeRegion()">Analyze</button>
-    <div id="map"></div>
-    <div id="geo-result" style="margin-top:1rem;"></div>
-  </section>
-
-  <!-- Tariff -->
-  <section id="tariff">
-    <h1>Tariff & Packages</h1>
-    <p><strong>Standard Report:</strong> $5</p>
-    <button>$5 Purchase</button>
-    <p><strong>Premium Reading:</strong> $10</p>
-    <button>$10 Purchase</button>
-    <p><strong>Lifetime Package:</strong> $25</p>
-    <p><strong>Student Mode:</strong> Free / Pay-what-you-can</p>
-  </section>
-
-  <!-- Translate -->
   <div id="google_translate_element" style="display:none;"></div>
   <button id="lang-btn">🌐</button>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    // Disable copy actions
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('keydown', e => {
-      if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
-    });
-
     let mode = 'KP';
-    function setMode(selected) { mode = selected; alert(mode+" mode selected."); }
-    function generateReport() {
+    function setMode(selected) { mode = selected; alert(mode + " mode selected."); }
+
+    async function generateReport() {
       const name = document.getElementById('name').value;
-      const nic = document.getElementById('nic').value;
+      const gender = document.getElementById('gender').value;
       const dob = document.getElementById('birthdate').value;
       const tob = document.getElementById('birthtime').value;
       const pob = document.getElementById('birthplace').value;
-      document.getElementById('report-output').innerHTML =
-        `<h2>Astrology Report</h2><p>${name} (${nic})</p><p>${dob} ${tob} at ${pob}</p><p>Mode: ${mode}</p>`;
-    }
-    function downloadPDF() {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF();
-      pdf.text(document.getElementById('report-output').innerText, 10, 10);
-      pdf.save("Astrology_Report.pdf");
-    }
-    function playVoice() {
-      const text = document.getElementById('report-output').innerText;
-      const utterance = new SpeechSynthesisUtterance(text);
-      speechSynthesis.speak(utterance);
-    }
-    function generateNumerology() {
-      const name = document.getElementById('fullname').value.trim();
-      const dob = document.getElementById('dob').value;
-      const num = (name.length + dob.replace(/-/g,'').length) % 9 || 9;
-      document.getElementById('num-result').innerHTML = `<h2>Your Number: ${num}</h2>`;
-    }
-    function generateNadi() {
-      const dob = document.getElementById('ndob').value;
-      const tob = document.getElementById('ntob').value;
-      const place = document.getElementById('nplace').value;
-      document.getElementById('nadi-result').innerHTML =
-        `<h2>Nadi Records</h2><p>Searching for ${dob}, ${tob}, ${place}...</p>`;
-    }
 
-    const map = L.map('map').setView([7.8731,80.7718],7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
-    function analyzeRegion() {
-      const region = document.getElementById('region').value;
-      const focus = document.getElementById('focus').value;
-      document.getElementById('geo-result').innerText = `Analyzing ${focus} for ${region}`;
-      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${region}`)
-        .then(res=>res.json()).then(data=>{
-          if(data.length){ map.setView([data[0].lat,data[0].lon],10);
-            L.marker([data[0].lat,data[0].lon]).addTo(map).bindPopup(region).openPopup();}
-        });
-    }
+      const response = await fetch('/.netlify/functions/generateReport', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, gender, dob, tob, pob, mode })
+      });
 
-    // KP Chart Dynamic
-    const ctx = document.getElementById('chartCanvas').getContext('2d');
-    const centerX = 250, centerY = 250, radius = 200;
-    function drawHouses() {
-      ctx.clearRect(0,0,500,500);
-      for (let i=0; i<12; i++) {
-        const angle = (i*30)*Math.PI/180;
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX+radius*Math.cos(angle), centerY+radius*Math.sin(angle));
-        ctx.strokeStyle="#38bdf8"; ctx.stroke();
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${name}_KP_Report.pdf`;
+        link.click();
+      } else {
+        alert("Failed to generate report. Please try again.");
       }
-      ctx.beginPath(); ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
-      ctx.strokeStyle="#16f0a7"; ctx.lineWidth=2; ctx.stroke();
     }
-    let mockData = {
-      Sun:12, Moon:46, Mercury:123, Venus:188, Mars:222,
-      Jupiter:260, Saturn:315, Rahu:44, Ketu:224
-    };
-    function drawPlanets() {
-      drawHouses();
-      Object.entries(mockData).forEach(([planet,deg])=>{
-        const rad = (deg-90)*Math.PI/180;
-        const px = centerX + (radius-40)*Math.cos(rad);
-        const py = centerY + (radius-40)*Math.sin(rad);
-        ctx.beginPath(); ctx.arc(px, py, 6, 0, 2*Math.PI);
-        ctx.fillStyle = planet==='Sun'?'yellow':
-                        planet==='Moon'?'#ccc':
-                        planet==='Mars'?'red':
-                        planet==='Mercury'?'#0ff':
-                        planet==='Jupiter'?'orange':
-                        planet==='Saturn'?'#aaa':
-                        planet==='Venus'?'pink':
-                        planet==='Rahu'?'lime':'violet';
-        ctx.fill();
-        ctx.fillText(planet, px+8, py);
-      });
-    }
-    function refreshChart() {
-      Object.keys(mockData).forEach(p=>{
-        mockData[p]=(mockData[p]+Math.floor(Math.random()*30))%360;
-      });
-      drawPlanets();
-    }
-    drawPlanets();
 
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
-        pageLanguage:'en', includedLanguages:'en,si,ta',
+        pageLanguage: 'en', includedLanguages: 'en,si,ta',
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay:false
+        autoDisplay: false
       }, 'google_translate_element');
     }
-    document.getElementById('lang-btn').addEventListener('click',()=>{
+    document.getElementById('lang-btn').addEventListener('click', () => {
       document.querySelector('.goog-te-gadget-simple').click();
     });
   </script>

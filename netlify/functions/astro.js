@@ -2,7 +2,7 @@
 
 exports.handler = async (event, context) => {
   try {
-    // Temporary mock planetary data (replace later with Astronomy API)
+    // Mock planetary positions (replace with real API later)
     const planets = [
       { name: "Sun", degree: 25 },
       { name: "Moon", degree: 48 },
@@ -12,20 +12,20 @@ exports.handler = async (event, context) => {
       { name: "Jupiter", degree: 250 },
       { name: "Saturn", degree: 300 },
       { name: "Rahu", degree: 330 },
-      { name: "Ketu", degree: 150 },
+      { name: "Ketu", degree: 150 }
     ];
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         message: "KP Planetary Positions (Mock Data)",
-        data: planets,
+        data: planets
       }),
     };
   } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error", details: err.message }),
+      body: JSON.stringify({ error: "Failed to load planetary data." }),
     };
   }
 };

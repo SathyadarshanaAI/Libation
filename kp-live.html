@@ -2,51 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>KP Live Chart Test</title>
+  <title>KP Live Chart (AstronomyAPI)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      background: #0f172a;
-      color: #e0f2fe;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 2rem;
-    }
-    input, button {
-      margin: 0.5rem;
-      padding: 0.7rem;
-      border-radius: 0.5rem;
-      border: none;
-      font-size: 1rem;
-      width: 80%;
-      max-width: 300px;
-    }
-    button {
-      background: linear-gradient(90deg, #16f0a7, #0ea5e9);
-      color: #0f172a;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: linear-gradient(90deg, #0ea5e9, #16f0a7);
-      transform: scale(1.05);
-    }
-    canvas {
-      margin-top: 2rem;
-      background: #000;
-      border-radius: 50%;
-      box-shadow: 0 0 15px #38bdf8;
-    }
+    body { margin:0; background:#0f172a; color:#e0f2fe; font-family:Arial, sans-serif; text-align:center; padding:2rem; }
+    input, button { margin:0.5rem; padding:0.7rem; border:none; border-radius:0.5rem; font-size:1rem; width:80%; max-width:300px; }
+    button { background:linear-gradient(90deg,#16f0a7,#0ea5e9); color:#0f172a; cursor:pointer; transition:0.3s; }
+    button:hover { background:linear-gradient(90deg,#0ea5e9,#16f0a7); transform:scale(1.05); }
+    canvas { margin-top:2rem; background:#000; border-radius:50%; box-shadow:0 0 15px #38bdf8; }
   </style>
 </head>
 <body>
-  <h1>KP Birth Chart (Live Planet Positions)</h1>
+  <h1>KP Birth Chart (Live)</h1>
   <p>Enter birth details to fetch live planet positions:</p>
   <input type="date" id="birthdate">
   <input type="time" id="birthtime">
   <input type="text" id="birthplace" placeholder="Ex: Anuradhapura">
-  <button onclick="fetchPlanets()">Get Planet Positions</button>
+  <button onclick="fetchPlanets()">Get Live KP Chart</button>
 
   <canvas id="kpCanvas" width="500" height="500"></canvas>
   <p id="status" style="margin-top:1rem;color:#7dd3fc;"></p>
@@ -54,82 +26,75 @@
   <script>
     const canvas = document.getElementById('kpCanvas');
     const ctx = canvas.getContext('2d');
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
+    const centerX = canvas.width / 2, centerY = canvas.height / 2;
     const radius = 200;
 
     function drawHouses() {
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      for (let i = 0; i < 12; i++) {
-        const angle = (i*30)*Math.PI/180;
+      for(let i=0;i<12;i++){
+        const angle=(i*30)*Math.PI/180;
         ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX + radius*Math.cos(angle), centerY + radius*Math.sin(angle));
-        ctx.strokeStyle = "#38bdf8";
-        ctx.stroke();
+        ctx.moveTo(centerX,centerY);
+        ctx.lineTo(centerX+radius*Math.cos(angle),centerY+radius*Math.sin(angle));
+        ctx.strokeStyle="#38bdf8"; ctx.stroke();
       }
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
-      ctx.strokeStyle = "#16f0a7";
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      ctx.beginPath(); ctx.arc(centerX,centerY,radius,0,2*Math.PI);
+      ctx.strokeStyle="#16f0a7"; ctx.lineWidth=2; ctx.stroke();
     }
 
-    function drawPlanets(positions) {
+    function drawPlanets(planets) {
       drawHouses();
-      Object.entries(positions).forEach(([planet,deg])=>{
-        const rad = (deg-90)*Math.PI/180;
-        const px = centerX + (radius-40)*Math.cos(rad);
-        const py = centerY + (radius-40)*Math.sin(rad);
-        ctx.beginPath(); ctx.arc(px, py, 6, 0, 2*Math.PI);
-        ctx.fillStyle = planet==='Sun'?'yellow':
-                        planet==='Moon'?'#ccc':
-                        planet==='Mars'?'red':
-                        planet==='Mercury'?'#0ff':
-                        planet==='Jupiter'?'orange':
-                        planet==='Saturn'?'#aaa':
-                        planet==='Venus'?'pink':
-                        planet==='Rahu'?'lime':'violet';
+      Object.entries(planets).forEach(([planet,deg])=>{
+        const rad=(deg-90)*Math.PI/180;
+        const px=centerX+(radius-40)*Math.cos(rad);
+        const py=centerY+(radius-40)*Math.sin(rad);
+        ctx.beginPath(); ctx.arc(px,py,6,0,2*Math.PI);
+        ctx.fillStyle=(planet==="Sun")?"yellow":
+                      (planet==="Moon")?"#ccc":
+                      (planet==="Mars")?"red":
+                      (planet==="Mercury")?"#0ff":
+                      (planet==="Jupiter")?"orange":
+                      (planet==="Saturn")?"#aaa":
+                      (planet==="Venus")?"pink":
+                      (planet==="Rahu")?"lime":"violet";
         ctx.fill();
-        ctx.fillText(planet, px+8, py);
+        ctx.fillText(planet,px+8,py);
       });
     }
 
     async function fetchPlanets() {
-      const date = document.getElementById('birthdate').value;
-      const time = document.getElementById('birthtime').value;
-      const place = document.getElementById('birthplace').value;
-      if (!date || !time || !place) {
-        alert("Please enter all details!");
-        return;
+      const date=document.getElementById('birthdate').value;
+      const time=document.getElementById('birthtime').value;
+      const place=document.getElementById('birthplace').value;
+      if(!date||!time||!place){alert("Please fill all fields!");return;}
+      document.getElementById('status').innerText="Fetching location...";
+
+      // Step 1: Get Lat/Lon
+      const geo=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${place}`);
+      const g=await geo.json();
+      if(!g.length){alert("Place not found!");return;}
+      const lat=g[0].lat, lon=g[0].lon;
+
+      document.getElementById('status').innerText=`Lat:${lat}, Lon:${lon} - Fetching planets...`;
+
+      // Step 2: Planet positions via AstronomyAPI (GitHub secrets used via proxy in server)
+      try {
+        const apiRes=await fetch(`/api/astro?lat=${lat}&lon=${lon}&date=${date}&time=${time}`);
+        const data=await apiRes.json();
+        let planets={};
+        ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn"].forEach(p=>{
+          const entry=data.data.table.rows.find(row=>row.entry.name===p);
+          if(entry) planets[p]=entry.cells[0].position.horizontal.azimuth;
+        });
+        planets["Rahu"]=180; planets["Ketu"]=0;
+        drawPlanets(planets);
+        document.getElementById('status').innerText="Chart updated with live planet data.";
+      } catch(err){
+        document.getElementById('status').innerText="Error fetching planets. Using mock data.";
+        drawPlanets({Sun:120,Moon:40,Mercury:210,Venus:310,Mars:180,Jupiter:220,Saturn:340,Rahu:90,Ketu:270});
       }
-      document.getElementById('status').innerText = "Fetching coordinates...";
-
-      // Step 1: Get Lat/Lon from Nominatim
-      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${place}`);
-      const geoData = await geoRes.json();
-      if (!geoData.length) {
-        alert("Location not found!");
-        return;
-      }
-      const lat = geoData[0].lat;
-      const lon = geoData[0].lon;
-
-      // Step 2: Fetch Planet Data (Mock for now, replace with AstronomyAPI)
-      document.getElementById('status').innerText = `Lat: ${lat}, Lon: ${lon} - Loading planet data...`;
-      
-      // Mock planet degrees (replace with API response)
-      const planetPositions = {
-        Sun: 120.4, Moon: 45.8, Mercury: 250.1,
-        Venus: 305.5, Mars: 180.0, Jupiter: 220.3,
-        Saturn: 340.0, Rahu: 90.2, Ketu: 270.2
-      };
-
-      drawPlanets(planetPositions);
-      document.getElementById('status').innerText = "Chart updated (mock planet data).";
     }
 
-    // Initial empty chart
     drawHouses();
   </script>
 </body>

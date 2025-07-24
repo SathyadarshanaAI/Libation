@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -15,27 +16,3 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: |
-          npm install
-
-      - name: Build site (Static + Functions)
-        run: |
-          echo "Building static site and functions..."
-          # PDFKit and other functions support
-          npm install pdfkit fs
-
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v2.0.0
-        with:
-          publish-dir: .
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Automated Deploy"
-          enable-pull-request-comment: true
-          overwrites-pull-request-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

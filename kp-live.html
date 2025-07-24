@@ -36,7 +36,7 @@
       padding: 1rem;
       border-radius: 12px;
       margin: 1rem auto;
-      max-width: 400px;
+      max-width: 420px;
       font-size: 1rem;
       opacity: 1;
       transition: opacity 0.4s ease-in-out, box-shadow 0.6s ease-in-out;
@@ -61,7 +61,7 @@
   </style>
 </head>
 <body>
-  <h1>KP Birth Chart (Dynamic Mock)</h1>
+  <h1>KP Birth Chart (Live API)</h1>
 
   <div id="report-output">Select KP or Vedic Mode to view Sub Lord updates.</div>
   <div id="chart"></div>
@@ -75,30 +75,61 @@
     const chart = document.getElementById('chart');
     const output = document.getElementById('report-output');
 
-    const planets = [
-      { name: 'Sun', color: 'yellow', angle: 30 },
-      { name: 'Moon', color: 'lime', angle: 70 },
-      { name: 'Mercury', color: 'cyan', angle: 140 },
-      { name: 'Venus', color: 'pink', angle: 200 },
-      { name: 'Mars', color: 'red', angle: 250 },
-      { name: 'Jupiter', color: 'orange', angle: 310 },
-      { name: 'Saturn', color: 'gray', angle: 20 },
-      { name: 'Rahu', color: 'green', angle: 180 },
-      { name: 'Ketu', color: 'purple', angle: 340 }
+    let planets = [
+      { name: 'Sun', color: 'yellow', degree: 30 },
+      { name: 'Moon', color: 'lime', degree: 70 },
+      { name: 'Mercury', color: 'cyan', degree: 140 },
+      { name: 'Venus', color: 'pink', degree: 200 },
+      { name: 'Mars', color: 'red', degree: 250 },
+      { name: 'Jupiter', color: 'orange', degree: 310 },
+      { name: 'Saturn', color: 'gray', degree: 20 },
+      { name: 'Rahu', color: 'green', degree: 180 },
+      { name: 'Ketu', color: 'purple', degree: 340 }
     ];
+
+    async function fetchLivePositions() {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const time = new Date().toTimeString().slice(0, 5);
+        const lat = 7.8731, lon = 80.7718; // default: Sri Lanka center
+
+        const res = await fetch(`/.netlify/functions/astro?lat=${lat}&lon=${lon}&date=${today}&time=${time}`);
+        const data = await res.json();
+
+        if (data && data.data && data.data.table && data.data.table.rows) {
+          planets = data.data.table.rows.map(row => ({
+            name: row.entry.name,
+            color: pickColor(row.entry.name),
+            degree: row.cells[0].position.ecliptic.declination.decimal
+          }));
+        }
+      } catch (err) {
+        console.error("Falling back to mock planetary data.", err);
+      }
+      drawChart();
+    }
+
+    function pickColor(name) {
+      const map = {
+        Sun: 'yellow', Moon: 'lime', Mercury: 'cyan', Venus: 'pink', Mars: 'red',
+        Jupiter: 'orange', Saturn: 'gray', Rahu: 'green', Ketu: 'purple'
+      };
+      return map[name] || '#fff';
+    }
 
     function drawChart() {
       chart.innerHTML = '';
       const radius = 130;
       planets.forEach(p => {
-        const x = 150 + radius * Math.cos((p.angle - 90) * Math.PI / 180);
-        const y = 150 + radius * Math.sin((p.angle - 90) * Math.PI / 180);
+        const angle = p.degree % 360;
+        const x = 150 + radius * Math.cos((angle - 90) * Math.PI / 180);
+        const y = 150 + radius * Math.sin((angle - 90) * Math.PI / 180);
         const el = document.createElement('div');
         el.className = 'planet';
         el.style.background = p.color;
         el.style.left = `${x}px`;
         el.style.top = `${y}px`;
-        el.title = p.name;
+        el.title = `${p.name} (${angle.toFixed(1)}°)`;
         chart.appendChild(el);
       });
     }
@@ -109,19 +140,20 @@
       setTimeout(() => {
         output.innerHTML = `
           <h2 style="color:#16f0a7;">Mode: ${mode}</h2>
-          <p style="color:#7dd3fc;">Sub Lord Calculation (Mock Data) Updating...</p>
+          <p style="color:#7dd3fc;">Sub Lord Calculation updating (live data)…</p>
         `;
         output.style.boxShadow = "0 0 25px #16f0a7";
         output.style.opacity = 1;
         setTimeout(() => { output.style.boxShadow = "0 0 15px #0ea5e9"; }, 800);
       }, 400);
+
+      fetchLivePositions();
     }
 
     function refreshPositions() {
-      planets.forEach(p => p.angle = (p.angle + Math.random() * 30) % 360);
-      drawChart();
+      fetchLivePositions();
       output.innerHTML = `<h2 style="color:#38bdf8;">Mode: ${mode}</h2>
-        <p style="color:#7dd3fc;">Planet positions refreshed (Mock Data).</p>`;
+        <p style="color:#7dd3fc;">Planet positions refreshed (Live API).</p>`;
     }
 
     drawChart();

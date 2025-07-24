@@ -13,6 +13,7 @@
       text-align: center;
     }
     h1 { margin-top: 1rem; }
+
     #chart {
       width: 300px;
       height: 300px;
@@ -29,15 +30,19 @@
       border-radius: 50%;
       transform: translate(-50%, -50%);
     }
-    #output {
+
+    #report-output {
       background: rgba(30,41,59,0.7);
       padding: 1rem;
       border-radius: 12px;
       margin: 1rem auto;
       max-width: 400px;
       font-size: 1rem;
-      transition: 0.5s ease;
+      opacity: 1;
+      transition: opacity 0.4s ease-in-out, box-shadow 0.6s ease-in-out;
+      box-shadow: 0 0 15px #0ea5e9;
     }
+
     button {
       margin: 0.5rem;
       padding: 0.7rem 1.5rem;
@@ -57,8 +62,10 @@
 </head>
 <body>
   <h1>KP Birth Chart (Dynamic Mock)</h1>
-  <div id="output">Click a mode to generate Sub Lord data.</div>
+
+  <div id="report-output">Select KP or Vedic Mode to view Sub Lord updates.</div>
   <div id="chart"></div>
+
   <button onclick="setMode('KP')">KP Mode</button>
   <button onclick="setMode('Vedic')">Vedic Mode</button>
   <button onclick="refreshPositions()">Refresh Planet Positions</button>
@@ -66,7 +73,7 @@
   <script>
     let mode = 'KP';
     const chart = document.getElementById('chart');
-    const output = document.getElementById('output');
+    const output = document.getElementById('report-output');
 
     const planets = [
       { name: 'Sun', color: 'yellow', angle: 30 },
@@ -100,15 +107,21 @@
       mode = selected;
       output.style.opacity = 0;
       setTimeout(() => {
-        output.innerHTML = `Mode: <b>${mode}</b><br>Sub Lord Calculation (Mock): Updating...`;
+        output.innerHTML = `
+          <h2 style="color:#16f0a7;">Mode: ${mode}</h2>
+          <p style="color:#7dd3fc;">Sub Lord Calculation (Mock Data) Updating...</p>
+        `;
+        output.style.boxShadow = "0 0 25px #16f0a7";
         output.style.opacity = 1;
+        setTimeout(() => { output.style.boxShadow = "0 0 15px #0ea5e9"; }, 800);
       }, 400);
     }
 
     function refreshPositions() {
       planets.forEach(p => p.angle = (p.angle + Math.random() * 30) % 360);
       drawChart();
-      output.innerHTML = `Mode: <b>${mode}</b><br>Planet positions refreshed (Mock Data).`;
+      output.innerHTML = `<h2 style="color:#38bdf8;">Mode: ${mode}</h2>
+        <p style="color:#7dd3fc;">Planet positions refreshed (Mock Data).</p>`;
     }
 
     drawChart();

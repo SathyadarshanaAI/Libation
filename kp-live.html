@@ -2,85 +2,91 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>KP Live Astrology Report</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KP Astrology Live | Sathyadarshana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #fff;
-      min-height: 100vh;
-    }
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 10px;
-      gap: 15px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    nav a {
-      color: #00eaff;
-      text-decoration: none;
-      font-size: 1.1rem;
-      transition: 0.3s;
-      padding: 5px 10px;
-      border-radius: 5px;
-    }
-    nav a:hover {
-      background: #00eaff;
-      color: #000;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
+      text-align: center;
     }
     h1 {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 2rem;
-      color: #00eaff;
+      margin-top: 1rem;
+      font-size: 2em;
+      color: #7dd3fc;
+      text-shadow: 0 0 12px #38bdf8;
     }
-    .content {
-      text-align: center;
-      margin: 30px auto;
-      max-width: 700px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+    section {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: rgba(30,41,59,0.85);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 0 20px rgba(56,189,248,0.3);
     }
-    footer {
-      text-align: center;
-      padding: 15px;
-      margin-top: 20px;
-      background: rgba(0, 0, 0, 0.6);
-      color: #aaa;
-      font-size: 0.9rem;
+    input, button {
+      margin: 0.5rem;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 0.5rem;
+      width: 80%;
+      font-size: 1rem;
+    }
+    button {
+      background: linear-gradient(90deg, #16f0a7, #0ea5e9);
+      color: #0f172a;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #16f0a7);
+      transform: scale(1.05);
+    }
+    #report-output {
+      margin-top: 1.5rem;
+      text-align: left;
+      font-size: 1.1rem;
     }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="astrologer.html">Main Astrology</a>
-    <a href="vedic.html">Vedic</a>
-    <a href="numerology.html">Numerology</a>
-    <a href="palmistry.html">Palmistry</a>
-    <a href="aura.html">Aura</a>
-    <a href="nasa-kp-report.html">NASA KP</a>
-  </nav>
+  <h1>KP Live Report (NASA Data)</h1>
+  <section>
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="date" id="dob">
+    <input type="time" id="tob">
+    <input type="text" id="place" placeholder="Birth Place">
+    <button onclick="generateKPReport()">Generate Live KP Report</button>
+    <div id="report-output"></div>
+  </section>
 
-  <h1>KP Astrology Live</h1>
+  <script>
+    async function generateKPReport() {
+      const name = document.getElementById('name').value;
+      const dob = document.getElementById('dob').value;
+      const tob = document.getElementById('tob').value;
+      const place = document.getElementById('place').value;
 
-  <div class="content">
-    <p>This page will display <strong>real-time KP chart data</strong> with Sub-Lord calculations using NASA ephemeris (future integration).</p>
-    <p>Features like birth data input, planetary positions, and report export will appear here soon.</p>
-  </div>
+      document.getElementById('report-output').innerText = "Fetching live planetary positions...";
 
-  <footer>
-    &copy; 2025 Sathyadarshana. All Rights Reserved.
-  </footer>
+      const res = await fetch('/.netlify/functions/nasaKP', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, dob, tob, place })
+      });
+      const data = await res.json();
+      document.getElementById('report-output').innerHTML =
+        `<h2>Live KP Report</h2>
+         <p><b>Name:</b> ${name}</p>
+         <p><b>Date & Time:</b> ${dob} ${tob}</p>
+         <p><b>Place:</b> ${place}</p>
+         <hr>
+         <pre>${JSON.stringify(data.planets, null, 2)}</pre>
+         <button onclick="window.location.href='${data.pdfUrl}'">Download PDF</button>`;
+    }
+  </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Astrology Hub | Sathyadarshana</title>
+  <title>Sathyadarshana Astrology Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -12,211 +12,182 @@
       font-family: 'Inter', sans-serif;
       background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
-      text-align: center;
-      overflow-x: hidden;
     }
-    h1 {
-      margin-top: 1rem;
-      font-size: 2.2em;
-      color: #7dd3fc;
-      text-shadow: 0 0 12px #38bdf8;
-    }
-    /* Navbar */
     nav {
       position: sticky;
       top: 0;
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 1rem;
-      background: rgba(2,6,23,0.8);
-      backdrop-filter: blur(10px);
+      background: rgba(2,6,23,0.85);
       padding: 1rem;
+      box-shadow: 0 0 12px #38bdf8;
       z-index: 999;
-      box-shadow: 0 0 15px rgba(56,189,248,0.3);
     }
     nav a {
       color: #e0f2fe;
       text-decoration: none;
-      font-size: 1rem;
       padding: 0.6rem 1rem;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
       border-radius: 6px;
       transition: 0.3s;
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      box-shadow: 0 0 8px #0ea5e9;
     }
     nav a:hover {
       background: linear-gradient(90deg, #0ea5e9, #38bdf8);
       color: #0f172a;
       transform: scale(1.05);
     }
-    .container {
-      max-width: 800px;
+    section {
+      min-height: 100vh;
+      max-width: 900px;
       margin: 2rem auto;
-      padding: 1.5rem;
+      padding: 2rem 1.5rem;
       background: rgba(30,41,59,0.8);
       border-radius: 1rem;
-      box-shadow: 0 0 25px rgba(56,189,248,0.4);
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
+      box-shadow: 0 0 25px rgba(56,189,248,0.3);
+      text-align: center;
     }
-    .link-btn {
-      display: block;
+    input, select, button {
       width: 90%;
-      margin: 0 auto;
-      padding: 1.2rem;
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      color: white;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 0 12px #38bdf877;
-      transition: all 0.3s ease-in-out;
-      text-decoration: none;
-    }
-    .link-btn:hover {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-      color: #0f172a;
-      transform: scale(1.05);
-    }
-    /* Tariff Section */
-    .tariff-box {
-      max-width: 700px;
-      margin: 2rem auto;
-      padding: 2rem;
-      border-radius: 1rem;
-      background: rgba(2,6,23,0.7);
-      box-shadow: 0 0 25px rgba(56,189,248,0.4);
-      color: #e0f2fe;
-      font-size: 1.2rem;
-    }
-    .tariff-box h2 {
-      color: #16f0a7;
-      text-shadow: 0 0 8px #16f0a799;
-      margin-bottom: 1rem;
-    }
-    .tariff-item {
-      margin: 1rem 0;
-      padding: 1rem;
-      background: rgba(30,41,59,0.8);
+      margin: 0.5rem auto;
+      padding: 0.8rem;
       border-radius: 0.5rem;
-      box-shadow: 0 0 15px rgba(56,189,248,0.2);
+      border: none;
+      font-size: 1rem;
     }
-    .buy-btn {
-      display: inline-block;
-      margin-top: 0.5rem;
-      padding: 0.8rem 1.5rem;
+    button {
       background: linear-gradient(90deg, #16f0a7, #0ea5e9);
       color: #0f172a;
-      font-weight: bold;
-      border: none;
-      border-radius: 0.5rem;
       cursor: pointer;
-      box-shadow: 0 0 12px #16f0a777;
-      transition: 0.3s ease-in-out;
-      text-decoration: none;
-      font-size: 1.1rem;
+      transition: 0.3s;
     }
-    .buy-btn:hover {
+    button:hover {
       background: linear-gradient(90deg, #0ea5e9, #16f0a7);
-      transform: scale(1.08);
+      transform: scale(1.05);
     }
-    footer {
-      margin-top: 3rem;
-      padding: 1rem;
-      background: rgba(2,6,23,0.6);
-      backdrop-filter: blur(10px);
-      color: #7dd3fc;
-      font-weight: bold;
-      font-size: 1em;
-      border-top: 2px solid #38bdf8;
-    }
-    #lang-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #0ea5e9;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 0 15px #0ea5e9;
-      z-index: 9999;
+    #map {
+      width: 100%;
+      height: 400px;
+      margin-top: 1rem;
+      border-radius: 1rem;
     }
   </style>
 </head>
 <body>
+
   <!-- Navbar -->
   <nav>
-    <a href="astrology-hub.html">Hub</a>
-    <a href="astrologer.html">Report Generator</a>
-    <a href="palmistry.html">Palmistry</a>
-    <a href="numerology.html">Numerology</a>
-    <a href="nadi-jyotishya.html">Nadi</a>
-    <a href="geovision.html">GeoVision</a>
+    <a href="#kp">KP Live</a>
+    <a href="#vedic">Vedic Graha Chakra</a>
+    <a href="#numerology">Numerology</a>
+    <a href="#palmistry">Palmistry</a>
+    <a href="#geo">GeoVision</a>
+    <a href="#tariff">Tariff</a>
   </nav>
 
-  <h1>Sathyadarshana Astrology Hub</h1>
-  <div class="container">
-    <a class="link-btn" href="astrologer.html">Astrology Report Generator</a>
-    <a class="link-btn" href="palmistry.html">Palmistry (Hand Reading)</a>
-    <a class="link-btn" href="numerology.html">Numerology Report</a>
-    <a class="link-btn" href="nadi-jyotishya.html">Nadi Jyotishya (Ancient Insights)</a>
-    <a class="link-btn" href="geovision.html">GeoVision (Regional Insights)</a>
-    <a class="link-btn" href="#tariff">Tariff & Packages</a>
-  </div>
-
-  <!-- Tariff Section -->
-  <section id="tariff">
-    <div class="tariff-box">
-      <h2>Tariff & Packages</h2>
-      <div class="tariff-item">
-        <strong>Standard Astrology Report:</strong> $5 per KP/NASA-based birth chart with PDF + Voice Summary.
-        <br><button class="buy-btn">$5 Purchase</button>
-      </div>
-      <div class="tariff-item">
-        <strong>Premium Extended Reading:</strong> $10 full report + updates + email delivery.
-        <br><button class="buy-btn">$10 Purchase</button>
-      </div>
-      <div class="tariff-item">
-        <strong>Lifetime Prediction Package:</strong> $25 (Nadi + KP + Numerology integration).
-      </div>
-      <div class="tariff-item">
-        <strong>Student Mode:</strong> Free / Pay-what-you-can (Sri Lanka & India only).
-      </div>
-    </div>
+  <!-- KP Live -->
+  <section id="kp">
+    <h1>KP Live Astrology Report</h1>
+    <input type="text" id="kp-name" placeholder="Full Name">
+    <input type="date" id="kp-dob">
+    <input type="time" id="kp-tob">
+    <input type="text" id="kp-place" placeholder="Birth Place">
+    <button onclick="generateKPReport()">Generate KP Report</button>
+    <div id="kp-output" style="margin-top:1rem;text-align:left;"></div>
   </section>
 
-  <footer>
-    © 2025 SathyadarshanaAI | Powered by Buddhi
-  </footer>
+  <!-- Vedic Graha Chakra -->
+  <section id="vedic">
+    <h1>Vedic Graha Chakra (NASA Sidereal)</h1>
+    <input type="text" id="vedic-name" placeholder="Full Name">
+    <input type="date" id="vedic-dob">
+    <input type="time" id="vedic-tob">
+    <input type="text" id="vedic-place" placeholder="Birth Place">
+    <button onclick="generateVedicReport()">Generate Vedic Report</button>
+    <div id="vedic-output" style="margin-top:1rem;text-align:left;"></div>
+  </section>
 
-  <!-- Google Translate -->
-  <div id="google_translate_element" style="display:none;"></div>
-  <button id="lang-btn">🌐</button>
+  <!-- Numerology -->
+  <section id="numerology">
+    <h1>Numerology Calculator</h1>
+    <input type="text" id="fullname" placeholder="Full Name">
+    <input type="date" id="num-dob">
+    <button onclick="generateNumerology()">Get Numerology Report</button>
+    <div id="num-result" style="margin-top:1rem;"></div>
+  </section>
 
+  <!-- Palmistry -->
+  <section id="palmistry">
+    <h1>Palmistry (Future AI Integration)</h1>
+    <input type="file" accept="image/*">
+    <button onclick="alert('Palmistry AI scanning coming soon!')">Analyze</button>
+  </section>
+
+  <!-- GeoVision -->
+  <section id="geo">
+    <h1>GeoVision Regional Insights</h1>
+    <input type="text" id="region" placeholder="Ex: Anuradhapura">
+    <select id="focus">
+      <option value="">-- Select Focus --</option>
+      <option value="climate">History & Climate</option>
+      <option value="culture">Cultural Overview</option>
+      <option value="future">Future Planetary Impacts</option>
+    </select>
+    <button onclick="analyzeRegion()">Analyze</button>
+    <div id="map"></div>
+    <div id="geo-result" style="margin-top:1rem;"></div>
+  </section>
+
+  <!-- Tariff -->
+  <section id="tariff">
+    <h1>Astrology Tariff & Packages</h1>
+
+    <p><strong>Standard Report:</strong> $5 (Single KP or Vedic Report)</p>
+    <button>$5 Purchase</button>
+
+    <p><strong>Premium Package:</strong> $10 (KP + Vedic + Numerology + Palmistry, Valid 3 Months)</p>
+    <button>$10 Purchase</button>
+
+    <p><strong>One-Year Service Plan:</strong> $30</p>
+    <ul style="list-style:none; padding:0; margin:1rem 0;">
+      <li>✔ KP & Vedic combined report</li>
+      <li>✔ Free updates for planetary changes (1 year)</li>
+      <li>✔ Unlimited PDF reprints with watermark</li>
+      <li>✔ Astro trends (Poya, Graha Chakra, NASA alerts)</li>
+    </ul>
+    <button>$30 One-Year Plan</button>
+
+    <p><em>Student Mode: Free / Pay-What-You-Can</em></p>
+  </section>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    // Disable right-click & shortcuts
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('keydown', e => {
-      if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
-    });
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,si,ta',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: false
-      }, 'google_translate_element');
+    async function generateKPReport() {
+      const res = await fetch('/.netlify/functions/nasaKP', { method: 'POST' });
+      const data = await res.json();
+      document.getElementById('kp-output').innerText = JSON.stringify(data.planets, null, 2);
     }
-    document.getElementById('lang-btn').addEventListener('click', () => {
-      document.querySelector('.goog-te-gadget-simple').click();
-    });
+    async function generateVedicReport() {
+      const res = await fetch('/.netlify/functions/vedicLive', { method: 'POST' });
+      const data = await res.json();
+      document.getElementById('vedic-output').innerText = JSON.stringify(data.planets, null, 2);
+    }
+    function generateNumerology() {
+      const name = document.getElementById('fullname').value.trim();
+      const dob = document.getElementById('num-dob').value;
+      const num = (name.length + dob.replace(/-/g,'').length) % 9 || 9;
+      document.getElementById('num-result').innerHTML = `<h2>Your Number: ${num}</h2>`;
+    }
+    const map = L.map('map').setView([7.8731,80.7718],7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+    function analyzeRegion() {
+      const region = document.getElementById('region').value;
+      const focus = document.getElementById('focus').value;
+      document.getElementById('geo-result').innerText = `Analyzing ${focus} for ${region}`;
+    }
   </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

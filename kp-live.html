@@ -2,95 +2,96 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>KP Live Astrology Report</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <title>KP Live Report (NASA Data)</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: Arial, sans-serif;
       background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
       text-align: center;
+      padding: 30px;
     }
     h1 {
-      margin-top: 1rem;
       font-size: 2em;
       color: #7dd3fc;
-      text-shadow: 0 0 12px #38bdf8;
     }
-    section {
-      max-width: 800px;
-      margin: 2rem auto;
-      background: rgba(30,41,59,0.85);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 0 20px rgba(56,189,248,0.3);
-    }
-    input, button {
-      margin: 0.5rem;
-      padding: 0.7rem;
+    input, select, button {
+      margin: 8px;
+      padding: 10px;
+      border-radius: 5px;
       border: none;
-      border-radius: 0.5rem;
-      width: 80%;
-      font-size: 1rem;
+      font-size: 1em;
     }
     button {
-      background: linear-gradient(90deg, #16f0a7, #0ea5e9);
-      color: #0f172a;
+      background: linear-gradient(to right, #00f5a0, #00d9f5);
       cursor: pointer;
-      transition: 0.3s;
     }
     button:hover {
-      background: linear-gradient(90deg, #0ea5e9, #16f0a7);
-      transform: scale(1.05);
+      opacity: 0.8;
     }
-    #report-output {
-      margin-top: 1.5rem;
-      text-align: left;
-      font-size: 1.1rem;
+    #output {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      min-height: 100px;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 12px;
+      opacity: 0.15;
+      color: #7dd3fc;
     }
   </style>
 </head>
 <body>
   <h1>KP Live Report (NASA Data)</h1>
-  <section>
-    <input type="text" id="name" placeholder="Full Name">
+
+  <div>
+    <input type="text" id="name" placeholder="Enter Name">
     <input type="date" id="dob">
     <input type="time" id="tob">
-    <input type="text" id="place" placeholder="Birth Place">
-    <button onclick="generateKPReport()">Generate Live KP Report</button>
-    <div id="report-output"></div>
-  </section>
+    <input type="text" id="pob" placeholder="Place of Birth">
+    <button onclick="fetchKPData()">Generate Live KP Report</button>
+  </div>
+
+  <div id="output">Fetching live planetary positions...</div>
+  <button id="downloadBtn" style="display:none;" onclick="downloadPDF()">Download PDF</button>
+
+  <div class="watermark">Sathyadarshana.com | KP Live Report</div>
 
   <script>
-    async function generateKPReport() {
-      const name = document.getElementById('name').value;
-      const dob = document.getElementById('dob').value;
-      const tob = document.getElementById('tob').value;
-      const place = document.getElementById('place').value;
+    async function fetchKPData() {
+      document.getElementById("output").innerText = "Fetching live planetary positions...";
+      const name = document.getElementById("name").value;
+      const dob = document.getElementById("dob").value;
+      const tob = document.getElementById("tob").value;
+      const pob = document.getElementById("pob").value;
 
-      document.getElementById('report-output').innerText = "Fetching NASA planetary data...";
+      // Temporary demo planetary data (replace with NASA API fetch)
+      const planets = {
+        Sun: "Aries (12°)", Moon: "Taurus (3°)",
+        Mars: "Gemini (18°)", Mercury: "Leo (5°)",
+        Jupiter: "Virgo (22°)", Saturn: "Pisces (7°)"
+      };
 
-      try {
-        const res = await fetch('/.netlify/functions/nasaKP', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, dob, tob, place })
-        });
-        const data = await res.json();
+      document.getElementById("output").innerHTML = `
+        <b>Name:</b> ${name}<br>
+        <b>Date of Birth:</b> ${dob}<br>
+        <b>Time of Birth:</b> ${tob}<br>
+        <b>Place of Birth:</b> ${pob}<br><br>
+        <b>Live Planetary Positions (Sample):</b><br>
+        ${Object.entries(planets).map(([k,v]) => `${k}: ${v}`).join("<br>")}
+      `;
 
-        document.getElementById('report-output').innerHTML =
-          `<h2>Live KP Report</h2>
-           <p><b>Name:</b> ${name}</p>
-           <p><b>Date & Time:</b> ${dob} ${tob}</p>
-           <p><b>Place:</b> ${place}</p>
-           <hr>
-           <pre>${JSON.stringify(data.planets, null, 2)}</pre>
-           <button onclick="window.open('${data.pdfUrl}', '_blank')">Download PDF</button>`;
-      } catch (err) {
-        document.getElementById('report-output').innerText = "Error generating report: " + err.message;
-      }
+      document.getElementById("downloadBtn").style.display = "inline-block";
+    }
+
+    function downloadPDF() {
+      alert("PDF generation will include NASA data + watermark. (Coming Soon)");
     }
   </script>
 </body>

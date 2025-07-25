@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KP Live Report (NASA Data)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 2em;
+      color: #7dd3fc;
+    }
+    input, select, button {
+      margin: 8px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 1em;
+    }
+    button {
+      background: linear-gradient(to right, #00f5a0, #00d9f5);
+      cursor: pointer;
+    }
+    button:hover {
+      opacity: 0.8;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      min-height: 100px;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 12px;
+      opacity: 0.15;
+      color: #7dd3fc;
+    }
+  </style>
+</head>
+<body>
+  <h1>KP Live Report (NASA Data)</h1>
+
+  <div>
+    <input type="text" id="name" placeholder="Enter Name">
+    <input type="date" id="dob">
+    <input type="time" id="tob">
+    <input type="text" id="pob" placeholder="Place of Birth">
+    <button onclick="fetchKPData()">Generate Live KP Report</button>
+  </div>
+
+  <div id="output">Fetching live planetary positions...</div>
+  <button id="downloadBtn" style="display:none;" onclick="downloadPDF()">Download PDF</button>
+
+  <div class="watermark">Sathyadarshana.com | KP Live Report</div>
+
+  <script>
+    async function fetchKPData() {
+      document.getElementById("output").innerText = "Fetching live planetary positions...";
+      const name = document.getElementById("name").value;
+      const dob = document.getElementById("dob").value;
+      const tob = document.getElementById("tob").value;
+      const pob = document.getElementById("pob").value;
+
+      // Temporary demo planetary data (replace with NASA API fetch)
+      const planets = {
+        Sun: "Aries (12°)", Moon: "Taurus (3°)",
+        Mars: "Gemini (18°)", Mercury: "Leo (5°)",
+        Jupiter: "Virgo (22°)", Saturn: "Pisces (7°)"
+      };
+
+      document.getElementById("output").innerHTML = `
+        <b>Name:</b> ${name}<br>
+        <b>Date of Birth:</b> ${dob}<br>
+        <b>Time of Birth:</b> ${tob}<br>
+        <b>Place of Birth:</b> ${pob}<br><br>
+        <b>Live Planetary Positions (Sample):</b><br>
+        ${Object.entries(planets).map(([k,v]) => `${k}: ${v}`).join("<br>")}
+      `;
+
+      document.getElementById("downloadBtn").style.display = "inline-block";
+    }
+
+    function downloadPDF() {
+      alert("PDF generation will include NASA data + watermark. (Coming Soon)");
+    }
+  </script>
+</body>
+</html>

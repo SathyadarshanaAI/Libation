@@ -16,7 +16,7 @@
       font-size: 2em;
       color: #7dd3fc;
     }
-    input, select, button {
+    input, button {
       margin: 8px;
       padding: 10px;
       border-radius: 5px;
@@ -27,15 +27,14 @@
       background: linear-gradient(to right, #00f5a0, #00d9f5);
       cursor: pointer;
     }
-    button:hover {
-      opacity: 0.8;
-    }
+    button:hover { opacity: 0.8; }
     #output {
       margin-top: 20px;
       padding: 15px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 10px;
-      min-height: 100px;
+      min-height: 120px;
+      text-align: left;
     }
     .watermark {
       position: fixed;
@@ -49,49 +48,60 @@
 </head>
 <body>
   <h1>KP Live Report (NASA Data)</h1>
-
   <div>
     <input type="text" id="name" placeholder="Enter Name">
     <input type="date" id="dob">
     <input type="time" id="tob">
     <input type="text" id="pob" placeholder="Place of Birth">
-    <button onclick="fetchKPData()">Generate Live KP Report</button>
+    <button onclick="generateKPReport()">Generate Live KP Report</button>
   </div>
 
-  <div id="output">Fetching live planetary positions...</div>
+  <div id="output">Enter your birth details and click Generate.</div>
   <button id="downloadBtn" style="display:none;" onclick="downloadPDF()">Download PDF</button>
-
   <div class="watermark">Sathyadarshana.com | KP Live Report</div>
 
   <script>
-    async function fetchKPData() {
-      document.getElementById("output").innerText = "Fetching live planetary positions...";
+    async function generateKPReport() {
       const name = document.getElementById("name").value;
       const dob = document.getElementById("dob").value;
       const tob = document.getElementById("tob").value;
       const pob = document.getElementById("pob").value;
 
-      // Temporary demo planetary data (replace with NASA API fetch)
-      const planets = {
-        Sun: "Aries (12°)", Moon: "Taurus (3°)",
-        Mars: "Gemini (18°)", Mercury: "Leo (5°)",
-        Jupiter: "Virgo (22°)", Saturn: "Pisces (7°)"
-      };
+      document.getElementById("output").innerText = "Fetching live planetary positions...";
 
-      document.getElementById("output").innerHTML = `
-        <b>Name:</b> ${name}<br>
-        <b>Date of Birth:</b> ${dob}<br>
-        <b>Time of Birth:</b> ${tob}<br>
-        <b>Place of Birth:</b> ${pob}<br><br>
-        <b>Live Planetary Positions (Sample):</b><br>
-        ${Object.entries(planets).map(([k,v]) => `${k}: ${v}`).join("<br>")}
-      `;
+      try {
+        const res = await fetch('/.netlify/functions/nasaEphemeris', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dob, tob, pob })
+        });
+        const data = await res.json();
 
-      document.getElementById("downloadBtn").style.display = "inline-block";
+        if (data.error) {
+          document.getElementById("output").innerText = "Failed to fetch planetary data.";
+          return;
+        }
+
+        const planetList = Object.entries(data.data)
+          .map(([planet, pos]) => `<li><b>${planet}:</b> ${pos}</li>`)
+          .join("");
+
+        document.getElementById("output").innerHTML = `
+          <h3>KP Live Planetary Positions</h3>
+          <p><b>Name:</b> ${name}</p>
+          <p><b>DOB:</b> ${dob} | <b>TOB:</b> ${tob}</p>
+          <p><b>Place:</b> ${pob}</p>
+          <ul>${planetList}</ul>
+        `;
+
+        document.getElementById("downloadBtn").style.display = "inline-block";
+      } catch (err) {
+        document.getElementById("output").innerText = "Error fetching data.";
+      }
     }
 
     function downloadPDF() {
-      alert("PDF generation will include NASA data + watermark. (Coming Soon)");
+      alert("PDF generation with watermark will be added next!");
     }
   </script>
 </body>

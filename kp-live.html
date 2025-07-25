@@ -70,22 +70,27 @@
       const tob = document.getElementById('tob').value;
       const place = document.getElementById('place').value;
 
-      document.getElementById('report-output').innerText = "Fetching live planetary positions...";
+      document.getElementById('report-output').innerText = "Fetching NASA planetary data...";
 
-      const res = await fetch('/.netlify/functions/nasaKP', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, dob, tob, place })
-      });
-      const data = await res.json();
-      document.getElementById('report-output').innerHTML =
-        `<h2>Live KP Report</h2>
-         <p><b>Name:</b> ${name}</p>
-         <p><b>Date & Time:</b> ${dob} ${tob}</p>
-         <p><b>Place:</b> ${place}</p>
-         <hr>
-         <pre>${JSON.stringify(data.planets, null, 2)}</pre>
-         <button onclick="window.location.href='${data.pdfUrl}'">Download PDF</button>`;
+      try {
+        const res = await fetch('/.netlify/functions/nasaKP', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, dob, tob, place })
+        });
+        const data = await res.json();
+
+        document.getElementById('report-output').innerHTML =
+          `<h2>Live KP Report</h2>
+           <p><b>Name:</b> ${name}</p>
+           <p><b>Date & Time:</b> ${dob} ${tob}</p>
+           <p><b>Place:</b> ${place}</p>
+           <hr>
+           <pre>${JSON.stringify(data.planets, null, 2)}</pre>
+           <button onclick="window.open('${data.pdfUrl}', '_blank')">Download PDF</button>`;
+      } catch (err) {
+        document.getElementById('report-output').innerText = "Error generating report: " + err.message;
+      }
     }
   </script>
 </body>

@@ -6,19 +6,20 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Deploy to Netlify
+      - name: Deploy Static Site and Functions to Netlify
         uses: nwtgck/actions-netlify@v2.0
         with:
-          publish-dir: "./"
+          publish-dir: "./"               # All HTML, CSS, JS are in root
           production-deploy: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Auto-deployed via GitHub Actions"
+          deploy-message: "Deploy static site with functions"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

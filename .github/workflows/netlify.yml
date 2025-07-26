@@ -16,7 +16,7 @@ jobs:
       - name: Deploy Static Site and Functions to Netlify
         uses: nwtgck/actions-netlify@v2.0
         with:
-          publish-dir: "./"               # All HTML, CSS, JS are in root
+          publish-dir: "./"               # All HTML, CSS, JS in root
           production-deploy: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: "Deploy static site with functions"

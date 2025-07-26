@@ -1,117 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana | Official Launch</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sathyadarshana Astrology</title>
   <style>
-    body {
+    /* Base Styles and Theme */
+    html, body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
-      color: #e0f2fe;
-      text-align: center;
-      scroll-behavior: smooth;
-      overflow-x: hidden;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at center, #033d4c, #010a1a, #000000);
+      color: #f0f8ff; /* AliceBlue/white-ish text for contrast */
+      scroll-behavior: smooth;  /* Enable smooth scrolling for anchor links 8 */
     }
-    header {
-      padding: 2rem;
-      background: rgba(2,6,23,0.8);
-      box-shadow: 0 0 30px #38bdf8;
-      animation: glowPulse 4s ease-in-out infinite alternate;
-    }
-    header h1 {
-      font-size: 2rem;
-      color: #7dd3fc;
-      text-shadow: 0 0 20px #38bdf8aa;
-      animation: textPulse 3s ease-in-out infinite alternate;
-    }
-    nav {
-      margin: 2rem auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-    }
-    nav a, .guide-btn {
-      padding: 0.8rem 1.5rem;
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      color: #0f172a;
+    a {
+      color: #00ffff; /* cyan links */
       text-decoration: none;
-      font-weight: bold;
-      border-radius: 0.5rem;
-      transition: 0.3s;
-      box-shadow: 0 0 20px #38bdf888;
-      animation: buttonGlow 5s ease-in-out infinite alternate;
     }
-    nav a:hover, .guide-btn:hover {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-      transform: scale(1.05);
-    }
-    section {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1.5rem;
-      background: rgba(30,41,59,0.8);
-      border-radius: 1rem;
-      box-shadow: 0 0 35px rgba(56,189,248,0.4);
-      text-align: center;
-    }
-    footer {
-      margin-top: 3rem;
-      padding: 1rem;
-      background: rgba(2,6,23,0.7);
-      color: #7dd3fc;
-      font-size: 0.9rem;
-      border-top: 2px solid #38bdf8;
-      animation: glowPulse 4s ease-in-out infinite alternate;
+    a:hover {
+      color: #ffffff;
     }
 
-    /* Glow Animations */
-    @keyframes glowPulse {
-      from { box-shadow: 0 0 15px #38bdf844; }
-      to { box-shadow: 0 0 45px #38bdf8cc; }
+    /* Navigation Bar */
+    nav {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);  /* semi-transparent background for nav */
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1000;
     }
-    @keyframes textPulse {
-      from { text-shadow: 0 0 10px #38bdf8aa; color: #7dd3fc; }
-      to { text-shadow: 0 0 30px #16f0a7; color: #38bdf8; }
+    nav .brand {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #00eaff; /* bright cyan/blue for brand */
     }
-    @keyframes buttonGlow {
-      from { box-shadow: 0 0 12px #38bdf855; }
-      to { box-shadow: 0 0 35px #16f0a7aa; }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      font-weight: 500;
+      color: #b0c4de; /* light steelblue for nav links */
+      text-transform: capitalize;
+    }
+    nav ul li a:hover {
+      color: #ffffff;
+    }
+
+    /* Hero Section */
+    header.hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: transparent;
+    }
+    header.hero h1 {
+      font-size: 2.5em;
+      color: #00eaff;
+      margin-bottom: 0.2em;
+    }
+    header.hero p {
+      font-size: 1.2em;
+      color: #d0eaff;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Sections for Tools */
+    section {
+      padding: 60px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      scroll-margin-top: 70px;  /* offset anchors for fixed nav 910 */
+    }
+    section:nth-child(even) {
+      background: rgba(255,255,255,0.03); /* slight alternation in background for contrast */
+    }
+    section h2 {
+      color: #00ffff;
+      font-size: 1.8em;
+      margin-bottom: 0.4em;
+    }
+    section p {
+      font-size: 1em;
+      line-height: 1.6;
+      max-width: 800px;
+      color: #c0ddeb;
+    }
+    .tool-button {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: linear-gradient(90deg, #00eaff, #0066ff);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .tool-button:hover {
+      background: linear-gradient(90deg, #00ffff, #0088ff);
+      color: #000;
+    }
+
+    /* Call-to-Action Section */
+    .cta {
+      text-align: center;
+      padding: 60px 20px;
+      background: rgba(0, 51, 102, 0.2); /* faint blue overlay background */
+    }
+    .cta h2 {
+      font-size: 1.8em;
+      color: #00eaff;
+      margin-bottom: 0.5em;
+    }
+    .cta p {
+      font-size: 1.1em;
+      color: #d0eaff;
+      max-width: 600px;
+      margin: 0 auto 1.5em auto;
+    }
+    .cta .button-group a {
+      display: inline-block;
+      margin: 5px 10px;
+      padding: 12px 20px;
+      border: 2px solid #00eaff;
+      border-radius: 4px;
+      color: #00eaff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s, color 0.3s;
+    }
+    .cta .button-group a:hover {
+      background: #00eaff;
+      color: #000;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #000;
+      color: #777;
+      font-size: 0.9em;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      nav ul li {
+        margin: 5px;
+      }
+      header.hero h1 {
+        font-size: 2em;
+      }
+      section h2 {
+        font-size: 1.5em;
+      }
+      .cta h2 {
+        font-size: 1.5em;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🌟 Sathyadarshana Official Launch</h1>
-    <p>Experience AI-powered spiritual tools and cosmic insights.</p>
-  </header>
 
-  <!-- Navigation -->
+  <!-- Navigation Bar -->
   <nav>
-    <a href="/nasa-kp.html">KP Live Report</a>
-    <a href="/time-twin.html">Time-Twin Dashboard</a>
-    <a href="/palmistry-ai.html">Palmistry AI</a>
-    <a href="/unified-dashboard.html">Unified Dashboard</a>
+    <div class="brand">Sathyadarshana</div>
+    <ul>
+      <li><a href="#kp-live-report">KP Live Report</a></li>
+      <li><a href="#time-twin">Time-Twin Dashboard</a></li>
+      <li><a href="#palmistry-ai">Palmistry AI</a></li>
+      <li><a href="#unified-dashboard">Unified Dashboard</a></li>
+      <li><a href="#birth-report">Birth Report</a></li>
+      <li><a href="#vedic">Vedic Astrology</a></li>
+      <li><a href="#numerology">Numerology</a></li>
+      <li><a href="#aura">Aura Analysis</a></li>
+      <li><a href="#nadi">Nadi Astrology</a></li>
+      <li><a href="#desha-guna">Desha Guna & Viparyasa</a></li>
+    </ul>
   </nav>
 
-  <!-- User Guide -->
-  <section>
-    <h2>📜 User Guide</h2>
-    <p>Step-by-step instructions to explore our tools.</p>
-    <a class="guide-btn" href="/assets/Sathyadarshana_User_Guide.pdf" download>Download Guide</a>
-  </section>
+  <!-- Hero Section -->
+  <header class="hero">
+    <h1>Sathyadarshana</h1>
+    <p>Welcome to Sathyadarshana – a suite of astrological tools and insights. Explore various systems of astrology, palmistry, numerology, and more in one place.</p>
+  </header>
 
-  <!-- Support -->
-  <section>
-    <h2>💖 Support Our Mission</h2>
-    <p>Your contributions help us grow and keep these tools free.</p>
-    <p>Contact: sathyadarshana2025@gmail.com</p>
-  </section>
+  <!-- Sections for each tool -->
+  <main>
+    <section id="kp-live-report">
+      <h2>KP Live Report</h2>
+      <p>Real-time KP (Krishnamurti Paddhati) astrological analysis with live data integration. Get instant insights based on planetary positions and the KP system.</p>
+      <a href="nasa-kp.html" class="tool-button">Open KP Live Report</a>
+    </section>
 
+    <section id="time-twin">
+      <h2>Time-Twin Dashboard</h2>
+      <p>Discover and analyze astrological twins – individuals born at the same time. The Time-Twin Dashboard compares charts to reveal unique life patterns and coincidences.</p>
+      <a href="time-twin.html" class="tool-button">Open Time-Twin Dashboard</a>
+    </section>
+
+    <section id="palmistry-ai">
+      <h2>Palmistry AI</h2>
+      <p>AI-powered palm reading tool. Upload hand images and let the Palmistry AI interpret lines and mounts, providing insights into personality and destiny.</p>
+      <a href="palmistry-ai.html" class="tool-button">Try Palmistry AI</a>
+    </section>
+
+    <section id="unified-dashboard">
+      <h2>Unified Dashboard</h2>
+      <p>A comprehensive dashboard combining various astrological systems. View and correlate data from Vedic, KP, Numerology, and more – all in a unified interface.</p>
+      <a href="unified-dashboard.html" class="tool-button">Open Unified Dashboard</a>
+    </section>
+
+    <section id="birth-report">
+      <h2>Birth Report Generator</h2>
+      <p>Generate detailed birth (natal) charts and reports. Enter birth details to receive personalized astrological interpretations and charts in an instant.</p>
+      <a href="astro.html" class="tool-button">Generate Birth Report</a>
+    </section>
+
+    <section id="vedic">
+      <h2>Vedic Astrology</h2>
+      <p>Dive into traditional Vedic astrology calculations. Generate divisional charts, Dasha predictions, and classical interpretations based on Vedic principles.</p>
+      <a href="vedic.html" class="tool-button">Explore Vedic Astrology</a>
+    </section>
+
+    <section id="numerology">
+      <h2>Numerology</h2>
+      <p>Analyze the significance of numbers in your life. Our Numerology tool provides insights from your birth date and name, revealing core numbers and their meanings.</p>
+      <a href="numerology.html" class="tool-button">Try Numerology</a>
+    </section>
+
+    <section id="aura">
+      <h2>Aura Analysis</h2>
+      <p>Visualize and interpret aura energy fields. Using input data or imagery, the Aura Analysis tool helps you understand energetic vibrations and well-being.</p>
+      <a href="aura.html" class="tool-button">Analyze Aura</a>
+    </section>
+
+    <section id="nadi">
+      <h2>Nadi Astrology</h2>
+      <p>Experience the ancient Nadi astrology, traditionally from palm-leaf manuscripts. Our tool gives you a glimpse into Nadi predictions based on your inputs.</p>
+      <a href="nadi.html" class="tool-button">Explore Nadi Astrology</a>
+    </section>
+
+    <section id="desha-guna">
+      <h2>Desha Guna & Viparyasa</h2>
+      <p>Assess astrological compatibility and variations through Desha Guna and Viparyasa. Understand personal attributes and compatibility metrics in depth.</p>
+      <a href="desha-viparyasa.html" class="tool-button">Check Desha Guna & Viparyasa</a>
+    </section>
+
+    <!-- Call-to-Action Section for User Guide and Support -->
+    <section class="cta" id="support">
+      <h2>Get Started with Sathyadarshana</h2>
+      <p>Download our user guide to learn how to use these tools, or reach out to us for support and inquiries. We’re here to help you on your astrological journey.</p>
+      <div class="button-group">
+        <a href="user-guide.pdf" download>📄 Download User Guide</a>
+        <a href="mailto:support@sathyadarshana.com">✉️ Contact Support</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
   <footer>
     &copy; 2025 Sathyadarshana. Powered by Buddhi AI.
   </footer>
+
 </body>
 </html>

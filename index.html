@@ -3,116 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana - The Light of Truth</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <title>Sathyadarshana | Official Launch</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
+      text-align: center;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+    header {
+      padding: 2rem;
+      background: rgba(2,6,23,0.8);
+      box-shadow: 0 0 30px #38bdf8;
+      animation: glowPulse 4s ease-in-out infinite alternate;
+    }
+    header h1 {
+      font-size: 2rem;
+      color: #7dd3fc;
+      text-shadow: 0 0 20px #38bdf8aa;
+      animation: textPulse 3s ease-in-out infinite alternate;
     }
     nav {
-      position: sticky;
-      top: 0;
+      margin: 2rem auto;
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       gap: 1rem;
-      background: rgba(2,6,23,0.85);
-      padding: 1rem;
-      box-shadow: 0 0 12px #38bdf8;
-      z-index: 999;
     }
-    nav a {
-      color: #e0f2fe;
-      text-decoration: none;
-      padding: 0.6rem 1rem;
+    nav a, .guide-btn {
+      padding: 0.8rem 1.5rem;
       background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      border-radius: 6px;
-      transition: 0.3s;
-    }
-    nav a:hover {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
       color: #0f172a;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 0.5rem;
+      transition: 0.3s;
+      box-shadow: 0 0 20px #38bdf888;
+      animation: buttonGlow 5s ease-in-out infinite alternate;
+    }
+    nav a:hover, .guide-btn:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
       transform: scale(1.05);
     }
-    .content {
-      text-align: center;
-      padding: 3rem 1rem;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: #7dd3fc;
-      text-shadow: 0 0 14px #38bdf8cc;
-    }
-    p {
+    section {
       max-width: 800px;
-      margin: 1rem auto;
-      font-size: 1.2rem;
-      line-height: 1.7;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: rgba(30,41,59,0.8);
+      border-radius: 1rem;
+      box-shadow: 0 0 35px rgba(56,189,248,0.4);
+      text-align: center;
     }
     footer {
       margin-top: 3rem;
       padding: 1rem;
       background: rgba(2,6,23,0.7);
-      text-align: center;
-      border-top: 2px solid #38bdf8;
+      color: #7dd3fc;
       font-size: 0.9rem;
+      border-top: 2px solid #38bdf8;
+      animation: glowPulse 4s ease-in-out infinite alternate;
     }
-    #lang-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #0ea5e9;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 0 12px #0ea5e9;
-      z-index: 9999;
+
+    /* Glow Animations */
+    @keyframes glowPulse {
+      from { box-shadow: 0 0 15px #38bdf844; }
+      to { box-shadow: 0 0 45px #38bdf8cc; }
+    }
+    @keyframes textPulse {
+      from { text-shadow: 0 0 10px #38bdf8aa; color: #7dd3fc; }
+      to { text-shadow: 0 0 30px #16f0a7; color: #38bdf8; }
+    }
+    @keyframes buttonGlow {
+      from { box-shadow: 0 0 12px #38bdf855; }
+      to { box-shadow: 0 0 35px #16f0a7aa; }
     }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
+  <header>
+    <h1>🌟 Sathyadarshana Official Launch</h1>
+    <p>Experience AI-powered spiritual tools and cosmic insights.</p>
+  </header>
+
+  <!-- Navigation -->
   <nav>
-    <a href="index.html">Home</a>
-    <a href="astrologer.html">Astrology</a>
-    <a href="library.html">Library</a>
-    <a href="ai-buddhi.html">AI Buddhi</a>
-    <a href="music-lab.html">Music Lab</a>
+    <a href="/nasa-kp.html">KP Live Report</a>
+    <a href="/time-twin.html">Time-Twin Dashboard</a>
+    <a href="/palmistry-ai.html">Palmistry AI</a>
+    <a href="/unified-dashboard.html">Unified Dashboard</a>
   </nav>
 
-  <!-- Main Content -->
-  <div class="content">
-    <h1>Welcome to Sathyadarshana</h1>
-    <p>Touch the Light, Walk the Path. Explore our Astrology, Library, AI Buddhi, and Music Lab — 
-       a digital sanctuary blending wisdom, technology, and spirituality for all humanity.</p>
-  </div>
+  <!-- User Guide -->
+  <section>
+    <h2>📜 User Guide</h2>
+    <p>Step-by-step instructions to explore our tools.</p>
+    <a class="guide-btn" href="/assets/Sathyadarshana_User_Guide.pdf" download>Download Guide</a>
+  </section>
+
+  <!-- Support -->
+  <section>
+    <h2>💖 Support Our Mission</h2>
+    <p>Your contributions help us grow and keep these tools free.</p>
+    <p>Contact: sathyadarshana2025@gmail.com</p>
+  </section>
 
   <footer>
-    © 2025 SathyadarshanaAI | Powered by Buddhi
+    &copy; 2025 Sathyadarshana. Powered by Buddhi AI.
   </footer>
-
-  <!-- Translate -->
-  <div id="google_translate_element" style="display:none;"></div>
-  <button id="lang-btn">🌐</button>
-  <script>
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,si,ta',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: false
-      }, 'google_translate_element');
-    }
-    document.getElementById('lang-btn').addEventListener('click', () => {
-      document.querySelector('.goog-te-gadget-simple').click();
-    });
-  </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

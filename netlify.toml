@@ -1,13 +1,8 @@
-i[build]
-  publish = "./"                    # Serve site from root
-  functions = "netlify/functions"   # Functions directory
+[build]
+  publish = "./"                    # Use "./" for static sites at root
+  functions = "netlify/functions"   # Where your Netlify functions live
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
   status = 200

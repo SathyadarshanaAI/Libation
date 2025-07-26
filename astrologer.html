@@ -5,84 +5,200 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sathyadarshana | Astrology</title>
   <style>
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #fff;
-      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
     }
     nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 10px;
-      gap: 15px;
       position: sticky;
       top: 0;
-      z-index: 100;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: rgba(2,6,23,0.85);
+      padding: 1rem;
+      box-shadow: 0 0 12px #38bdf8;
+      z-index: 999;
     }
     nav a {
-      color: #00eaff;
+      color: #e0f2fe;
       text-decoration: none;
-      font-size: 1.1rem;
+      padding: 0.6rem 1rem;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      border-radius: 6px;
       transition: 0.3s;
-      padding: 5px 10px;
-      border-radius: 5px;
     }
     nav a:hover {
-      background: #00eaff;
-      color: #000;
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      color: #0f172a;
+      transform: scale(1.05);
     }
-    h1 {
+    section {
+      min-height: 100vh;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem 1.5rem;
+      background: rgba(30,41,59,0.8);
+      border-radius: 1rem;
+      box-shadow: 0 0 25px rgba(56,189,248,0.3);
       text-align: center;
-      margin-top: 20px;
-      font-size: 2rem;
-      color: #00eaff;
     }
-    .content {
-      text-align: center;
-      margin: 30px auto;
-      max-width: 700px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+    input, select, button {
+      width: 90%;
+      margin: 0.5rem auto;
+      padding: 0.8rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
     }
-    footer {
-      text-align: center;
-      padding: 15px;
-      margin-top: 20px;
-      background: rgba(0, 0, 0, 0.6);
-      color: #aaa;
-      font-size: 0.9rem;
+    button {
+      background: linear-gradient(90deg, #16f0a7, #0ea5e9);
+      color: #0f172a;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #16f0a7);
+      transform: scale(1.05);
+    }
+    #chart {
+      margin: 2rem auto;
+      background: #111;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(56,189,248,0.3);
+    }
+    #map {
+      width: 100%;
+      height: 400px;
+      margin-top: 1rem;
+      border-radius: 1rem;
     }
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 </head>
 <body>
+
+  <!-- Navigation -->
   <nav>
-    <a href="index.html">Home</a>
-    <a href="kp-live.html">KP Report</a>
-    <a href="vedic.html">Vedic Astrology</a>
-    <a href="numerology.html">Numerology</a>
-    <a href="palmistry.html">Palmistry</a>
-    <a href="aura.html">Aura Scan</a>
-    <a href="nasa-kp-report.html">NASA KP</a>
-    <a href="astrology-hub.html">Astrology Hub</a>
+    <a href="#report">KP/Vedic Report</a>
+    <a href="#palmistry">Palmistry</a>
+    <a href="#numerology">Numerology</a>
+    <a href="#nadi">Nadi Jyotishya</a>
+    <a href="#geo">GeoVision</a>
+    <a href="#tariff">Tariff</a>
+    <a href="/index.html">Home</a>
   </nav>
 
-  <h1>Sathyadarshana Astrology</h1>
+  <!-- KP + Vedic -->
+  <section id="report">
+    <h1>Astrology Report Generator</h1>
+    <input type="text" id="name" placeholder="Full Name">
+    <select id="gender"><option>Male</option><option>Female</option></select>
+    <input type="date" id="birthdate">
+    <input type="time" id="birthtime">
+    <input type="text" id="birthplace" placeholder="Birth Place">
+    <button onclick="generateKPReport()">Generate KP Report</button>
+    <canvas id="chart" width="500" height="500"></canvas>
+    <div id="report-output" style="margin-top:1rem;text-align:left;"></div>
+  </section>
 
-  <div class="content">
-    <p>Welcome to the <strong>Sathyadarshana Astrology Center</strong>.  
-      Choose a category above to explore KP, Vedic, Numerology, Palmistry, Aura readings, and more.</p>
-    <p>Generate your birth reports, explore cosmic data, and connect with NASA/KP-based charts!</p>
-  </div>
+  <!-- Palmistry -->
+  <section id="palmistry">
+    <h1>Palmistry Scanner</h1>
+    <input type="file" accept="image/*">
+    <button onclick="alert('Palmistry AI analysis coming soon.')">Analyze</button>
+  </section>
 
-  <footer>
-    &copy; 2025 Sathyadarshana. All Rights Reserved.
-  </footer>
+  <!-- Numerology -->
+  <section id="numerology">
+    <h1>Numerology Calculator</h1>
+    <input type="text" id="fullname" placeholder="Full Name">
+    <input type="date" id="dob">
+    <button onclick="generateNumerology()">Get Numerology Report</button>
+    <div id="num-result" style="margin-top:1rem;"></div>
+  </section>
+
+  <!-- Nadi -->
+  <section id="nadi">
+    <h1>Nadi Jyotishya Insights</h1>
+    <input type="date" id="ndob">
+    <input type="time" id="ntob">
+    <input type="text" id="nplace" placeholder="Birthplace">
+    <button onclick="generateNadi()">Search Nadi Records</button>
+    <div id="nadi-result" style="margin-top:1rem;"></div>
+  </section>
+
+  <!-- GeoVision -->
+  <section id="geo">
+    <h1>GeoVision - Regional Insights</h1>
+    <input type="text" id="region" placeholder="Ex: Anuradhapura">
+    <select id="focus">
+      <option value="">-- Select Focus --</option>
+      <option value="climate">History & Climate</option>
+      <option value="culture">Cultural Overview</option>
+      <option value="future">Future Planetary Impacts</option>
+    </select>
+    <button onclick="analyzeRegion()">Analyze</button>
+    <div id="map"></div>
+    <div id="geo-result" style="margin-top:1rem;"></div>
+  </section>
+
+  <!-- Tariff -->
+  <section id="tariff">
+    <h1>Tariff & Packages</h1>
+    <p><strong>Standard Report:</strong> $5</p>
+    <p><strong>Premium Reading:</strong> $10</p>
+    <p><strong>One Year Full Access:</strong> $30</p>
+    <p><strong>Student Mode:</strong> Free / Donation</p>
+  </section>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    function generateKPReport() {
+      const name = document.getElementById('name').value;
+      const gender = document.getElementById('gender').value;
+      const dob = document.getElementById('birthdate').value;
+      const tob = document.getElementById('birthtime').value;
+      const pob = document.getElementById('birthplace').value;
+      document.getElementById('report-output').innerHTML =
+        `<h2>KP Report</h2><p>${name} (${gender})</p><p>${dob} ${tob} - ${pob}</p>`;
+      drawMockChart();
+    }
+    function drawMockChart() {
+      const c = document.getElementById("chart");
+      const ctx = c.getContext("2d");
+      ctx.clearRect(0,0,c.width,c.height);
+      ctx.strokeStyle="#38bdf8";ctx.lineWidth=2;
+      ctx.beginPath();
+      for(let i=0;i<12;i++){let ang=(Math.PI*2/12)*i;let x=250+200*Math.cos(ang);let y=250+200*Math.sin(ang);ctx.moveTo(250,250);ctx.lineTo(x,y);}ctx.stroke();
+      ctx.beginPath();ctx.arc(250,250,200,0,Math.PI*2);ctx.stroke();
+    }
+    function generateNumerology() {
+      const name=document.getElementById('fullname').value.trim();
+      const dob=document.getElementById('dob').value;
+      const num=(name.length+dob.replace(/-/g,'').length)%9||9;
+      document.getElementById('num-result').innerHTML=`<h2>Your Number: ${num}</h2>`;
+    }
+    function generateNadi() {
+      const dob=document.getElementById('ndob').value;
+      const tob=document.getElementById('ntob').value;
+      const place=document.getElementById('nplace').value;
+      document.getElementById('nadi-result').innerHTML=`<h2>Nadi Search</h2><p>${dob}, ${tob}, ${place}</p>`;
+    }
+    const map=L.map('map').setView([7.8731,80.7718],7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+    function analyzeRegion(){
+      const region=document.getElementById('region').value;
+      const focus=document.getElementById('focus').value;
+      document.getElementById('geo-result').innerText=`Analyzing ${focus} for ${region}`;
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${region}`).then(r=>r.json()).then(data=>{
+        if(data.length){map.setView([data[0].lat,data[0].lon],10);L.marker([data[0].lat,data[0].lon]).addTo(map).bindPopup(region).openPopup();}
+      });
+    }
+  </script>
 </body>
 </html>

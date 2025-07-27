@@ -1,6 +1,9 @@
 [build]
-  publish = "./"                    # Use "./" for static sites at root
-  functions = "netlify/functions"   # Where your Netlify functions live
+  publish = "./"                      # Static files in root
+  functions = "netlify/functions"     # Serverless functions directory
+
+[build.environment]
+  NODE_VERSION = "18"                 # Force Node 18 for PDFKit + get-stream
 
 [[redirects]]
   from = "/api/*"

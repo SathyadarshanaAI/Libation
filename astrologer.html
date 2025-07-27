@@ -1,84 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sathyadarshana – KP / Vedic Astrology</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sathyadarshana Astrology</title>
   <style>
-    body{margin:0;background:radial-gradient(circle at 20% 20%,#0f172a,#000);color:#e0f2fe;font-family:Segoe UI,system-ui,sans-serif;text-align:center}
-    .wrap{max-width:720px;margin:2rem auto;background:rgba(2,6,23,.72);border-radius:16px;box-shadow:0 0 24px #0ea5e966;padding:1.25rem}
-    h1{color:#7dd3fc;text-shadow:0 0 16px #38bdf877;margin:0 0 1rem}
-    input{width:85%;max-width:560px;margin:.5rem 0;padding:.9rem;border-radius:10px;border:none;background:#0b1220;color:#e0f2fe;box-shadow:0 0 0 1px #0ea5e955 inset}
-    .btn{width:85%;max-width:560px;margin:.6rem auto;padding:1rem;border-radius:12px;border:none;cursor:pointer;font-weight:600;background:linear-gradient(90deg,#38bdf8,#0ea5e9);color:#081426;box-shadow:0 10px 30px #0ea5e955;transition:.25s}
-    .btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px #0ea5e977}
-    #status{margin-top:1rem;min-height:1.5rem;color:#7dd3fc}
-    #preview{margin-top:1rem;padding:1rem;background:rgba(30,41,59,.6);border-radius:12px;text-align:left}
+    body { margin:0; font-family:sans-serif; background:#0f172a; color:#e0f2fe; scroll-behavior:smooth; }
+    section { min-height:100vh; max-width:800px; margin:2rem auto; padding:1.5rem; background:rgba(30,41,59,0.8); border-radius:1rem; }
+    nav { position:sticky; top:0; display:flex; gap:1rem; justify-content:center; background:rgba(2,6,23,0.8); padding:1rem; }
+    nav a { color:#e0f2fe; background:#0ea5e9; padding:0.5rem 1rem; border-radius:0.5rem; text-decoration:none; }
+    nav a:hover { background:#38bdf8; }
+    button { background:#16f0a7; border:none; padding:0.7rem 1rem; border-radius:0.5rem; margin:0.5rem; cursor:pointer; }
+    button:hover { background:#0ea5e9; color:#fff; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>KP Live Report (NASA Data)</h1>
+  <nav>
+    <a href="#report">Report</a>
+    <a href="#palmistry">Palmistry</a>
+    <a href="#numerology">Numerology</a>
+    <a href="#geo">GeoVision</a>
+  </nav>
 
-    <input id="name" placeholder="Full Name" />
-    <input id="birthdate" type="date" />
-    <input id="birthtime" type="time" />
-    <input id="birthplace" placeholder="Birth Place" />
+  <section id="report">
+    <h1>KP Live Report</h1>
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="date" id="dob">
+    <input type="time" id="tob">
+    <input type="text" id="pob" placeholder="Birth Place">
+    <button onclick="generatePDF()">Download KP PDF</button>
+  </section>
 
-    <button class="btn" onclick="preview()">Preview</button>
-    <button class="btn" onclick="downloadPDF()">Generate & Download PDF</button>
-
-    <div id="status"></div>
-    <div id="preview"></div>
-  </div>
+  <section id="palmistry"><h1>Palmistry</h1><p>Coming soon.</p></section>
+  <section id="numerology"><h1>Numerology</h1><p>Coming soon.</p></section>
+  <section id="geo"><h1>GeoVision</h1><p>Coming soon.</p></section>
 
   <script>
-    function val(id){ return document.getElementById(id).value.trim(); }
-
-    function preview(){
-      const html = `
-        <h3>Preview</h3>
-        <p><b>Name:</b> ${val('name')}</p>
-        <p><b>Date:</b> ${val('birthdate')}</p>
-        <p><b>Time:</b> ${val('birthtime')}</p>
-        <p><b>Place:</b> ${val('birthplace')}</p>
-      `;
-      document.getElementById('preview').innerHTML = html;
-    }
-
-    async function downloadPDF(){
-      const status = document.getElementById('status');
-      status.textContent = 'Generating PDF...';
-
-      try{
-        const res = await fetch('/api/generateReport', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            name: val('name'),
-            birthDate: val('birthdate'),
-            birthTime: val('birthtime'),
-            birthPlace: val('birthplace')
-          })
-        });
-
-        if(!res.ok){
-          const txt = await res.text();
-          throw new Error(`Server ${res.status}: ${txt}`);
-        }
-
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'KP_Report.pdf';
-        a.click();
-        URL.revokeObjectURL(url);
-        status.textContent = '✅ PDF downloaded.';
-      }catch(err){
-        console.error(err);
-        status.textContent = '❌ Failed: ' + err.message;
-        alert('Error generating report:\n' + err.message);
-      }
+    async function generatePDF() {
+      const res = await fetch("/api/generateReport", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: document.getElementById("name").value,
+          birthDate: document.getElementById("dob").value,
+          birthTime: document.getElementById("tob").value,
+          birthPlace: document.getElementById("pob").value
+        })
+      });
+      if (!res.ok) { alert("Report failed"); return; }
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "KP_Report.pdf";
+      link.click();
     }
   </script>
 </body>

@@ -2,13 +2,11 @@
   "name": "sathyadarshana",
   "version": "1.0.0",
   "description": "Sathyadarshana static site with Netlify functions",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
     "build": "echo 'Static build step - nothing to compile'"
   },
   "dependencies": {
     "pdfkit": "^0.13.0",
-    "fs-extra": "^11.2.0"
+    "get-stream": "^6.0.1"
   }
 }

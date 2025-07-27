@@ -3,49 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana - KP Live Report</title>
+  <title>Sathyadarshana Astrology</title>
   <style>
-    body { margin: 0; font-family: sans-serif; background: radial-gradient(circle, #0f172a, #000); color: #e0f2fe; text-align: center; }
-    .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: rgba(30,41,59,0.8); border-radius: 1rem; box-shadow: 0 0 25px rgba(56,189,248,0.3); }
-    input, button { width: 90%; padding: 0.7rem; margin: 0.5rem; border-radius: 0.5rem; border: none; font-size: 1rem; }
-    button { background: linear-gradient(90deg, #16f0a7, #0ea5e9); cursor: pointer; }
-    button:hover { background: linear-gradient(90deg, #0ea5e9, #16f0a7); transform: scale(1.05); }
-    pre { text-align: left; background: #1e293b; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; color: #7dd3fc; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
+      text-align: center;
+      padding: 2rem;
+    }
+    input {
+      display: block;
+      margin: 0.5rem auto;
+      padding: 0.7rem;
+      border-radius: 6px;
+      border: none;
+      width: 60%;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      color: #0f172a;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>KP Live Report (Mock)</h1>
-    <input type="text" id="name" placeholder="Full Name">
-    <input type="date" id="birthDate">
-    <input type="time" id="birthTime">
-    <input type="text" id="birthPlace" placeholder="Birth Place">
-    <button onclick="generateKPReport()">Generate KP Report</button>
-    <button id="pdfBtn" style="display:none;" onclick="downloadPDF()">Download PDF</button>
-    <pre id="output"></pre>
-  </div>
+  <h1>KP Astrology Report</h1>
+  <p>Enter your birth details to generate a downloadable KP report.</p>
+
+  <!-- Input Fields -->
+  <input id="name" placeholder="Full Name">
+  <input id="birthdate" type="date">
+  <input id="birthtime" type="time">
+  <input id="birthplace" placeholder="Birth Place">
+
+  <!-- Button -->
+  <button onclick="generateReport()">Generate KP PDF</button>
 
   <script>
-    async function generateKPReport() {
-      const data = {
+    async function generateReport() {
+      const payload = {
         name: document.getElementById('name').value,
-        birthDate: document.getElementById('birthDate').value,
-        birthTime: document.getElementById('birthTime').value,
-        birthPlace: document.getElementById('birthPlace').value
+        birthDate: document.getElementById('birthdate').value,
+        birthTime: document.getElementById('birthtime').value,
+        birthPlace: document.getElementById('birthplace').value
       };
-      const res = await fetch('/api/generateReport', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
-      });
-      const json = await res.json();
-      document.getElementById('output').textContent = JSON.stringify(json, null, 2);
-      window.generatedPDF = json.pdfBase64; // Save PDF for download
-      document.getElementById('pdfBtn').style.display = 'inline-block';
-    }
-    function downloadPDF() {
-      const link = document.createElement('a');
-      link.href = 'data:application/pdf;base64,' + window.generatedPDF;
-      link.download = "KP_Report.pdf";
-      link.click();
+
+      try {
+        const res = await fetch('/api/generateReport', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.pdfBase64) {
+          const link = document.createElement('a');
+          link.href = 'data:application/pdf;base64,' + data.pdfBase64;
+          link.download = 'KP_Report.pdf';
+          link.click();
+          alert('KP Report generated successfully!');
+        } else {
+          alert('Failed to generate report. Check function response.');
+        }
+      } catch (error) {
+        console.error('Error generating report:', error);
+        alert('An error occurred while generating the report.');
+      }
     }
   </script>
 </body>

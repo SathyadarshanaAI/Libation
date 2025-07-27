@@ -1,70 +1,60 @@
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
+// netlify/functions/generateReport.js
+const PDFDocument = require("pdfkit");
+const getStream = require("get-stream");
 
 exports.handler = async (event) => {
   try {
-    const { name, gender, dob, tob, pob, mode } = JSON.parse(event.body);
+    const { name, birthDate, birthTime, birthPlace } = JSON.parse(event.body || "{}");
 
-    // Dummy KP Sub-Lord prediction (Sample – NASA/KP API will replace this)
-    const kpSubLord = "Moon in Rohini Nakshatra - Favorable for new beginnings (Sample Data).";
+    // Create PDF Document
+    const doc = new PDFDocument();
+    const stream = doc.pipe(getStream.buffer());
 
-    // Create PDF
-    const pdf = new PDFDocument();
-    const filePath = `/tmp/${name.replace(/\s+/g, '_')}_KP_Report.pdf`;
-    const stream = fs.createWriteStream(filePath);
-    pdf.pipe(stream);
+    doc.fontSize(18).text("Sathyadarshana Astrology Report", { align: "center" });
+    doc.moveDown();
+    doc.fontSize(12).text(`Name: ${name || "N/A"}`);
+    doc.text(`Birth Date: ${birthDate || "N/A"}`);
+    doc.text(`Birth Time: ${birthTime || "N/A"}`);
+    doc.text(`Birth Place: ${birthPlace || "N/A"}`);
+    doc.moveDown();
 
-    // Watermark
-    pdf.fontSize(30).fillColor('#f0f0f0')
-       .text("SATHYADARSHANA", 100, 300, { angle: 45, opacity: 0.1 });
+    // Mock KP Planetary Positions (Static Example)
+    doc.fontSize(14).text("KP Planetary Positions:", { underline: true });
+    const positions = {
+      Sun: "Leo 15°",
+      Moon: "Cancer 22°",
+      Mars: "Virgo 05°",
+      Venus: "Libra 10°",
+      Jupiter: "Pisces 18°",
+      Saturn: "Aquarius 02°"
+    };
+    for (const [planet, pos] of Object.entries(positions)) {
+      doc.text(`${planet}: ${pos}`);
+    }
 
-    // Title
-    pdf.fillColor('#000').fontSize(20)
-       .text("Sathyadarshana KP Astrology Report", { align: "center" });
-    pdf.moveDown();
-
-    // Personal Info
-    pdf.fontSize(14).text(`Name: ${name}`);
-    pdf.text(`Gender: ${gender}`);
-    pdf.text(`Date of Birth: ${dob}`);
-    pdf.text(`Time of Birth: ${tob}`);
-    pdf.text(`Place of Birth: ${pob}`);
-    pdf.text(`Mode: ${mode}`);
-    pdf.moveDown();
-
-    // Planetary Table (Sample Data for now)
-    pdf.fontSize(16).text("Planetary Positions & Sub-Lord Table (Sample):");
-    pdf.fontSize(12).text(
-      "Sun - Aries - Krittika\n" +
-      "Moon - Taurus - Rohini\n" +
-      "Mars - Gemini - Ardra\n" +
-      "(Full NASA/KP data will be added soon)"
-    );
-    pdf.moveDown();
-
-    // Horoscope Summary
-    pdf.fontSize(14).text("Horoscope Summary:");
-    pdf.fontSize(12).text(kpSubLord);
-
-    pdf.end();
-
-    // Return PDF as Base64 for Netlify response
-    return new Promise((resolve, reject) => {
-      stream.on('finish', () => {
-        const data = fs.readFileSync(filePath).toString('base64');
-        resolve({
-          statusCode: 200,
-          headers: {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename="${name}_KP_Report.pdf"`
-          },
-          body: data,
-          isBase64Encoded: true
-        });
-      });
-      stream.on('error', reject);
+    // Add watermark text
+    doc.fontSize(10).fillColor("gray").text("Sathyadarshana.com - Astrology", 50, 750, {
+      align: "center",
+      opacity: 0.3
     });
+
+    doc.end();
+
+    const pdfBuffer = await stream;
+    const pdfBase64 = pdfBuffer.toString("base64");
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: "KP Astrology PDF generated successfully",
+        pdfBase64,
+        positions
+      }),
+    };
   } catch (error) {
-    return { statusCode: 500, body: `Error generating report: ${error.message}` };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message }),
+    };
   }
 };

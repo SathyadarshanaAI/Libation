@@ -1,44 +1,53 @@
-.// netlify/functions/generateReport.js
-const PDFDocument = require('pdfkit');
-const getStream = require('get-stream');
+// netlify/functions/generateReport.js
+const PDFDocument = require("pdfkit");
+const getStream = require("get-stream");
 
-exports.handler = async (event, context) => {
+exports.handler = async (event) => {
   try {
-    const { name, birthDate, birthTime, birthPlace } = JSON.parse(event.body || '{}');
+    if (event.httpMethod !== "POST") {
+      return { statusCode: 405, body: "Method Not Allowed" };
+    }
 
-    // Create PDF
-    const doc = new PDFDocument();
-    let buffers = [];
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => {});
+    const { name, birthDate, birthTime, birthPlace } = JSON.parse(event.body || "{}");
 
-    doc.fontSize(20).text('Sathyadarshana KP Astrology Report', { align: 'center' });
+    const doc = new PDFDocument({ margin: 40 });
+    const stream = doc.pipe(getStream.buffer());
+
+    doc.fontSize(20).text("Sathyadarshana - KP Report", { align: "center" });
     doc.moveDown();
-    doc.fontSize(14).text(`Name: ${name || 'N/A'}`);
-    doc.text(`Birth Date: ${birthDate || 'N/A'}`);
-    doc.text(`Birth Time: ${birthTime || 'N/A'}`);
-    doc.text(`Birth Place: ${birthPlace || 'N/A'}`);
+
+    doc.fontSize(12).text(`Name: ${name || ""}`);
+    doc.text(`Birth Date: ${birthDate || ""}`);
+    doc.text(`Birth Time: ${birthTime || ""}`);
+    doc.text(`Birth Place: ${birthPlace || ""}`);
     doc.moveDown();
-    doc.text('Planetary positions (mock): Sun - Leo, Moon - Taurus, etc.');
+
+    doc.text("This is a demo PDF generated on Netlify Functions.", { align: "left" });
+    doc.moveDown();
+
+    // mock positions
+    const positions = {
+      Sun: "Leo 15°", Moon: "Scorpio 02°", Mercury: "Virgo 21°",
+      Venus: "Cancer 09°", Mars: "Gemini 17°", Jupiter: "Taurus 07°",
+      Saturn: "Aquarius 28°", Rahu: "Pisces 12°", Ketu: "Virgo 12°"
+    };
+    doc.text("Planetary Positions:");
+    Object.entries(positions).forEach(([k, v]) => doc.text(` • ${k}: ${v}`));
 
     doc.end();
-    const pdfBuffer = await getStream.buffer(doc);
+    const pdfBuffer = await stream;
 
-    // Direct PDF response
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="KP_Report.pdf"'
+        "Content-Type": "application/pdf",
+        "Content-Disposition": 'attachment; filename="KP_Report.pdf"'
       },
-      body: pdfBuffer.toString('base64'),
+      body: pdfBuffer.toString("base64"),
       isBase64Encoded: true
     };
-
   } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message })
-    };
+    console.error(err);
+    return { statusCode: 500, body: "Failed to generate PDF." };
   }
 };

@@ -3,85 +3,150 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana Astrology</title>
+  <title>Sathyadarshana - Astrology</title>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
       background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      padding: 2rem;
     }
-    input {
-      display: block;
-      margin: 0.5rem auto;
+    .container {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: rgba(2, 6, 23, 0.7);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 25px #0ea5e9;
+    }
+    input, select {
+      margin: 0.5rem;
       padding: 0.7rem;
       border-radius: 6px;
       border: none;
-      width: 60%;
+      width: 80%;
+      text-align: center;
     }
-    button {
-      margin-top: 1rem;
-      padding: 0.8rem 1.5rem;
+    .mode-btn {
+      display: block;
+      width: 80%;
+      margin: 1rem auto;
+      padding: 1rem;
+      background: #0ea5e9;
+      color: #fff;
+      font-size: 1.1rem;
       border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      color: #0f172a;
+      border-radius: 8px;
       cursor: pointer;
-      transition: 0.3s;
+      transition: all 0.3s;
     }
-    button:hover {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    .mode-btn:hover {
+      background: #16f0a7;
       transform: scale(1.05);
+    }
+    #report-output {
+      margin-top: 1rem;
+      text-align: left;
+      padding: 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 8px;
+    }
+    #lang-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0ea5e9;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 0 15px #0ea5e9;
     }
   </style>
 </head>
 <body>
-  <h1>KP Astrology Report</h1>
-  <p>Enter your birth details to generate a downloadable KP report.</p>
+  <div class="container">
+    <h1>KP / Vedic Astrology Report</h1>
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="text" id="nic" placeholder="NIC (Optional)">
+    <input type="date" id="birthdate" required>
+    <input type="time" id="birthtime" required>
+    <input type="text" id="birthplace" placeholder="Birth Place" required>
 
-  <!-- Input Fields -->
-  <input id="name" placeholder="Full Name">
-  <input id="birthdate" type="date">
-  <input id="birthtime" type="time">
-  <input id="birthplace" placeholder="Birth Place">
+    <button class="mode-btn" onclick="setMode('KP')">KP Mode</button>
+    <button class="mode-btn" onclick="setMode('Vedic')">Vedic Mode</button>
+    <button class="mode-btn" onclick="generatePreview()">Generate Preview</button>
+    <button class="mode-btn" onclick="downloadKPReport()">Download PDF</button>
+    <div id="report-output"></div>
+  </div>
 
-  <!-- Button -->
-  <button onclick="generateReport()">Generate KP PDF</button>
+  <div id="google_translate_element" style="display:none;"></div>
+  <button id="lang-btn">🌐</button>
 
   <script>
-    async function generateReport() {
-      const payload = {
-        name: document.getElementById('name').value,
-        birthDate: document.getElementById('birthdate').value,
-        birthTime: document.getElementById('birthtime').value,
-        birthPlace: document.getElementById('birthplace').value
-      };
-
-      try {
-        const res = await fetch('/api/generateReport', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        if (data.pdfBase64) {
-          const link = document.createElement('a');
-          link.href = 'data:application/pdf;base64,' + data.pdfBase64;
-          link.download = 'KP_Report.pdf';
-          link.click();
-          alert('KP Report generated successfully!');
-        } else {
-          alert('Failed to generate report. Check function response.');
-        }
-      } catch (error) {
-        console.error('Error generating report:', error);
-        alert('An error occurred while generating the report.');
-      }
+    let mode = 'KP';
+    function setMode(selected) {
+      mode = selected;
+      alert(mode + " mode selected.");
     }
+
+    function generatePreview() {
+      const name = document.getElementById('name').value;
+      const dob = document.getElementById('birthdate').value;
+      const tob = document.getElementById('birthtime').value;
+      const pob = document.getElementById('birthplace').value;
+      document.getElementById('report-output').innerHTML = `
+        <h2>Preview Report</h2>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Date:</b> ${dob}</p>
+        <p><b>Time:</b> ${tob}</p>
+        <p><b>Place:</b> ${pob}</p>
+        <p><b>Mode:</b> ${mode}</p>
+      `;
+    }
+
+    async function downloadKPReport() {
+      const name = document.getElementById('name').value;
+      const birthDate = document.getElementById('birthdate').value;
+      const birthTime = document.getElementById('birthtime').value;
+      const birthPlace = document.getElementById('birthplace').value;
+
+      const res = await fetch('/api/generateReport', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, birthDate, birthTime, birthPlace })
+      });
+
+      if (!res.ok) {
+        alert('Error generating report');
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "KP_Report.pdf";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+    document.getElementById('lang-btn').addEventListener('click', function(){
+      document.querySelector('.goog-te-gadget-simple')?.click();
+    });
   </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

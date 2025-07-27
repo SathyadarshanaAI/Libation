@@ -1,12 +1,10 @@
 {
-  "name": "sathyadarshana",
+  "name": "sathyadarshana-astro",
   "version": "1.0.0",
-  "description": "Sathyadarshana static site with Netlify functions",
-  "scripts": {
-    "build": "echo 'Static build step - nothing to compile'"
-  },
+  "engines": { "node": ">=18.0.0" },
   "dependencies": {
     "pdfkit": "^0.13.0",
-    "get-stream": "^6.0.1"
+    "get-stream": "^6.0.1",
+    "axios": "^1.6.0"
   }
 }

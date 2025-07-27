@@ -1,11 +1,8 @@
 [build]
-  publish = "./"                      # Static files in root
-  functions = "netlify/functions"     # Serverless functions directory
-
-[build.environment]
-  NODE_VERSION = "18"                 # Force Node 18 for PDFKit + get-stream
+  publish = "./"
+  functions = "netlify/functions"
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to   = "/.netlify/functions/:splat"
   status = 200

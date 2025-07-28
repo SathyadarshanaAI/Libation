@@ -47,7 +47,7 @@
     }
     button:hover { background:#0ea5e9; color:#fff; transform:scale(1.05); }
 
-    /* Floating language button */
+    /* Floating neon-glass language button */
     #lang-btn {
       position:fixed;
       bottom:20px;
@@ -99,22 +99,28 @@
     <p><i>Student Mode available (Free or Pay-What-You-Can)</i></p>
   </section>
 
-  <!-- Google Translate (hidden toolbar) -->
-  <div id="google_translate_element" style="display:none;"></div>
+  <!-- Hidden Google Translate container -->
+  <div id="google_translate_element"></div>
   <button id="lang-btn">🌐</button>
 
   <script>
-    // Language button action
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
-        pageLanguage:'en',
-        includedLanguages:'en,si,ta',
-        layout:google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay:false
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
       }, 'google_translate_element');
     }
-    document.getElementById('lang-btn').addEventListener('click',()=>{
-      document.querySelector('.goog-te-gadget-simple').click();
+
+    // Toggle language menu on button click
+    document.getElementById('lang-btn').addEventListener('click', () => {
+      const gadget = document.querySelector('.goog-te-gadget-simple');
+      if (gadget) {
+        gadget.click();
+      } else {
+        alert("Language menu not loaded yet. Wait a moment and try again.");
+      }
     });
 
     async function generatePDF() {

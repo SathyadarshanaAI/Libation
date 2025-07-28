@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Birth Details – Satellite Map | Sathyadarshana</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>උපන් විස්තර – Satellite Map | Sathyadarshana</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
     body {
       margin: 0;
-      font-family: 'Noto Sans Sinhala', sans-serif;
+      font-family: 'Inter', sans-serif;
       background: radial-gradient(circle at 25% 20%, #0f172a, #000);
       color: #e0f2fe;
       text-align: center;
@@ -21,20 +21,20 @@
     h1 {
       color: #7dd3fc;
       margin-bottom: 1em;
-      font-size: 2.5em;
+      font-size: 2.3em;
     }
     #map {
       width: 90%;
-      height: 450px;
+      height: 420px;
       border-radius: 1em;
       margin-top: 1.5em;
       box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
     }
     .form-box {
-      background: rgba(2, 6, 23, 0.85);
+      background: rgba(2, 6, 23, 0.90);
       padding: 1.5em;
       border-radius: 1em;
-      max-width: 500px;
+      max-width: 480px;
       width: 100%;
       text-align: left;
       margin-bottom: 1em;
@@ -56,17 +56,23 @@
       color: #e0f2fe;
       font-size: 1em;
     }
+    .btn-row {
+      display: flex;
+      gap: 0.6em;
+      margin-top: 1.5em;
+    }
     button {
-      margin-top: 1em;
-      padding: 0.8em 1.5em;
+      flex: 1;
+      min-width: 120px;
+      padding: 0.8em 1.2em;
       border: none;
       border-radius: 0.5em;
       background: linear-gradient(90deg, #38bdf8, #0ea5e9);
       color: #fff;
       font-weight: bold;
       cursor: pointer;
-      width: 100%;
       transition: 0.3s;
+      font-size: 1em;
     }
     button:hover {
       background: linear-gradient(90deg, #0ea5e9, #38bdf8);
@@ -77,64 +83,57 @@
       padding: 1em;
       background: rgba(30,41,59,0.85);
       border-radius: 1em;
-      box-shadow: 0 0 15px rgba(56,189,248,0.15);
       color: #e0f2fe;
       text-align: left;
       font-size: 1.09em;
       line-height: 1.7;
-      display:none;
-    }
-    .export-btn {
-      margin: 1em auto;
-      display: block;
-      padding: 0.7em 1.2em;
-      font-size: 1em;
-      background: linear-gradient(90deg, #14b8a6, #0ea5e9);
-      color: #fff;
-      border: none;
-      border-radius: 0.5em;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-    .export-btn:hover {
-      background: linear-gradient(90deg, #0ea5e9, #14b8a6);
+      display: none;
     }
     @media(max-width:700px){
-      #map{height:300px;}
+      #map{height:260px;}
       .info-box {padding:1em;}
     }
   </style>
 </head>
 <body>
-  <h1>උපන් විස්තර – Satellite Map</h1>
+  <h1>Birth Details – Satellite Map</h1>
   <form id="birthForm" class="form-box">
-    <label for="fullName">නම (Full Name):</label>
+    <label for="fullName">Full Name:</label>
     <input type="text" id="fullName" name="fullName" required>
 
-    <label for="dob">උපන් දිනය (Date of Birth):</label>
+    <label for="gender">Gender:</label>
+    <select id="gender" name="gender" required>
+      <option value="">Select</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="nic">NIC (optional):</label>
+    <input type="text" id="nic" name="nic">
+
+    <label for="dob">Date of Birth:</label>
     <input type="date" id="dob" name="dob" required>
 
-    <label for="birthTime">උපන් වේලාව (Time of Birth):</label>
+    <label for="birthTime">Time of Birth:</label>
     <input type="time" id="birthTime" name="birthTime" required>
 
-    <label for="birthPlace">උපන් නගරය / ප්‍රදේශය:</label>
-    <input type="text" id="birthPlace" name="birthPlace" placeholder="උදා: Colombo, Sri Lanka" required>
+    <label for="birthPlace">Place of Birth (City, Country):</label>
+    <input type="text" id="birthPlace" name="birthPlace" placeholder="e.g., Colombo, Sri Lanka" required>
 
     <input type="hidden" id="latitude" name="latitude">
     <input type="hidden" id="longitude" name="longitude">
 
-    <button type="button" id="searchBtn">Map පෙන්වන්න</button>
-    <button type="submit">ඉදිරියට යන්න</button>
+    <div class="btn-row">
+      <button type="button" id="searchBtn">Show Map</button>
+      <button type="submit">Continue</button>
+    </div>
   </form>
 
-  <button id="exportBtn" class="export-btn" type="button">🖼️ Map Image බාගන්න</button>
   <div id="infoBox" class="info-box"></div>
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <!-- html2canvas for map export -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
     // Mapbox Token (replace with your key!)
     const mapboxToken = "YOUR_MAPBOX_TOKEN";
@@ -148,7 +147,7 @@
 
     document.getElementById('searchBtn').addEventListener('click', () => {
       const place = document.getElementById('birthPlace').value.trim();
-      if (!place) return alert("කරුණාකර නගරය/ප්‍රදේශය ඇතුළත් කරන්න.");
+      if (!place) return alert("Please enter your city or area.");
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`)
         .then(res => res.json())
         .then(data => {
@@ -164,31 +163,16 @@
             document.getElementById('longitude').value = lon;
             document.getElementById('infoBox').style.display = 'block';
             document.getElementById('infoBox').innerHTML = `
-              <strong>ස්ථානය:</strong> ${place}<br>
+              <strong>Location:</strong> ${place}<br>
               <strong>Latitude:</strong> ${lat.toFixed(4)}<br>
-              <strong>Longitude:</strong> ${lon.toFixed(4)}<br>
-              <strong>Time Zone:</strong> <span id="tzInfo">උපන් ස්ථානය අනුව</span>
+              <strong>Longitude:</strong> ${lon.toFixed(4)}
             `;
-            fetch(`https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lon}&username=demo`)
-              .then(r=>r.json()).then(time=>{
-                if(time && time.timezoneId)
-                  document.getElementById('tzInfo').textContent = time.timezoneId.replace("_"," ");
-              }).catch(()=>{});
           } else {
-            alert("ස්ථානය හමු නොවිණි.");
+            alert("Location not found.");
             document.getElementById('infoBox').style.display = 'none';
           }
         })
-        .catch(() => alert("සම්බන්ධතාවය හෝ API ගැටලුවක් ඇත."));
-    });
-
-    document.getElementById('exportBtn').addEventListener('click', function(){
-      html2canvas(document.getElementById('map')).then(canvas=>{
-        let link = document.createElement('a');
-        link.download = 'birthplace_map.png';
-        link.href = canvas.toDataURL();
-        link.click();
-      });
+        .catch(() => alert("Connection or API error."));
     });
 
     document.getElementById('birthForm').addEventListener('submit', function(e){
@@ -196,6 +180,8 @@
       // Gather all data
       const payload = {
         name: document.getElementById('fullName').value,
+        gender: document.getElementById('gender').value,
+        nic: document.getElementById('nic').value,
         dob: document.getElementById('dob').value,
         time: document.getElementById('birthTime').value,
         place: document.getElementById('birthPlace').value,
@@ -203,10 +189,10 @@
         longitude: document.getElementById('longitude').value
       };
       if(!payload.latitude || !payload.longitude){
-        alert("කරුණාකර map එකෙන් ස්ථානය තෝරන්න.");
+        alert("Please select your place on the map.");
         return;
       }
-      // TODO: Replace with backend API endpoint
+      // TODO: Replace with your backend API endpoint
       fetch('/api/birth-details', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -214,8 +200,8 @@
       })
       .then(res => res.json())
       .then(data => {
-        alert('Birth details submitted successfully! Astrology chart will be generated.');
-        // Redirect or show next steps here
+        alert('Birth details submitted successfully! The astrology chart will be generated.');
+        // Next steps or redirect
       })
       .catch(() => alert('Error submitting details.'));
     });

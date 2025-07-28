@@ -6,76 +6,22 @@
   <title>Sathyadarshana Astrology</title>
   <style>
     body { margin:0; font-family:sans-serif; background:#0f172a; color:#e0f2fe; scroll-behavior:smooth; }
-    section { 
-      min-height:100vh; 
-      max-width:800px; 
-      margin:2rem auto; 
-      padding:1.5rem; 
-      background:rgba(30,41,59,0.6); 
-      border-radius:1rem; 
-      backdrop-filter: blur(10px);
-      box-shadow:0 0 25px rgba(56,189,248,0.3);
-    }
-    nav { 
-      position:sticky; 
-      top:0; 
-      display:flex; 
-      gap:1rem; 
-      justify-content:center; 
-      background:rgba(2,6,23,0.5); 
-      padding:1rem; 
-      backdrop-filter: blur(8px);
-      box-shadow:0 0 12px rgba(56,189,248,0.5);
-    }
-    nav a { 
-      color:#e0f2fe; 
-      background:rgba(14,165,233,0.8); 
-      padding:0.5rem 1rem; 
-      border-radius:0.5rem; 
-      text-decoration:none;
-      transition:0.3s;
-    }
-    nav a:hover { background:#38bdf8; transform:scale(1.05);}
-    button { 
-      background:#16f0a7; 
-      border:none; 
-      padding:0.7rem 1rem; 
-      border-radius:0.5rem; 
-      margin:0.5rem; 
-      cursor:pointer; 
-      transition:0.3s;
-    }
-    button:hover { background:#0ea5e9; color:#fff; transform:scale(1.05); }
-
-    /* Floating neon-glass language button */
-    #lang-btn {
-      position:fixed;
-      bottom:20px;
-      right:20px;
-      background:rgba(14,165,233,0.8);
-      color:white;
-      border:none;
-      border-radius:50%;
-      width:60px;
-      height:60px;
-      font-size:18px;
-      cursor:pointer;
-      box-shadow:0 0 20px #38bdf8;
-      backdrop-filter:blur(10px);
-      transition:transform 0.3s;
-      z-index:1000;
-    }
-    #lang-btn:hover { transform:scale(1.2);}
+    section { min-height:100vh; max-width:900px; margin:2rem auto; padding:1.5rem; background:rgba(30,41,59,0.8); border-radius:1rem; }
+    nav { position:sticky; top:0; display:flex; gap:1rem; justify-content:center; background:rgba(2,6,23,0.8); padding:1rem; }
+    nav a { color:#e0f2fe; background:#0ea5e9; padding:0.5rem 1rem; border-radius:0.5rem; text-decoration:none; }
+    nav a:hover { background:#38bdf8; }
+    button { background:#16f0a7; border:none; padding:0.7rem 1rem; border-radius:0.5rem; margin:0.5rem; cursor:pointer; }
+    button:hover { background:#0ea5e9; color:#fff; }
+    #kpCanvas { width:100%; height:500px; display:block; border:1px solid #38bdf8; border-radius:1rem; margin-top:1rem; }
   </style>
 </head>
 <body>
   <nav>
-    <a href="/index.html">Home</a>
+    <a href="index.html">Home</a>
     <a href="#report">Report</a>
     <a href="#palmistry">Palmistry</a>
     <a href="#numerology">Numerology</a>
     <a href="#geo">GeoVision</a>
-    <a href="#tariff">Tariff</a>
   </nav>
 
   <section id="report">
@@ -85,44 +31,16 @@
     <input type="time" id="tob">
     <input type="text" id="pob" placeholder="Birth Place">
     <button onclick="generatePDF()">Download KP PDF</button>
+    <canvas id="kpCanvas"></canvas>
   </section>
 
   <section id="palmistry"><h1>Palmistry</h1><p>Coming soon.</p></section>
   <section id="numerology"><h1>Numerology</h1><p>Coming soon.</p></section>
   <section id="geo"><h1>GeoVision</h1><p>Coming soon.</p></section>
 
-  <section id="tariff">
-    <h1>Tariff & Packages</h1>
-    <p><b>Standard Report:</b> $5</p>
-    <p><b>Premium Reading:</b> $10</p>
-    <p><b>Lifetime Service (1 year):</b> $30</p>
-    <p><i>Student Mode available (Free or Pay-What-You-Can)</i></p>
-  </section>
-
-  <!-- Hidden Google Translate container -->
-  <div id="google_translate_element"></div>
-  <button id="lang-btn">🌐</button>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script>
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,si,ta',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: false
-      }, 'google_translate_element');
-    }
-
-    // Toggle language menu on button click
-    document.getElementById('lang-btn').addEventListener('click', () => {
-      const gadget = document.querySelector('.goog-te-gadget-simple');
-      if (gadget) {
-        gadget.click();
-      } else {
-        alert("Language menu not loaded yet. Wait a moment and try again.");
-      }
-    });
-
     async function generatePDF() {
       const res = await fetch("/api/generateReport", {
         method: "POST",
@@ -141,7 +59,59 @@
       link.download = "KP_Report.pdf";
       link.click();
     }
+
+    // 3D KP Visualization (Mock)
+    const canvas = document.getElementById("kpCanvas");
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // Lights
+    const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambient);
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(0, 0, 50);
+    scene.add(pointLight);
+
+    // Sun (center)
+    const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
+    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd00 });
+    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    scene.add(sun);
+
+    // Planets (mock positions)
+    const planetData = [
+      { color:0xaaaaaa, dist:5, size:0.5, speed:0.01 },
+      { color:0x3399ff, dist:8, size:0.6, speed:0.008 },
+      { color:0xff6633, dist:12, size:0.7, speed:0.006 },
+    ];
+    const planets = planetData.map(d=>{
+      const geom = new THREE.SphereGeometry(d.size, 16, 16);
+      const mat = new THREE.MeshStandardMaterial({ color:d.color });
+      const mesh = new THREE.Mesh(geom, mat);
+      mesh.userData = d;
+      scene.add(mesh);
+      return mesh;
+    });
+
+    camera.position.set(0, 20, 30);
+    function animate(){
+      requestAnimationFrame(animate);
+      planets.forEach(p=>{
+        const d = p.userData;
+        p.rotation.y += 0.01;
+        const time = Date.now()*0.0001;
+        p.position.x = Math.cos(time*d.dist)*d.dist;
+        p.position.z = Math.sin(time*d.dist)*d.dist;
+      });
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
   </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

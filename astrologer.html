@@ -1,192 +1,81 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana Astrology</title>
+  <title>Sathyadarshana | Astrologers</title>
+  <link rel="icon" href="/assets/favicon.png">
   <style>
     body {
-      margin: 0;
-      font-family: sans-serif;
-      background: #0f172a;
-      color: #e0f2fe;
-      scroll-behavior: smooth;
+      margin: 0; font-family:'Segoe UI',sans-serif; background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe; min-height: 100vh; text-align: center;
     }
-    nav {
-      position: sticky;
-      top: 0;
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      background: rgba(2,6,23,0.93);
-      padding: 1rem;
-      z-index: 100;
+    header {padding:2rem 0 1rem 0;}
+    header h1 {color:#7dd3fc; font-size:2em;}
+    header p {color:#bae6fd; font-size:1.09em;}
+    main {max-width: 1000px; margin:2rem auto; background:rgba(30,41,59,0.92); border-radius:1em; padding:2rem;}
+    h2 {color:#38bdf8; margin-bottom:1.2em; font-size:1.35em;}
+    .astro-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:2rem;
     }
-    nav a {
-      color: #e0f2fe;
-      background: #0ea5e9;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      transition: background 0.2s;
+    .astro-card {
+      background:rgba(2,6,23,0.94);bdf844; border-color:#38bdf8;}
+    .astro-img {
+      width:84px; height:84px; border-radius:50%; object-fit:cover; margin-bottom:1rem; border:3px solid #0ea5e9;
     }
-    nav a:hover {
-      background: #38bdf8;
+    .astro-name {font-weight:boldfe; font-size:1.13em;}
+    .astro-specialty {color:#7dd3fc; font-size:1em;}
+    .astro-bio {color:#bae6fd; font-size:0.97em; margin:0.7em 0 1.2em 0;}
+    .astro-contact {
+      display:inline-block; color:#0ea5e9; background:#1e293b; padding:0.4rem 0.8rem; border-radius:0.5rem;
+      text-decoration:none; font-weight:500; transition:background 0.18s, color 0.18s;
     }
-    main {
-      max-width: 540px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: rgba(30,41,59,0.9);
-      border-radius: 1rem;
-      box-shadow: 0 2px 24px 0 #02061755;
+    .astro-contact:hover {background:#38bdf8; color:#1e293b;}
+    .back-link {
+      display:inline-block; margin:2.3em 0 0 0; color:#38bdf8; text-decoration:none; font-weight:bold;
+      border:1.5px solid #38bdf8; border-radius:0.5em; padding:0.5em 1.2em; background:rgba(2,6,23,0.5);
+      transition:background 0.22s, color 0.18s, border 0.22s;
     }
-    h1 {
-      margin-top: 0;
-      color: #7dd3fc;
-      text-align: center;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    input {
-      background: #1e293b;
-      color: #e0f2fe;
-      border: 1px solid #334155;
-      border-radius: 0.4rem;
-      padding: 0.7rem 1rem;
-      font-size: 1rem;
-      outline: none;
-      transition: border 0.2s;
-    }
-    input:focus {
-      border: 1.5px solid #38bdf8;
-    }
-    button {
-      background: #16f0a7;
-      color: #1e293b;
-      border: none;
-      padding: 0.9rem 1.2rem;
-      border-radius: 0.5rem;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 0.5rem;
-      transition: background 0.2s, color 0.2s;
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    button:hover:enabled {
-      background: #0ea5e9;
-      color: #fff;
-    }
-    .message {
-      margin-top: 1rem;
-      text-align: center;
-      font-size: 1.05rem;
-    }
-    section {
-      margin-top: 2.5rem;
-      background: rgba(30,41,59,0.7);
-      border-radius: 0.7rem;
-      padding: 1rem 1.5rem;
-    }
-    @media (max-width: 600px) {
-      main { padding: 1rem; }
-      section { padding: 1rem; }
+    .back-link:hover {background:#38bdf8; color:#1e293b; border-color:#1e293b;}
+    @media (max-width:700px){
+      main{padding:1.1rem;} .astro-grid{gap:1rem;}
     }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="#report">Report</a>
-    <a href="#palmistry">Palmistry</a>
-    <a href="#numerology">Numerology</a>
-    <a href="#geo">GeoVision</a>
-  </nav>
-
-  <main id="report">
-    <h1>KP Live Report</h1>
-    <form id="kpForm" autocomplete="off">
-      <input type="text" id="name" placeholder="Full Name" autocomplete="name" required>
-      <input type="date" id="dob" required>
-      <input type="time" id="tob" required>
-      <input type="text" id="pob" placeholder="Birth Place" autocomplete="address-level2" required>
-      <button type="submit" id="downloadBtn">Download KP PDF</button>
-    </form>
-    <div class="message" id="resultMsg"></div>
+  <header>
+    <h1>🪐 Sathyadarshana</h1>
+    <p>Meet Our Astrologer Team</p>
+  </header>
+  <main>
+    <h2>Astrologers</h2>
+    <div class="astro-grid">
+      <div class="astro-card">
+        <img class="astro-img" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Astrologer 1">
+        <div class="astro-name">S. Perera</div>
+        <div class="astro-specialty">KP Astrology, Vedic</div>
+        <div class="astro-bio">20+ years guiding clients on love, career and health. KP & Vedic expert, practical and compassionate advice.</div>
+        <a class="astro-contact" href="mailto:perera@sathyadarshana.lk">Contact</a>
+      </div>
+      <div class="astro-card">
+        <img class="astro-img" src="https://randomuser.me/api/portraits/women/43.jpg" alt="Astrologer 2">
+        <div class="astro-name">R. Silva</div>
+        <div class="astro-specialty">Palmistry, Numerology</div>
+        <div class="astro-bio">Accurate palm readings and numerology. Helped 1000+ clients discover life path and potential.</div>
+        <a class="astro-contact" href="mailto:silva@sathyadarshana.lk">Contact</a>
+      </div>
+      <div class="astro-card">
+        <img class="astro-img" src="https://randomuser.me/api/portraits/men/55.jpg" alt="Astrologer 3">
+        <div class="astro-name">T. Fernando</div>
+        <div class="astro-specialty">Western Astrology</div>
+        <div class="astro-bio">Specializes in Western charts, compatibility, and psychological astrology. Friendly and insightful.</div>
+        <a class="astro-contact" href="mailto:fernando@sathyadarshana.lk">Contact</a>
+      </div>
+    </div>
+    <a class="back-link" href="/index.html">← Back to Home</a>
   </main>
-
-  <section id="palmistry">
-    <h1>Palmistry</h1>
-    <p>Coming soon.</p>
-  </section>
-  <section id="numerology">
-    <h1>Numerology</h1>
-    <p>Coming soon.</p>
-  </section>
-  <section id="geo">
-    <h1>GeoVision</h1>
-    <p>Coming soon.</p>
-  </section>
-
-  <script>
-    const form = document.getElementById('kpForm');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const msg = document.getElementById('resultMsg');
-
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      // Validation (extra check for blank input)
-      if(!form.name.value.trim() || !form.dob.value || !form.tob.value || !form.pob.value.trim()) {
-        msg.textContent = "Please fill all details.";
-        msg.style.color = "#fb7185";
-        return;
-      }
-
-      downloadBtn.disabled = true;
-      downloadBtn.textContent = "Generating...";
-      msg.textContent = "";
-
-      try {
-        const res = await fetch("/api/generateReport", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: form.name.value.trim(),
-            birthDate: form.dob.value,
-            birthTime: form.tob.value,
-            birthPlace: form.pob.value.trim()
-          })
-        });
-
-        if (!res.ok) {
-          msg.textContent = "Report failed. Try again.";
-          msg.style.color = "#fb7185";
-        } else {
-          const blob = await res.blob();
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = "KP_Report.pdf";
-          link.click();
-          msg.textContent = "✅ Report downloaded!";
-          msg.style.color = "#34d399";
-          form.reset();
-        }
-      } catch (err) {
-        msg.textContent = "Network error. Try again.";
-        msg.style.color = "#fb7185";
-      } finally {
-        downloadBtn.disabled = false;
-        downloadBtn.textContent = "Download KP PDF";
-      }
-    });
-  </script>
+  <footer style="margin-top:2em; color:#7dd3fc; padding:1em 0; font-size:0.99em;">
+    &copy; 2025 Sathyadarshana. Powered by Buddhi AI.
+  </footer>
 </body>
 </html>

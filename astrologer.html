@@ -3,37 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana Astrology</title>
+  <title>Sathyadarshana | KP Live Report</title>
   <style>
-    body { margin:0; font-family:sans-serif; background:#0f172a; color:#e0f2fe; scroll-behavior:smooth; }
-    section { min-height:100vh; max-width:800px; margin:2rem auto; padding:1.5rem; background:rgba(30,41,59,0.8); border-radius:1rem; }
-    nav { position:sticky; top:0; display:flex; gap:1rem; justify-content:center; background:rgba(2,6,23,0.8); padding:1rem; }
-    nav a { color:#e0f2fe; background:#0ea5e9; padding:0.5rem 1rem; border-radius:0.5rem; text-decoration:none; }
-    nav a:hover { background:#38bdf8; }
-    button { background:#16f0a7; border:none; padding:0.7rem 1rem; border-radius:0.5rem; margin:0.5rem; cursor:pointer; }
-    button:hover { background:#0ea5e9; color:#fff; }
+    body { 
+      margin: 0; 
+      font-family: sans-serif; 
+      background: #0f172a; 
+      color: #e0f2fe; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      height: 100vh; 
+    }
+    .container {
+      background: rgba(30,41,59,0.9);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px #38bdf8;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+    h1 { margin-bottom: 1rem; }
+    input {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      background: #16f0a7;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background: #0ea5e9;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="#report">Report</a>
-    <a href="#palmistry">Palmistry</a>
-    <a href="#numerology">Numerology</a>
-    <a href="#geo">GeoVision</a>
-  </nav>
-
-  <section id="report">
+  <div class="container">
     <h1>KP Live Report</h1>
     <input type="text" id="name" placeholder="Full Name">
     <input type="date" id="dob">
     <input type="time" id="tob">
     <input type="text" id="pob" placeholder="Birth Place">
-    <button onclick="generatePDF()">Download KP PDF</button>
-  </section>
-
-  <section id="palmistry"><h1>Palmistry</h1><p>Coming soon.</p></section>
-  <section id="numerology"><h1>Numerology</h1><p>Coming soon.</p></section>
-  <section id="geo"><h1>GeoVision</h1><p>Coming soon.</p></section>
+    <button onclick="generatePDF()">Download KP Report</button>
+  </div>
 
   <script>
     async function generatePDF() {
@@ -47,7 +71,10 @@
           birthPlace: document.getElementById("pob").value
         })
       });
-      if (!res.ok) { alert("Report failed"); return; }
+      if (!res.ok) { 
+        alert("Report generation failed."); 
+        return; 
+      }
       const blob = await res.blob();
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);

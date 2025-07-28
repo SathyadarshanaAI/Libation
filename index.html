@@ -3,111 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana | The Light of Truth</title>
+  <title>Sathyadarshana | Light of Truth</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    html, body {
+    body {
       font-family: 'Segoe UI', sans-serif;
       background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
-      scroll-behavior: smooth;
+      line-height: 1.6;
+      text-align: center;
+    }
+    header {
+      padding: 2rem 1rem;
+      background: rgba(2,6,23,0.8);
+      box-shadow: 0 0 20px #38bdf8;
+    }
+    header h1 {
+      color: #7dd3fc;
+      text-shadow: 0 0 10px #38bdf8aa;
+      margin-bottom: 0.5rem;
     }
     nav {
       display: flex;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      background: rgba(2, 6, 23, 0.9);
+      justify-content: center;
+      gap: 1rem;
+      background: rgba(2,6,23,0.9);
       padding: 1rem;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 0 12px #38bdf8;
     }
     nav a {
-      flex: 0 0 auto;
-      margin: 0 0.5rem;
-      padding: 0.6rem 1.2rem;
-      color: #7dd3fc;
+      color: #e0f2fe;
       text-decoration: none;
-      font-weight: bold;
-      border-radius: 0.5rem;
-      background: rgba(56,189,248,0.1);
-      transition: all 0.3s ease;
-      box-shadow: 0 0 10px transparent;
+      padding: 0.6rem 1.2rem;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      border-radius: 6px;
+      transition: all 0.3s ease-in-out;
     }
     nav a:hover {
-      background: rgba(56,189,248,0.3);
-      color: #e0f2fe;
-      box-shadow: 0 0 15px #38bdf8;
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      color: #0f172a;
       transform: scale(1.05);
     }
     section {
       max-width: 900px;
-      margin: 3rem auto;
+      margin: 2rem auto;
       padding: 2rem;
-      text-align: center;
-      background: rgba(30,41,59,0.7);
+      background: rgba(30,41,59,0.8);
       border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(56,189,248,0.3);
-    }
-    h1, h2 {
-      color: #7dd3fc;
-      text-shadow: 0 0 10px #38bdf8aa;
+      box-shadow: 0 0 25px rgba(56,189,248,0.3);
     }
     footer {
-      margin-top: 4rem;
-      padding: 1.5rem;
-      text-align: center;
-      font-size: 0.9rem;
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(2,6,23,0.7);
       color: #7dd3fc;
-      background: rgba(2,6,23,0.8);
+      font-size: 0.9rem;
       border-top: 1px solid #38bdf8;
     }
   </style>
 </head>
 <body>
 
-  <!-- Navigation -->
+  <header>
+    <h1>Sathyadarshana</h1>
+    <p>The Light of Truth – Explore, Learn, and Grow Spiritually</p>
+  </header>
+
   <nav>
-    <a href="index.html">Home</a>
-    <a href="kp.html">KP Astrology</a>
-    <a href="nasa-kp.html">NASA KP Live</a>
-    <a href="vedic.html">Vedic Astrology</a>
-    <a href="numerology.html">Numerology</a>
-    <a href="palmistry.html">Palmistry</a>
-    <a href="aura.html">Aura Scan</a>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="launch.html">Launch</a>
-    <a href="ai-buddhi.html">AI Buddhi</a>
-    <a href="library.html">Library</a>
+    <a href="/astrologer.html">Astrology</a>
+    <a href="#library">Library</a>
   </nav>
 
-  <!-- Welcome Section -->
-  <section>
-    <h1>Welcome to Sathyadarshana</h1>
-    <p>
-      A spiritual sanctuary blending ancient wisdom with cutting-edge AI.  
-      Explore KP Astrology, NASA-based charts, Vedic readings, Numerology, Palmistry, and more.
-    </p>
+  <section id="welcome">
+    <h2>Welcome to Sathyadarshana</h2>
+    <p>A sanctuary of wisdom, where technology and spirituality unite.</p>
   </section>
 
-  <!-- Features Section -->
-  <section>
-    <h2>🌟 Features</h2>
-    <p>
-      Generate live planetary reports, scan your aura, consult Buddhi AI,  
-      and access a vast multilingual sacred library — all in one place.
-    </p>
+  <section id="library">
+    <h2>Digital Library</h2>
+    <p>Access sacred texts, research materials, and spiritual teachings.</p>
   </section>
 
-  <!-- Footer -->
   <footer>
-    &copy; 2025 Sathyadarshana | Powered by Buddhi AI
+    &copy; 2025 Sathyadarshana. Powered by Buddhi AI.
   </footer>
 
 </body>

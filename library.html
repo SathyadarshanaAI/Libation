@@ -2,198 +2,187 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Global Free eBook Library</title>
+  <title>Sathyadarshana Digital Library</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/assets/favicon.png">
   <style>
-    html, body {height: 100%; margin: 0;}
-    body {
-      min-height: 100vh; background: #111827; color: #e0f2fe; font-family: 'Segoe UI', Arial, sans-serif; margin: 0;
-    }
-    .container {
-      max-width: 700px;
-      margin: 2rem auto;
-      background: #1e293b;
-      border-radius: 1.2rem;
-      padding: 2.2rem 1.5rem 2.5rem 1.5rem;
-      box-shadow: 0 4px 24px #0f172a55;
-      position: relative;
-    }
-    h1, h2, h3 {color: #38bdf8; margin-top: 0; font-weight: 700;}
+    body {margin:0; background:#0f172a; color:#e0f2fe; font-family:'Segoe UI',Arial,sans-serif;}
+    header {text-align:center; padding:2rem 0 0.5rem 0;}
+    header h1 {color:#38bdf8;}
     .home-btn {
-      position: fixed; top: 1.5rem; left: 1.5rem;
-      background: #38bdf8; color: #0f172a;
-      padding: 0.5rem 1rem; border-radius: 1.5rem;
-      font-size: 1.1em; font-weight: bold; text-decoration: none;
-      z-index: 30; box-shadow: 0 2px 12px #0f172a44;
-      border: none; transition: background 0.2s; cursor: pointer;
+      position:fixed; top:1.2rem; left:1.2rem; background:#38bdf8; color:#0f172a;
+      padding:0.5rem 1rem; border-radius:1.5rem; font-size:1.1em; font-weight:bold;
+      text-decoration:none; z-index:30; box-shadow:0 2px 12px #0f172a44; border:none; transition:background 0.2s; cursor:pointer;
     }
-    .home-btn:hover {background: #0ea5e9; color: #e0f2fe;}
-    input, button {font-size: 1.07em; padding: 0.6em; margin: 0.2em 0.2em 0.2em 0; border-radius: 0.6em; border: none;}
-    input {width: 70%; max-width: 350px;}
-    button {cursor: pointer; background: #38bdf8; color: #0f172a; font-weight: bold; transition: background 0.2s;}
-    button:hover {background: #0ea5e9; color: #e0f2fe;}
-    .result-links ul {list-style: none; padding: 0; margin: 0.7em 0;}
-    .result-links li {margin: 0.7em 0;}
-    .book-list {margin-top: 2em;}
-    .book-list li {margin-bottom: 0.7em;}
-    .book-iframe-container {margin-top: 2em; display: none;}
-    .book-iframe {width: 100%; height: 400px; border: 2px solid #38bdf8; border-radius: 0.7em; background: #0f172a;}
-    .close-iframe-btn {margin-bottom: 0.6em; background: #f87171; color: #fff; border: none; border-radius: 0.6em; padding: 0.3em 1em; cursor: pointer; font-weight: bold; float: right;}
-    .translated-title {margin-top: 1em; color: #fbbf24; font-weight: bold;}
-    .tariff-section {background: #334155; border-radius: 0.7rem; padding: 1.2rem; color: #bae6fd; margin-top: 2.2em;}
-    .tariff-section .free {color: #38bdf8; font-weight: bold;}
-    .tariff-section .paid {color: #fbbf24; font-weight: bold;}
-    @media (max-width: 480px) {
-      .container {padding: 1rem 0.4rem 1.2rem 0.4rem;}
-      input {width: 98%; max-width: none;}
-      .book-iframe {height: 260px;}
-      .home-btn {top: 0.5rem; left: 0.3rem; font-size: 1em; padding: 0.4em 1em;}
+    .home-btn:hover {background:#0ea5e9; color:#e0f2fe;}
+    .container {max-width: 820px; margin:2rem auto 2.7rem auto; background:#1e293b; border-radius:1.2rem; padding:2.2rem 1.5rem 2.5rem 1.5rem; box-shadow:0 4px 24px #0f172a55;}
+    .search-row {display:flex; flex-wrap:wrap; gap:0.7em; align-items:center; margin-bottom:1.4em;}
+    .search-row input[type="text"] {flex:1; font-size:1.08em; padding:0.62em 1em; border-radius:0.5em; border:none; background:#334155; color:#e0f2fe;}
+    .search-row button, .filter-btn, .book-btn {
+      font-size:1em; padding:0.53em 1.1em; border-radius:0.5em; border:none; background:#38bdf8; color:#0f172a; font-weight:bold; cursor:pointer; transition:background 0.2s;
+    }
+    .search-row button:hover, .filter-btn:hover, .book-btn:hover {background:#0ea5e9; color:#fff;}
+    .filters {margin-bottom:1em; display:flex; flex-wrap:wrap; gap:0.7em;}
+    .filter-btn.active {background:#fbbf24; color:#0f172a;}
+    .section-title {color:#bae6fd; margin:2em 0 0.6em 0; font-size:1.15em;}
+    .featured-list, .book-list, .fav-list {display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.1em;}
+    .book-card {
+      background:rgba(8,47,73,0.91); border-radius:0.8em; box-shadow:0 0 10px #38bdf822; padding:1em;
+      display:flex; flex-direction:column; align-items:flex-start; min-height:120px; position:relative;
+    }
+    .book-card .book-title {color:#38bdf8; font-weight:bold; font-size:1.05em;}
+    .book-card .book-author {color:#94a3b8; font-size:0.97em;}
+    .book-card .lang {position:absolute; top:0.6em; right:1em; background:#fbbf24; color:#0f172a; border-radius:0.5em; font-size:0.93em; padding:0.1em 0.7em;}
+    .book-btn {margin-top:0.8em;}
+    .add-book-row {margin-top:2em; background:rgba(56,189,248,0.08); border-radius:0.6em; padding:1em;}
+    .add-book-row input {font-size:1em; padding:0.5em; border-radius:0.4em; border:none; margin-right:0.5em; background:#334155; color:#e0f2fe;}
+    .add-book-row button {font-size:1em;}
+    .fav-list {margin-top:1.4em;}
+    .empty-msg {color:#fbbf24; text-align:center; margin:1.5em 0;}
+    @media (max-width:600px){
+      .container{padding:1.1rem 0.4rem 1.2rem 0.4rem;}
+      .search-row {flex-direction:column; gap:0.5em;}
+      .filters {flex-direction:column;}
     }
   </style>
 </head>
 <body>
   <a href="index.html" class="home-btn" title="Go Home">🏠 Home</a>
+  <header>
+    <h1>📚 Sathyadarshana Digital Library</h1>
+    <div style="color:#bae6fd; margin-bottom:1.2em;">Global eBooks, Sacred Texts, and Knowledge Archives</div>
+  </header>
   <div class="container">
-    <h1 id="library-title">🌏 Global Free eBook Library</h1>
-    <input type="text" id="searchInput" placeholder="Type any book name or subject...">
-    <button onclick="showSites()"><span id="site-btn-label">Show eBook Sites</span></button>
-    <button onclick="searchOpenLibrary()"><span id="ol-btn-label">Show Books (Open Library)</span></button>
-    <div id="siteLinks" class="result-links"></div>
+    <!-- Search and Filters -->
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder="Search books, author, or subject...">
+      <button onclick="searchBooks()">🔍 Search</button>
+      <button onclick="showFeatured()">🌟 Featured</button>
+      <button onclick="showFavorites()">💖 My Favorites</button>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterLang('all',this)">All</button>
+      <button class="filter-btn" onclick="filterLang('si',this)">සිංහල</button>
+      <button class="filter-btn" onclick="filterLang('en',this)">English</button>
+      <button class="filter-btn" onclick="filterLang('ta',this)">தமிழ்</button>
+      <button class="filter-btn" onclick="filterCat('all',this)">All Categories</button>
+      <button class="filter-btn" onclick="filterCat('spirituality',this)">Spirituality</button>
+      <button class="filter-btn" onclick="filterCat('buddhism',this)">Buddhism</button>
+      <button class="filter-btn" onclick="filterCat('ayurveda',this)">Ayurveda</button>
+      <button class="filter-btn" onclick="filterCat('novel',this)">Novels</button>
+      <button class="filter-btn" onclick="filterCat('science',this)">Science</button>
+    </div>
+    <!-- Book Results -->
     <div id="bookResults" class="book-list"></div>
-    <div id="translatedTitle" class="translated-title"></div>
-    <div class="book-iframe-container" id="iframeContainer">
-      <button class="close-iframe-btn" onclick="closeIframe()">✖ Close Book</button>
-      <iframe id="bookIframe" class="book-iframe" src="" loading="lazy"></iframe>
+    <!-- Featured Books -->
+    <div id="featured" class="featured-list" style="display:none;"></div>
+    <!-- Favorites -->
+    <div id="favorites" class="fav-list" style="display:none;"></div>
+    <!-- Add Book Option -->
+    <div class="add-book-row">
+      <input type="text" id="addBookTitle" placeholder="Suggest a Book Title">
+      <input type="text" id="addBookLink" placeholder="Book Link (optional)">
+      <button onclick="suggestBook()">Suggest Book</button>
+      <span id="addBookMsg" style="margin-left:1em; color:#38bdf8;"></span>
     </div>
-    <div class="tariff-section">
-      <h2 id="tariff-title">📢 Tariff Plan</h2>
-      <ul>
-        <li><span class="free" id="free-plan-label">Free:</span> <span id="free-plan-desc">Online reading, translation, and basic AI narration for all users.</span></li>
-        <li><span class="paid" id="paid-plan-label">Paid:</span> <span id="paid-plan-desc">Advanced voice reading (multiple languages), offline access, premium AI insights, narrated PDFs.</span></li>
-        <li><span class="paid" id="plan-price-label">Plans:</span> <span id="plan-price-desc">$3/month or $20/year for premium AI & voice features.</span></li>
-        <li><span class="paid" id="pdf-note">PDF downloads with AI-powered narration and support also require a small fee.</span></li>
-      </ul>
-      <p>
-        <span class="free">Free</span>: <span id="free-mini">Basic online reading, translation</span><br>
-        <span class="paid">Paid</span>: <span id="paid-mini">Premium voice/AI, offline, PDF with narration</span>
-      </p>
-    </div>
-    <p style="margin-top:2.3rem; font-size:1em; color:#94a3b8; text-align:center;">
-      <span style="opacity:0.8;">
-        <span id="footer-desc">This free eBook service is powered by 4 major global repositories:</span><br>
-        <span style="color:#38bdf8;" id="repo-list">Internet Archive, Project Gutenberg, Sacred Texts, Open Library</span>
-      </span>
-    </p>
-    <div id="google_translate_element" style="margin-top:1.5em; text-align:right;"></div>
+    <!-- AI Recommendations (demo) -->
+    <div class="section-title">🤖 AI Recommendations (Demo)</div>
+    <div id="aiRecs" class="book-list"></div>
   </div>
   <script>
-    // -- Book Sites Search
-    function showSites() {
-      var book = document.getElementById('searchInput').value.trim();
-      var links = [
-        { name: "Internet Archive", url: "https://archive.org/search.php?query=" + encodeURIComponent(book) },
-        { name: "Project Gutenberg", url: "https://www.gutenberg.org/ebooks/search/?query=" + encodeURIComponent(book) },
-        { name: "Sacred Texts Archive", url: "https://www.sacred-texts.com/search/search.php?query=" + encodeURIComponent(book) },
-        { name: "Open Library", url: "https://openlibrary.org/search?q=" + encodeURIComponent(book) }
-      ];
-      var html = '<h3>'+translateLabel('eBook Sites:')+'</h3><ul>';
-      links.forEach(function(link){
-        html += '<li><a href="'+link.url+'" target="_blank">'+link.name+' – "'+ book +'"</a></li>';
+    // --- Sample Data (replace with backend/books API as needed)
+    const books = [
+      {title:"Dhammapada", author:"Buddha", lang:"si", cat:"buddhism", link:"https://www.sacred-texts.com/bud/sbe10/index.htm"},
+      {title:"Bhagavad Gita", author:"Vyasa", lang:"en", cat:"spirituality", link:"https://www.sacred-texts.com/hin/gita/index.htm"},
+      {title:"Ayurveda Secrets", author:"Dr. Senanayake", lang:"si", cat:"ayurveda", link:"https://archive.org/details/ayurvedabook"},
+      {title:"Sivananda Yoga", author:"Sivananda", lang:"en", cat:"spirituality", link:"https://www.sivananda.org/publications"},
+      {title:"නිම්නේ මනරම් නවකතාව", author:"අනුරද්ද", lang:"si", cat:"novel", link:"https://archive.org/details/namana-novel"},
+      {title:"The Selfish Gene", author:"Richard Dawkins", lang:"en", cat:"science", link:"https://archive.org/details/TheSelfishGene"},
+      {title:"திருக்குறள்", author:"திருவள்ளுவர்", lang:"ta", cat:"spirituality", link:"https://ta.wikisource.org/wiki/திருக்குறள்"},
+      {title:"Mahavamsa", author:"Mahanama", lang:"en", cat:"buddhism", link:"https://www.sacred-texts.com/bud/mahavamsa/index.htm"}
+    ];
+    const featuredBooks = [
+      {title:"Dhammapada", author:"Buddha", lang:"si", cat:"buddhism", link:"https://www.sacred-texts.com/bud/sbe10/index.htm"},
+      {title:"Bhagavad Gita", author:"Vyasa", lang:"en", cat:"spirituality", link:"https://www.sacred-texts.com/hin/gita/index.htm"},
+      {title:"Mahavamsa", author:"Mahanama", lang:"en", cat:"buddhism", link:"https://www.sacred-texts.com/bud/mahavamsa/index.htm"},
+    ];
+    const aiRecs = [
+      {title:"What the Buddha Taught", author:"Walpola Rahula", lang:"en", cat:"buddhism", link:"https://archive.org/details/whatthebuddhataught"},
+      {title:"බුදු දහම", author:"අනෝම", lang:"si", cat:"buddhism", link:"https://archive.org/details/budu-dahama"}
+    ];
+    // --- State
+    let currentLang = 'all', currentCat = 'all';
+    // --- Render Book List
+    function renderBooks(list, targetId){
+      const el = document.getElementById(targetId);
+      if(!list.length) { el.innerHTML = `<div class="empty-msg">No books found.</div>`; return; }
+      let html = '';
+      list.forEach(b=>{
+        html += `<div class="book-card">
+          <span class="lang">${b.lang == 'si' ? 'සිං' : b.lang == 'ta' ? 'தமிழ்' : 'EN'}</span>
+          <div class="book-title">${b.title}</div>
+          <div class="book-author">${b.author}</div>
+          <a href="${b.link}" target="_blank" class="book-btn">Read</a>
+          <button class="book-btn" onclick="addFavorite('${b.title.replace(/'/g,"\\'")}')">💖</button>
+        </div>`;
       });
-      html += '</ul>';
-      document.getElementById('siteLinks').innerHTML = html;
+      el.innerHTML = html;
     }
-    // -- Open Library Search + iframe book view
-    function searchOpenLibrary() {
-      var book = document.getElementById('searchInput').value.trim();
-      if(!book) {
-        document.getElementById('bookResults').innerHTML = '<span style="color:#f87171;">'+translateLabel('Please enter a book name or subject.')+'</span>';
-        return;
-      }
-      document.getElementById('bookResults').innerHTML = '<span style="color:#38bdf8;">'+translateLabel('Searching Open Library...')+'</span>';
-      fetch('https://openlibrary.org/search.json?q=' + encodeURIComponent(book))
-      .then(response => response.json())
-      .then(data => {
-        if(!data.docs.length) {
-          document.getElementById('bookResults').innerHTML = '<span style="color:#f87171;">'+translateLabel('No books found.')+'</span>';
-          return;
-        }
-        var html = '<h3>'+translateLabel('Books from Open Library:')+'</h3><ul>';
-        data.docs.slice(0,8).forEach(function(doc){
-          var url = "https://openlibrary.org"+doc.key;
-          html += `<li>
-            <a href="#" onclick="showBookIframe('${url}');return false;">${doc.title}</a>
-            <button onclick="translateTitle('${doc.title.replace(/'/g,"\\'")}')">${translateLabel('Auto Translate to Sinhala')}</button>
-          </li>`;
-        });
-        html += '</ul><small style="color:#94a3b8;">'+translateLabel('Click "Auto Translate to Sinhala" to view the book title in Sinhala.')+'</small>';
-        document.getElementById('bookResults').innerHTML = html;
-        document.getElementById('translatedTitle').innerHTML = '';
-      });
+    function searchBooks(){
+      let q = document.getElementById('searchInput').value.trim().toLowerCase();
+      let res = books.filter(b=>
+        (currentLang=='all'||b.lang==currentLang) &&
+        (currentCat=='all'||b.cat==currentCat) &&
+        (b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q))
+      );
+      document.getElementById('featured').style.display = 'none';
+      document.getElementById('favorites').style.display = 'none';
+      renderBooks(res, 'bookResults');
     }
-    // -- Book Iframe Open/Close
-    function showBookIframe(url) {
-      var iframe = document.getElementById('bookIframe');
-      document.getElementById('iframeContainer').style.display = 'block';
-      iframe.src = url;
-      iframe.focus();
-      window.scrollTo({top: document.getElementById('iframeContainer').offsetTop - 20, behavior:'smooth'});
+    function filterLang(lang,btn){
+      currentLang = lang;
+      Array.from(document.querySelectorAll('.filter-btn')).forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      searchBooks();
     }
-    function closeIframe() {
-      document.getElementById('iframeContainer').style.display = 'none';
-      document.getElementById('bookIframe').src = '';
+    function filterCat(cat,btn){
+      currentCat = cat;
+      Array.from(document.querySelectorAll('.filter-btn')).forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      searchBooks();
     }
-    // -- Auto Translate Book Title
-    function translateTitle(title) {
-      var url = 'https://translate.google.com/?sl=auto&tl=si&text=' + encodeURIComponent(title) + '&op=translate';
-      document.getElementById('translatedTitle').innerHTML =
-        translateLabel('Sinhala translation of') + ` "<span style='color:#38bdf8;'>${title}</span>": ` +
-        `<a href="${url}" target="_blank" style="color:#38bdf8; text-decoration:underline;">${translateLabel('View in Google Translate')}</a>`;
+    function showFeatured(){
+      document.getElementById('featured').style.display = 'grid';
+      document.getElementById('favorites').style.display = 'none';
+      document.getElementById('bookResults').innerHTML = '';
+      renderBooks(featuredBooks, 'featured');
     }
-    // -- Simple Label Translator (for UI)
-    function translateLabel(label) {
-      var lang = window.selectedLang || 'en';
-      var labels = {
-        'eBook Sites:': {si:'eBook අඩවි:', ta:'eBook தளங்கள்:', en:'eBook Sites:'},
-        'Please enter a book name or subject.': {si:'පොත් නමක් හෝ විෂයයක් ඇතුල් කරන්න.', ta:'புத்தகப் பெயர் அல்லது தலைப்பை உள்ளிடவும்.', en:'Please enter a book name or subject.'},
-        'Searching Open Library...': {si:'Open Library සෙවීම...', ta:'Open Library தேடுகிறது...', en:'Searching Open Library...'},
-        'No books found.': {si:'පොත් හමු නොවීය.', ta:'புத்தகங்கள் இல்லை.', en:'No books found.'},
-        'Books from Open Library:': {si:'Open Library වෙතින් පොත්:', ta:'Open Library இலிருந்து புத்தகங்கள்:', en:'Books from Open Library:'},
-        'Auto Translate to Sinhala': {si:'සිංහලට පරිවර්තනය කරන්න', ta:'சிங்களமாக மொழிபெயர்க்க', en:'Auto Translate to Sinhala'},
-        'Click "Auto Translate to Sinhala" to view the book title in Sinhala.': {si:'සිංහල නාමය බැලීමට පරිවර්තනය කරන්න ඔබන්න.', ta:'சிங்களம் பெயரைப் பார்க்க மொழிபெயர்ப்பு அழுத்தவும்.', en:'Click "Auto Translate to Sinhala" to view the book title in Sinhala.'},
-        'Sinhala translation of': {si:'සිංහල පරිවර්තනය:', ta:'சிங்கள மொழிபெயர்ப்பு:', en:'Sinhala translation of'},
-        'View in Google Translate': {si:'Google Translate එකෙන් බලන්න', ta:'Google Translate இல் பார்க்க', en:'View in Google Translate'},
-        'Show eBook Sites': {si:'eBook අඩවි පෙන්වන්න', ta:'eBook தளங்களை காண்பி', en:'Show eBook Sites'},
-        'Show Books (Open Library)': {si:'Open Library පොත් පෙන්වන්න', ta:'Open Library புத்தகங்களை காண்பி', en:'Show Books (Open Library)'},
-        '🌏 Global Free eBook Library': {si:'🌏 ගෝලීය නිදහස් eBook පුස්තකාලය', ta:'🌏 உலக இலவச eBook நூலகம்', en:'🌏 Global Free eBook Library'},
-        '📢 Tariff Plan': {si:'📢 ගාස්තු සැලැස්ම', ta:'📢 வாடிக்கை திட்டம்', en:'📢 Tariff Plan'}
-      };
-      return labels[label] && labels[label][lang] ? labels[label][lang] : label;
+    function addFavorite(title){
+      let favs = JSON.parse(localStorage.getItem('favBooks')||'[]');
+      if(!favs.includes(title)) favs.push(title);
+      localStorage.setItem('favBooks', JSON.stringify(favs));
+      alert('Added to favorites!');
     }
-    // -- Google Translate Widget Integration
-    function setLangFromGoogle(selectedLang) {
-      window.selectedLang = selectedLang;
-      document.getElementById('site-btn-label').innerText = translateLabel('Show eBook Sites');
-      document.getElementById('ol-btn-label').innerText = translateLabel('Show Books (Open Library)');
-      document.getElementById('library-title').innerText = translateLabel('🌏 Global Free eBook Library');
-      document.getElementById('tariff-title').innerText = translateLabel('📢 Tariff Plan');
+    function showFavorites(){
+      let favs = JSON.parse(localStorage.getItem('favBooks')||'[]');
+      let favBooks = books.filter(b=>favs.includes(b.title));
+      document.getElementById('favorites').style.display = 'grid';
+      document.getElementById('featured').style.display = 'none';
+      document.getElementById('bookResults').innerHTML = '';
+      renderBooks(favBooks, 'favorites');
     }
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,si,ta',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: false
-      }, 'google_translate_element');
-      setTimeout(function(){
-        var observer = new MutationObserver(function() {
-          var sel = document.querySelector('.goog-te-combo');
-          if(sel) sel.onchange = function(e){ setLangFromGoogle(e.target.value); }
-        });
-        observer.observe(document.getElementById('google_translate_element'), {childList:true, subtree:true});
-      }, 700);
+    function suggestBook(){
+      let t = document.getElementById('addBookTitle').value.trim();
+      let l = document.getElementById('addBookLink').value.trim();
+      if(!t) {document.getElementById('addBookMsg').textContent="Enter book title!"; return;}
+      document.getElementById('addBookMsg').textContent="Thank you! We'll review it.";
+      document.getElementById('addBookTitle').value='';
+      document.getElementById('addBookLink').value='';
     }
+    // --- Render AI Recommendations
+    renderBooks(aiRecs, 'aiRecs');
+    // --- Initial load
+    renderBooks(books, 'bookResults');
   </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
-</html> 
+</html>

@@ -5,352 +5,115 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sathyadarshana | Light of Truth</title>
   <meta name="description" content="Sathyadarshana - The Light of Truth. AI-powered spirituality, astrology tools, digital library, and more.">
-  <meta property="og:title" content="Sathyadarshana | Light of Truth">
-  <meta property="og:description" content="Explore, learn, and grow spiritually with AI-powered wisdom, astrology, and a digital library.">
-  <meta property="og:image" content="/assets/banner.jpg">
   <link rel="icon" href="/assets/favicon.png">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', sans-serif;
+      margin: 0; font-family: 'Segoe UI',sans-serif;
       background: radial-gradient(circle at 20% 20%, #0f172a, #000);
-      color: #e0f2fe;
-      line-height: 1.6;
-      text-align: center;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    header {
-      padding: 2rem 1rem 1rem 1rem;
-      background: rgba(2,6,23,0.8);
-      box-shadow: 0 0 20px #38bdf8;
-      position: relative;
-    }
-    #logo {
-      width: 70px;
-      margin-bottom: 0.6rem;
-      vertical-align: middle;
-    }
-    .lang-switcher {
-      position: absolute;
-      top: 1.2rem;
-      right: 1.5rem;
-    }
-    .lang-switcher button {
-      background: #38bdf8;
-      color: #0f172a;
-      border: none;
-      border-radius: 6px;
-      padding: 0.3em 0.8em;
-      font-weight: bold;
-      margin-left: 0.5em;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .lang-switcher button:hover {
-      background: #0ea5e9;
-      color: #fff;
-    }
-    header h1 {
-      color: #7dd3fc;
-      text-shadow: 0 0 10px #38bdf8aa;
-      margin-bottom: 0.5rem;
-      font-size: 2.1em;
-      letter-spacing: 2px;
-      display: inline-block;
-      vertical-align: middle;
-    }
-    header p {
-      color: #bae6fd;
-      font-size: 1.13em;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      background: rgba(2,6,23,0.95);
-      padding: 1rem;
-      box-shadow: 0 0 12px #38bdf8;
-      flex-wrap: wrap;
-    }
-    nav a {
-      color: #e0f2fe;
-      text-decoration: none;
-      padding: 0.6rem 1.2rem;
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      border-radius: 6px;
-      transition: all 0.3s;
-      font-weight: bold;
-      font-size: 1.05em;
-    }
-    nav a:hover {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-      color: #0f172a;
-      transform: scale(1.05);
-    }
-    .social-row {
-      margin: 1.1rem 0 0.4rem 0;
-      display: flex;
-      justify-content: center;
-      gap: 0.7rem;
-    }
-    .social-link {
-      font-size: 1.08em;
-      padding: 0.5em 1em;
-      background: linear-gradient(90deg, #082f49, #0ea5e9);
-      color: #7dd3fc;
-      border-radius: 0.5em;
-      box-shadow: 0 0 10px #38bdf888;
-      text-decoration: none;
-      transition: 0.22s;
-      display: inline-block;
-    }
-    .social-link:hover {
-      background: linear-gradient(90deg, #0ea5e9, #082f49);
-      color: #fff;
-    }
-    main { flex: 1 0 auto; width: 100%; }
-    section {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: rgba(30,41,59,0.87);
-      border-radius: 1rem;
-      box-shadow: 0 0 25px rgba(56,189,248,0.3);
+      color: #e0f2fe; min-height: 100vh;
       text-align: center;
     }
-    h2 {
-      color: #38bdf8;
-      margin-bottom: 0.5em;
-      font-size: 1.4em;
-      letter-spacing: 1px;
+    header { padding: 2rem 0 1rem 0; }
+    header h1 { color: #7dd3fc; font-size: 2.2em; letter-spacing:2px; margin-bottom: 0.2em; }
+    header p { color: #bae6fd; font-size:1.09em; }
+    .main-grid {
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+      gap: 1.3rem; max-width: 1100px; margin: 2.5rem auto 2rem auto; padding: 0 1rem;
     }
-    .features-list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.2rem;
-      margin: 1.3rem 0 0.5rem 0;
-    }
-    .feature-card {
-      background: rgba(8,47,73,0.92);
-      border-radius: 0.8em;
-      box-shadow: 0 0 10px #38bdf844;
-      padding: 1.2em 1em;
-      min-width: 170px;
-      max-width: 220px;
-      flex: 1 1 180px;
-      margin: 0.5em;
-      color: #e0f2fe;
-    }
-    .feature-card h3 {
-      color: #7dd3fc;
-      margin-bottom: 0.4em;
-      font-size: 1.08em;
-    }
-    .newsletter-form {
-      margin: 1.2em auto 0.3em auto;
-      max-width: 350px;
-      display: flex;
-      gap: 0.5em;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .newsletter-form input[type="email"] {
-      flex: 1;
-      padding: 0.6em;
-      border: 1px solid #38bdf8;
-      border-radius: 0.5em;
-      font-size: 1em;
-      background: #1e293b;
-      color: #e0f2fe;
-      outline: none;
-    }
-    .newsletter-form button {
-      padding: 0.6em 1.2em;
-      border-radius: 0.5em;
-      border: none;
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      color: #0f172a;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.22s;
-    }
-    .newsletter-form button:hover {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-      color: #fff;
-    }
-    .testimonials-slider {
-      margin: 1.2em auto 0.3em auto;
-      max-width: 600px;
-      background: rgba(8,47,73,0.87);
-      border-radius: 0.8em;
-      padding: 1.1em 1em;
-      color: #e0f2fe;
-      min-height: 70px;
-      font-style: italic;
-      font-size: 1.03em;
-      box-shadow: 0 0 10px #38bdf844;
-    }
-    .user-guide-btn {
-      display: inline-block;
-      margin: 1em auto 0 auto;
-      padding: 0.7em 2.1em;
-      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
-      color: #0f172a;
-      border-radius: 0.6em;
-      font-weight: bold;
-      font-size: 1.1em;
-      text-decoration: none;
-      box-shadow: 0 0 13px #38bdf899;
-      transition: 0.22s;
-    }
-    .user-guide-btn:hover {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-      color: #fff;
-    }
-    .contact-section {
-      background: rgba(8,47,73,0.93);
+    .main-card {
+      background: rgba(30,41,59,0.93);
       border-radius: 1em;
-      padding: 1.2em 1em;
-      max-width: 400px;
-      margin: 1.2em auto 0.5em auto;
+      box-shadow: 0 0 18px #38bdf833;
+      padding: 1.5em 1em;
+      text-align: center;
+      transition: transform 0.21s, box-shadow 0.21s;
       color: #e0f2fe;
-      box-shadow: 0 0 10px #38bdf822;
+      text-decoration: none;
+      display: flex; flex-direction: column; align-items: center;
+      min-height: 180px;
+      border: 2px solid transparent;
     }
-    .contact-section a {
-      color: #7dd3fc;
-      text-decoration: underline;
-      font-weight: bold;
+    .main-card:hover {
+      transform: translateY(-9px) scale(1.04);
+      box-shadow: 0 7px 28px #38bdf888;
+      border: 2px solid #38bdf8;
+      color: #fff;
+      background: rgba(2,6,23,0.95);
     }
-    footer {
-      margin-top: 2rem;
-      padding: 1rem 0 0.5rem 0;
-      background: rgba(2,6,23,: #7dd3fc;
-      font-size: 0.98rem;
-      border-top: 1px solid #38bdf8;
-    }
+    .main-card .emoji { font-size:2em; margin-bottom:0.5em; }
+    .main-card h2 { color: #38bdf8; font-size: 1.2em; margin-bottom: 0.3em; }
+    .main-card ul { margin: 0.7em 0 0 0; padding: 0; list-style: none; color:#bae6fd; font-size:0.98em;}
+    .main-card ul li {margin:0.16em 0;}
     @media (max-width: 700px) {
-      section { padding: 1.1rem 0.5rem; margin: 1rem 0.3rem;}
-      nav a { padding: 0.6rem 0.8rem; font-size: 1em;}
-      header { padding: 1.3rem 0.5rem 0.7rem 0.5rem;}
-      h2 { font-size: 1.14em;}
-      .features-list { flex-direction: column; gap: 0.7rem;}
-      .feature-card { margin: 0.2em auto;}
+      .main-grid { grid-template-columns: 1fr; gap: 0.9rem; }
+      .main-card { padding: 1em 0.6em; min-height: 135px;}
+      header { padding: 1.1rem 0 0.7rem 0;}
     }
+    footer {margin-top:2.5rem; color:#7dd3fc; font-size:0.98rem;}
   </style>
 </head>
 <body>
-
   <header>
     <h1>Sathyadarshana</h1>
     <p>The Light of Truth – Explore, Learn, and Grow Spiritually</p>
-    <div class="lang-switcher" aria-label="Language Switcher">
-      <button onclick="alert('සිංහල පිටුව ඉක්මනින්!')">සිංහල</button>
-      <button disabled>English</button>
-    </div>
   </header>
-
-  <nav aria-label="Main Navigation">
-    <a href="/">Home</a>
-    <a href="/astrologer.html">Astrology</a>
-    <a href="# class="social-row" aria-label="Social Media Links">
-    <a class="social-link" href="https://facebook.com/sathyadarshana" target="_blank" aria-label="Facebook">FB</a>
-    <a class="social-link" href="https://youtube.com/@sathyadarshana" target="_blank" aria-label="YouTube">YouTube</a>
-    <a class="social-link" href="mailto:sathyadarshana2025@gmail.com" aria-label="Email">Email</a>
-  </div>
-
-  <main>
-    <section id="welcome">
-      <h2>Welcome to Sathyadarshana</h2>
-      <p>A sanctuary of wisdom, where technology and spirituality unite.<br>
-         Discover AI-powered astrology, sacred texts, and spiritual guidance in one place.</p>
-    </section>
-
-    <section id="features">
-      <h2>✨ Our Tools & Features</h2>
-      <div class="features-list" aria-label="Feature Cards">
-        <div class="feature-card">
-          <h3>KP Live Astrology</h3>
-          <p>Personalized reports, NASA precision, instant PDF export.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Palmistry AI</h3>
-          <p>Scan your palm, get analysis and predictions in seconds.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Numerology</h3>
-          <p>Name & birthdate powered numerology insights with ancient algorithms.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Digital Library</h3>
-          <p>Access rare texts and research in Sinhala & English.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="library">
-      <h2>Digital Library</h2>
-      <p>Access sacred texts, research materials, and spiritual teachings.</p>
-      <a href="/library/index.html" class="user-guide-btn">Explore Library</a>
-    </section>
-
-    <section id="newsletter">
-      <h2>📰 Join Our Newsletter</h2>
-      <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
-        <input type="email" placeholder="Your email address" aria-label="Email" required>
-        <button type="submit">Subscribe</button>
-      </form>
-      <div id="newsletter-msg" style="margin-top:0.5em;color:#38f07b;"></div>
-    </section>
-
-    <section id="testimonials">
-      <h2>What Our Users Say</h2>
-      <div class="testimonials-slider" id="testimonial">
-        “Sathyadarshana changed my life. The astrology report was spot on!” – <b>Chamara, Kandy</b>
-      </div>
-    </section>
-
-    <section>
-      <h2>📜 User Guide</h2>
-      <p>Learn how to use all the tools with step-by-step instructions and screenshots.</p>
-      <a class="user-guide-btn" href="/assets/Sathyadarshana_User_Guide.pdf" download>Download User Guide</a>
-    </section>
-
-    <section class="contact-section" id="contact">
-      <h2>Contact & Support</h2>
-      <p>Reach out for help, feedback, or partnership.<br>
-      <a href="mailto:sathyadarshana2025@gmail.com">sathyadarshana2025@gmail.com</a>
-      </p>
-      <div style="margin-top:0.3em;">
-        <a href="https://facebook.com/sathyadarshana" target="_blank">Facebook</a> | 
-        <a href="https://youtube.com/@sathyadarshana" target="_blank">YouTube</a>
-      </div>
-    </section>
-  </main>
-
+  <section>
+    <div class="main-grid">
+      <a href="/astrology.html" class="main-card">
+        <span class="emoji">🪐</span>
+        <h2>Astrology</h2>
+        <ul>
+          <li>KP Charts</li>
+          <li>NASA Data</li>
+          <li>Numerology</li>
+          <li>Palmistry</li>
+          <li>GeoVision</li>
+        </ul>
+      </a>
+      <a href="/library.html" class="main-card">
+        <span class="emoji">📚</span>
+        <h2>Digital Library</h2>
+        <div>Sacred texts & multilingual archives</div>
+      </a>
+      <a href="/dharma-sabha.html" class="main-card">
+        <span class="emoji">🏛️</span>
+        <h2>Dharma Sabha Mandapaya</h2>
+        <div>Live Zoom & Discussions</div>
+      </a>
+      <a href="/doctor-buddhi.html" class="main-card">
+        <span class="emoji">🧑‍⚕️</span>
+        <h2>Doctor Buddhi</h2>
+        <div>Physical & Mental Health</div>
+      </a>
+      <a href="/music-lab.html" class="main-card">
+        <span class="emoji">🎶</span>
+        <h2>Music Lab</h2>
+        <div>Spiritual music & Smule</div>
+      </a>
+      <a href="/news.html" class="main-card">
+        <span class="emoji">📰</span>
+        <h2>News Line</h2>
+        <div>Spiritual & Global news</div>
+      </a>
+      <a href="/anurudda-articles.html" class="main-card">
+        <span class="emoji">✍️</span>
+        <h2>Anurudda’s Articles</h2>
+        <div>Personal spiritual insights</div>
+      </a>
+      <a href="/ai-buddhi-mona.html" class="main-card">
+        <span class="emoji">🤖</span>
+        <h2>AI Buddhi & Mona</h2>
+        <div>Dual AI wisdom & coding</div>
+      </a>
+      <a href="/community-writers.html" class="main-card">
+        <span class="emoji">🧑‍🤝‍🧑</span>
+        <h2>Community Writers</h2>
+        <div>Articles from spiritual writers</div>
+      </a>
+    </div>
+  </section>
   <footer>
     &copy; 2025 Sathyadarshana. Powered by Buddhi AI.
-    <br>
-    <span style="font-size:0.96em;">Follow us: 
-      <a href="https://facebook.com/sathyadarshana" style="color:#7dd3fc;text-decoration:underline;" target="_blank">Facebook</a>
-      | 
-      <a href="https://youtube.com/@sathyadarshana" style="color:#7dd3fc;text-decoration:underline;" target="_blank">You!";
-      setTimeout(()=>{document.getElementById('newsletter-msg').innerText='';},3000);
-    }
-    // Testimonials slider (basic demo)
-    const testimonials = [
-      "“Sathyadarshana changed my life. The astrology report was spot on!” – <b>Chamara, Kandy</b>",
-      "“Palmistry AI is amazing – never thought this was possible online!” – <b>Nilmini, Galle</b>",
-      "“The library is a treasure for anyone serious about spirituality.” – <b>Sandun, Kurunegala</b>"
-    ];
-    let ti = 0;
-    setInterval(()=>{
-      ti = (ti+1)%testimonials.length;
-      document.getElementById('testimonial').innerHTML = testimonials[ti];
-    }, 5000);
-  </script>
+  </footer>
 </body>
 </html>

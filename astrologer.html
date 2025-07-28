@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,113 +6,187 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sathyadarshana Astrology</title>
   <style>
-    body { margin:0; font-family:sans-serif; background:#0f172a; color:#e0f2fe; scroll-behavior:smooth; }
-    section { min-height:100vh; max-width:900px; margin:2rem auto; padding:1.5rem; background:rgba(30,41,59,0.8); border-radius:1rem; }
-    nav { position:sticky; top:0; display:flex; gap:1rem; justify-content:center; background:rgba(2,6,23,0.8); padding:1rem; }
-    nav a { color:#e0f2fe; background:#0ea5e9; padding:0.5rem 1rem; border-radius:0.5rem; text-decoration:none; }
-    nav a:hover { background:#38bdf8; }
-    button { background:#16f0a7; border:none; padding:0.7rem 1rem; border-radius:0.5rem; margin:0.5rem; cursor:pointer; }
-    button:hover { background:#0ea5e9; color:#fff; }
-    #kpCanvas { width:100%; height:500px; display:block; border:1px solid #38bdf8; border-radius:1rem; margin-top:1rem; }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #0f172a;
+      color: #e0f2fe;
+      scroll-behavior: smooth;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      background: rgba(2,6,23,0.93);
+      padding: 1rem;
+      z-index: 100;
+    }
+    nav a {
+      color: #e0f2fe;
+      background: #0ea5e9;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    nav a:hover {
+      background: #38bdf8;
+    }
+    main {
+      max-width: 540px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: rgba(30,41,59,0.9);
+      border-radius: 1rem;
+      box-shadow: 0 2px 24px 0 #02061755;
+    }
+    h1 {
+      margin-top: 0;
+      color: #7dd3fc;
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    input {
+      background: #1e293b;
+      color: #e0f2fe;
+      border: 1px solid #334155;
+      border-radius: 0.4rem;
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+    input:focus {
+      border: 1.5px solid #38bdf8;
+    }
+    button {
+      background: #16f0a7;
+      color: #1e293b;
+      border: none;
+      padding: 0.9rem 1.2rem;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    button:hover:enabled {
+      background: #0ea5e9;
+      color: #fff;
+    }
+    .message {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+    section {
+      margin-top: 2.5rem;
+      background: rgba(30,41,59,0.7);
+      border-radius: 0.7rem;
+      padding: 1rem 1.5rem;
+    }
+    @media (max-width: 600px) {
+      main { padding: 1rem; }
+      section { padding: 1rem; }
+    }
   </style>
 </head>
 <body>
   <nav>
-    <a href="index.html">Home</a>
     <a href="#report">Report</a>
     <a href="#palmistry">Palmistry</a>
     <a href="#numerology">Numerology</a>
     <a href="#geo">GeoVision</a>
   </nav>
 
-  <section id="report">
+  <main id="report">
     <h1>KP Live Report</h1>
-    <input type="text" id="name" placeholder="Full Name">
-    <input type="date" id="dob">
-    <input type="time" id="tob">
-    <input type="text" id="pob" placeholder="Birth Place">
-    <button onclick="generatePDF()">Download KP PDF</button>
-    <canvas id="kpCanvas"></canvas>
+    <form id="kpForm" autocomplete="off">
+      <input type="text" id="name" placeholder="Full Name" autocomplete="name" required>
+      <input type="date" id="dob" required>
+      <input type="time" id="tob" required>
+      <input type="text" id="pob" placeholder="Birth Place" autocomplete="address-level2" required>
+      <button type="submit" id="downloadBtn">Download KP PDF</button>
+    </form>
+    <div class="message" id="resultMsg"></div>
+  </main>
+
+  <section id="palmistry">
+    <h1>Palmistry</h1>
+    <p>Coming soon.</p>
+  </section>
+  <section id="numerology">
+    <h1>Numerology</h1>
+    <p>Coming soon.</p>
+  </section>
+  <section id="geo">
+    <h1>GeoVision</h1>
+    <p>Coming soon.</p>
   </section>
 
-  <section id="palmistry"><h1>Palmistry</h1><p>Coming soon.</p></section>
-  <section id="numerology"><h1>Numerology</h1><p>Coming soon.</p></section>
-  <section id="geo"><h1>GeoVision</h1><p>Coming soon.</p></section>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script>
-    async function generatePDF() {
-      const res = await fetch("/api/generateReport", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: document.getElementById("name").value,
-          birthDate: document.getElementById("dob").value,
-          birthTime: document.getElementById("tob").value,
-          birthPlace: document.getElementById("pob").value
-        })
-      });
-      if (!res.ok) { alert("Report failed"); return; }
-      const blob = await res.blob();
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "KP_Report.pdf";
-      link.click();
-    }
+    const form = document.getElementById('kpForm');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const msg = document.getElementById('resultMsg');
 
-    // 3D KP Visualization (Mock)
-    const canvas = document.getElementById("kpCanvas");
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
-    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
 
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+      // Validation (extra check for blank input)
+      if(!form.name.value.trim() || !form.dob.value || !form.tob.value || !form.pob.value.trim()) {
+        msg.textContent = "Please fill all details.";
+        msg.style.color = "#fb7185";
+        return;
+      }
 
-    // Lights
-    const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambient);
-    const pointLight = new THREE.PointLight(0xffffff, 1);
-    pointLight.position.set(0, 0, 50);
-    scene.add(pointLight);
+      downloadBtn.disabled = true;
+      downloadBtn.textContent = "Generating...";
+      msg.textContent = "";
 
-    // Sun (center)
-    const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
-    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd00 });
-    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-    scene.add(sun);
+      try {
+        const res = await fetch("/api/generateReport", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name.value.trim(),
+            birthDate: form.dob.value,
+            birthTime: form.tob.value,
+            birthPlace: form.pob.value.trim()
+          })
+        });
 
-    // Planets (mock positions)
-    const planetData = [
-      { color:0xaaaaaa, dist:5, size:0.5, speed:0.01 },
-      { color:0x3399ff, dist:8, size:0.6, speed:0.008 },
-      { color:0xff6633, dist:12, size:0.7, speed:0.006 },
-    ];
-    const planets = planetData.map(d=>{
-      const geom = new THREE.SphereGeometry(d.size, 16, 16);
-      const mat = new THREE.MeshStandardMaterial({ color:d.color });
-      const mesh = new THREE.Mesh(geom, mat);
-      mesh.userData = d;
-      scene.add(mesh);
-      return mesh;
+        if (!res.ok) {
+          msg.textContent = "Report failed. Try again.";
+          msg.style.color = "#fb7185";
+        } else {
+          const blob = await res.blob();
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "KP_Report.pdf";
+          link.click();
+          msg.textContent = "✅ Report downloaded!";
+          msg.style.color = "#34d399";
+          form.reset();
+        }
+      } catch (err) {
+        msg.textContent = "Network error. Try again.";
+        msg.style.color = "#fb7185";
+      } finally {
+        downloadBtn.disabled = false;
+        downloadBtn.textContent = "Download KP PDF";
+      }
     });
-
-    camera.position.set(0, 20, 30);
-    function animate(){
-      requestAnimationFrame(animate);
-      planets.forEach(p=>{
-        const d = p.userData;
-        p.rotation.y += 0.01;
-        const time = Date.now()*0.0001;
-        p.position.x = Math.cos(time*d.dist)*d.dist;
-        p.position.z = Math.sin(time*d.dist)*d.dist;
-      });
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    animate();
   </script>
 </body>
 </html>

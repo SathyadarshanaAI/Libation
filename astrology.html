@@ -18,70 +18,71 @@
       --radius-main: 1em;
     }
     body {
-      margin: 0; font-family: 'Segoe UI', Arial, sans-serif;
-      background: var(--bg-main); color: var(--text-main);
-      min-height: 100vh; display: flex; flex-direction: column;
-      font-size: 1em;
+      margin:0; font-family:'Segoe UI',Arial,sans-serif;
+      background:var(--bg-main); color:var(--text-main);
+      display:flex; flex-direction:column; min-height:100vh;
     }
-    header {padding: 2rem 0 1rem 0; text-align: center;}
-    header h1 {color: var(--accent3); font-size: 2em; margin-bottom: 0.3em;}
-    header p {margin: 0; font-size: 1.17em; opacity: 0.92;}
-    .lang-switch {margin-top: 1em;}
-    .lang-btn {
-      background: linear-gradient(90deg,#38bdf8,#0ea5e9);
-      color: #0f172a; border: none; padding: 0.5em 1em;
-      margin: 0 0.3em; border-radius: 0.4em; cursor: pointer;
-      font-weight: 500; transition: background 0.19s, color 0.15s;
-    }
-    .lang-btn:hover {background: linear-gradient(90deg,#0ea5e9,#38bdf8); color: #fff;}
+    header {padding:2rem 0 1rem 0; text-align:center;}
+    header h1 {color:var(--accent3); font-size:2em; margin:0.3em 0;}
+    header p {color:var(--text-main); opacity:0.9; margin:0;}
+
     nav {
-      display:flex; overflow-x:auto; gap:1rem;
-      background: var(--bg-nav); padding:1rem;
-      position: sticky; top: 0; z-index: 999;
-      box-shadow: 0 2px 18px rgba(30,41,59,0.13);
-      -webkit-overflow-scrolling: touch;
+      display:flex; overflow-x:auto; gap:1rem; justify-content:center;
+      background:var(--bg-nav); padding:1rem; position:sticky; top:0; z-index:999;
     }
-    nav::-webkit-scrollbar {display:none;}
     nav a {
-      color: var(--text-main); text-decoration:none; font-weight:500;
-      padding:0.6rem 1.2rem; border-radius:0.5em;
-      background: linear-gradient(90deg,var(--accent1),var(--accent2));
-      transition: background 0.2s, color 0.15s;
+      flex:0 0 auto; text-decoration:none; color:var(--text-main);
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      padding:0.6rem 1.2rem; border-radius:0.5em; font-weight:500;
+      transition:background 0.2s, color 0.2s;
     }
-    nav a:hover {background: linear-gradient(90deg,var(--accent2),var(--accent1)); color: var(--bg-main);}
+    nav a:hover {background:linear-gradient(90deg,var(--accent2),var(--accent1)); color:var(--bg-main);}
+    nav::-webkit-scrollbar {display:none;} /* Hide scrollbar for mobile */
+
     main {
-      max-width: 600px; margin:2rem auto; background:var(--bg-card);
-      border-radius: var(--radius-main); padding: 2rem;
-      box-shadow: 0 8px 32px rgba(2,6,23,0.13);
-      position: relative;
+      max-width:600px; margin:2rem auto; background:var(--bg-card);
+      padding:2rem; border-radius:var(--radius-main);
+      box-shadow:0 8px 32px rgba(2,6,23,0.2);
     }
-    h2 {color: var(--accent1); margin-bottom:0.5em; font-size:1.4em;}
-    .coming {color: var(--text-accent); font-size:1.08em; font-weight:500;}
-    footer {
-      text-align: center; color: var(--accent3);
-      margin-top: auto; padding: 2em 0 1em 0; font-size: 1em;
+    main:not(:first-of-type){margin-top:0.8rem;}
+    h2 {color:var(--accent1); margin-bottom:0.5em;}
+    .coming {color:var(--text-accent); font-size:1.1em;}
+
+    /* Tariff Plan Box */
+    .tariff-box {
+      margin-top:1.5rem; padding:1rem; border-radius:0.8em;
+      background:rgba(56,189,248,0.08); color:#bae6fd; font-size:1em;
+      border:1px solid var(--accent1);
     }
-    footer strong {color: var(--accent1);}
-    /* Scroll to top button */
-    #topBtn {
-      position:fixed; bottom:18px; right:18px;
-      background: var(--accent1); color: #0f172a;
-      border:none; border-radius:50%;
-      width:46px; height:46px; font-size:1.5em;
-      cursor:pointer; box-shadow:0 0 10px #0ea5e9;
-      display:none; z-index:999;
+    .tariff-box h3 {color:var(--accent1);}
+    .tariff-box .free {color:#38bdf8; font-weight:bold;}
+    .tariff-box .paid {color:#fbbf24; font-weight:bold;}
+
+    /* Scroll-to-Top Button */
+    #scrollTop {
+      position:fixed; bottom:1.2em; right:1.2em;
+      background:linear-gradient(90deg,#38bdf8,#0ea5e9);
+      color:#0f172a; padding:0.5em 0.9em; font-size:1.3em;
+      border:none; border-radius:0.5em; cursor:pointer;
+      display:none; z-index:1000;
+      box-shadow:0 2px 10px rgba(30,41,59,0.3);
     }
-    #topBtn:hover {background: var(--accent2); color:#fff;}
-    /* High Copyright Watermark */
+    #scrollTop:hover {background:linear-gradient(90deg,#0ea5e9,#38bdf8); color:#fff;}
+
+    /* Watermark */
     .watermark {
-      position:fixed; bottom:5%; left:50%; transform:translateX(-50%);
-      font-size: 0.9em; color: rgba(125,211,252,0.3);
-      pointer-events: none; user-select: none; white-space: nowrap;
+      position:fixed; bottom:10%; left:50%; transform:translateX(-50%);
+      font-size:3em; color:rgba(56,189,248,0.06);
+      pointer-events:none; user-select:none; z-index:0;
+      white-space:nowrap;
     }
+
+    footer {text-align:center; color:var(--accent3); padding:2em 0 1em 0;}
+    footer strong {color:var(--accent1);}
     @media(max-width:700px){
-      main{padding:1.1rem;} header{padding:1rem 0 0.7rem;}
-      nav{flex-direction:column;align-items:center;}
-      nav a{width:90%;text-align:center;margin-bottom:0.2em;}
+      nav {flex-direction:row; overflow-x:auto;}
+      nav a {flex:0 0 auto;}
+      main {padding:1.2rem;}
     }
   </style>
 </head>
@@ -89,11 +90,6 @@
   <header>
     <h1>🪐 Sathyadarshana Astrology</h1>
     <p>Explore the cosmic science & wisdom tools</p>
-    <div class="lang-switch">
-      <button class="lang-btn" data-lang="en">English</button>
-      <button class="lang-btn" data-lang="si">සිංහල</button>
-      <button class="lang-btn" data-lang="ta">தமிழ்</button>
-    </div>
   </header>
   <nav>
     <a href="/kp_life_prediction.html">Advanced KP Life Prediction</a>
@@ -102,8 +98,15 @@
     <a href="#geo">GeoVision</a>
   </nav>
   <main id="kp">
-    <h2>Astrology Services</h2>
-    <p>Access KP Life Prediction ($5), Palmistry, Numerology, and GeoVision modules here.</p>
+    <h2>Advanced KP Life Prediction</h2>
+    <p>Get your full AI-powered KP Life Report for just $5 (One-time).</p>
+    <div class="tariff-box">
+      <h3>📢 Tariff Plan</h3>
+      <ul>
+        <li><span class="free">Free:</span> Basic guidance, astrology tips (no report).</li>
+        <li><span class="paid">Paid ($5):</span> Complete life prediction PDF, AI insights, premium support.</li>
+      </ul>
+    </div>
   </main>
   <main id="palmistry">
     <h2>Palmistry</h2>
@@ -117,19 +120,23 @@
     <h2>GeoVision</h2>
     <p class="coming">Coming Soon.</p>
   </main>
+
+  <div class="watermark">© Sathyadarshana | High Copyright</div>
+
+  <button id="scrollTop" title="Back to Top">⬆</button>
+
   <footer>
-    © 2025 Sathyadarshana Astrology | Concept by Anurudda | Executed by Buddhi AI  
+    &copy; 2025 Sathyadarshana Astrology | Concept by Anurudda | Executed by Buddhi AI  
     <br><strong>All Rights Reserved – High Copyright</strong>
   </footer>
-  <!-- Scroll to Top Button -->
-  <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-  <!-- Watermark -->
-  <div class="watermark">© Sathyadarshana 2025 – High Copyright</div>
+
   <script>
-    window.addEventListener('scroll',()=>{
-      document.getElementById('topBtn').style.display =
-        window.scrollY>200 ? 'block':'none';
+    // Show scroll-to-top when user scrolls down
+    const btn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', ()=> {
+      btn.style.display = window.scrollY > 300 ? 'block' : 'none';
     });
+    btn.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
   </script>
 </body>
 </html>

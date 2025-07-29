@@ -1,240 +1,132 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>KP Live Report with NASA Ephemeris & Chart</title>
+  <title>Advanced KP Edition</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif;}
-    main { max-width: 500px; margin: 40px auto; border: 1px solid #ccc; padding: 24px; border-radius: 8px;}
-    .message { margin-top: 15px; }
-    input, button { display: block; margin-bottom: 15px; width: 100%; padding: 8px; }
-    #astroChart { display: block; margin: 24px auto; background: #fff; border-radius: 50%; border: 1px solid #bbb;}
+    body { font-family: Arial, sans-serif; background: #0f172a; color: #e0f2fe; margin:0; padding:0; }
+    main { max-width: 540px; margin: 40px auto; border: 1px solid #134e4a; padding: 24px; border-radius: 8px; background: rgba(19, 46, 74, 0.8); }
+    label, input, select, textarea, button { display:block; width:100%; margin-bottom:14px; font-size:15px; }
+    input, select, textarea { padding:8px; border:1px solid #334155; border-radius:6px; background:#1e293b; color:#e0f2fe; }
+    button { background:#38bdf8; color:#0f172a; font-weight:bold; padding:10px; border:none; border-radius:6px; cursor:pointer; }
+    button:hover { background:#0ea5e9; }
+    #astroChart { display:block; margin:24px auto; background:#fff; border-radius:50%; border:1px solid #bbb; }
+    .tariff { text-align:center; margin-top:15px; font-size:14px; color:#bae6fd; }
+    #resultMsg { text-align:center; margin-bottom:12px; font-size:15px; color:#fb7185; }
   </style>
 </head>
 <body>
 <main id="report">
-  <h1>KP Live Report</h1>
+  <h1 style="text-align:center; color:#7dd3fc;">Advanced KP Edition</h1>
+  <p style="text-align:center; color:#bae6fd;">AI-powered KP Report with planetary charts & insights.</p>
   <form id="kpForm" autocomplete="off">
-    <input type="text" id="name" placeholder="Full Name" required>
+    <label>Full Name</label>
+    <input type="text" id="name" required>
+    <label>Date of Birth</label>
     <input type="date" id="dob" required>
+    <label>Time of Birth</label>
     <input type="time" id="tob" required>
-    <input type="text" id="pob" placeholder="Birth Place" required>
-    <button type="submit" id="downloadBtn">Download KP PDF</button>
+    <label>Birth Place</label>
+    <input type="text" id="pob" placeholder="City, Country" required>
+    <label>Gender</label>
+    <select id="gender" required>
+      <option value="">Select...</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+    <label>Email (optional)</label>
+    <input type="email" id="email" placeholder="Email">
+    <label>Your Main Question</label>
+    <textarea id="userQ" placeholder="Eg: When will I get married?" rows="2"></textarea>
+    <label><input type="checkbox" id="consent" required> I consent to share my birth data for report generation</label>
+    <button type="submit" id="downloadBtn">Download Advanced KP PDF</button>
   </form>
-  <div class="message" id="resultMsg" style="color: rgb(251, 113, 133);"></div>
+  <div id="resultMsg">Planetary data unavailable</div>
   <canvas id="astroChart" width="400" height="400"></canvas>
+  <div id="aiPrediction" style="display:none; background:#1e293b; padding:10px; border-radius:8px; margin-top:12px;"></div>
+  <div class="tariff"><strong>Tariff:</strong> Premium reports $5 per user (one-time).</div>
 </main>
 <script>
-// 1. Geocoding: place name to lat/lon (OpenStreetMap Nominatim)
+// Geocode (OpenStreetMap)
 async function getLatLong(place) {
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`;
   try {
     const response = await fetch(url);
     const data = await response.json();
-    if (data && data.length > 0) {
-      return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
-    } else {
-      return { lat: 6.9271, lon: 79.8612 }; // Colombo fallback
-    }
-  } catch (err) {
-    return { lat: 6.9271, lon: 79.8612 }; // fallback
-  }
+    if (data && data.length > 0) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    return { lat: 6.9271, lon: 79.8612 };
+  } catch { return { lat: 6.9271, lon: 79.8612 }; }
 }
 
-// 2. NASA Horizons API for planetary longitude
+// Planets List
 const planetList = [
-  { name: "Sun", id: "10", color: "#FFD700" },
-  { name: "Moon", id: "301", color: "#F5F3CE" },
-  { name: "Mercury", id: "199", color: "#A9A9A9" },
-  { name: "Venus", id: "299", color: "#FFB6C1" },
-  { name: "Mars", id: "499", color: "#D94F4F" },
-  { name: "Jupiter", id: "599", color: "#F7C873" },
-  { name: "Saturn", id: "699", color: "#E5C07B" },
-  { name: "Uranus", id: "799", color: "#7FFFD4" },
-  { name: "Neptune", id: "899", color: "#5F9EA0" },
-  { name: "Pluto", id: "999", color: "#B8860B" }
+  { name:"Sun", id:"10", color:"#FFD700" }, { name:"Moon", id:"301", color:"#F5F3CE" },
+  { name:"Mercury", id:"199", color:"#A9A9A9" }, { name:"Venus", id:"299", color:"#FFB6C1" },
+  { name:"Mars", id:"499", color:"#D94F4F" }, { name:"Jupiter", id:"599", color:"#F7C873" },
+  { name:"Saturn", id:"699", color:"#E5C07B" }, { name:"Uranus", id:"799", color:"#7FFFD4" },
+  { name:"Neptune", id:"899", color:"#5F9EA0" }, { name:"Pluto", id:"999", color:"#B8860B" }
 ];
-async function getPlanetLongitude(dateStr, timeStr, lat, lon, planetId) {
-  // NASA expects UTC; for demo keep as local. For production, convert to UTC!
-  const elevation = 0;
-  const datetime = `${dateStr} ${timeStr}`;
-  const params = new URLSearchParams({
-    format: 'json',
-    COMMAND: `'${planetId}'`,
-    EPHEM_TYPE: 'OBSERVER',
-    SITE_COORD: `'${lon},${lat},${elevation}'`,
-    START_TIME: `'${datetime}'`,
-    STOP_TIME: `'${datetime}'`,
-    STEP_SIZE: "'1 d'",
-    QUANTITIES: "'1,2,3,4,20,23,24,29,36,38,39,40,41'",
-    CSV_FORMAT: 'YES'
-  });
-  const url = `https://ssd.jpl.nasa.gov/api/horizons.api?${params.toString()}`;
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    // Parse longitude from CSV lines in "result"
-    if (data.result) {
-      const lines = data.result.split("\n");
-      for (let l of lines) {
-        if (l.match(/^[0-9]/)) {
-          const fields = l.trim().split(",");
-          const longitude = parseFloat(fields[4]); // 5th field: ObsEcLon
-          return longitude;
-        }
+
+// Proxy fetch to Netlify (avoids CORS)
+async function getPlanetLongitude(dateStr,timeStr,lat,lon,planetId){
+  const datetime=`${dateStr} ${timeStr}`;
+  const proxyUrl=`/.netlify/functions/horizons?format=json&COMMAND='${planetId}'&EPHEM_TYPE=OBSERVER&SITE_COORD='${lon},${lat},0'&START_TIME='${datetime}'&STOP_TIME='${datetime}'&STEP_SIZE='1 d'&QUANTITIES='1,2,3,4,20,23,24,29,36,38,39,40,41'&CSV_FORMAT=YES`;
+  try{
+    const res=await fetch(proxyUrl); const data=await res.json();
+    if(data.result){
+      for(const l of data.result.split("\n")){
+        if(/^[0-9]/.test(l)){ const fields=l.trim().split(","); return parseFloat(fields[4]); }
       }
     }
     return null;
-  } catch (e) { return null; }
+  }catch(e){ console.error(e); return null; }
 }
-async function getAllPlanets(dateStr, timeStr, lat, lon) {
-  const results = [];
-  for (const p of planetList) {
-    const degree = await getPlanetLongitude(dateStr, timeStr, lat, lon, p.id);
-    results.push({ name: p.name, degree, color: p.color });
-  }
-  return results.filter(p => p.degree !== null);
+async function getAllPlanets(dateStr,timeStr,lat,lon){
+  const results=[];
+  for(const p of planetList){ const degree=await getPlanetLongitude(dateStr,timeStr,lat,lon,p.id); results.push({name:p.name,degree,color:p.color}); }
+  return results.filter(p=>p.degree!==null);
 }
 
-// 3. Zodiac sign lookup
-function getZodiacSign(degree) {
-  const signs = [
-    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
-  ];
-  return signs[Math.floor(((degree % 360) / 30))];
+// Zodiac Labels
+function getZodiacSign(deg){const z=["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];return z[Math.floor((deg%360)/30)];}
+
+// Draw Chart
+function drawAstroChart(planets){
+  const canvas=document.getElementById('astroChart'),ctx=canvas.getContext('2d'); ctx.clearRect(0,0,400,400);
+  ctx.beginPath(); ctx.arc(200,200,150,0,2*Math.PI); ctx.strokeStyle="#333"; ctx.lineWidth=3; ctx.stroke();
+  for(let i=0;i<12;i++){let ang=(i*30-90)*Math.PI/180; ctx.beginPath(); ctx.moveTo(200,200); ctx.lineTo(200+150*Math.cos(ang),200+150*Math.sin(ang)); ctx.strokeStyle="#aaa"; ctx.stroke();
+    ctx.save(); ctx.translate(200,200); ctx.rotate(ang+Math.PI/12); ctx.textAlign="center"; ctx.font="bold 13px Arial"; ctx.fillStyle="#38bdf8"; ctx.fillText(getZodiacSign(i*30+15),0,-120); ctx.restore();}
+  planets.forEach(p=>{let ang=((p.degree%360)-90)*Math.PI/180; let x=200+130*Math.cos(ang),y=200+130*Math.sin(ang);
+    ctx.beginPath(); ctx.arc(x,y,10,0,2*Math.PI); ctx.fillStyle=p.color||"#e74c3c"; ctx.fill(); ctx.font="10px Arial"; ctx.fillStyle="#222"; ctx.fillText(p.name,x,y-12); ctx.fillText(p.degree?p.degree.toFixed(1)+"°":"-",x,y+18);});
 }
 
-// 4. Chart drawing (2D, Canvas)
-function drawAstroChart(planets) {
-  const canvas = document.getElementById('astroChart');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 400, 400);
-
-  // Circle
-  ctx.beginPath();
-  ctx.arc(200, 200, 150, 0, 2 * Math.PI);
-  ctx.strokeStyle = "#333";
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  // Zodiac segments
-  for (let i = 0; i < 12; i++) {
-    let angle = (i * 30 - 90) * Math.PI / 180;
-    ctx.beginPath();
-    ctx.moveTo(200, 200);
-    ctx.lineTo(200 + 150 * Math.cos(angle), 200 + 150 * Math.sin(angle));
-    ctx.strokeStyle = "#aaa";
-    ctx.stroke();
-
-    // Zodiac label
-    ctx.save();
-    ctx.translate(200, 200);
-    ctx.rotate(angle + Math.PI / 12);
-    ctx.textAlign = "center";
-    ctx.font = "bold 13px Arial";
-    ctx.fillStyle = "#333";
-    ctx.fillText(getZodiacSign(i * 30 + 15), 0, -120);
-    ctx.restore();
-  }
-
-  // Planets
-  planets.forEach(p => {
-    let angle = ((p.degree % 360) - 90) * Math.PI / 180;
-    let x = 200 + 130 * Math.cos(angle);
-    let y = 200 + 130 * Math.sin(angle);
-    ctx.beginPath();
-    ctx.arc(x, y, 11, 0, 2 * Math.PI);
-    ctx.fillStyle = p.color || "#e74c3c";
-    ctx.fill();
-    ctx.font = "bold 12px Arial";
-    ctx.fillStyle = "#222";
-    ctx.fillText(p.name, x, y - 17);
-    // Degree
-    ctx.font = "10px Arial";
-    ctx.fillStyle = "#444";
-    ctx.fillText(p.degree !== undefined ? p.degree.toFixed(1) + "°" : "-", x, y + 21);
-  });
+// PDF Export
+async function downloadPDFwithChart(user,planets){
+  const { jsPDF }=window.jspdf, canvas=document.getElementById('astroChart'),imgData=canvas.toDataURL('image/png');
+  const pdf=new jsPDF({orientation:"portrait",unit:"pt",format:"a4"}); pdf.setFontSize(18);
+  pdf.text("Sathyadarshana Advanced KP Report",40,40); pdf.setFontSize(12);
+  pdf.text("Powered by Buddhi AI | www.sathyadarshana-ai.netlify.app",40,60);
+  pdf.setLineWidth(0.5); pdf.line(40,68,555,68);
+  pdf.text(`Name: ${user.name}`,40,90); pdf.text(`DOB: ${user.dob}`,220,90); pdf.text(`TOB: ${user.tob}`,340,90); pdf.text(`Place: ${user.pob}`,40,110);
+  pdf.addImage(imgData,'PNG',80,140,400,400); pdf.setFontSize(11); let y=570; pdf.text("Planet",80,y); pdf.text("Degree",160,y); pdf.text("Zodiac",240,y);
+  planets.forEach((p,idx)=>{pdf.text(p.name,80,y+20+idx*18); pdf.text(p.degree?p.degree.toFixed(1)+"°":"-",160,y+20+idx*18); pdf.text(getZodiacSign(p.degree),240,y+20+idx*18);});
+  pdf.setFontSize(10); pdf.text("Tariff: $5 per report | Generated: "+new Date().toLocaleString(),40,800);
+  pdf.save("Advanced_KP_Report.pdf");
 }
 
-// 5. PDF export with chart
-async function downloadPDFwithChart(user, planets) {
-  // Chart to image
-  const canvas = document.getElementById('astroChart');
-  const imgData = canvas.toDataURL('image/png');
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({orientation: "portrait", unit: "pt", format: "a4"});
-  // Branding/Header
-  pdf.setFontSize(18);
-  pdf.text("Sathyadarshana KP Astrology Report", 40, 40);
-  pdf.setFontSize(12);
-  pdf.text("Powered by SathyadarshanaAI | www.sathyadarshana-ai.netlify.app", 40, 60);
-  pdf.setLineWidth(0.5);
-  pdf.line(40, 68, 555, 68);
-  // User info
-  pdf.setFontSize(12);
-  pdf.text(`Name: ${user.name}`, 40, 90);
-  pdf.text(`DOB: ${user.dob}`, 220, 90);
-  pdf.text(`TOB: ${user.tob}`, 340, 90);
-  pdf.text(`Place: ${user.pob}`, 40, 110);
-
-  // Chart
-  pdf.addImage(imgData, 'PNG', 80, 130, 400, 400);
-
-  // Table
-  pdf.setFontSize(11);
-  let y = 550;
-  pdf.text("Planet", 80, y);
-  pdf.text("Degree", 160, y);
-  pdf.text("Zodiac", 240, y);
-  planets.forEach((p, idx) => {
-    pdf.text(p.name, 80, y + 20 + idx * 18);
-    pdf.text(p.degree !== undefined ? p.degree.toFixed(2) + "°" : "-", 160, y + 20 + idx * 18);
-    pdf.text(getZodiacSign(p.degree), 240, y + 20 + idx * 18);
-  });
-
-  // Footer
-  pdf.setFontSize(10);
-  pdf.text("Tariff: Premium Service", 40, 800);
-  pdf.text("Report Generated: " + new Date().toLocaleString(), 40, 814);
-
-  pdf.save("KP_Report_Chart.pdf");
-}
-
-// 6. Main event
-document.getElementById('kpForm').addEventListener('submit', async function(e) {
+// Event
+document.getElementById('kpForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  const name = document.getElementById('name').value.trim();
-  const dob = document.getElementById('dob').value;
-  const tob = document.getElementById('tob').value;
-  const pob = document.getElementById('pob').value.trim();
-
-  document.getElementById('resultMsg').style.color = "#888";
-  document.getElementById('resultMsg').textContent = 'Generating report...';
-
-  // 1. Geocode
-  const coords = await getLatLong(pob);
-
-  // 2. Get all graha longitudes
-  const planets = await getAllPlanets(dob, tob, coords.lat, coords.lon);
-
-  if (planets.length === 0) {
-    document.getElementById('resultMsg').style.color = "red";
-    document.getElementById('resultMsg').textContent = 'Could not get planetary data. Try again.';
-    return;
-  }
-
-  // 3. Draw chart
-  drawAstroChart(planets);
-
-  // 4. PDF download
-  await downloadPDFwithChart({ name, dob, tob, pob }, planets);
-
-  document.getElementById('resultMsg').style.color = "green";
-  document.getElementById('resultMsg').textContent = 'Report generated and downloaded!';
+  const name=document.getElementById('name').value,dob=document.getElementById('dob').value,tob=document.getElementById('tob').value,pob=document.getElementById('pob').value,consent=document.getElementById('consent').checked;
+  if(!consent){alert("Consent is required.");return;}
+  document.getElementById('resultMsg').textContent='Fetching planetary data...'; const coords=await getLatLong(pob); const planets=await getAllPlanets(dob,tob,coords.lat,coords.lon);
+  if(planets.length===0){document.getElementById('resultMsg').style.color="red"; document.getElementById('resultMsg').textContent='Could not fetch planetary data. Try again.'; return;}
+  drawAstroChart(planets); await downloadPDFwithChart({name,dob,tob,pob},planets);
+  document.getElementById('resultMsg').style.color="green"; document.getElementById('resultMsg').textContent='Report generated and downloaded!';
 });
-
-// Initial empty chart
 drawAstroChart([]);
 </script>
 </body>

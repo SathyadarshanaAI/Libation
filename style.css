@@ -1,4 +1,6 @@
 /* style.css */
+
+/* Global body & theme */
 body {
   font-family: 'Inter', sans-serif;
   background: linear-gradient(135deg, #0f172a 0%, #134e4a 100%);
@@ -6,6 +8,8 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* Navigation bar */
 nav {
   display: flex;
   justify-content: center;
@@ -24,6 +28,8 @@ nav a:hover, nav a:focus {
   background: #38bdf8;
   color: #0f172a;
 }
+
+/* Animated Logo */
 .logo-animated {
   display: flex;
   justify-content: center;
@@ -34,6 +40,8 @@ nav a:hover, nav a:focus {
   background: radial-gradient(circle at 60% 40%, #7dd3fc99, #0ea5e944 65%, transparent 100%);
   border-radius: 50%;
 }
+
+/* Header Section */
 header {
   text-align: center;
   padding: 2.5rem 1rem 1.5rem;
@@ -41,6 +49,8 @@ header {
 h1 {
   color: #7dd3fc;
 }
+
+/* Feature grid */
 .features-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -55,6 +65,8 @@ h1 {
     gap: 2.8rem;
   }
 }
+
+/* Feature cards */
 .feature-card {
   background: rgba(13,34,55,0.38);
   border-radius: 1.3rem;
@@ -69,6 +81,8 @@ h1 {
   transform: translateY(-6px) scale(1.033);
   box-shadow: 0 8px 38px #38bdf899;
 }
+
+/* Feature icons and text */
 .feature-icon {
   font-size: 2.85rem;
   margin-bottom: .6rem;
@@ -95,6 +109,8 @@ h1 {
   font-weight: 600;
   text-decoration: none;
 }
+
+/* Footer styling */
 footer {
   width: 100%;
   background: rgba(15,23,42,0.96);
@@ -110,4 +126,38 @@ footer {
   margin-top: .47rem;
   display: block;
   font-size: 1.09rem;
+}
+
+/* ----- KP Page Specific Fixes ----- */
+
+/* Ensure input elements scale on mobile */
+input, select, textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tariff section for KP Pages */
+.tariff {
+  text-align: center;
+  margin-top: 1em;
+  color: #7dd3fc;
+  font-size: 0.95em;
+}
+
+/* AI Buddhi floating support button */
+.support-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #38bdf8;
+  color: #0f172a;
+  padding: 0.7rem 1rem;
+  border-radius: 2em;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 10px #38bdf8;
+}
+.support-btn:hover {
+  background: #0ea5e9;
+  color: #fff;
 }

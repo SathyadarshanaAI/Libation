@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Advanced KP Life Prediction</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/assets/favicon.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; background:#0f172a; color:#e0f2fe; margin:0; }
     main { max-width: 540px; margin: 40px auto; border:1px solid #38bdf8; padding:24px; border-radius:8px; background:rgba(30,41,59,0.94);}
@@ -16,25 +17,14 @@
     .tariff {margin-top:16px; text-align:center; color:#fbbf24; font-size:1.1em; font-weight:bold;}
     .spinner {display:none; margin:16px auto; border: 5px solid #bae6fd; border-top: 5px solid #38bdf8; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;}
     @keyframes spin {100% {transform: rotate(360deg);}}
-    .error {color: #f87171;}
-    .fade-out {animation: fadeOut 1.5s forwards;}
-    @keyframes fadeOut {to {opacity: 0;}}
-    .lang-switch {position:absolute; top:18px; right:24px;}
-    @media (max-width: 600px) {
-      main {margin:8px; padding:10px;}
-      .lang-switch {position:static; float:right;}
-    }
+    .error {color: #f87171; font-size:0.9em;}
     .preview-box {background:#1e293b; color:#bae6fd; border-radius:8px; padding:18px; margin-top:16px; border:1px solid #38bdf8;}
     .rating {margin-top:18px; text-align:center;}
     .rating span {font-size:2em; cursor:pointer;}
     .rating .selected {color:#fbbf24;}
-    footer {text-align:center; margin-top:24px; padding:12px; color:#94a3b8; font-size:0.9em;}
   </style>
 </head>
 <body>
-<div class="lang-switch">
-  <button id="langBtn" style="padding:6px 16px; border-radius:6px; border:none; background:#38bdf8; color:#0f172a;">සිංහල</button>
-</div>
 <main id="report">
   <h1 id="title" style="text-align:center;color:#38bdf8;">Advanced KP Life Prediction</h1>
   <p id="subtitle" style="text-align:center;color:#bae6fd;">AI-powered KP life report (Premium $5)</p>
@@ -59,14 +49,6 @@
       <option id="other">Other</option>
     </select>
     <div id="error-gender" class="error"></div>
-    <label id="lblAstro">Astrologer</label>
-    <select id="astro">
-      <option value="">Select astrologer...</option>
-      <option>Sathyadarshana</option>
-      <option>Budhika</option>
-      <option>Chathura</option>
-      <option>Guest Astrologer</option>
-    </select>
     <label id="lblEmail">Email (optional)</label>
     <input type="email" id="email" placeholder="Email">
     <div id="error-email" class="error"></div>
@@ -90,12 +72,68 @@
   </div>
   <div class="tariff" id="tariff">Premium Life Report – $5 (One-time)</div>
 </main>
-<footer>
-  © 2025 Sathyadarshana – All Rights Reserved | Concept by Anurudda | Built by Buddhi AI.  
-  <strong>Unauthorized copying, resale, or distribution is strictly prohibited.</strong>
-</footer>
+
 <script>
-  // (JS remains same as before, handling language toggle, validation, prediction, PDF, and rating)
-</script>
-</body>
-</html>
+function showError(id, msg){ document.getElementById('error-'+id).textContent = msg; }
+function clearErrors(){ ['name','dob','tob','pob','gender','email','consent'].forEach(id=>showError(id,'')); }
+function validateForm(fields){
+  clearErrors(); let valid=true;
+  if(!fields.name){showError('name','Name is required.'); valid=false;}
+  if(!fields.dob){showError('dob','Date of birth is required.'); valid=false;}
+  if(!fields.tob){showError('tob','Time of birth is required.'); valid=false;}
+  if(!fields.pob){showError('pob','Place of birth is required.'); valid=false;}
+  if(!fields.gender){showError('gender','Select your gender.'); valid=false;}
+  if(fields.email && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(fields.email)){
+    showError('email','Invalid email address.'); valid=false;
+  }
+  if(!fields.consent){showError('consent','You must consent for report generation.'); valid=false;}
+  return valid;
+}
+function getPrediction(name,userQ){
+  const lines=[
+    "Shows strong determination and success in career.",
+    "Will face positive turning points in personal life.",
+    "Radiates positivity and adapts well to change.",
+    "Achieves steady financial growth with effort."
+  ];
+  const random=arr=>arr[Math.floor(Math.random()*arr.length)];
+  return `AI Life Insights for ${name}:\n• ${random(lines)}\n• ${random(lines)}\n${userQ ? "Your Question: "+userQ : ""}`;
+}
+document.getElementById('previewBtn').onclick=()=>{
+  const f=getFields(); if(!validateForm(f))return;
+  const txt=getPrediction(f.name,f.userQ);
+  document.getElementById('preview').innerHTML=`<b>Name:</b> ${f.name}<br><b>DOB:</b> ${f.dob}<br><b>TOB:</b> ${f.tob}<br><b>Place:</b> ${f.pob}<br><hr><pre>${txt}</pre>`;
+  document.getElementById('preview').style.display="block";
+  document.getElementById('rating').style.display="block";
+};
+function getFields(){
+  return {
+    name:document.getElementById('name').value.trim(),
+    dob:document.getElementById('dob').value,
+    tob:document.getElementById('tob').value,
+    pob:document.getElementById('pob').value.trim(),
+    gender:document.getElementById('gender').value,
+    email:document.getElementById('email').value.trim(),
+    userQ:document.getElementById('userQ').value.trim(),
+    consent:document.getElementById('consent').checked
+  };
+}
+document.getElementById('kpForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const f=getFields(); if(!validateForm(f))return;
+  document.getElementById('spinner').style.display='block';
+  setTimeout(()=>{
+    const report=`Sathyadarshana KP Life Report\n\nName: ${f.name}\nDOB: ${f.dob} Time: ${f.tob}\nPlace: ${f.pob}\nGender: ${f.gender}\n\n${getPrediction(f.name,f.userQ)}\n\nTariff: $5 Premium\nGenerated: ${new Date().toLocaleString()}`;
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF(); pdf.setFontSize(12); pdf.text(report,20,30);
+    pdf.save(`${f.name.replace(/\\s+/g,'_')}_KP_Report.pdf`);
+    document.getElementById('spinner').style.display='none';
+    document.getElementById('resultMsg').style.color="green";
+    document.getElementById('resultMsg').textContent="Report generated!";
+  },700);
+});
+document.querySelectorAll('#rating span').forEach(star=>{
+  star.onclick=function(){
+    const rate=this.dataset.rate;
+    document.querySelectorAll('#rating span').forEach(s=>s.classList.remove('selected'));
+    for(let i=1;i<=rate;i++){document.querySelector(`#rating

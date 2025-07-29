@@ -6,57 +6,497 @@
   <title>Sathyadarshana Astrology</title>
   <link rel="icon" href="/assets/favicon.png">
   <style>
-    body {margin:0; font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e0f2fe;}
-    header {padding:2rem 0 1rem 0;}
-    header h1 {color:#7dd3fc; font-size:2em;}
+    :root {
+      --bg-main: #0f172a;
+      --bg-card: rgba(30,41,59,0.94);
+      --bg-nav: rgba(2,6,23,0.95);
+      --accent1: #38bdf8;
+      --accent2: #0ea5e9;
+      --accent3: #7dd3fc;
+      --text-main: #e0f2fe;
+      --text-accent: #fb7185;
+      --radius-main: 1em;
+      --transition-fast: 0.18s;
+      --transition-med: 0.21s;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s, color 0.3s;
+      font-size: 1em;
+    }
+    header {
+      padding: 2rem 0 1rem 0;
+      text-align: center;
+    }
+    header h1 {
+      color: var(--accent3);
+      font-size: 2em;
+      margin-bottom: 0.3em;
+      letter-spacing: 1px;
+    }
+    header p {
+      margin: 0;
+      color: var(--text-main);
+      font-size: 1.17em;
+      opacity: 0.92;
+    }
+    .lang-switch {
+      margin-top: 1em;
+    }
+    .lang-btn {
+      background: linear-gradient(90deg,#38bdf8,#0ea5e9);
+      color: #0f172a;
+      border: none;
+      padding: 0.5em 1em;
+      margin: 0 0.3em;
+      border-radius: 0.4em;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.19s, color 0.15s;
+    }
+    .lang-btn:hover, .lang-btn:focus {
+      background: linear-gradient(90deg,#0ea5e9,#38bdf8);
+      color: #fff;
+    }
     nav {
-      display:flex; justify-content:center; gap:1rem; background:rgba(2,6,23,0.95);
-      padding:1rem; position:sticky; top:0; z-index:999;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      background: var(--bg-nav);
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 2px 18px 0 rgba(30,41,59,0.13);
     }
     nav a {
-      color:#e0f2fe; text-decoration:none; font-weight:bold;
-      padding:0.6rem 1.1rem; border-radius:0.5em;
-      background:linear-gradient(90deg,#38bdf8,#0ea5e9);
-      transition:background 0.21s, color 0.18s;
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.5em;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      transition: background var(--transition-med), color var(--transition-fast), box-shadow var(--transition-fast);
+      box-shadow: 0 2px 8px 0 rgba(56,189,248,0.09);
     }
-    nav a:hover {background:linear-gradient(90deg,#0ea5e9,#38bdf8); color:#0f172a;}
-    main {max-width:600px; margin:2rem auto; background:rgba(30,41,59,0.94); border-radius:1em; padding:2rem;}
-    h2 {color:#38bdf8; margin-bottom:0.4em;}
-    .coming {color:#fb7185; font-size:1.08em;}
-    @media (max-width:700px){main{padding:1.1rem;} header{padding:1rem 0 0.7rem 0;}}
+    nav a:hover, nav a:focus {
+      background: linear-gradient(90deg, var(--accent2), var(--accent1));
+      color: var(--bg-main);
+      outline: none;
+      box-shadow: 0 2px 12px 0 rgba(56,189,248,0.17);
+    }
+    main {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: var(--bg-card);
+      border-radius: var(--radius-main);
+      padding: 2rem;
+      box-shadow: 0 8px 32px 0 rgba(2,6,23,0.13);
+    }
+    main:not(:first-of-type) {
+      margin-top: 0.8rem;
+    }
+    h2 {
+      color: var(--accent1);
+      margin-bottom: 0.5em;
+      font-size: 1.4em;
+    }
+    .coming {
+      color: var(--text-accent);
+      font-size: 1.08em;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    footer {
+      text-align: center;
+      color: var(--accent3);
+      margin-top: auto;
+      padding: 2em 0 1em 0;
+      font-size: 1em;
+      opacity: 0.93;
+    }
+    footer strong {
+      color: var(--accent1);
+      font-size: 1.04em;
+    }
+    /* Accessibility: focus for nav links */
+    nav a:focus-visible {
+      outline: 2px dashed var(--accent1);
+      outline-offset: 2px;
+    }
+    /* Dark/Light mode */
+    body.light-mode {
+      background: #f3f4f6;
+      color: #1e293b;
+    }
+    body.light-mode nav, body.light-mode main {
+      background: #e0f2fe;
+      color: #0f172a;
+    }
+    body.light-mode nav a {
+      background: linear-gradient(90deg,#0ea5e9,#38bdf8);
+      color: #0f172a;
+    }
+    /* FAQ details */
+    details {
+      background: rgba(56,189,248,0.08);
+      border-radius: 0.5em;
+      margin-bottom: 1em;
+      padding: 0.7em;
+      color: inherit;
+    }
+    details[open] {
+      background: rgba(56,189,248,0.16);
+    }
+    details summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: var(--accent2);
+    }
+    /* Contact form */
+    form input, form textarea {
+      width: 100%;
+      margin-bottom: 1em;
+      padding: 0.7em;
+      border-radius: 0.4em;
+      border: none;
+      font-size: 1em;
+    }
+    form button {
+      background: linear-gradient(90deg,#38bdf8,#0ea5e9);
+      color: #0f172a;
+      border: none;
+      padding: 0.5em 1.1em;
+      border-radius: 0.4em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    form button:hover {
+      background: linear-gradient(90deg,#0ea5e9,#38bdf8);
+      color: #fff;
+    }
+    /* Testimonials */
+    blockquote {
+      background: rgba(56,189,248,0.09);
+      border-left: 4px solid var(--accent2);
+      margin: 0 0 1em 0;
+      padding: 1em;
+      border-radius: 0.5em;
+      font-style: italic;
+      color: inherit;
+    }
+    /* Social share */
+    .share-btns a {
+      display: inline-block;
+      margin: 0 0.3em;
+      background: linear-gradient(90deg,#38bdf8,#0ea5e9);
+      color: #0f172a;
+      padding: 0.4em 0.8em;
+      border-radius: 0.4em;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.19s, color 0.15s;
+    }
+    .share-btns a:hover {
+      background: linear-gradient(90deg,#0ea5e9,#38bdf8);
+      color: #fff;
+    }
+    /* Accessibility controls */
+    .access-controls {
+      position:fixed;
+      bottom:1em; left:1em;
+      z-index:999;
+      background:rgba(30,41,59,0.94);
+      padding:0.7em 1em;
+      border-radius:0.7em;
+      box-shadow:0 2px 8px 0 rgba(30,41,59,0.13);
+    }
+    .access-controls button {
+      margin:0 0.2em;
+      font-size:1.1em;
+      background:linear-gradient(90deg,#38bdf8,#0ea5e9);
+      color:#0f172a;
+      border:none;
+      border-radius:0.4em;
+      padding:0.3em 0.7em;
+      cursor:pointer;
+    }
+    .access-controls button:hover {
+      background:linear-gradient(90deg,#0ea5e9,#38bdf8);
+      color:#fff;
+    }
+    /* Theme toggle button */
+    #theme-toggle {
+      position:fixed;
+      bottom:1em;
+      right:1em;
+      z-index:999;
+      background:linear-gradient(90deg,#38bdf8,#0ea5e9);
+      color:#0f172a;
+      border:none;
+      border-radius:0.5em;
+      padding:0.5em 0.9em;
+      font-size:1.2em;
+      cursor:pointer;
+      box-shadow:0 2px 8px 0 rgba(30,41,59,0.09);
+      transition: background 0.19s, color 0.15s;
+    }
+    #theme-toggle:hover {
+      background:linear-gradient(90deg,#0ea5e9,#38bdf8);
+      color:#fff;
+    }
+    @media (max-width: 700px) {
+      main { padding: 1.1rem; }
+      header { padding: 1rem 0 0.7rem 0; }
+      nav { flex-direction: column; align-items: center; }
+      nav a { width: 90%; text-align: center; margin-bottom: 0.2em; }
+      .access-controls, #theme-toggle { position:static; display:block; margin:1em auto;}
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>🪐 Sathyadarshana Astrology</h1>
-    <p>Explore the cosmic science & wisdom tools</p>
+    <h1 data-i18n="header-title">🪐 Sathyadarshana Astrology</h1>
+    <p data-i18n="header-sub">Explore the cosmic science &amp; wisdom tools</p>
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="si">සිංහල</button>
+      <button class="lang-btn" data-lang="ta">தமிழ்</button>
+    </div>
   </header>
-  <nav>
-    <a href="/kp_live_report_with_chart.html">KP Live Report</a>
-    <a href="/kp_live_report_seed_project.html">Seed Project Edition</a>
-    <a href="#palmistry">Palmistry</a>
-    <a href="#numerology">Numerology</a>
-    <a href="#geo">GeoVision</a>
+  <nav aria-label="Main navigation">
+    <a href="/kp_life_prediction.html" data-i18n="nav-kp">Advanced KP Life Prediction</a>
+    <a href="#palmistry" data-i18n="nav-palm">Palmistry</a>
+    <a href="#numerology" data-i18n="nav-num">Numerology</a>
+    <a href="#geo" data-i18n="nav-geo">GeoVision</a>
   </nav>
-  <main id="kp">
-    <h2>KP Live Charts</h2>
-    <p>Use the above links to access KP Reports (Live & Seed Edition).</p>
+  <main id="kp" aria-labelledby="kp-title">
+    <h2 id="kp-title" data-i18n="main-kp-title">Astrology Services</h2>
+    <p data-i18n="main-kp-desc">Access KP Life Prediction ($5), Palmistry, Numerology, and GeoVision modules here.</p>
   </main>
-  <main id="palmistry">
-    <h2>Palmistry</h2>
-    <p class="coming">Coming Soon.</p>
+  <main id="palmistry" aria-labelledby="palmistry-title">
+    <h2 id="palmistry-title" data-i18n="main-palm-title">Palmistry</h2>
+    <p class="coming" data-i18n="main-coming">Coming Soon.</p>
   </main>
-  <main id="numerology">
-    <h2>Numerology</h2>
-    <p class="coming">Coming Soon.</p>
+  <main id="numerology" aria-labelledby="numerology-title">
+    <h2 id="numerology-title" data-i18n="main-num-title">Numerology</h2>
+    <p class="coming" data-i18n="main-coming">Coming Soon.</p>
   </main>
-  <main id="geo">
-    <h2>GeoVision</h2>
-    <p class="coming">Coming Soon.</p>
+  <main id="geo" aria-labelledby="geo-title">
+    <h2 id="geo-title" data-i18n="main-geo-title">GeoVision</h2>
+    <p class="coming" data-i18n="main-coming">Coming Soon.</p>
   </main>
-  <footer style="text-align:center; color:#7dd3fc; margin-top:2em; padding:1em 0;">
-    &copy; 2025 Sathyadarshana Astrology | Concept by Anurudda | Executed by Buddhi AI  
-    <br><strong>All Rights Reserved – High Copyright</strong>
+
+  <!-- FAQ Section -->
+  <main id="faq">
+    <h2 data-i18n="faq-title">FAQs</h2>
+    <details>
+      <summary data-i18n="faq-q1">What is KP Astrology?</summary>
+      <p data-i18n="faq-a1">KP Astrology is a scientific method of astrological prediction based on stellar positions.</p>
+    </details>
+    <details>
+      <summary data-i18n="faq-q2">How can I request a prediction?</summary>
+      <p data-i18n="faq-a2">Use the contact form below to submit your details and question.</p>
+    </details>
+  </main>
+
+  <!-- Contact Form -->
+  <main id="contact">
+    <h2 data-i18n="contact-title">Contact / Inquiry</h2>
+    <form action="https://formspree.io/f/yourid" method="POST">
+      <input name="name" type="text" required placeholder="Your Name" data-i18n-placeholder="contact-name">
+      <input name="email" type="email" required placeholder="Your Email" data-i18n-placeholder="contact-email">
+      <textarea name="message" required placeholder="Your Message" data-i18n-placeholder="contact-msg"></textarea>
+      <button type="submit" data-i18n="contact-btn">Send</button>
+    </form>
+  </main>
+
+  <!-- Testimonials -->
+  <main id="testimonials">
+    <h2 data-i18n="testimonials-title">Testimonials</h2>
+    <blockquote data-i18n="testimonial-1">
+      "KP Prediction was very accurate. Highly recommend!" – Kasun D.
+    </blockquote>
+    <blockquote data-i18n="testimonial-2">
+      "Friendly service & deep knowledge!" – Priya S.
+    </blockquote>
+  </main>
+
+  <!-- Social Share Buttons -->
+  <div class="share-btns" style="text-align:center;margin:1em 0;">
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https://your-astrology-site.com" target="_blank" data-i18n="share-fb">Share on Facebook</a>
+    <a href="https://wa.me/?text=https://your-astrology-site.com" target="_blank" data-i18n="share-wa">Share on WhatsApp</a>
+  </div>
+
+  <!-- Newsletter -->
+  <main id="newsletter">
+    <h2 data-i18n="newsletter-title">Subscribe for Updates</h2>
+    <form action="https://formspree.io/f/yourid" method="POST">
+      <input type="email" name="email" required placeholder="Your Email" data-i18n-placeholder="newsletter-email">
+      <button type="submit" data-i18n="newsletter-btn">Subscribe</button>
+    </form>
+  </main>
+
+  <footer>
+    <span data-i18n="footer-main">&copy; 2025 Sathyadarshana Astrology | Concept by Anurudda | Executed by Buddhi AI</span>
+    <br><strong data-i18n="footer-copyright">All Rights Reserved – High Copyright</strong>
   </footer>
+
+  <!-- Accessibility Controls -->
+  <div class="access-controls">
+    <button onclick="document.body.style.fontSize='1.13em'">A+</button>
+    <button onclick="document.body.style.fontSize='1em'">A-</button>
+  </div>
+  <!-- Theme Toggle -->
+  <button id="theme-toggle">🌙/☀️</button>
+
+  <!-- Language Switcher JS -->
+  <script>
+const LANGUAGES = {
+  en: {
+    "header-title": "🪐 Sathyadarshana Astrology",
+    "header-sub": "Explore the cosmic science & wisdom tools",
+    "nav-kp": "Advanced KP Life Prediction",
+    "nav-palm": "Palmistry",
+    "nav-num": "Numerology",
+    "nav-geo": "GeoVision",
+    "main-kp-title": "Astrology Services",
+    "main-kp-desc": "Access KP Life Prediction ($5), Palmistry, Numerology, and GeoVision modules here.",
+    "main-palm-title": "Palmistry",
+    "main-num-title": "Numerology",
+    "main-geo-title": "GeoVision",
+    "main-coming": "Coming Soon.",
+    "faq-title": "FAQs",
+    "faq-q1": "What is KP Astrology?",
+    "faq-a1": "KP Astrology is a scientific method of astrological prediction based on stellar positions.",
+    "faq-q2": "How can I request a prediction?",
+    "faq-a2": "Use the contact form below to submit your details and question.",
+    "contact-title": "Contact / Inquiry",
+    "contact-name": "Your Name",
+    "contact-email": "Your Email",
+    "contact-msg": "Your Message",
+    "contact-btn": "Send",
+    "testimonials-title": "Testimonials",
+    "testimonial-1": "\"KP Prediction was very accurate. Highly recommend!\" – Kasun D.",
+    "testimonial-2": "\"Friendly service & deep knowledge!\" – Priya S.",
+    "share-fb": "Share on Facebook",
+    "share-wa": "Share on WhatsApp",
+    "newsletter-title": "Subscribe for Updates",
+    "newsletter-email": "Your Email",
+    "newsletter-btn": "Subscribe",
+    "footer-main": "© 2025 Sathyadarshana Astrology | Concept by Anurudda | Executed by Buddhi AI",
+    "footer-copyright": "All Rights Reserved – High Copyright"
+  },
+  si: {
+    "header-title": "🪐 සත්‍යදර්ශන ජ්‍යොතිෂය",
+    "header-sub": "කොස්මික් විද්‍යා හා ඥානාත්මක මෙවලම් සොයන්න",
+    "nav-kp": "උසස් KP ජීවන ප්‍රවචන",
+    "nav-palm": "අත්රේඛාව",
+    "nav-num": "අංක විද්‍යාව",
+    "nav-geo": "GeoVision",
+    "main-kp-title": "ජ්‍යොතිෂ සේවා",
+    "main-kp-desc": "KP ජීවන ප්‍රවචන ($5), අත්රේඛාව, අංක විද්‍යාව සහ GeoVision මෙවලම් මෙහි ලබාගන්න.",
+    "main-palm-title": "අත්රේඛාව",
+    "main-num-title": "අංක විද්‍යාව",
+    "main-geo-title": "GeoVision",
+    "main-coming": "ඉක්මනින් පැමිණේ.",
+    "faq-title": "ප්‍රශ්න සහ පිළිතුරු",
+    "faq-q1": "KP ජ්‍යොතිෂය කියන්නේ මොකක්ද?",
+    "faq-a1": "KP ජ්‍යොතිෂය කියන්නේ තරු තත්ත්වයන් මත පදනම් වූ විද්‍යාත්මක ප්‍රවචන ක්‍රමයක්.",
+    "faq-q2": "මම ප්‍රවචනයක් ඉල්ලන්න කොහොමද?",
+    "faq-a2": "පහළින් ඇති සම්බන්ධතා පෝරමය භාවිතා කර ඔබේ විස්තර සහ ප්‍රශ්නය යවන්න.",
+    "contact-title": "සම්බන්ධ වෙන්න / ඉල්ලීම්",
+    "contact-name": "ඔබේ නම",
+    "contact-email": "ඔබේ ඊමේල්",
+    "contact-msg": "ඔබේ පණිවුඩය",
+    "contact-btn": "යවන්න",
+    "testimonials-title": "පාරිභෝගික අදහස්",
+    "testimonial-1": "\"KP ප්‍රවචනය ඉතා නිවැරදියි. අධික ලෙස නිර්දේශ කරමි!\" – කසුන් ද.",
+    "testimonial-2": "\"හිතවත් සේවාව සහ ගැඹුරු දැනුම!\" – ප්‍රියා ස.",
+    "share-fb": "Facebook එකේ බෙදාගන්න",
+    "share-wa": "WhatsApp එකේ බෙදාගන්න",
+    "newsletter-title": "යාවත්කාලීන සඳහා දායක වන්න",
+    "newsletter-email": "ඔබේ ඊමේල්",
+    "newsletter-btn": "දායක වන්න",
+    "footer-main": "© 2025 සත්‍යදර්ශන ජ්‍යොතිෂය | අදහස: Anurudda | ක්‍රියාත්මක කිරීම: Buddhi AI",
+    "footer-copyright": "සියලු හිමිකම් ඇවිරිණි – උසස් කාපිරයිට්"
+  },
+  ta: {
+    "header-title": "🪐 சத்தியதர்ஷன ஜோதிடம்",
+    "header-sub": "காச்மிக் அறிவியல் மற்றும் ஞான கருவிகளை ஆராயுங்கள்",
+    "nav-kp": "மேம்பட்ட KP வாழ்க்கை கணிப்பு",
+    "nav-palm": "கைரேகை",
+    "nav-num": "எண் ஜோதிடம்",
+    "nav-geo": "GeoVision",
+    "main-kp-title": "ஜோதிடம் சேவைகள்",
+    "main-kp-desc": "KP வாழ்க்கை கணிப்பு ($5), கைரேகை, எண் ஜோதிடம் மற்றும் GeoVision தொகுப்புகளை இங்கே அணுகுங்கள்.",
+    "main-palm-title": "கைரேகை",
+    "main-num-title": "எண் ஜோதிடம்",
+    "main-geo-title": "GeoVision",
+    "main-coming": "விரைவில் வருகிறது.",
+    "faq-title": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+    "faq-q1": "KP ஜோதிடம் என்றால் என்ன?",
+    "faq-a1": "KP ஜோதிடம் என்பது விண்மீன் நிலைகளைக் கொண்டு கணிப்பு செய்யும் அறிவியல் முறை.",
+    "faq-q2": "நான் கணிப்பை எப்படி கேட்கலாம்?",
+    "faq-a2": "கீழே உள்ள தொடர்பு படிவத்தை பயன்படுத்தி உங்கள் விபரங்கள் மற்றும் கேள்வியை சமர்ப்பிக்கவும்.",
+    "contact-title": "தொடர்பு / விசாரணை",
+    "contact-name": "உங்கள் பெயர்",
+    "contact-email": "உங்கள் மின்னஞ்சல்",
+    "contact-msg": "உங்கள் செய்தி",
+    "contact-btn": "அனுப்பு",
+    "testimonials-title": "வாடிக்கையாளர் விமர்சனங்கள்",
+    "testimonial-1": "\"KP கணிப்பு மிகவும் துல்லியமானது. மிகவும் பரிந்துரைக்கிறேன்!\" – காசன் டி.",
+    "testimonial-2": "\"நட்பு சேவை & ஆழ்ந்த அறிவு!\" – பிரியா எஸ்.",
+    "share-fb": "Facebook-இல் பகிரவும்",
+    "share-wa": "WhatsApp-இல் பகிரவும்",
+    "newsletter-title": "புதிய தகவல்களுக்கு சந்தா",
+    "newsletter-email": "உங்கள் மின்னஞ்சல்",
+    "newsletter-btn": "சந்தா",
+    "footer-main": "© 2025 சத்தியதர்ஷன ஜோதிடம் | கருத்து: Anurudda | செயல்படுத்தியது: Buddhi AI",
+    "footer-copyright": "அனைத்து உரிமைகள் பாதுகாக்கப்பட்டவை – உயர் பதிப்புரிமை"
+  }
+};
+
+function setLanguage(lang) {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (LANGUAGES[lang][key]) {
+      el.innerHTML = LANGUAGES[lang][key];
+    }
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (LANGUAGES[lang][key]) {
+      el.placeholder = LANGUAGES[lang][key];
+    }
+  });
+  localStorage.setItem('site-lang', lang);
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setLanguage(btn.getAttribute('data-lang'));
+  });
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const lang = localStorage.getItem('site-lang') || 'en';
+  setLanguage(lang);
+});
+
+// Dark/Light theme toggle
+document.getElementById('theme-toggle').onclick = function() {
+  document.body.classList.toggle('light-mode');
+  localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+};
+if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
+  </script>
 </body>
 </html>

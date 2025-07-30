@@ -1,4 +1,44 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KP Live Report with Chart</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+    canvas {
+      border: 1px solid #444;
+      background: #1e293b;
+      display: block;
+      margin: 2rem auto;
+    }
+    input, button {
+      padding: 0.5rem;
+      margin: 0.3rem;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🌌 KP Live Planetary Chart</h2>
+  <form id="kpForm">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="date" id="dob" required>
+    <input type="time" id="tob" required>
+    <input type="text" id="pob" placeholder="Place of Birth (e.g. Galle)" required>
+    <button type="submit">Generate Chart</button>
+  </form>
+
+  <p id="resultMsg"></p>
+  <canvas id="astroChart" width="400" height="400"></canvas>
+
+  <!-- ✅ KP Chart Script -->
+  <script>
 // --- Geocoding (OpenStreetMap fallback) ---
 async function getLatLong(place) {
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`;
@@ -123,3 +163,6 @@ document.getElementById('kpForm').addEventListener('submit', async e => {
 });
 drawAstroChart([]);
 </script>
+
+</body>
+</html>

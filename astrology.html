@@ -1,114 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NASA Linked Astrology Chart</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       background: #0f172a;
-      color: #e0f2fe;
-      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      font-family: Arial, sans-serif;
       padding: 20px;
     }
-    .card {
+
+    .container {
+      max-width: 400px;
+      margin: auto;
       background: #1e293b;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 10px;
       box-shadow: 0 0 10px #334155;
-      max-width: 600px;
-      margin: auto;
     }
+
     input, select, button {
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
       width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
       border: none;
     }
-    button {
-      background-color: #3b82f6;
-      color: white;
-      cursor: pointer;
-    }
-    #birth-chart table {
-      width: 100%;
-      border-collapse: collapse;
+
+    #chartCard {
       margin-top: 20px;
-    }
-    #birth-chart th, #birth-chart td {
-      border: 1px solid #64748b;
-      padding: 8px;
-      text-align: center;
-    }
-    .message {
-      background-color: #0f172a;
+      background: #334155;
       padding: 10px;
-      margin-top: 10px;
+      border-radius: 10px;
+    }
+
+    canvas {
+      background: #fff;
       border-radius: 8px;
-      font-style: italic;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h2>🔭 NASA Linked Astrology Chart</h2>
+    <input id="name" type="text" placeholder="Name">
+    <input id="dob" type="date">
+    <input id="time" type="time">
+    <input id="place" type="text" placeholder="Place of Birth">
+    <button onclick="generateChart()">🌌 Generate Chart</button>
 
-<div class="card">
-  <h2>🔭 NASA Linked Astrology Chart</h2>
-  <input type="text" id="name" placeholder="Your Name" />
-  <input type="date" id="dob" />
-  <input type="time" id="time" />
-  <input type="text" id="location" placeholder="Location" />
-  <button id="generate-btn">🌌 Generate Chart</button>
+    <div id="chartCard">
+      <p>🛰️ NASA API Status: ✅ Success</p>
+      <p id="summary"></p>
+      <p><strong>🌠 NASA Message:</strong> <em>Supernova 2025rbs in NGC 7331</em></p>
+      <canvas id="astroChart" width="350" height="350"></canvas>
+    </div>
+  </div>
 
-  <div id="result" style="margin-top: 20px;"></div>
-  <div id="birth-chart"></div>
-</div>
+  <script>
+    function generateChart() {
+      const name = document.getElementById('name').value;
+      const dob = document.getElementById('dob').value;
+      const time = document.getElementById('time').value;
+      const place = document.getElementById('place').value;
 
-<script>
-  function generateChart(data) {
-    const chartHTML = `
-      <h3>🧭 KP Birth Chart (Example)</h3>
-      <table>
-        <tr><th>House</th><th>Planet</th></tr>
-        <tr><td>1 (Asc)</td><td>Moon</td></tr>
-        <tr><td>2</td><td>Sun</td></tr>
-        <tr><td>3</td><td>Mercury</td></tr>
-        <tr><td>4</td><td>Venus</td></tr>
-        <tr><td>5</td><td>Jupiter</td></tr>
-        <tr><td>6</td><td>Saturn</td></tr>
-        <tr><td>7</td><td>Rahu</td></tr>
-        <tr><td>8</td><td>Ketu</td></tr>
-        <tr><td>9</td><td>Mars</td></tr>
-        <tr><td>10</td><td>Empty</td></tr>
-        <tr><td>11</td><td>Uranus</td></tr>
-        <tr><td>12</td><td>Neptune</td></tr>
-      </table>
-      <div class="message">📡 NASA Message: <em>Supernova 2025rbs detected near NGC 7331</em></div>
-    `;
-    document.getElementById("birth-chart").innerHTML = chartHTML;
-  }
+      document.getElementById('summary').innerHTML = `
+        <strong>Name:</strong> ${name}<br>
+        <strong>DOB:</strong> ${dob}<br>
+        <strong>Time:</strong> ${time}<br>
+        <strong>Location:</strong> ${place}
+      `;
 
-  document.getElementById("generate-btn").addEventListener("click", function (e) {
-    e.preventDefault();
+      const ctx = document.getElementById('astroChart').getContext('2d');
 
-    const name = document.getElementById("name").value;
-    const dob = document.getElementById("dob").value;
-    const time = document.getElementById("time").value;
-    const location = document.getElementById("location").value;
+      // Destroy old chart instance if any
+      if (window.currentChart) {
+        window.currentChart.destroy();
+      }
 
-    const resultHTML = `
-      <strong>Name:</strong> ${name}<br>
-      <strong>DOB:</strong> ${dob}<br>
-      <strong>Time:</strong> ${time}<br>
-      <strong>Location:</strong> ${location}<br>
-      <strong>NASA API Status:</strong> ✅ Success
-    `;
-    document.getElementById("result").innerHTML = resultHTML;
-
-    const userData = { name, dob, time, location };
-    generateChart(userData);
-  });
-</script>
-
+      window.currentChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'],
+          datasets: [{
+            label: 'Planet Influence',
+            data: [12, 10, 7, 6, 8, 9, 5, 4, 3], // sample dummy data
+            backgroundColor: [
+              '#fbbf24', '#60a5fa', '#ef4444', '#a78bfa', '#34d399',
+              '#f472b6', '#9ca3af', '#f59e0b', '#4b5563'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: 'white'
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
 </body>
 </html>

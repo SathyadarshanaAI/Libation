@@ -1,226 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sathyadarshana Astrology</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="/assets/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sathyadarshana | Astrology</title>
   <style>
     body {
-      margin: 0;
-      padding: 2rem;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0f172a;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
-    }
-    h1, h2 {
-      color: #7dd3fc;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
       text-align: center;
-    }
-    form, .tariff, .sub-pages {
-      background-color: rgba(30,41,59,0.94);
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin: 1.5rem auto;
-      max-width: 600px;
-      box-shadow: 0 0 10px #0891b2;
-    }
-    input, button {
-      padding: 0.6rem;
-      margin: 0.3rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: none;
     }
     button {
-      background: #38bdf8;
-      color: #000;
+      background-color: #22d3ee;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
       cursor: pointer;
+      margin-top: 1rem;
+      color: #0f172a;
+      font-weight: bold;
     }
     canvas {
-      display: block;
-      margin: 2rem auto;
-      background: #1e293b;
+      margin-top: 2rem;
       border: 1px solid #334155;
-    }
-    .sub-pages a {
-      display: inline-block;
+      border-radius: 1rem;
       background: #1e293b;
-      color: #bae6fd;
-      padding: 10px 16px;
-      margin: 5px;
-      border-radius: 10px;
-      text-decoration: none;
-      box-shadow: 0 0 8px #38bdf8;
-      white-space: nowrap;
-    }
-    .sub-pages {
-      overflow-x: auto;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      padding-top: 1em;
-      flex-wrap: wrap;
-    }
-    #buddhi-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #14b8a6;
-      color: #000;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 1.5rem;
-      text-align: center;
-      line-height: 50px;
-      text-decoration: none;
-      box-shadow: 0 0 10px #14b8a6;
     }
   </style>
 </head>
 <body>
 
-  <h1>🌌 Sathyadarshana Astrology</h1>
+  <h1>🪐 Sathyadarshana Astrology</h1>
+  <p>Explore your planetary chart with AI-assisted insight.</p>
 
-  <form id="kpForm">
-    <h2>KP Live Chart</h2>
-    <input type="text" id="name" placeholder="Your Name" required>
-    <input type="date" id="dob" required>
-    <input type="time" id="tob" required>
-    <input type="text" id="pob" placeholder="Place of Birth (e.g. Galle)" required>
-    <button type="submit">Generate Chart</button>
-  </form>
+  <!-- Generate Chart Button -->
+  <button onclick="generateChart()">Generate Chart</button>
 
-  <p id="resultMsg" style="text-align:center;"></p>
+  <!-- Chart Canvas -->
   <canvas id="astroChart" width="400" height="400"></canvas>
 
-  <div class="tariff">
-    <h2>📜 Tariff Plans</h2>
-    <p>🔮 <strong>Standard Life-Time Report:</strong> $5 (One-time)</p>
-    <p>🚀 <strong>Advanced Seed Insight (Yearly Access):</strong> $30</p>
-    <ul>
-      <li>✅ Daily planetary trends</li>
-      <li>✅ Good/Bad time alerts</li>
-      <li>✅ Spiritual AI Buddhi support</li>
-      <li>✅ Personalized guidance</li>
-    </ul>
-  </div>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <div>
-    <h2>🔭 Explore More Astrology Tools</h2>
-    <div class="sub-pages">
-      <a href="palmistry.html">✋ Palmistry</a>
-      <a href="numerology.html">🔢 Numerology</a>
-      <a href="nadi.html">🕉️ Nadi</a>
-      <a href="vedic-astrology.html">🌌 Vedic</a>
-      <a href="astrology-research.html">🧠 AI Lab</a>
-    </div>
-  </div>
-
-  <a id="buddhi-btn" href="ai-buddhi.html">🧠</a>
-
+  <!-- Chart Generator Logic -->
   <script>
-    // --- Geocode ---
-    async function getLatLong(place) {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data && data.length > 0) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
-      return { lat: 6.9271, lon: 79.8612 }; // Colombo fallback
-    }
+    function generateChart() {
+      const ctx = document.getElementById('astroChart').getContext('2d');
 
-    // --- Planet List ---
-    const planetList = [
-      { name: "Sun", id: "10", color: "#FFD700" },
-      { name: "Moon", id: "301", color: "#F5F3CE" },
-      { name: "Mercury", id: "199", color: "#A9A9A9" },
-      { name: "Venus", id: "299", color: "#FFB6C1" },
-      { name: "Mars", id: "499", color: "#D94F4F" },
-      { name: "Jupiter", id: "599", color: "#F7C873" },
-      { name: "Saturn", id: "699", color: "#E5C07B" }
-    ];
-
-    async function getPlanetLongitude(dateStr, timeStr, lat, lon, planetId) {
-      const params = new URLSearchParams({
-        COMMAND: `'${planetId}'`,
-        EPHEM_TYPE: 'OBSERVER',
-        SITE_COORD: `'${lon},${lat},0'`,
-        START_TIME: `'${dateStr} ${timeStr}'`,
-        STOP_TIME: `'${dateStr} ${timeStr}'`,
-        STEP_SIZE: "'1 d'",
-        QUANTITIES: "'1,2,3,4,20'",
-        CSV_FORMAT: 'YES'
-      });
-      try {
-        const res = await fetch(`/.netlify/functions/horizons?${params.toString()}`);
-        const data = await res.json();
-        const line = data.result.split("\n").find(l => /^[0-9]/.test(l));
-        if (line) return parseFloat(line.trim().split(",")[4]);
-      } catch (e) {
-        console.error("Error:", e);
+      // Clear previous chart if exists
+      if (window.myAstroChart) {
+        window.myAstroChart.destroy();
       }
-      return null;
-    }
 
-    async function getAllPlanets(dateStr, timeStr, lat, lon) {
-      const arr = [];
-      for (const p of planetList) {
-        const deg = await getPlanetLongitude(dateStr, timeStr, lat, lon, p.id);
-        if (deg !== null) arr.push({ ...p, degree: deg });
-      }
-      return arr;
-    }
+      // Sample Planetary Longitudes (°)
+      const planetNames = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+      const planetPositions = [145, 212, 89, 67, 320, 144, 178]; // Dummy Data
 
-    function drawAstroChart(planets) {
-      const c = document.getElementById('astroChart');
-      const ctx = c.getContext('2d');
-      ctx.clearRect(0, 0, 400, 400);
-      ctx.beginPath();
-      ctx.arc(200, 200, 150, 0, 2 * Math.PI);
-      ctx.strokeStyle = "#334155";
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      for (let i = 0; i < 12; i++) {
-        const a = (i * 30 - 90) * Math.PI / 180;
-        ctx.beginPath();
-        ctx.moveTo(200, 200);
-        ctx.lineTo(200 + 150 * Math.cos(a), 200 + 150 * Math.sin(a));
-        ctx.strokeStyle = "#aaa";
-        ctx.stroke();
-      }
-      planets.forEach(p => {
-        const a = ((p.degree % 360) - 90) * Math.PI / 180;
-        const x = 200 + 130 * Math.cos(a);
-        const y = 200 + 130 * Math.sin(a);
-        ctx.beginPath();
-        ctx.arc(x, y, 10, 0, 2 * Math.PI);
-        ctx.fillStyle = p.color;
-        ctx.fill();
-        ctx.fillStyle = "#000";
-        ctx.font = "bold 12px Arial";
-        ctx.fillText(p.name, x - 15, y - 15);
+      const data = {
+        labels: planetNames,
+        datasets: [{
+          label: 'Planetary Longitudes (°)',
+          data: planetPositions,
+          backgroundColor: [
+            '#facc15', '#fef08a', '#f87171',
+            '#a3a3a3', '#7dd3fc', '#fda4af', '#c4b5fd'
+          ],
+          borderColor: '#e2e8f0',
+          borderWidth: 1
+        }]
+      };
+
+      const options = {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: {
+              color: '#e0f2fe'
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 360,
+            ticks: {
+              color: '#bae6fd'
+            },
+            grid: {
+              color: '#334155'
+            }
+          },
+          x: {
+            ticks: {
+              color: '#bae6fd'
+            },
+            grid: {
+              color: '#334155'
+            }
+          }
+        }
+      };
+
+      window.myAstroChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: options
       });
     }
-
-    document.getElementById('kpForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      const name = document.getElementById('name').value;
-      const dob = document.getElementById('dob').value;
-      const tob = document.getElementById('tob').value;
-      const pob = document.getElementById('pob').value;
-      document.getElementById('resultMsg').textContent = "Generating...";
-      const coords = await getLatLong(pob);
-      const planets = await getAllPlanets(dob, tob, coords.lat, coords.lon);
-      if (planets.length === 0) {
-        document.getElementById('resultMsg').textContent = "No data found.";
-        return;
-      }
-      drawAstroChart(planets);
-      document.getElementById('resultMsg').textContent = "✅ Report ready!";
-    });
-
-    drawAstroChart([]);
   </script>
+
 </body>
 </html>

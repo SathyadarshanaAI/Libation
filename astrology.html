@@ -1,125 +1,137 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana Astrology Chart</title>
+  <title>KP Sub-Lord Calculator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #0f172a;
-      color: #f1f5f9;
-      margin: 0;
-      padding: 2rem;
+      color: #e0f2fe;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
     }
-    h1 {
+    .container {
+      background-color: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #0ea5e9;
+      width: 90%;
+      max-width: 400px;
+    }
+    h2 {
       text-align: center;
       color: #38bdf8;
+      margin-bottom: 20px;
     }
-    .chart-box {
-      max-width: 500px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: rgba(15, 23, 42, 0.9);
-      border-radius: 1rem;
-      box-shadow: 0 0 15px #38bdf8aa;
-    }
-    .label {
-      margin-top: 1rem;
-    }
-    select, input[type="number"] {
+    select, input, button {
       width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border-radius: 0.5rem;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
       border: none;
-      background: #1e293b;
-      color: #f1f5f9;
+      font-size: 16px;
     }
     button {
-      margin-top: 1.5rem;
-      padding: 0.75rem;
-      width: 100%;
-      background: #38bdf8;
-      border: none;
-      border-radius: 0.5rem;
-      color: #0f172a;
+      background-color: #0ea5e9;
+      color: #000;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 15px;
     }
-    .result {
-      margin-top: 2rem;
-      padding: 1rem;
-      background: #1e3a8a;
-      border-radius: 0.5rem;
-      white-space: pre-wrap;
+    .result, #prediction {
+      background-color: #1e293b;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+      color: #cbd5e1;
+      white-space: pre-line;
     }
   </style>
 </head>
 <body>
-  <h1>KP Sub-Lord Calculator</h1>
-  <div class="chart-box">
-    <label class="label">Planet:</label>
+  <div class="container">
+    <h2>KP Sub-Lord Calculator</h2>
+    <label for="planet">Planet:</label>
     <select id="planet">
-      <option value="Moon">Moon</option>
-      <option value="Sun">Sun</option>
-      <option value="Mars">Mars</option>
-      <option value="Mercury">Mercury</option>
-      <option value="Jupiter">Jupiter</option>
-      <option value="Venus">Venus</option>
-      <option value="Saturn">Saturn</option>
-      <option value="Rahu">Rahu</option>
-      <option value="Ketu">Ketu</option>
-    </select><label class="label">Degrees (0-30° in Rashi):</label>
-<input type="number" id="degrees" step="0.1" min="0" max="30">
+      <option>Sun</option>
+      <option>Moon</option>
+      <option>Mars</option>
+      <option>Mercury</option>
+      <option>Jupiter</option>
+      <option>Venus</option>
+      <option>Saturn</option>
+    </select>
 
-<button onclick="calculateSubLord()">Get Sub-Lord</button>
+    <label for="degree">Degrees (0-30° in Rashi):</label>
+    <input type="number" id="degree" placeholder="E.g., 20" min="0" max="30">
 
-<div class="result" id="output"></div>
+    <button onclick="getSubLord()">Get Sub-Lord</button>
 
-  </div>  <script>
-    const nakshatras = [
-      { name: "Ashwini", lord: "Ketu" },
-      { name: "Bharani", lord: "Venus" },
-      { name: "Krittika", lord: "Sun" },
-      { name: "Rohini", lord: "Moon" },
-      { name: "Mrigashira", lord: "Mars" },
-      { name: "Ardra", lord: "Rahu" },
-      { name: "Punarvasu", lord: "Jupiter" },
-      { name: "Pushya", lord: "Saturn" },
-      { name: "Ashlesha", lord: "Mercury" },
-      { name: "Magha", lord: "Ketu" },
-      { name: "Purva Phalguni", lord: "Venus" },
-      { name: "Uttara Phalguni", lord: "Sun" },
-      { name: "Hasta", lord: "Moon" },
-      { name: "Chitra", lord: "Mars" },
-      { name: "Swati", lord: "Rahu" },
-      { name: "Vishakha", lord: "Jupiter" },
-      { name: "Anuradha", lord: "Saturn" },
-      { name: "Jyeshtha", lord: "Mercury" },
-      { name: "Mula", lord: "Ketu" },
-      { name: "Purva Ashadha", lord: "Venus" },
-      { name: "Uttara Ashadha", lord: "Sun" },
-      { name: "Shravana", lord: "Moon" },
-      { name: "Dhanishta", lord: "Mars" },
-      { name: "Shatabhisha", lord: "Rahu" },
-      { name: "Purva Bhadrapada", lord: "Jupiter" },
-      { name: "Uttara Bhadrapada", lord: "Saturn" },
-      { name: "Revati", lord: "Mercury" }
-    ];
+    <div id="result" class="result"></div>
+    <div id="prediction" class="result"></div>
+  </div>
 
-    function calculateSubLord() {
-      const degrees = parseFloat(document.getElementById("degrees").value);
+  <script>
+    function getSubLord() {
       const planet = document.getElementById("planet").value;
-      if (isNaN(degrees) || degrees < 0 || degrees > 30) {
-        document.getElementById("output").innerText = "Please enter a degree between 0 and 30.";
+      const degree = parseFloat(document.getElementById("degree").value);
+
+      let nakshatra = "";
+      let starLord = "";
+
+      if (degree >= 0 && degree < 13.2) {
+        nakshatra = "Ashwini";
+        starLord = "Ketu";
+      } else if (degree >= 13.2 && degree < 26.4) {
+        nakshatra = "Bharani";
+        starLord = "Venus";
+      } else if (degree >= 26.4 && degree <= 30) {
+        nakshatra = "Krittika";
+        starLord = "Sun";
+      } else {
+        document.getElementById("result").innerText = "Invalid degree range. Must be 0–30°";
+        document.getElementById("prediction").innerText = "";
         return;
       }
-      const totalNakshatraDegrees = 13.3333;
-      let nakIndex = Math.floor(degrees / totalNakshatraDegrees);
-      const nakshatra = nakshatras[nakIndex];
 
-      const output = `Planet: ${planet}\nPosition: ${degrees.toFixed(2)}°\nNakshatra: ${nakshatra.name}\nStar Lord: ${nakshatra.lord}`;
-      document.getElementById("output").innerText = output;
+      const resultText = `Planet: ${planet}\nPosition: ${degree.toFixed(2)}°\nNakshatra: ${nakshatra}\nStar Lord: ${starLord}`;
+      document.getElementById("result").innerText = resultText;
+
+      showPrediction(planet, nakshatra, starLord);
     }
-  </script></body>
+
+    const kpPredictions = {
+      Sun: {
+        Bharani: {
+          Venus: `☀️ Sun in Bharani (Venus):
+- Leadership blended with artistic grace
+- 📚 Career: Arts, Finance, Politics
+- ❤️ Sensitive in love matters
+- 🧘 Seek balance in ego vs. compassion`
+        }
+      },
+      Moon: {
+        Rohini: {
+          Moon: `🌙 Moon in Rohini (Moon):
+- Highly sensual and charming
+- 💼 Career: Beauty, Media, Food
+- ❤️ Romantic but moody
+- 🧠 Emotional intelligence high`
+        }
+      }
+    };
+
+    function showPrediction(planet, nakshatra, starLord) {
+      const prediction = kpPredictions?.[planet]?.[nakshatra]?.[starLord];
+      document.getElementById("prediction").innerText =
+        prediction || "🧘‍♂️ Prediction not available for this combination.";
+    }
+  </script>
+</body>
 </html>

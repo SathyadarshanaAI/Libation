@@ -1,270 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana Astrology</title>
-  <link rel="icon" href="/assets/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Astrology Report | Sathyadarshana</title>
   <style>
-    :root {
-      --bg-main: #0f172a;
-      --bg-card: rgba(30,41,59,0.94);
-      --bg-sidebar: rgba(2,6,23,0.98);
-      --accent1: #38bdf8;
-      --accent2: #0ea5e9;
-      --accent3: #7dd3fc;
-      --text-main: #e0f2fe;
-      --text-accent: #fb7185;
-      --radius-main: 1em;
-      --sidebar-width: 220px;
-    }
     body {
-      margin:0; font-family:'Segoe UI',Arial,sans-serif;
-      background:var(--bg-main); color:var(--text-main);
-      min-height:100vh; display:flex; flex-direction:row;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e0f2fe;
+      margin: 0;
+      padding: 2rem;
     }
-    /* Sidebar */
-    aside.sidebar {
-      width:var(--sidebar-width);
-      background:var(--bg-sidebar);
-      min-height:100vh;
-      display:flex; flex-direction:column; align-items:center;
-      padding:2em 1em 1em 1em;
-      position:fixed; left:0; top:0;
-      z-index:100;
-      box-shadow:0 8px 32px rgba(2,6,23,0.08);
+    h1 {
+      text-align: center;
+      color: #38bdf8;
     }
-    .sidebar h1 {
-      color:var(--accent3); font-size:1.2em; margin-bottom:1em; text-align:center;
-      letter-spacing:1px;
+    .tariff-box {
+      background: rgba(30,41,59,0.95);
+      border: 1px solid #38bdf8;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 600px;
+      border-radius: 12px;
     }
-    .sidebar .lang-switch {
-      margin-bottom:2em; text-align:center;
+    .tariff-box h2 {
+      color: #7dd3fc;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
     }
-    .lang-btn {
-      background: linear-gradient(90deg,#38bdf8,#0ea5e9);
+    .tariff-box ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .tariff-box li {
+      margin-bottom: 10px;
+      background: rgba(2,6,23,0.7);
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .note {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #a5f3fc;
+      font-size: 0.95rem;
+    }
+    .support-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #38bdf8;
       color: #0f172a;
-      border: none;
-      padding: 0.4em 0.7em;
-      margin: 0 0.2em 0.5em 0;
-      border-radius: 0.4em;
+      padding: 0.7rem 1.2rem;
+      border-radius: 2em;
+      font-weight: bold;
       cursor: pointer;
-      font-weight: 500;
-      transition: background 0.19s, color 0.15s;
-      font-size:1em;
-      display:inline-block;
+      box-shadow: 0 0 10px #38bdf8;
+      z-index: 1000;
     }
-    .lang-btn:hover, .lang-btn:focus {
-      background: linear-gradient(90deg,#0ea5e9,#38bdf8);
+    .support-btn:hover {
+      background: #0ea5e9;
       color: #fff;
     }
-    nav {
-      display:flex; flex-direction:column; gap:0.7em;
-      width:100%; text-align:left; margin-top:1em;
-      overflow-y:auto;
-      flex:1;
-    }
-    nav a {
-      text-decoration:none; color:var(--text-main);
-      background:linear-gradient(90deg,var(--accent1),var(--accent2));
-      padding:0.6rem 1.1rem; border-radius:0.5em; font-weight:500;
-      transition:background 0.2s, color 0.2s;
-      display:block;
-    }
-    nav a:hover {background:linear-gradient(90deg,var(--accent2),var(--accent1)); color:var(--bg-main);}
-    nav::-webkit-scrollbar {width:6px; background:transparent;}
-    nav::-webkit-scrollbar-thumb {background:var(--accent1); border-radius:3px;}
-    /* Main Content */
-    .main-content {
-      margin-left:var(--sidebar-width);
-      flex:1;
-      display:flex; flex-direction:column;
-      min-height:100vh;
-    }
-    header {
-      padding:2rem 0 1rem 0; text-align:center;
-    }
-    header h1 {color:var(--accent3); font-size:2em; margin:0.3em 0;}
-    header p {color:var(--text-main); opacity:0.9; margin:0;}
-    main {
-      max-width:600px; margin:2rem auto; background:var(--bg-card);
-      padding:2rem; border-radius:var(--radius-main);
-      box-shadow:0 8px 32px rgba(2,6,23,0.2);
-    }
-    main:not(:first-of-type){margin-top:0.8rem;}
-    h2 {color:var(--accent1); margin-bottom:0.5em;}
-    .coming {color:var(--text-accent); font-size:1.1em;}
-    .tariff-box {
-      margin-top:1.5rem; padding:1rem; border-radius:0.8em;
-      background:rgba(56,189,248,0.08); color:#bae6fd; font-size:1em;
-      border:1px solid var(--accent1);
-    }
-    .tariff-box h3 {color:var(--accent1);}
-    .tariff-box .free {color:#38bdf8; font-weight:bold;}
-    .tariff-box .paid {color:#fbbf24; font-weight:bold;}
-    /* Scroll-to-Top Button */
-    #scrollTop {
-      position:fixed; bottom:1.2em; right:1.2em;
-      background:linear-gradient(90deg,#38bdf8,#0ea5e9);
-      color:#0f172a; padding:0.5em 0.9em; font-size:1.3em;
-      border:none; border-radius:0.5em; cursor:pointer;
-      display:none; z-index:1000;
-      box-shadow:0 2px 10px rgba(30,41,59,0.3);
-    }
-    #scrollTop:hover {background:linear-gradient(90deg,#0ea5e9,#38bdf8); color:#fff;}
-    /* Watermark */
-    .watermark {
-      position:fixed; bottom:10%; left:50%; transform:translateX(-50%);
-      font-size:3em; color:rgba(56,189,248,0.06);
-      pointer-events:none; user-select:none; z-index:0;
-      white-space:nowrap;
-    }
-    footer {text-align:center; color:var(--accent3); padding:2em 0 1em 0;}
-    footer strong {color:var(--accent1);}
-    @media(max-width:900px){
-      :root {--sidebar-width:165px;}
-      .sidebar {padding:1.1em 0.5em;}
-      .main-content{margin-left:var(--sidebar-width);}
-    }
-    @media(max-width:700px){
-      body{flex-direction:column;}
-      aside.sidebar {
-        position:static; width:100%; min-height:auto;
-        flex-direction:row; justify-content:space-between; align-items:center;
-        padding:0.7em 0.3em;
-        box-shadow:none;
-      }
-      .sidebar h1 {display:none;}
-      nav {flex-direction:row; gap:0.5em; margin-top:0;}
-      nav a {padding:0.43em 0.7em;}
-      .main-content{margin-left:0;}
-      #scrollTop, .watermark {position:static;}
-      .watermark {display:none;}
-    }
-  </style>.committee-message {
-  max-width: 500px;
-  margin: 2em auto 0 auto;
-  background: rgba(56,189,248,0.11);
-  color: #0ea5e9;
-  border-radius: 1em;
-  padding: 1.4em 1.1em 1.2em 1.1em;
-  box-shadow: 0 4px 18px rgba(30,41,59,0.10);
-  text-align: center;
-  font-size: 1.13em;
-  border: 1.5px solid #38bdf8;
-  position: relative;
-}
-.committee-icon {
-  font-size: 2.3em;
-  display: block;
-  margin-bottom: 0.5em;
-  color: #38bdf8;
-}
-.committee-highlight {
-  color: #fb7185;
-  font-weight: bold;
-  font-size: 1.06em;
-  letter-spacing: 0.5px;
-}
-@media (max-width: 700px) {
-  .committee-message { padding: 1em 0.2em; font-size: 1em; }
-}
+  </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <div>
-      <h1>🪐 Sathyadarshana</h1>
-      <div class="lang-switch">
-        <button class="lang-btn" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="si">සිං</button>
-        <button class="lang-btn" data-lang="ta">TA</button>
-      </div>
-    </div>
-    <nav>
-      <a href="#kp">KP Life Prediction</a>
-      <a href="#palmistry">Palmistry</a>
-      <a href="#numerology">Numerology</a>
-      <a href="#geo">GeoVision</a>
-    </nav>
-  </aside>
-  <div class="main-content">
-    <header>
-      <h1 id="main-title">Sathyadarshana Astrology</h1>
-      <p id="main-sub">Explore the cosmic science & wisdom tools</p>
-    </header>
-    <main id="kp">
-      <h2>Advanced KP Life Prediction</h2>
-      <p>Get your full AI-powered KP Life Report for just $5 (One-time).</p>
-      <div class="tariff-box">
-        <h3>📢 Tariff Plan</h3>
-        <ul>
-          <li><span class="free">Free:</span> Basic guidance, astrology tips (no report).</li>
-          <li><span class="paid">Paid ($5):</span> Complete life prediction PDF, AI insights, premium support.</li>
-        </ul>
-      </div>
-    </main>
-    <main id="palmistry">
-      <h2>Palmistry</h2>
-      <p class="coming">Coming Soon.</p>
-    </main>
-    <main id="numerology">
-      <h2>Numerology</h2>
-      <p class="coming">Coming Soon.</p>
-    </main>
-    <main id="geo">
-      <h2>GeoVision</h2>
-      <p class="coming">Coming Soon.</p>
-    </main>
-    <div class="watermark">© Sathyadarshana | High Copyright</div>
-    <button id="scrollTop" title="Back to Top">⬆</button>
-    <footer><footer>
-  &copy; 2025 Sathyadarshana Astrology | Concept by Anurudda | Executed by Buddhi AI  
-  <br><strong>All Rights Reserved – High Copyright</strong>
-</footer>
+  <h1>Astrology Tariff Plans 🔮</h1>
 
-<!-- Committee Message Block (Add below footer) -->
-<div class="committee-message">
-  <span class="committee-icon">🤝</span>
-  <div>
-    <strong>අපි එකමුතු වෙලා, හොඳ වැඩක් කරමු!</strong><br>
-    සියල්ලන්ගේ අදහස්, සහයෝගය සහ කැපවීම අපේ කණ්ඩායම ඉදිරියට යන්න මහත් ශක්තියක්.<br>
-    <span class="committee-highlight">අපි එකට ජයගමු!</span>
+  <div class="tariff-box">
+    <h2>🔹 Standard KP Life Report - $5 (Lifetime)</h2>
+    <ul>
+      <li>Accurate KP Astrology-based Birth Report</li>
+      <li>Sub-lord & Ruling Planet Analysis</li>
+      <li>PDF Report Generation (Watermarked)</li>
+      <li>Basic Planetary Positions (Sun to Saturn)</li>
+    </ul>
   </div>
-</div>
-      &copy; 2025 Sathyadarshana Astrology | Concept by Anurudda | Executed by Buddhi AI  
-      <br><strong>All Rights Reserved – High Copyright</strong>
-    </footer>
-  </div>
-  <script>
-    // Scroll-to-top
-    const btn = document.getElementById('scrollTop');
-    window.addEventListener('scroll', ()=> {
-      btn.style.display = window.scrollY > 300 ? 'block' : 'none';
-    });
-    btn.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
 
-    // Simple Language Switcher (demo)
-    const langs = {
-      en: {
-        main_title: "Sathyadarshana Astrology",
-        main_sub: "Explore the cosmic science & wisdom tools",
-      },
-      si: {
-        main_title: "සත්‍යදර්ශන ජ්‍යෝතිෂය",
-        main_sub: "කොස්මික් විද්‍යා හා ඥානාත්මක මෙවලම් සොයන්න",
-      },
-      ta: {
-        main_title: "சத்தியதர்ஷன ஜோதிடம்",
-        main_sub: "காஸ்மிக் அறிவியல் மற்றும் ஞான கருவிகளை ஆராயுங்கள்",
-      }
-    };
-    document.querySelectorAll('.lang-btn').forEach(btn=>{
-      btn.onclick = ()=>{
-        const lang = btn.getAttribute('data-lang');
-        document.getElementById('main-title').innerText = langs[lang].main_title;
-        document.getElementById('main-sub').innerText = langs[lang].main_sub;
-      }
-    });
-  </script>
+  <div class="tariff-box">
+    <h2>🌟 Advanced KP Seed Plan - $30 / 1 Year</h2>
+    <ul>
+      <li>Daily Planetary Influence Insights (Good & Bad Times)</li>
+      <li>Spiritual Guidance & Personal Messages</li>
+      <li>AI Buddhi Support – Chat Anytime</li>
+      <li>Graphical Birth Chart Visualization (Real-time)</li>
+      <li>Voice Summary of Report (Coming Soon)</li>
+    </ul>
+  </div>
+
+  <p class="note">You can start with the $5 report and later upgrade to the Seed Plan for deeper insights anytime.</p>
+
+  <!-- AI Buddhi Support Button -->
+  <div class="support-btn" onclick="window.location.href='/ai-buddhi.html';">💬 AI Buddhi</div>
 </body>
 </html>

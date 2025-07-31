@@ -1,72 +1,100 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana NASA Linked Astrology</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NASA Linked Astrology Chart</title>
   <style>
     body {
-      background: #0f172a;
-      color: #e0f2fe;
       font-family: 'Segoe UI', sans-serif;
-      padding: 2rem;
+      background: #0f172a;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    .card {
-      background: rgba(30, 41, 59, 0.95);
+    .container {
+      background: #1e293b;
       padding: 2rem;
-      border-radius: 1rem;
-      max-width: 600px;
-      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      width: 90%;
+      max-width: 400px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
     }
     input, select, button {
       width: 100%;
+      padding: 0.75rem;
       margin: 0.5rem 0;
-      padding: 0.7rem;
-      border-radius: 0.5rem;
+      border-radius: 8px;
       border: none;
+      font-size: 1rem;
     }
     button {
-      background: #3b82f6;
+      background-color: #3b82f6;
       color: white;
+      cursor: pointer;
       font-weight: bold;
     }
-    .summary {
-      margin-top: 2rem;
+    #output {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+    #errorMessage {
+      color: #f87171;
+      text-align: center;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="card">
+  <div class="container">
     <h2>🔭 NASA Linked Astrology Chart</h2>
-    <input type="text" id="name" placeholder="Full Name">
-    <input type="date" id="dob">
-    <input type="time" id="time">
-    <input type="text" id="place" placeholder="Place of Birth (City, Country)">
-    <button onclick="generateChart()">🌌 Generate Chart</button><div id="result" class="summary"></div>
-
+    <input type="text" id="name" placeholder="Your Name" />
+    <input type="date" id="dob" />
+    <input type="time" id="birthTime" />
+    <input type="text" id="location" placeholder="Birthplace (e.g. Kandy, Sri Lanka)" />
+    <button onclick="generateChart()">🌌 Generate Chart</button>
+    <div id="output">⏳ Loading NASA data...</div>
+    <div id="errorMessage"></div>
   </div>  <script>
     async function generateChart() {
       const name = document.getElementById('name').value;
       const dob = document.getElementById('dob').value;
-      const time = document.getElementById('time').value;
-      const place = document.getElementById('place').value;
-      const result = document.getElementById('result');
+      const birthTime = document.getElementById('birthTime').value;
+      const location = document.getElementById('location').value;
 
-      result.innerHTML = '⏳ Loading NASA data...';
+      const output = document.getElementById('output');
+      const errorMessage = document.getElementById('errorMessage');
+      output.innerHTML = '⏳ Loading NASA data...';
+      errorMessage.innerText = '';
 
-      // Simulate NASA API integration
-      const nasaResponse = await fetch(`https://api.usno.navy.mil/rstt/oneday?date=${dob}&coords=7.29,80.63&timezone=5.5`);
-      const nasaData = await nasaResponse.json();
+      try {
+        const res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY`);
+        const data = await res.json();
 
-      result.innerHTML = `
-        <h3>🪐 Birth Chart Summary for ${name}</h3>
-        <p>📅 DOB: ${dob}</p>
-        <p>⏰ Time: ${time}</p>
-        <p>📍 Location: ${place}</p>
-        <p>🌞 Sun: Leo (from NASA data)</p>
-        <p>🌕 Moon: Cancer</p>
-        <p>🪐 Planets aligned and fetched using NASA data.</p>
-        <p>✨ More features coming soon...</p>
-      `;
+        if (data.title) {
+          output.innerHTML = `
+            <strong>🌌 NASA API Status:</strong> ✅ Success<br><br>
+            <strong>Name:</strong> ${name}<br>
+            <strong>DOB:</strong> ${dob}<br>
+            <strong>Time:</strong> ${birthTime}<br>
+            <strong>Location:</strong> ${location}<br><br>
+            📡 NASA Message: <em>${data.title}</em>
+          `;
+        } else {
+          output.innerHTML = '❌ Unexpected response from NASA.';
+        }
+      } catch (err) {
+        output.innerHTML = '';
+        errorMessage.innerText = '❌ NASA API Error: ' + err.message;
+      }
     }
   </script></body>
 </html>

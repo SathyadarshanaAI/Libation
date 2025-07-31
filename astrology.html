@@ -1,87 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sathyadarshana | Astrology</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sathyadarshana Astrology</title>
   <style>
     body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: #0f172a;
-      color: #e0f2fe;
-      padding: 2rem;
+      background: #0f172a;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
     }
-    h1 {
+    .chart-box {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    h1, h2 {
       color: #38bdf8;
     }
-    .section {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1rem;
-      border-radius: 10px;
-      margin-bottom: 2rem;
+    .planet-row {
+      padding: 8px 0;
+      border-bottom: 1px solid #334155;
     }
-    ul {
-      margin-top: 1rem;
+    .planet-name {
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
+  <h1>🌌 Sathyadarshana Astrology</h1>
+  <h2>Real-Time Planetary Position (Zodiac Degrees)</h2>
+  <div id="chart" class="chart-box">
+    Loading chart...
+  </div>  <script>
+    const sampleData = {
+      Sun: { zodiac: 'Leo', degree: 12.5 },
+      Moon: { zodiac: 'Scorpio', degree: 24.1 },
+      Mars: { zodiac: 'Gemini', degree: 3.3 },
+      Mercury: { zodiac: 'Cancer', degree: 17.7 },
+      Jupiter: { zodiac: 'Scorpio', degree: 22.0 },
+      Venus: { zodiac: 'Virgo', degree: 8.2 },
+      Saturn: { zodiac: 'Pisces', degree: 29.5 },
+      Rahu: { zodiac: 'Aries', degree: 9.4 },
+      Ketu: { zodiac: 'Libra', degree: 9.4 }
+    };
 
-  <h1>🔭 Sathyadarshana Astrology</h1>
+    const chartDiv = document.getElementById('chart');
+    chartDiv.innerHTML = '';
 
-  <!-- 🧘🏻 Input Form (You can expand this later) -->
-  <div class="section">
-    <h2>Birth Chart Generator</h2>
-    <p>This version uses simulated NASA planetary data.</p>
-  </div>
-
-  <!-- 🌌 NASA Graha Position Display -->
-  <div class="section">
-    <h2>🪐 NASA-Based Planetary Positions</h2>
-    <div id="nasa-output">Loading graha data...</div>
-  </div>
-
-  <script>
-    function extractGrahaPositions(text) {
-      const lines = text.split("\n");
-      const grahaMap = {};
-      lines.forEach(line => {
-        const match = line.match(/^([A-Za-z]+)\s+([\d.]+)/);
-        if (match) {
-          const graha = match[1];
-          const degree = parseFloat(match[2]);
-          grahaMap[graha] = degree;
-        }
-      });
-      return grahaMap;
+    for (const planet in sampleData) {
+      const { zodiac, degree } = sampleData[planet];
+      const row = document.createElement('div');
+      row.className = 'planet-row';
+      row.innerHTML = `
+        <span class="planet-name">${planet}</span>: 
+        ${zodiac} (${degree.toFixed(1)}°)
+      `;
+      chartDiv.appendChild(row);
     }
-
-    // Simulated NASA-style planetary degrees
-    const nasaData = `
-Sun   143.55
-Moon  221.80
-Mars  111.25
-Mercury 32.1
-Venus  76.8
-Jupiter  245.6
-Saturn  302.4
-Rahu  123.7
-Ketu  303.7
-`;
-
-    const grahaPositions = extractGrahaPositions(nasaData);
-    const outputDiv = document.getElementById("nasa-output");
-    const ul = document.createElement("ul");
-
-    Object.entries(grahaPositions).forEach(([graha, degree]) => {
-      const li = document.createElement("li");
-      li.textContent = `${graha}: ${degree.toFixed(2)}°`;
-      ul.appendChild(li);
-    });
-
-    outputDiv.textContent = "";
-    outputDiv.appendChild(ul);
-  </script>
-
-</body>
+  </script></body>
 </html>

@@ -3,114 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sathyadarshana | Astrology</title>
+  <title>Sathyadarshana Astrology</title>
   <style>
     body {
-      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
-      color: #e0f2fe;
+      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      padding: 2rem;
+      background-color: #0f172a;
+      color: #fff;
       text-align: center;
+      padding: 2rem;
     }
+
+    .card {
+      background-color: #1e293b;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin: 2rem auto;
+      max-width: 500px;
+    }
+
     button {
-      background-color: #22d3ee;
+      padding: 0.7rem 1.5rem;
       border: none;
-      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      background-color: #06b6d4;
+      color: #000;
       font-size: 1rem;
-      border-radius: 0.5rem;
       cursor: pointer;
-      margin-top: 1rem;
-      color: #0f172a;
-      font-weight: bold;
+      transition: all 0.3s ease;
     }
-    canvas {
-      margin-top: 2rem;
-      border: 1px solid #334155;
-      border-radius: 1rem;
-      background: #1e293b;
+
+    button:hover {
+      background-color: #22d3ee;
+    }
+
+    ul {
+      text-align: left;
+      padding-left: 1.2rem;
+      line-height: 1.8;
+    }
+
+    .planet-list {
+      background-color: #0f172a;
+      border-radius: 8px;
+      padding: 1rem;
     }
   </style>
 </head>
 <body>
-
   <h1>🪐 Sathyadarshana Astrology</h1>
   <p>Explore your planetary chart with AI-assisted insight.</p>
 
-  <!-- Generate Chart Button -->
   <button onclick="generateChart()">Generate Chart</button>
 
-  <!-- Chart Canvas -->
-  <canvas id="astroChart" width="400" height="400"></canvas>
+  <div class="card" id="chart-box">
+    <!-- Chart results will appear here -->
+  </div>
 
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Chart Generator Logic -->
   <script>
     function generateChart() {
-      const ctx = document.getElementById('astroChart').getContext('2d');
+      const chartBox = document.getElementById("chart-box");
 
-      // Clear previous chart if exists
-      if (window.myAstroChart) {
-        window.myAstroChart.destroy();
-      }
-
-      // Sample Planetary Longitudes (°)
-      const planetNames = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
-      const planetPositions = [145, 212, 89, 67, 320, 144, 178]; // Dummy Data
-
-      const data = {
-        labels: planetNames,
-        datasets: [{
-          label: 'Planetary Longitudes (°)',
-          data: planetPositions,
-          backgroundColor: [
-            '#facc15', '#fef08a', '#f87171',
-            '#a3a3a3', '#7dd3fc', '#fda4af', '#c4b5fd'
-          ],
-          borderColor: '#e2e8f0',
-          borderWidth: 1
-        }]
-      };
-
-      const options = {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: {
-              color: '#e0f2fe'
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 360,
-            ticks: {
-              color: '#bae6fd'
-            },
-            grid: {
-              color: '#334155'
-            }
-          },
-          x: {
-            ticks: {
-              color: '#bae6fd'
-            },
-            grid: {
-              color: '#334155'
-            }
-          }
-        }
-      };
-
-      window.myAstroChart = new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: options
-      });
+      // Placeholder values for now
+      chartBox.innerHTML = `
+        <h2>🔭 Your Planetary Chart</h2>
+        <div class="planet-list">
+          <ul>
+            <li>☉ Sun: ♌ Leo (Simha)</li>
+            <li>☽ Moon: ♓ Pisces (Meena)</li>
+            <li>♂ Mars: ♏ Scorpio (Vrischika)</li>
+            <li>♀ Venus: ♉ Taurus (Vrushabha)</li>
+            <li>☿ Mercury: ♍ Virgo (Kanya)</li>
+            <li>♃ Jupiter: ♐ Sagittarius (Dhanu)</li>
+            <li>♄ Saturn: ♒ Aquarius (Kumbha)</li>
+            <li>☊ Rahu: ♋ Cancer (Kataka)</li>
+            <li>☋ Ketu: ♑ Capricorn (Makara)</li>
+          </ul>
+        </div>
+        <p>🌟 Powered by AI Buddhi & Seed Engine (Prototype)</p>
+      `;
     }
   </script>
-
 </body>
 </html>

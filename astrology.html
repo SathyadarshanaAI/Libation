@@ -3,99 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sathyadarshana Astrology</title>
-  <link rel="icon" href="/assets/favicon.png" />
+  <title>🪐 Sathyadarshana Astrology</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #0f172a;
+      background: #0f172a;
       color: #e0f2fe;
+      padding: 2rem;
       text-align: center;
     }
-
-    h1 {
-      margin-top: 1rem;
-      font-size: 2rem;
+    .card {
+      background: #1e293b;
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 15px rgba(0,255,255,0.1);
     }
-
-    form {
-      margin-top: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-
     input, button {
       padding: 0.8rem;
-      width: 80%;
-      max-width: 400px;
-      border-radius: 0.5rem;
+      margin: 0.5rem 0;
       border: none;
+      border-radius: 5px;
+      width: 100%;
       font-size: 1rem;
     }
-
-    button {
-      background-color: #06b6d4;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
+    input {
+      background: #0f172a;
+      color: #e0f2fe;
+      border: 1px solid #334155;
     }
-
+    button {
+      background: #06b6d4;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
     #chart {
       margin-top: 2rem;
+      white-space: pre-line;
+      background: #0f172a;
       padding: 1rem;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 0.5rem;
-      width: 90%;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      border-radius: 10px;
+      border: 1px solid #334155;
     }
   </style>
 </head>
 <body>
-  <h1>🪐 Sathyadarshana Astrology</h1>
-  <p>Explore your planetary chart with AI-assisted insight.</p>
 
-  <form id="birth-form">
-    <input type="text" id="name" placeholder="Name" required />
+  <div class="card">
+    <h1>🪐 Sathyadarshana Astrology</h1>
+    <p>Generate your birth chart instantly</p>
+
+    <input type="text" id="name" placeholder="Your Full Name" required />
     <input type="date" id="dob" required />
-    <input type="time" id="tob" required />
-    <input type="text" id="place" placeholder="Place of Birth" required />
-    <button type="submit">🔮 Generate Chart</button>
-  </form>
+    <input type="time" id="birthTime" required />
+    <input type="text" id="birthPlace" placeholder="Place of Birth" required />
+    
+    <button onclick="generateChart()">Generate Chart</button>
 
-  <div id="chart"></div>
+    <div id="chart"></div>
+  </div>
 
   <script>
-    const form = document.getElementById('birth-form');
-    const chartDiv = document.getElementById('chart');
+    function generateChart() {
+      const name = document.getElementById("name").value;
+      const dob = document.getElementById("dob").value;
+      const time = document.getElementById("birthTime").value;
+      const place = document.getElementById("birthPlace").value;
 
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
+      if (!name || !dob || !time || !place) {
+        alert("Please fill in all fields");
+        return;
+      }
 
-      const name = document.getElementById('name').value;
-      const dob = document.getElementById('dob').value;
-      const tob = document.getElementById('tob').value;
-      const place = document.getElementById('place').value;
-
-      // Sample static chart data (replace this with real astro logic)
+      // 🧠 Mock astrology logic
       const chartData = `
-        <h2>🔭 Your Planetary Chart</h2>
-        <p>☉ Sun: ♌ Leo (Simha)</p>
-        <p>☽ Moon: ♓ Pisces (Meena)</p>
-        <p>♂ Mars: ♏ Scorpio (Vrischika)</p>
-        <p>♀ Venus: ♉ Taurus (Vrushabha)</p>
-        <p>☿ Mercury: ♍ Virgo (Kanya)</p>
-        <p>♃ Jupiter: ♐ Sagittarius (Dhanu)</p>
-        <p>♄ Saturn: ♒ Aquarius (Kumbha)</p>
-      `;
+🔮 Birth Chart Summary for ${name}
+📅 DOB: ${dob}
+⏰ Time: ${time}
+📍 Location: ${place}
 
-      chartDiv.innerHTML = `<p><strong>${name}</strong> — ${dob} ${tob}, ${place}</p>` + chartData;
-    });
+🪐 Sun in Leo ♌
+🌕 Moon in Cancer ♋
+🔥 Mars in Aries ♈
+💧 Venus in Pisces ♓
+🌿 Mercury in Gemini ♊
+🌌 Jupiter in Aquarius ♒
+🌀 Saturn in Capricorn ♑
+💥 Rahu in Taurus ♉
+🌪 Ketu in Scorpio ♏
+
+🧠 Sub-Lord Reading: Calm, spiritual, introspective.
+💫 Sathyadarshana Insight: Seek stillness. A new path begins today.
+
+📥 Download PDF option coming soon...
+      `;
+      document.getElementById("chart").innerText = chartData;
+    }
   </script>
 </body>
 </html>

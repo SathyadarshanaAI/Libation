@@ -3,67 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🪐 Sathyadarshana Astrology</title>
+  <title>Sathyadarshana | Astrology Birth Chart</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #0f172a;
+      background: radial-gradient(circle at center, #0f172a, #000);
       color: #e0f2fe;
       padding: 2rem;
-      text-align: center;
+      line-height: 1.6;
     }
-    .card {
-      background: #1e293b;
-      padding: 2rem;
-      border-radius: 10px;
-      max-width: 500px;
-      margin: auto;
-      box-shadow: 0 0 15px rgba(0,255,255,0.1);
+    h1 {
+      text-align: center;
+      color: #38bdf8;
+    }
+    .form-group {
+      margin-bottom: 1rem;
     }
     input, button {
-      padding: 0.8rem;
-      margin: 0.5rem 0;
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
       border: none;
       border-radius: 5px;
-      width: 100%;
       font-size: 1rem;
     }
-    input {
-      background: #0f172a;
-      color: #e0f2fe;
-      border: 1px solid #334155;
-    }
     button {
-      background: #06b6d4;
-      color: #000;
+      background-color: #2563eb;
+      color: white;
       cursor: pointer;
-      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #1e40af;
     }
     #chart {
       margin-top: 2rem;
-      white-space: pre-line;
-      background: #0f172a;
+      white-space: pre-wrap;
+      background-color: rgba(30,41,59,0.9);
       padding: 1rem;
       border-radius: 10px;
-      border: 1px solid #334155;
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>🪐 Sathyadarshana Astrology</h1>
-    <p>Generate your birth chart instantly</p>
+  <h1>🪐 Astrology Birth Chart</h1>
 
-    <input type="text" id="name" placeholder="Your Full Name" required />
-    <input type="date" id="dob" required />
-    <input type="time" id="birthTime" required />
-    <input type="text" id="birthPlace" placeholder="Place of Birth" required />
-    
-    <button onclick="generateChart()">Generate Chart</button>
-
-    <div id="chart"></div>
+  <div class="form-group">
+    <label for="name">👤 Full Name</label>
+    <input type="text" id="name" placeholder="Enter your name" required />
   </div>
+
+  <div class="form-group">
+    <label for="dob">📅 Date of Birth</label>
+    <input type="date" id="dob" required />
+  </div>
+
+  <div class="form-group">
+    <label for="birthTime">⏰ Time of Birth</label>
+    <input type="time" id="birthTime" required />
+  </div>
+
+  <div class="form-group">
+    <label for="birthPlace">📍 Place of Birth</label>
+    <input type="text" id="birthPlace" placeholder="City, Country" required />
+  </div>
+
+  <div class="form-group">
+    <label for="nic">🆔 NIC Number (Optional)</label>
+    <input type="text" id="nic" placeholder="Ex: 199043600123" />
+  </div>
+
+  <button onclick="generateChart()">🔮 Generate Chart</button>
+
+  <div id="chart"></div>
 
   <script>
     function generateChart() {
@@ -71,18 +84,30 @@
       const dob = document.getElementById("dob").value;
       const time = document.getElementById("birthTime").value;
       const place = document.getElementById("birthPlace").value;
+      const nic = document.getElementById("nic").value;
 
       if (!name || !dob || !time || !place) {
-        alert("Please fill in all fields");
+        alert("Please fill in all required fields.");
         return;
       }
 
-      // 🧠 Mock astrology logic
+      const userData = {
+        name,
+        dob,
+        time,
+        place,
+        nic,
+        generatedAt: new Date().toISOString()
+      };
+
+      console.log("Saving to DB:", userData); // Firebase/MongoDB use later
+
       const chartData = `
 🔮 Birth Chart Summary for ${name}
 📅 DOB: ${dob}
 ⏰ Time: ${time}
 📍 Location: ${place}
+🆔 NIC: ${nic || 'Not Provided'}
 
 🪐 Sun in Leo ♌
 🌕 Moon in Cancer ♋
@@ -94,13 +119,13 @@
 💥 Rahu in Taurus ♉
 🌪 Ketu in Scorpio ♏
 
-🧠 Sub-Lord Reading: Calm, spiritual, introspective.
-💫 Sathyadarshana Insight: Seek stillness. A new path begins today.
-
-📥 Download PDF option coming soon...
+🧠 Sub-Lord Insight: Calm, spiritual, introspective thinker.
+💫 Message from Buddhi: Seek stillness. A new path begins today.
       `;
+
       document.getElementById("chart").innerText = chartData;
     }
   </script>
+
 </body>
 </html>

@@ -1,7 +1,8 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KP Sub-Lord Calculator</title>
   <style>
     body {
@@ -26,7 +27,6 @@
     h2 {
       text-align: center;
       color: #38bdf8;
-      margin-bottom: 20px;
     }
     select, input, button {
       width: 100%;
@@ -43,7 +43,7 @@
       cursor: pointer;
       margin-top: 15px;
     }
-    .result, #prediction {
+    .result {
       background-color: #1e293b;
       padding: 15px;
       margin-top: 20px;
@@ -58,89 +58,67 @@
     <h2>KP Sub-Lord Calculator</h2>
     <label for="planet">Planet:</label>
     <select id="planet">
-      <option>Sun</option>
-      <option>Moon</option>
-      <option>Mars</option>
-      <option>Mercury</option>
-      <option>Jupiter</option>
-      <option>Venus</option>
-      <option>Saturn</option>
-    </select><label for="degree">Degrees (0-30° in Rashi):</label>
-<input type="number" id="degree" placeholder="E.g., 20" min="0" max="30">
+      <option>Sun</option><option>Moon</option><option>Mars</option>
+      <option>Mercury</option><option>Jupiter</option>
+      <option>Venus</option><option>Saturn</option>
+    </select>
 
-<button onclick="getSubLord()">Get Sub-Lord</button>
+    <label for="degree">Degrees (0° - 30°):</label>
+    <input type="number" id="degree" min="0" max="30" placeholder="E.g. 22.5" />
 
-<div id="result" class="result"></div>
-<div id="prediction" class="result"></div>
+    <button onclick="calculate()">Calculate Sub-Lord</button>
 
-  </div>  <script>
-    function getSubLord() {
+    <div id="output" class="result"></div>
+  </div>
+
+  <script>
+    function getNakshatraAndStarLord(degree) {
+      if (degree < 13.2) return { nakshatra: "Ashwini", starLord: "Ketu" };
+      else if (degree < 26.4) return { nakshatra: "Bharani", starLord: "Venus" };
+      else return { nakshatra: "Krittika", starLord: "Sun" };
+    }
+
+    function getSubLordFromDegree(degreeInRashi, starLord) {
+      const dashas = {
+        Ketu: 7, Venus: 20, Sun: 6, Moon: 10,
+        Mars: 7, Rahu: 18, Jupiter: 16, Saturn: 19, Mercury: 17
+      };
+      const totalYears = 120;
+      const portionPerDasha = Object.entries(dashas).map(([lord, years]) => ({
+        lord,
+        portion: years / totalYears * 800
+      }));
+
+      let start = 0;
+      for (const { lord, portion } of portionPerDasha) {
+        const end = start + portion;
+        if ((degreeInRashi * 60) >= start && (degreeInRashi * 60) < end) {
+          return lord;
+        }
+        start = end;
+      }
+      return "Unknown";
+    }
+
+    function calculate() {
       const planet = document.getElementById("planet").value;
       const degree = parseFloat(document.getElementById("degree").value);
-
-      let nakshatra = "";
-      let starLord = "";
-
-      if (degree >= 0 && degree < 13.2) {
-        nakshatra = "Ashwini";
-        starLord = "Ketu";
-      } else if (degree >= 13.2 && degree < 26.4) {
-        nakshatra = "Bharani";
-        starLord = "Venus";
-      } else if (degree >= 26.4 && degree <= 30) {
-        nakshatra = "Krittika";
-        starLord = "Sun";
-      } else {
-        document.getElementById("result").innerText = "Invalid degree range. Must be 0–30°";
-        document.getElementById("prediction").innerText = "";
+      if (isNaN(degree) || degree < 0 || degree > 30) {
+        document.getElementById("output").innerText = "Please enter a valid degree (0° to 30°).";
         return;
       }
 
-      const resultText = `Planet: ${planet}\nPosition: ${degree.toFixed(2)}°\nNakshatra: ${nakshatra}\nStar Lord: ${starLord}`;
-      document.getElementById("result").innerText = resultText;
+      const { nakshatra, starLord } = getNakshatraAndStarLord(degree);
+      const subLord = getSubLordFromDegree(degree, starLord);
 
-      showPrediction(planet, nakshatra, starLord);
+      const result = `🌠 Planet: ${planet}
+📌 Degree: ${degree.toFixed(2)}°
+🔯 Nakshatra: ${nakshatra}
+👑 Star Lord: ${starLord}
+🧙‍♂️ Sub-Lord: ${subLord}`;
+
+      document.getElementById("output").innerText = result;
     }
-
-    const kpPredictions = {
-      Sun: {
-        Ashwini: {
-          Ketu: `☀️ Sun in Ashwini (Ketu):
-- Energetic and independent
-- 💼 Career: Military, Adventure, Technology
-- ❤️ Brave but impulsive
-- 🧠 Sharp intellect`
-        },
-        Bharani: {
-          Venus: `☀️ Sun in Bharani (Venus):
-- Leadership blended with artistic grace
-- 📚 Career: Arts, Finance, Politics
-- ❤️ Sensitive in love matters
-- 🧘 Seek balance in ego vs. compassion`
-        },
-        Krittika: {
-          Sun: `☀️ Sun in Krittika (Sun):
-- Bold and fiery nature
-- 💼 Career: Government, Leadership
-- ❤️ Protective but dominant
-- 🔥 Natural charisma`
-        }
-      },
-      Moon: {
-        Rohini: {
-          Moon: `🌙 Moon in Rohini (Moon):
-- Highly sensual and charming
-- 💼 Career: Beauty, Media, Food
-- ❤️ Romantic but moody
-- 🧠 Emotional intelligence high`
-        }
-      }
-    };
-
-    function showPrediction(planet, nakshatra, starLord) {
-      const prediction = kpPredictions?.[planet]?.[nakshatra]?.[starLord];
-      document.getElementById("prediction").innerText =
-        prediction || "🧘‍♂️ Prediction not available for this combination.";
-    }
-  </script></body>
+  </script>
+</body>
 </html>

@@ -2,130 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sathyadarshana | Astrology Birth Chart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sathyadarshana Astrology</title>
+  <link rel="icon" href="/assets/favicon.png" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at center, #0f172a, #000);
+      background: #0f172a;
       color: #e0f2fe;
+      text-align: center;
       padding: 2rem;
-      line-height: 1.6;
     }
     h1 {
-      text-align: center;
-      color: #38bdf8;
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    input, button {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.3rem;
-      border: none;
-      border-radius: 5px;
-      font-size: 1rem;
+      font-size: 2rem;
     }
     button {
-      background-color: #2563eb;
+      margin-top: 1rem;
+      padding: 10px 20px;
+      background-color: #06b6d4;
+      border: none;
+      border-radius: 8px;
       color: white;
+      font-size: 16px;
       cursor: pointer;
-      transition: background 0.3s ease;
     }
     button:hover {
-      background-color: #1e40af;
+      background-color: #0891b2;
     }
-    #chart {
-      margin-top: 2rem;
-      white-space: pre-wrap;
-      background-color: rgba(30,41,59,0.9);
+    .pdf-button {
+      margin-top: 1.5rem;
+      background-color: #9333ea;
+    }
+    .pdf-button:hover {
+      background-color: #6b21a8;
+    }
+    #chartSummary {
+      background: rgba(255, 255, 255, 0.05);
       padding: 1rem;
       border-radius: 10px;
+      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
+  <h1>🪐 Sathyadarshana Astrology</h1>
+  <p>Explore your planetary chart with AI-assisted insight.</p>
 
-  <h1>🪐 Astrology Birth Chart</h1>
+  <button onclick="generateChart()">Generate Chart</button>
 
-  <div class="form-group">
-    <label for="name">👤 Full Name</label>
-    <input type="text" id="name" placeholder="Enter your name" required />
+  <div id="chartSummary" style="display:none;">
+    <h2>🗓️ Birth Chart Summary</h2>
+    <p><strong>Name:</strong> John Doe</p>
+    <p><strong>Date:</strong> 1990-01-01</p>
+    <p><strong>Time:</strong> 06:30 AM</p>
+    <p><strong>Place:</strong> Colombo, Sri Lanka</p>
+    <hr>
+    <p>☀ Sun in Capricorn, 🌙 Moon in Taurus, ♂ Mars in Leo</p>
+    <p>🪐 Saturn influence strong, Venus favorable in 7th house</p>
+    <p>✨ KP Sub Lord: Mercury | Ruling Planet: Jupiter</p>
+    <p>🔮 Next transit effect: Positive energy around August 2025</p>
   </div>
 
-  <div class="form-group">
-    <label for="dob">📅 Date of Birth</label>
-    <input type="date" id="dob" required />
-  </div>
-
-  <div class="form-group">
-    <label for="birthTime">⏰ Time of Birth</label>
-    <input type="time" id="birthTime" required />
-  </div>
-
-  <div class="form-group">
-    <label for="birthPlace">📍 Place of Birth</label>
-    <input type="text" id="birthPlace" placeholder="City, Country" required />
-  </div>
-
-  <div class="form-group">
-    <label for="nic">🆔 NIC Number (Optional)</label>
-    <input type="text" id="nic" placeholder="Ex: 199043600123" />
-  </div>
-
-  <button onclick="generateChart()">🔮 Generate Chart</button>
-
-  <div id="chart"></div>
+  <button class="pdf-button" onclick="downloadPDF()">📄 Download as PDF</button>
 
   <script>
     function generateChart() {
-      const name = document.getElementById("name").value;
-      const dob = document.getElementById("dob").value;
-      const time = document.getElementById("birthTime").value;
-      const place = document.getElementById("birthPlace").value;
-      const nic = document.getElementById("nic").value;
+      document.getElementById("chartSummary").style.display = "block";
+    }
 
-      if (!name || !dob || !time || !place) {
-        alert("Please fill in all required fields.");
-        return;
-      }
-
-      const userData = {
-        name,
-        dob,
-        time,
-        place,
-        nic,
-        generatedAt: new Date().toISOString()
+    function downloadPDF() {
+      const element = document.getElementById("chartSummary");
+      const opt = {
+        margin: 0.5,
+        filename: 'Astrology_Birth_Chart.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
-
-      console.log("Saving to DB:", userData); // Firebase/MongoDB use later
-
-      const chartData = `
-🔮 Birth Chart Summary for ${name}
-📅 DOB: ${dob}
-⏰ Time: ${time}
-📍 Location: ${place}
-🆔 NIC: ${nic || 'Not Provided'}
-
-🪐 Sun in Leo ♌
-🌕 Moon in Cancer ♋
-🔥 Mars in Aries ♈
-💧 Venus in Pisces ♓
-🌿 Mercury in Gemini ♊
-🌌 Jupiter in Aquarius ♒
-🌀 Saturn in Capricorn ♑
-💥 Rahu in Taurus ♉
-🌪 Ketu in Scorpio ♏
-
-🧠 Sub-Lord Insight: Calm, spiritual, introspective thinker.
-💫 Message from Buddhi: Seek stillness. A new path begins today.
-      `;
-
-      document.getElementById("chart").innerText = chartData;
+      html2pdf().set(opt).from(element).save();
     }
   </script>
-
 </body>
 </html>

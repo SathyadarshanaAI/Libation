@@ -1,96 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Astrology Report | Sathyadarshana</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sathyadarshana Astrology</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="/assets/favicon.png" />
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
+    html, body {
+      margin: 0;
+      padding: 0;
       background: #0f172a;
       color: #e0f2fe;
-      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100%;
+      height: auto;
+    }
+    nav {
+      background: #020617;
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-around;
+    }
+    nav a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .container {
       padding: 2rem;
     }
-    h1 {
-      text-align: center;
-      color: #38bdf8;
-    }
     .tariff-box {
-      background: rgba(30,41,59,0.95);
-      border: 1px solid #38bdf8;
-      padding: 20px;
-      margin: 20px auto;
-      max-width: 600px;
-      border-radius: 12px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0.5rem;
     }
     .tariff-box h2 {
       color: #7dd3fc;
-      font-size: 1.4rem;
-      margin-bottom: 10px;
     }
     .tariff-box ul {
       list-style: none;
-      padding-left: 0;
+      padding: 0;
     }
-    .tariff-box li {
-      margin-bottom: 10px;
-      background: rgba(2,6,23,0.7);
-      padding: 10px;
-      border-radius: 8px;
+    .tariff-box ul li {
+      margin-bottom: 0.5rem;
+      background: #0f172a;
+      padding: 0.5rem;
+      border-radius: 0.3rem;
     }
-    .note {
+    footer {
       text-align: center;
-      margin-top: 1.5rem;
-      color: #a5f3fc;
-      font-size: 0.95rem;
+      padding: 1rem;
+      background: #020617;
+      margin-top: 3rem;
     }
-    .support-btn {
+    .ai-button {
       position: fixed;
       bottom: 20px;
       right: 20px;
       background: #38bdf8;
-      color: #0f172a;
-      padding: 0.7rem 1.2rem;
-      border-radius: 2em;
+      color: black;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 50px;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 0 10px #38bdf8;
-      z-index: 1000;
-    }
-    .support-btn:hover {
-      background: #0ea5e9;
-      color: #fff;
+      box-shadow: 0 0 15px #38bdf8;
     }
   </style>
 </head>
 <body>
-  <h1>Astrology Tariff Plans 🔮</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="library.html">Library</a>
+    <a href="astrology.html">Astrology</a>
+    <a href="ai-buddhi.html">AI Buddhi</a>
+    <a href="contact.html">Contact</a>
+  </nav>  <main class="container">
+    <h1>🔮 Astrology Tariff Plans</h1><div class="tariff-box">
+  <h2>🔷 Standard KP Life Report – $5 (Lifetime)</h2>
+  <ul>
+    <li>Accurate KP Astrology-based Birth Report</li>
+    <li>Sub-lord & Ruling Planet Analysis</li>
+    <li>PDF Report Generation (Watermarked)</li>
+    <li>Basic Planetary Positions (Sun to Saturn)</li>
+  </ul>
+</div>
 
-  <div class="tariff-box">
-    <h2>🔹 Standard KP Life Report - $5 (Lifetime)</h2>
-    <ul>
-      <li>Accurate KP Astrology-based Birth Report</li>
-      <li>Sub-lord & Ruling Planet Analysis</li>
-      <li>PDF Report Generation (Watermarked)</li>
-      <li>Basic Planetary Positions (Sun to Saturn)</li>
-    </ul>
-  </div>
+<div class="tariff-box">
+  <h2>🌟 Advanced KP Seed Plan – $30 / 1 Year</h2>
+  <ul>
+    <li>Daily Planetary Influence Insights (Good & Bad Times)</li>
+    <li>Spiritual Guidance & Personal Messages</li>
+    <li>AI Buddhi Support – Chat Anytime</li>
+    <li>Graphical Birth Chart Visualization (Real-time)</li>
+    <li>Custom Remedies & Auspicious Time Predictions</li>
+    <li>Premium PDF Reports (Without Watermark)</li>
+  </ul>
+</div>
 
-  <div class="tariff-box">
-    <h2>🌟 Advanced KP Seed Plan - $30 / 1 Year</h2>
-    <ul>
-      <li>Daily Planetary Influence Insights (Good & Bad Times)</li>
-      <li>Spiritual Guidance & Personal Messages</li>
-      <li>AI Buddhi Support – Chat Anytime</li>
-      <li>Graphical Birth Chart Visualization (Real-time)</li>
-      <li>Voice Summary of Report (Coming Soon)</li>
-    </ul>
-  </div>
+  </main><button class="ai-button" onclick="location.href='ai-buddhi.html'">💬 AI Buddhi</button>
 
-  <p class="note">You can start with the $5 report and later upgrade to the Seed Plan for deeper insights anytime.</p>
-
-  <!-- AI Buddhi Support Button -->
-  <div class="support-btn" onclick="window.location.href='/ai-buddhi.html';">💬 AI Buddhi</div>
+  <footer>
+    <p>© 2025 Sathyadarshana. All Rights Reserved.</p>
+  </footer>
 </body>
 </html>

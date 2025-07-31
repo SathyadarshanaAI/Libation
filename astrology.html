@@ -2,65 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sathyadarshana Astrology</title>
+  <title>Astrology Report PDF Export</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #0f172a;
       color: #e0f2fe;
-      padding: 1rem;
+      padding: 20px;
     }
-    .card {
-      background: rgba(30, 41, 59, 0.95);
-      padding: 1rem;
-      border-radius: 12px;
-      margin: 1rem 0;
+    #report {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      width: 90%;
+      max-width: 600px;
     }
-    h2, h3 {
-      color: #38bdf8;
+    button {
+      background-color: #38bdf8;
+      color: black;
+      padding: 10px 20px;
+      border: none;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
     }
-    ul {
-      list-style: disc;
-      margin-left: 1.5rem;
+    canvas {
+      margin-top: 15px;
+      background: #fff;
     }
   </style>
 </head>
 <body>
-  <h2>🔭 Sathyadarshana Astrology</h2>
 
-  <div class="card">
-    <h3>Birth Chart Generator</h3>
-    <p>This version uses simulated NASA planetary data.</p>
+  <div id="report">
+    <h2>🪐 Astrology Report</h2>
+    <p><strong>Name:</strong> Anuruddha</p>
+    <p><strong>Date of Birth:</strong> 1990-12-01</p>
+    <p><strong>Time:</strong> 14:30</p>
+    <p><strong>Place:</strong> Colombo</p>
+
+    <canvas id="astroChart" width="300" height="300"></canvas>
   </div>
 
-  <div class="card">
-    <h3>🪐 NASA-Based Planetary Positions</h3>
-    <ul id="planet-data">
-      <!-- JS එකෙන් data load වෙනවා -->
-    </ul>
-  </div>
+  <button id="exportPDF">📄 Download Astrology Report (PDF)</button>
 
   <script>
-    // Simulated values (will replace with real NASA data soon)
-    const simulatedPlanets = {
-      Sun: 143.55,
-      Moon: 221.80,
-      Mars: 111.25,
-      Mercury: 32.10,
-      Venus: 76.80,
-      Jupiter: 245.60,
-      Saturn: 302.40,
-      Rahu: 123.70,
-      Ketu: 303.70
-    };
+    // Draw sample chart (placeholder)
+    const canvas = document.getElementById('astroChart');
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.arc(150, 150, 100, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.fillText("Scorpio", 130, 150);
 
-    const ul = document.getElementById('planet-data');
-    for (const [planet, value] of Object.entries(simulatedPlanets)) {
-      const li = document.createElement('li');
-      li.textContent = `${planet}: ${value.toFixed(2)}°`;
-      ul.appendChild(li);
-    }
+    // PDF Export logic
+    document.getElementById("exportPDF").addEventListener("click", async () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const element = document.getElementById("report");
+      await html2canvas(element).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        doc.addImage(imgData, 'PNG', 10, 10, 190, 0);
+        doc.save("astrology_report.pdf");
+      });
+    });
   </script>
+
 </body>
 </html>

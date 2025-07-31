@@ -1,100 +1,114 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>NASA Linked Astrology Chart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
       background: #0f172a;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+      color: #e0f2fe;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
     }
-    .container {
+    .card {
       background: #1e293b;
-      padding: 2rem;
+      padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-      width: 90%;
-      max-width: 400px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 1rem;
+      box-shadow: 0 0 10px #334155;
+      max-width: 600px;
+      margin: auto;
     }
     input, select, button {
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
       width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      border-radius: 8px;
       border: none;
-      font-size: 1rem;
     }
     button {
       background-color: #3b82f6;
       color: white;
       cursor: pointer;
-      font-weight: bold;
     }
-    #output {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
+    #birth-chart table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
     }
-    #errorMessage {
-      color: #f87171;
+    #birth-chart th, #birth-chart td {
+      border: 1px solid #64748b;
+      padding: 8px;
       text-align: center;
-      margin-top: 1rem;
+    }
+    .message {
+      background-color: #0f172a;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>🔭 NASA Linked Astrology Chart</h2>
-    <input type="text" id="name" placeholder="Your Name" />
-    <input type="date" id="dob" />
-    <input type="time" id="birthTime" />
-    <input type="text" id="location" placeholder="Birthplace (e.g. Kandy, Sri Lanka)" />
-    <button onclick="generateChart()">🌌 Generate Chart</button>
-    <div id="output">⏳ Loading NASA data...</div>
-    <div id="errorMessage"></div>
-  </div>  <script>
-    async function generateChart() {
-      const name = document.getElementById('name').value;
-      const dob = document.getElementById('dob').value;
-      const birthTime = document.getElementById('birthTime').value;
-      const location = document.getElementById('location').value;
 
-      const output = document.getElementById('output');
-      const errorMessage = document.getElementById('errorMessage');
-      output.innerHTML = '⏳ Loading NASA data...';
-      errorMessage.innerText = '';
+<div class="card">
+  <h2>🔭 NASA Linked Astrology Chart</h2>
+  <input type="text" id="name" placeholder="Your Name" />
+  <input type="date" id="dob" />
+  <input type="time" id="time" />
+  <input type="text" id="location" placeholder="Location" />
+  <button id="generate-btn">🌌 Generate Chart</button>
 
-      try {
-        const res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY`);
-        const data = await res.json();
+  <div id="result" style="margin-top: 20px;"></div>
+  <div id="birth-chart"></div>
+</div>
 
-        if (data.title) {
-          output.innerHTML = `
-            <strong>🌌 NASA API Status:</strong> ✅ Success<br><br>
-            <strong>Name:</strong> ${name}<br>
-            <strong>DOB:</strong> ${dob}<br>
-            <strong>Time:</strong> ${birthTime}<br>
-            <strong>Location:</strong> ${location}<br><br>
-            📡 NASA Message: <em>${data.title}</em>
-          `;
-        } else {
-          output.innerHTML = '❌ Unexpected response from NASA.';
-        }
-      } catch (err) {
-        output.innerHTML = '';
-        errorMessage.innerText = '❌ NASA API Error: ' + err.message;
-      }
-    }
-  </script></body>
+<script>
+  function generateChart(data) {
+    const chartHTML = `
+      <h3>🧭 KP Birth Chart (Example)</h3>
+      <table>
+        <tr><th>House</th><th>Planet</th></tr>
+        <tr><td>1 (Asc)</td><td>Moon</td></tr>
+        <tr><td>2</td><td>Sun</td></tr>
+        <tr><td>3</td><td>Mercury</td></tr>
+        <tr><td>4</td><td>Venus</td></tr>
+        <tr><td>5</td><td>Jupiter</td></tr>
+        <tr><td>6</td><td>Saturn</td></tr>
+        <tr><td>7</td><td>Rahu</td></tr>
+        <tr><td>8</td><td>Ketu</td></tr>
+        <tr><td>9</td><td>Mars</td></tr>
+        <tr><td>10</td><td>Empty</td></tr>
+        <tr><td>11</td><td>Uranus</td></tr>
+        <tr><td>12</td><td>Neptune</td></tr>
+      </table>
+      <div class="message">📡 NASA Message: <em>Supernova 2025rbs detected near NGC 7331</em></div>
+    `;
+    document.getElementById("birth-chart").innerHTML = chartHTML;
+  }
+
+  document.getElementById("generate-btn").addEventListener("click", function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const dob = document.getElementById("dob").value;
+    const time = document.getElementById("time").value;
+    const location = document.getElementById("location").value;
+
+    const resultHTML = `
+      <strong>Name:</strong> ${name}<br>
+      <strong>DOB:</strong> ${dob}<br>
+      <strong>Time:</strong> ${time}<br>
+      <strong>Location:</strong> ${location}<br>
+      <strong>NASA API Status:</strong> ✅ Success
+    `;
+    document.getElementById("result").innerHTML = resultHTML;
+
+    const userData = { name, dob, time, location };
+    generateChart(userData);
+  });
+</script>
+
+</body>
 </html>

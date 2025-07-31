@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KP Sub Lord Report Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e0f2fe;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .card {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px #38bdf8;
+      max-width: 500px;
+      width: 100%;
+    }
+    h2 {
+      color: #38bdf8;
+      text-align: center;
+    }
+    label, input, button {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    input {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      background: #0ea5e9;
+      color: #000;
+      border: none;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .result {
+      background: #0f172a;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      font-family: monospace;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>KP Sub Lord Prediction Report</h2>
+    <label for="degree">Planet Degree (0–30):</label>
+    <input type="number" id="degree" min="0" max="30" step="0.01">
+    <button onclick="generateReport()">Generate Report</button>
+    <div class="result" id="report"></div>
+  </div>  <script>
+    function getPrediction(subLord, subSubLord) {
+      return `🔮 Sub Lord: ${subLord}\n🌌 Sub-Sub Lord: ${subSubLord}\n\n📝 Prediction:\nYou are influenced by ${subLord}'s traits, further refined by ${subSubLord}.\nThis combination brings emotional, karmic, and professional guidance. Meditation and self-discipline are key.`;
+    }
+
+    function generateReport() {
+      const degree = parseFloat(document.getElementById("degree").value);
+      if (isNaN(degree) || degree < 0 || degree > 30) {
+        document.getElementById("report").innerText = "❗ Enter a valid degree between 0 and 30.";
+        return;
+      }
+      const sublords = getSubSubLord(degree);
+      const report = getPrediction(sublords.subLord, sublords.subSubLord);
+      document.getElementById("report").innerText = report;
+    }
+
+    function getSubSubLord(degree) {
+      const nakshatraSpans = [
+        { name: "Ashwini", lord: "Ketu", start: 0, end: 13.333 },
+        { name: "Bharani", lord: "Venus", start: 13.334, end: 26.666 },
+        { name: "Krittika", lord: "Sun", start: 26.667, end: 30.000 }
+      ];
+
+      const subLordTable = [
+        { lord: "Ketu", span: 7 },
+        { lord: "Venus", span: 20 },
+        { lord: "Sun", span: 6 },
+        { lord: "Moon", span: 10 },
+        { lord: "Mars", span: 7 },
+        { lord: "Rahu", span: 18 },
+        { lord: "Jupiter", span: 16 },
+        { lord: "Saturn", span: 19 },
+        { lord: "Mercury", span: 17 }
+      ];
+
+      const nak = nakshatraSpans.find(n => degree >= n.start && degree <= n.end);
+      const nakshatraLength = nak.end - nak.start;
+      const posInNak = degree - nak.start;
+      const totalSecs = nakshatraLength * 3600;
+      const passedSecs = posInNak * 3600;
+
+      let acc = 0, subLord = "", subLordDeg = 0;
+      for (const s of subLordTable) {
+        const part = (s.span / 120) * totalSecs;
+        if (passedSecs <= acc + part) {
+          subLord = s.lord;
+          subLordDeg = part;
+          break;
+        }
+        acc += part;
+      }
+
+      const posInSub = passedSecs - acc;
+      acc = 0;
+      let subSubLord = "";
+      for (const s of subLordTable) {
+        const part = (s.span / 120) * subLordDeg;
+        if (posInSub <= acc + part) {
+          subSubLord = s.lord;
+          break;
+        }
+        acc += part;
+      }
+
+      return {
+        subLord,
+        subSubLord
+      };
+    }
+  </script></body>
+</html>

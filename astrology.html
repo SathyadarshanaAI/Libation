@@ -1,63 +1,66 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sathyadarshana Astrology</title>
   <style>
     body {
-      background: #0f172a;
-      color: white;
       font-family: Arial, sans-serif;
-      padding: 20px;
+      background: #0f172a;
+      color: #e0f2fe;
+      padding: 1rem;
     }
-    .chart-box {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
+    .card {
+      background: rgba(30, 41, 59, 0.95);
+      padding: 1rem;
+      border-radius: 12px;
+      margin: 1rem 0;
     }
-    h1, h2 {
+    h2, h3 {
       color: #38bdf8;
     }
-    .planet-row {
-      padding: 8px 0;
-      border-bottom: 1px solid #334155;
-    }
-    .planet-name {
-      font-weight: bold;
+    ul {
+      list-style: disc;
+      margin-left: 1.5rem;
     }
   </style>
 </head>
 <body>
-  <h1>🌌 Sathyadarshana Astrology</h1>
-  <h2>Real-Time Planetary Position (Zodiac Degrees)</h2>
-  <div id="chart" class="chart-box">
-    Loading chart...
-  </div>  <script>
-    const sampleData = {
-      Sun: { zodiac: 'Leo', degree: 12.5 },
-      Moon: { zodiac: 'Scorpio', degree: 24.1 },
-      Mars: { zodiac: 'Gemini', degree: 3.3 },
-      Mercury: { zodiac: 'Cancer', degree: 17.7 },
-      Jupiter: { zodiac: 'Scorpio', degree: 22.0 },
-      Venus: { zodiac: 'Virgo', degree: 8.2 },
-      Saturn: { zodiac: 'Pisces', degree: 29.5 },
-      Rahu: { zodiac: 'Aries', degree: 9.4 },
-      Ketu: { zodiac: 'Libra', degree: 9.4 }
+  <h2>🔭 Sathyadarshana Astrology</h2>
+
+  <div class="card">
+    <h3>Birth Chart Generator</h3>
+    <p>This version uses simulated NASA planetary data.</p>
+  </div>
+
+  <div class="card">
+    <h3>🪐 NASA-Based Planetary Positions</h3>
+    <ul id="planet-data">
+      <!-- JS එකෙන් data load වෙනවා -->
+    </ul>
+  </div>
+
+  <script>
+    // Simulated values (will replace with real NASA data soon)
+    const simulatedPlanets = {
+      Sun: 143.55,
+      Moon: 221.80,
+      Mars: 111.25,
+      Mercury: 32.10,
+      Venus: 76.80,
+      Jupiter: 245.60,
+      Saturn: 302.40,
+      Rahu: 123.70,
+      Ketu: 303.70
     };
 
-    const chartDiv = document.getElementById('chart');
-    chartDiv.innerHTML = '';
-
-    for (const planet in sampleData) {
-      const { zodiac, degree } = sampleData[planet];
-      const row = document.createElement('div');
-      row.className = 'planet-row';
-      row.innerHTML = `
-        <span class="planet-name">${planet}</span>: 
-        ${zodiac} (${degree.toFixed(1)}°)
-      `;
-      chartDiv.appendChild(row);
+    const ul = document.getElementById('planet-data');
+    for (const [planet, value] of Object.entries(simulatedPlanets)) {
+      const li = document.createElement('li');
+      li.textContent = `${planet}: ${value.toFixed(2)}°`;
+      ul.appendChild(li);
     }
-  </script></body>
+  </script>
+</body>
 </html>

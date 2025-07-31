@@ -1,115 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NASA Linked Astrology Chart</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sathyadarshana Astrology</title>
   <style>
     body {
-      background: #0f172a;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #000;
       color: #fff;
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      overflow-x: hidden;
     }
-
-    .container {
-      max-width: 400px;
-      margin: auto;
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #334155;
-    }
-
-    input, select, button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: none;
-    }
-
-    #chartCard {
-      margin-top: 20px;
-      background: #334155;
-      padding: 10px;
-      border-radius: 10px;
-    }
-
     canvas {
-      background: #fff;
+      display: block;
+      margin: 20px auto;
+      background-color: #111;
       border-radius: 8px;
-      margin-top: 10px;
+      box-shadow: 0 0 12px rgba(255,255,255,0.2);
+    }
+    h2 {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 1.6em;
+      color: #0ff;
+    }
+    .color-key {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .key {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .box {
+      width: 15px;
+      height: 15px;
+      border-radius: 3px;
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h2>🔭 NASA Linked Astrology Chart</h2>
-    <input id="name" type="text" placeholder="Name">
-    <input id="dob" type="date">
-    <input id="time" type="time">
-    <input id="place" type="text" placeholder="Place of Birth">
-    <button onclick="generateChart()">🌌 Generate Chart</button>
-
-    <div id="chartCard">
-      <p>🛰️ NASA API Status: ✅ Success</p>
-      <p id="summary"></p>
-      <p><strong>🌠 NASA Message:</strong> <em>Supernova 2025rbs in NGC 7331</em></p>
-      <canvas id="astroChart" width="350" height="350"></canvas>
-    </div>
-  </div>
+<body>  <h2>Planetary Motion Chart</h2>  <div class="color-key">
+    <div class="key"><div class="box" style="background: #0f0"></div>Direct Motion</div>
+    <div class="key"><div class="box" style="background: #ff0"></div>Stationary</div>
+    <div class="key"><div class="box" style="background: #f00"></div>Retrograde</div>
+  </div><canvas id="astroChart" width="380" height="380"></canvas>
 
   <script>
-    function generateChart() {
-      const name = document.getElementById('name').value;
-      const dob = document.getElementById('dob').value;
-      const time = document.getElementById('time').value;
-      const place = document.getElementById('place').value;
+    const canvas = document.getElementById('astroChart');
+    const ctx = canvas.getContext('2d');
+    const radius = 160;
+    const center = canvas.width / 2;
 
-      document.getElementById('summary').innerHTML = `
-        <strong>Name:</strong> ${name}<br>
-        <strong>DOB:</strong> ${dob}<br>
-        <strong>Time:</strong> ${time}<br>
-        <strong>Location:</strong> ${place}
-      `;
+    // Sample planets with degrees and velocities
+    const planets = [
+      { name: 'Sun', degree: 120, velocity: 1.2 },
+      { name: 'Moon', degree: 210, velocity: 0.0 },
+      { name: 'Mars', degree: 90, velocity: -0.8 },
+      { name: 'Jupiter', degree: 45, velocity: 0.5 },
+      { name: 'Venus', degree: 275, velocity: 0.0 },
+      { name: 'Saturn', degree: 330, velocity: -0.3 }
+    ];
 
-      const ctx = document.getElementById('astroChart').getContext('2d');
+    function drawChart() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Destroy old chart instance if any
-      if (window.currentChart) {
-        window.currentChart.destroy();
+      // Outer Circle
+      ctx.beginPath();
+      ctx.arc(center, center, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#888';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw 12 divisions (rāśi)
+      for (let i = 0; i < 12; i++) {
+        const angle = (i * 30) * Math.PI / 180;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = '#333';
+        ctx.stroke();
       }
 
-      window.currentChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'],
-          datasets: [{
-            label: 'Planet Influence',
-            data: [12, 10, 7, 6, 8, 9, 5, 4, 3], // sample dummy data
-            backgroundColor: [
-              '#fbbf24', '#60a5fa', '#ef4444', '#a78bfa', '#34d399',
-              '#f472b6', '#9ca3af', '#f59e0b', '#4b5563'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                color: 'white'
-              }
-            }
-          }
-        }
+      // Planet Points
+      planets.forEach(p => {
+        const angle = (p.degree - 90) * Math.PI / 180;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+
+        // Determine color by motion
+        let color = '#ff0'; // Stationary
+        if (p.velocity > 0.01) color = '#0f0';
+        else if (p.velocity < 0) color = '#f00';
+
+        // Dot
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(p.name, x + 10, y);
       });
     }
-  </script>
-</body>
+
+    drawChart();
+  </script></body>
 </html>

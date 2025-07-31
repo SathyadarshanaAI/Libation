@@ -4,49 +4,55 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sathyadarshana Astrology</title>
+  <link rel="icon" href="/assets/favicon.png" />
   <style>
     body {
       margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
       background-color: #0f172a;
-      color: #fff;
+      color: #e0f2fe;
       text-align: center;
-      padding: 2rem;
     }
 
-    .card {
-      background-color: #1e293b;
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin: 2rem auto;
-      max-width: 500px;
+    h1 {
+      margin-top: 1rem;
+      font-size: 2rem;
+    }
+
+    form {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    input, button {
+      padding: 0.8rem;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
     }
 
     button {
-      padding: 0.7rem 1.5rem;
-      border: none;
-      border-radius: 8px;
       background-color: #06b6d4;
-      color: #000;
-      font-size: 1rem;
+      color: white;
+      font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
     }
 
-    button:hover {
-      background-color: #22d3ee;
-    }
-
-    ul {
-      text-align: left;
-      padding-left: 1.2rem;
-      line-height: 1.8;
-    }
-
-    .planet-list {
-      background-color: #0f172a;
-      border-radius: 8px;
+    #chart {
+      margin-top: 2rem;
       padding: 1rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 0.5rem;
+      width: 90%;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
@@ -54,35 +60,42 @@
   <h1>🪐 Sathyadarshana Astrology</h1>
   <p>Explore your planetary chart with AI-assisted insight.</p>
 
-  <button onclick="generateChart()">Generate Chart</button>
+  <form id="birth-form">
+    <input type="text" id="name" placeholder="Name" required />
+    <input type="date" id="dob" required />
+    <input type="time" id="tob" required />
+    <input type="text" id="place" placeholder="Place of Birth" required />
+    <button type="submit">🔮 Generate Chart</button>
+  </form>
 
-  <div class="card" id="chart-box">
-    <!-- Chart results will appear here -->
-  </div>
+  <div id="chart"></div>
 
   <script>
-    function generateChart() {
-      const chartBox = document.getElementById("chart-box");
+    const form = document.getElementById('birth-form');
+    const chartDiv = document.getElementById('chart');
 
-      // Placeholder values for now
-      chartBox.innerHTML = `
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const dob = document.getElementById('dob').value;
+      const tob = document.getElementById('tob').value;
+      const place = document.getElementById('place').value;
+
+      // Sample static chart data (replace this with real astro logic)
+      const chartData = `
         <h2>🔭 Your Planetary Chart</h2>
-        <div class="planet-list">
-          <ul>
-            <li>☉ Sun: ♌ Leo (Simha)</li>
-            <li>☽ Moon: ♓ Pisces (Meena)</li>
-            <li>♂ Mars: ♏ Scorpio (Vrischika)</li>
-            <li>♀ Venus: ♉ Taurus (Vrushabha)</li>
-            <li>☿ Mercury: ♍ Virgo (Kanya)</li>
-            <li>♃ Jupiter: ♐ Sagittarius (Dhanu)</li>
-            <li>♄ Saturn: ♒ Aquarius (Kumbha)</li>
-            <li>☊ Rahu: ♋ Cancer (Kataka)</li>
-            <li>☋ Ketu: ♑ Capricorn (Makara)</li>
-          </ul>
-        </div>
-        <p>🌟 Powered by AI Buddhi & Seed Engine (Prototype)</p>
+        <p>☉ Sun: ♌ Leo (Simha)</p>
+        <p>☽ Moon: ♓ Pisces (Meena)</p>
+        <p>♂ Mars: ♏ Scorpio (Vrischika)</p>
+        <p>♀ Venus: ♉ Taurus (Vrushabha)</p>
+        <p>☿ Mercury: ♍ Virgo (Kanya)</p>
+        <p>♃ Jupiter: ♐ Sagittarius (Dhanu)</p>
+        <p>♄ Saturn: ♒ Aquarius (Kumbha)</p>
       `;
-    }
+
+      chartDiv.innerHTML = `<p><strong>${name}</strong> — ${dob} ${tob}, ${place}</p>` + chartData;
+    });
   </script>
 </body>
 </html>

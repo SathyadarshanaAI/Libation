@@ -1,86 +1,114 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sathyadarshana Astrology</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sathyadarshana | Astrology</title>
+  <link rel="icon" href="assets/favicon.png" />
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: radial-gradient(circle at 20% 20%, #0f172a, #000);
       color: #e0f2fe;
+      scroll-behavior: smooth;
     }
+
     header {
-      background-color: #1e293b;
+      background: rgba(15, 23, 42, 0.9);
       padding: 1rem;
       text-align: center;
       font-size: 1.5rem;
+      font-weight: bold;
+      border-bottom: 1px solid #334155;
     }
+
     section {
       padding: 2rem;
-      max-width: 800px;
-      margin: auto;
     }
-    input, select, button {
-      display: block;
-      width: 100%;
-      margin: 0.5rem 0;
+
+    .translator-glass {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
       padding: 0.5rem;
-      border-radius: 0.5rem;
-      border: none;
+      z-index: 1000;
+      display: flex;
+      gap: 0.5rem;
     }
-    button {
-      background-color: #0284c7;
+
+    .translator-glass button {
+      background: rgba(0, 0, 0, 0.3);
       color: white;
+      border: none;
+      padding: 0.5rem 0.8rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .translator-glass button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .ai-float {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #4f46e5;
+      color: white;
+      padding: 0.8rem 1rem;
+      border-radius: 50px;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(79, 70, 229, 0.6);
+      z-index: 1000;
       cursor: pointer;
     }
-    .report, .pdf-link {
-      margin-top: 2rem;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1rem;
-      border-radius: 0.5rem;
-    }
-    audio {
-      margin-top: 1rem;
+
+    .ai-float:hover {
+      background: #6366f1;
     }
   </style>
+  <!-- Google Translate Script -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'translate-element');
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
+
 <body>
+  <div class="translator-glass">
+    <div id="translate-element"></div>
+  </div>
+
+  <div class="ai-float" onclick="window.location.href='ai-buddhi.html'">
+    🧠 Buddhi AI
+  </div>
+
   <header>
-    🔭 Sathyadarshana Astrology Panel
-  </header>  <section>
-    <h2>Enter Birth Details</h2>
-    <form id="astroForm">
-      <input type="text" id="name" placeholder="Full Name" required />
-      <input type="text" id="nic" placeholder="NIC Number (optional)" />
-      <input type="date" id="dob" required />
-      <input type="time" id="tob" required />
-      <input type="text" id="place" placeholder="Place of Birth" required />
-      <button type="submit">Generate Report</button>
-    </form><div class="report" id="kpResult"></div>
-<div class="pdf-link" id="pdfLink"></div>
+    🔭 Astrology – Sathyadarshana Cosmic Vision
+  </header>
 
-  </section>  <script>
-    document.getElementById("astroForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const name = document.getElementById("name").value;
-      const dob = document.getElementById("dob").value;
-      const tob = document.getElementById("tob").value;
-      const place = document.getElementById("place").value;
-
-      const summary = `This is the generated KP Sub-Lord and PDF Voice Summary for ${name} born on ${dob} at ${tob} in ${place}.`;
-
-      document.getElementById("kpResult").innerHTML = `
-        <h3>🪐 KP Sub-Lord Result</h3>
-        <p>${summary}</p>
-        <h3>🗣️ Voice Summary (English)</h3>
-        <audio controls src="https://example.com/audio-summary.mp3"></audio>
-      `;
-
-      document.getElementById("pdfLink").innerHTML = `
-        <a href="https://example.com/birth-report.pdf" download>📄 Download Birth Report (PDF)</a>
-      `;
-    });
-  </script></body>
+  <section>
+    <h2>Explore Your Birth Stars</h2>
+    <p>Use the dashboard below to generate KP Charts, Sub Lords, Planetary Positions and more.</p>
+    <ul>
+      <li><a href="kp-sub-lord.html">🪐 KP Sub Lord Calculator</a></li>
+      <li><a href="vedic-astrology.html">📜 Vedic Astrology Engine</a></li>
+      <li><a href="numerology.html">🔢 Numerology Insight</a></li>
+      <li><a href="aura-energy.html">🌈 Aura Energy Scanner</a></li>
+      <li><a href="astrology-report.html">📄 Generate PDF Birth Report</a></li>
+      <li><a href="palmistry.html">✋ Palmistry Research Engine</a></li>
+    </ul>
+  </section>
+</body>
 </html>

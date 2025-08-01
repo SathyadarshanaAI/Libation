@@ -1,81 +1,86 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NASA KP Logic Test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sathyadarshana Astrology</title>
   <style>
     body {
-      background: #0a0f1b;
-      color: #dceaff;
-      font-family: monospace;
-      padding: 2rem;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
     }
-    .planet-box {
-      background: #111927;
-      margin-bottom: 1rem;
+    header {
+      background-color: #1e293b;
       padding: 1rem;
-      border-left: 4px solid #48bfe3;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    section {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: none;
+    }
+    button {
+      background-color: #0284c7;
+      color: white;
+      cursor: pointer;
+    }
+    .report, .pdf-link {
+      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+    audio {
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <h1>🪐 KP Sub Lord Logic - Mock NASA Input</h1>
-  <div id="output"></div>  <script>
-    // Sample mock data for testing
-    const planets = [
-      { name: "Sun", degree: 108.45 },
-      { name: "Moon", degree: 13.25 },
-      { name: "Mars", degree: 205.88 },
-      { name: "Mercury", degree: 74.12 },
-      { name: "Jupiter", degree: 289.37 },
-      { name: "Venus", degree: 45.65 },
-      { name: "Saturn", degree: 323.10 },
-      { name: "Rahu", degree: 189.01 },
-      { name: "Ketu", degree: 9.01 }
-    ];
+  <header>
+    🔭 Sathyadarshana Astrology Panel
+  </header>  <section>
+    <h2>Enter Birth Details</h2>
+    <form id="astroForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="text" id="nic" placeholder="NIC Number (optional)" />
+      <input type="date" id="dob" required />
+      <input type="time" id="tob" required />
+      <input type="text" id="place" placeholder="Place of Birth" required />
+      <button type="submit">Generate Report</button>
+    </form><div class="report" id="kpResult"></div>
+<div class="pdf-link" id="pdfLink"></div>
 
-    // Nakshatra spans (13.333...° per Nakshatra)
-    const nakshatras = [
-      "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu",
-      "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta",
-      "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshta", "Mula", "Purva Ashadha",
-      "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada",
-      "Uttara Bhadrapada", "Revati"
-    ];
+  </section>  <script>
+    document.getElementById("astroForm").addEventListener("submit", function (e) {
+      e.preventDefault();
 
-    const lords = [
-      "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter",
-      "Saturn", "Mercury", "Ketu", "Venus", "Sun", "Moon",
-      "Mars", "Rahu", "Jupiter", "Saturn", "Mercury", "Ketu", "Venus",
-      "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"
-    ];
+      const name = document.getElementById("name").value;
+      const dob = document.getElementById("dob").value;
+      const tob = document.getElementById("tob").value;
+      const place = document.getElementById("place").value;
 
-    function getNakshatraInfo(degree) {
-      const segment = 13.33333;
-      const index = Math.floor(degree / segment);
-      const startDeg = index * segment;
-      const percentIn = ((degree - startDeg) / segment * 100).toFixed(2);
-      return {
-        nakshatra: nakshatras[index],
-        lord: lords[index],
-        segmentPercent: percentIn + "%"
-      };
-    }
+      const summary = `This is the generated KP Sub-Lord and PDF Voice Summary for ${name} born on ${dob} at ${tob} in ${place}.`;
 
-    const container = document.getElementById("output");
-
-    planets.forEach(planet => {
-      const info = getNakshatraInfo(planet.degree);
-      const div = document.createElement("div");
-      div.className = "planet-box";
-      div.innerHTML = `
-        <strong>${planet.name}</strong><br>
-        Degree: ${planet.degree}°<br>
-        Nakshatra: ${info.nakshatra}<br>
-        Nakshatra Lord: ${info.lord}<br>
-        Position in Segment: ${info.segmentPercent}
+      document.getElementById("kpResult").innerHTML = `
+        <h3>🪐 KP Sub-Lord Result</h3>
+        <p>${summary}</p>
+        <h3>🗣️ Voice Summary (English)</h3>
+        <audio controls src="https://example.com/audio-summary.mp3"></audio>
       `;
-      container.appendChild(div);
+
+      document.getElementById("pdfLink").innerHTML = `
+        <a href="https://example.com/birth-report.pdf" download>📄 Download Birth Report (PDF)</a>
+      `;
     });
   </script></body>
 </html>

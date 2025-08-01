@@ -1,93 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>KP Voice Summary Generator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KP Voice Summary</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0f172a;
+      background: #0f172a;
       color: #e0f2fe;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .card {
-      background-color: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 25px #38bdf8;
-      max-width: 600px;
-      width: 100%;
-    }
-
-    h2 {
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      color: #38bdf8;
+      padding: 2rem;
     }
-
-    textarea, select {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      margin-top: 10px;
+    input, button, select {
+      padding: 0.7rem;
+      margin: 1rem 0;
+      font-size: 1rem;
       border-radius: 8px;
       border: none;
+      width: 80%;
+      max-width: 300px;
     }
-
     button {
-      background-color: #0ea5e9;
-      color: #000;
-      font-weight: bold;
-      padding: 12px;
-      margin-top: 15px;
-      border: none;
-      border-radius: 8px;
+      background: #2563eb;
+      color: white;
       cursor: pointer;
-      width: 100%;
     }
-
-    audio {
-      margin-top: 20px;
-      width: 100%;
+    button:hover {
+      background: #1e40af;
+    }
+    #output {
+      margin-top: 1.5rem;
+      background: #1e293b;
+      padding: 1rem;
+      border-radius: 10px;
+      font-size: 1.2rem;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>🗣️ KP Voice Summary Generator</h2>
-    <textarea id="textInput" placeholder="Enter astrology summary or result here..."></textarea>
+  <h1>🔊 KP Voice Summary Generator</h1>
 
-    <label for="language">🌐 Choose Language:</label>
-    <select id="language">
-      <option value="en-US">English</option>
-      <option value="si-LK">සිංහල (Sinhala)</option>
-      <option value="ta-IN">தமிழ் (Tamil)</option>
-    </select>
+  <label>Enter Planetary Degree (0° – 360°):</label><br>
+  <input type="number" id="degree" placeholder="e.g. 125.35" step="0.0001" />
 
-    <button onclick="generateVoice()">🔊 Play Voice Summary</button>
-    <audio id="audioPlayer" controls hidden></audio>
-  </div>
+  <br>
+
+  <label>Select Language:</label><br>
+  <select id="lang">
+    <option value="en-US">English</option>
+    <option value="si-LK">සිංහල</option>
+    <option value="ta-IN">தமிழ்</option>
+  </select>
+
+  <br>
+
+  <button onclick="analyze()">Analyze</button>
+  <button onclick="speak()">🔊 Speak Result</button>
+
+  <div id="output"></div>
 
   <script>
-    function generateVoice() {
-      const text = document.getElementById("textInput").value;
-      const lang = document.getElementById("language").value;
-      const audio = document.getElementById("audioPlayer");
+    const vimshottari = {
+      Ketu: 7, Venus: 20, Sun: 6, Moon: 10, Mars: 7,
+      Rahu: 18, Jupiter: 16, Saturn: 19, Mercury: 17
+    };
+    const sequence = Object.keys(vimshottari);
+    const total = 120;
 
-      if (!text.trim()) {
-        alert("Please enter some summary text first.");
+    function getSubSpan(lord, baseSpan) {
+      return baseSpan * (vimshottari[lord] / total);
+    }
+
+    let globalSummary = "";
+
+    function analyze() {
+      const degree = parseFloat(document.getElementById("degree").value);
+      const output = document.getElementById("output");
+      if (isNaN(degree) || degree < 0 || degree > 360) {
+        output.innerHTML = "❌ Please enter a degree between 0° and 360°.";
         return;
       }
 
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang;
-      speechSynthesis.speak(utterance);
+      const nakSpan = 13.3333;
+      const posInNak = degree % nakSpan;
 
-      audio.hidden = true;
+      let subStart = 0, subLord = "", subSpan = 0;
+
+      for (let i = 0; i < sequence.length; i++) {
+        const span = getSubSpan(sequence[i], nakSpan);
+        if (posInNak >= subStart && posInNak < subStart + span) {
+          subLord = sequence[i];
+          subSpan = span;
+          break;
+        }
+        subStart += span;
+      }
+
+      let subSubStart = 0, subSubLord = "";
+
+      for (let j = 0; j < sequence.length; j++) {
+        const ssSpan = getSubSpan(sequence[j], subSpan);
+        if ((posInNak - subStart) >= subSubStart && (posInNak - subStart) < subSubStart + ssSpan) {
+          subSubLord = sequence[j];
+          break;
+        }
+        subSubStart += ssSpan;
+      }
+
+      globalSummary = `Degree: ${degree.toFixed(4)} degrees. Sub Lord is ${subLord}. Sub-Sub Lord is ${subSubLord}.`;
+
+      output.innerHTML = `
+        🔵 <strong>Degree:</strong> ${degree.toFixed(4)}°<br>
+        🌟 <strong>Sub Lord:</strong> ${subLord}<br>
+        🔍 <strong>Sub-Sub Lord:</strong> ${subSubLord}
+      `;
+    }
+
+    function speak() {
+      if (!globalSummary) return;
+      const lang = document.getElementById("lang").value;
+      const msg = new SpeechSynthesisUtterance(globalSummary);
+      msg.lang = lang;
+      window.speechSynthesis.speak(msg);
     }
   </script>
 </body>

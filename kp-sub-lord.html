@@ -3,108 +3,114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KP Sub Lord Calculator</title>
+  <title>KP Sub Lord & Sub-Sub Lord 🌌</title>
   <style>
     body {
-      background-color: #0f172a;
+      font-family: "Segoe UI", sans-serif;
+      background: #0f172a;
       color: #e0f2fe;
-      font-family: Arial, sans-serif;
-      text-align: center;
       padding: 2rem;
     }
+    .card {
+      background: #1e293b;
+      padding: 2rem;
+      border-radius: 1rem;
+      max-width: 500px;
+      margin: auto;
+    }
     input, select, button {
-      margin: 0.5rem;
-      padding: 0.5rem;
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 0.8rem;
+      border: none;
+      border-radius: 0.5rem;
       font-size: 1rem;
     }
+    button {
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
     .result {
-      margin-top: 1rem;
+      margin-top: 1.5rem;
       font-weight: bold;
+      font-size: 1.1rem;
     }
   </style>
 </head>
 <body>
-  <h2>KP Sub Lord & Sub-Sub Lord</h2>
-  <label>Enter Planetary Degree (0° to 360°):</label><br>
-  <input type="number" id="degree" min="0" max="360" /><br>
+  <div class="card">
+    <h2>KP Sub Lord & Sub-Sub Lord 🌌</h2>
+    <label>Enter Planetary Degree (0° to 360°):</label>
+    <input type="number" id="degree" min="0" max="360" step="0.01" placeholder="e.g., 273.58" />
+    
+    <label>Select Language:</label>
+    <select id="lang">
+      <option value="en">English</option>
+      <option value="si">සිංහල</option>
+      <option value="ta">தமிழ்</option>
+    </select>
 
-  <label>Select Language:</label><br>
-  <select id="language">
-    <option value="English">English</option>
-    <option value="Sinhala">සිංහල</option>
-    <option value="Tamil">தமிழ்</option>
-  </select><br>
-
-  <button onclick="calculate()">Find Sub Lords</button>
-  <button onclick="speakResult()">🔊 Speak</button>
-
-  <div class="result" id="result"></div>
+    <button onclick="calculate()">Calculate</button>
+    <div class="result" id="output"></div>
+  </div>
 
   <script>
-    const subLordData = [
-      { start: 0, end: 13.333, sub: "Sun", subsub: "Moon" },
-      { start: 13.334, end: 26.666, sub: "Moon", subsub: "Venus" },
-      { start: 26.667, end: 40, sub: "Venus", subsub: "Mercury" },
-      { start: 270, end: 300, sub: "Sun", subsub: "Rahu" }, // example for test
-      { start: 300, end: 330, sub: "Mars", subsub: "Jupiter" },
-      { start: 330, end: 360, sub: "Jupiter", subsub: "Saturn" }
+    const subLords = [
+      "Kethu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"
     ];
 
     const translations = {
-      Sun: { si: "සූර්යයා", ta: "சூரியன்" },
-      Moon: { si: "චන්ද්‍රයා", ta: "சந்திரன்" },
-      Mars: { si: "කුජ", ta: "செவ்வாய்" },
-      Mercury: { si: "බුධයා", ta: "புதன்" },
-      Jupiter: { si: "ගුරු", ta: "குரு" },
-      Venus: { si: "ශුක්‍රයා", ta: "சுக்ரன்" },
-      Saturn: { si: "ශනි", ta: "சனி" },
-      Rahu: { si: "රාහු", ta: "ராகு" },
-      Ketu: { si: "කේතු", ta: "கேது" }
+      en: {
+        Kethu: "Ketu", Venus: "Venus", Sun: "Sun", Moon: "Moon", Mars: "Mars",
+        Rahu: "Rahu", Jupiter: "Jupiter", Saturn: "Saturn", Mercury: "Mercury",
+        sub: "Sub Lord", subsub: "Sub-Sub Lord"
+      },
+      si: {
+        Kethu: "කේතු", Venus: "ශුක්‍රයා", Sun: "සූර්යයා", Moon: "සඳ", Mars: "අඟහරු",
+        Rahu: "රාහු", Jupiter: "ගුරු", Saturn: "ශනී", Mercury: "බුද", 
+        sub: "උප ආධිපති", subsub: "උප උප ආධිපති"
+      },
+      ta: {
+        Kethu: "கேது", Venus: "சுக்ரன்", Sun: "சூரியன்", Moon: "சந்திரன்", Mars: "செவ்வாய்",
+        Rahu: "ராகு", Jupiter: "குரு", Saturn: "சனி", Mercury: "புதன்",
+        sub: "துணை ஆண்டவன்", subsub: "துணை-துணை ஆண்டவன்"
+      }
     };
 
-    let lastResult = "";
-    let lastLang = "en";
+    const ranges = [
+      13.2, 13.2, 6.8, 13.2, 6.8, 13.2, 13.2, 13.2, 6.8
+    ];
 
-    function calculate() {
-      const degree = parseFloat(document.getElementById("degree").value);
-      const lang = document.getElementById("language").value;
-      if (isNaN(degree) || degree < 0 || degree > 360) {
-        document.getElementById("result").innerText = "Invalid degree.";
-        return;
+    function getLordIndex(degree) {
+      let total = 0;
+      for (let i = 0; i < ranges.length; i++) {
+        total += ranges[i];
+        if (degree <= total) return i;
       }
-
-      const match = subLordData.find(d => degree >= d.start && degree <= d.end);
-      if (!match) {
-        document.getElementById("result").innerText = "No data.";
-        return;
-      }
-
-      const sub = match.sub;
-      const subsub = match.subsub;
-
-      let display = "";
-      if (lang === "Sinhala") {
-        display = `අනුධිපති: ${translations[sub].si}, උප අනුධිපති: ${translations[subsub].si}`;
-        lastResult = display;
-        lastLang = "si-LK";
-      } else if (lang === "Tamil") {
-        display = `உபநாதன்: ${translations[sub].ta}, துணை உபநாதன்: ${translations[subsub].ta}`;
-        lastResult = display;
-        lastLang = "ta-IN";
-      } else {
-        display = `Sub Lord: ${sub}, Sub-Sub Lord: ${subsub}`;
-        lastResult = display;
-        lastLang = "en-US";
-      }
-
-      document.getElementById("result").innerText = display;
+      return ranges.length - 1;
     }
 
-    function speakResult() {
-      if (!lastResult) return;
-      const msg = new SpeechSynthesisUtterance(lastResult);
-      msg.lang = lastLang;
-      window.speechSynthesis.speak(msg);
+    function calculate() {
+      const deg = parseFloat(document.getElementById("degree").value);
+      const lang = document.getElementById("lang").value;
+      if (isNaN(deg) || deg < 0 || deg > 360) {
+        document.getElementById("output").innerText = "Invalid degree!";
+        return;
+      }
+
+      const subIndex = getLordIndex(deg % 120);  // 120 for Dasha cycle pattern
+      const subSubIndex = getLordIndex((deg * 3) % 120); // Arbitrary pattern
+
+      const sub = translations[lang][subLords[subIndex]];
+      const subsub = translations[lang][subLords[subSubIndex]];
+      const labelSub = translations[lang]["sub"];
+      const labelSubSub = translations[lang]["subsub"];
+
+      document.getElementById("output").innerHTML = `
+        ${labelSub}: ${sub}<br>
+        ${labelSubSub}: ${subsub}
+      `;
     }
   </script>
 </body>

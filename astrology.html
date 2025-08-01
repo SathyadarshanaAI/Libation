@@ -1,87 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Astrology Test Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NASA KP Logic Test</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #0f172a;
-      color: #e0f2fe;
+      background: #0a0f1b;
+      color: #dceaff;
+      font-family: monospace;
       padding: 2rem;
     }
-    h1 {
-      color: #38bdf8;
-      text-align: center;
-    }
-    .section {
-      background: #1e293b;
-      padding: 1.5rem;
-      margin: 1rem 0;
-      border-radius: 12px;
-      box-shadow: 0 0 12px #38bdf8;
-    }
-    textarea {
-      width: 100%;
+    .planet-box {
+      background: #111927;
+      margin-bottom: 1rem;
       padding: 1rem;
-      border-radius: 8px;
-      border: none;
-      background: #334155;
-      color: #e0f2fe;
-      font-size: 16px;
-    }
-    button {
-      background: #0ea5e9;
-      border: none;
-      padding: 12px;
-      color: #000;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    audio {
-      width: 100%;
-      margin-top: 1rem;
+      border-left: 4px solid #48bfe3;
     }
   </style>
 </head>
 <body>
+  <h1>🪐 KP Sub Lord Logic - Mock NASA Input</h1>
+  <div id="output"></div>  <script>
+    // Sample mock data for testing
+    const planets = [
+      { name: "Sun", degree: 108.45 },
+      { name: "Moon", degree: 13.25 },
+      { name: "Mars", degree: 205.88 },
+      { name: "Mercury", degree: 74.12 },
+      { name: "Jupiter", degree: 289.37 },
+      { name: "Venus", degree: 45.65 },
+      { name: "Saturn", degree: 323.10 },
+      { name: "Rahu", degree: 189.01 },
+      { name: "Ketu", degree: 9.01 }
+    ];
 
-  <h1>🔭 Astrology Test Page</h1>
+    // Nakshatra spans (13.333...° per Nakshatra)
+    const nakshatras = [
+      "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu",
+      "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta",
+      "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshta", "Mula", "Purva Ashadha",
+      "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada",
+      "Uttara Bhadrapada", "Revati"
+    ];
 
-  <div class="section">
-    <h2>1️⃣ Birth Report</h2>
-    <p>Testing KP Birth Report Output</p>
-    <textarea id="birthReport" placeholder="Your KP Birth Report will show here..."></textarea>
-    <button onclick="speakReport()">🔊 Speak</button>
-    <button onclick="downloadPDF()">📄 Download PDF</button>
-    <audio id="audioPlayer" controls hidden></audio>
-  </div>
+    const lords = [
+      "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter",
+      "Saturn", "Mercury", "Ketu", "Venus", "Sun", "Moon",
+      "Mars", "Rahu", "Jupiter", "Saturn", "Mercury", "Ketu", "Venus",
+      "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"
+    ];
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script>
-    function speakReport() {
-      const text = document.getElementById('birthReport').value;
-      if (!text.trim()) return alert("Please enter or generate report first.");
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      speechSynthesis.speak(utter);
-    }
-
-    function downloadPDF() {
-      const element = document.getElementById('birthReport');
-      const opt = {
-        margin:       0.5,
-        filename:     'kp-birth-report.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    function getNakshatraInfo(degree) {
+      const segment = 13.33333;
+      const index = Math.floor(degree / segment);
+      const startDeg = index * segment;
+      const percentIn = ((degree - startDeg) / segment * 100).toFixed(2);
+      return {
+        nakshatra: nakshatras[index],
+        lord: lords[index],
+        segmentPercent: percentIn + "%"
       };
-      html2pdf().from(element).set(opt).save();
     }
-  </script>
 
-</body>
+    const container = document.getElementById("output");
+
+    planets.forEach(planet => {
+      const info = getNakshatraInfo(planet.degree);
+      const div = document.createElement("div");
+      div.className = "planet-box";
+      div.innerHTML = `
+        <strong>${planet.name}</strong><br>
+        Degree: ${planet.degree}°<br>
+        Nakshatra: ${info.nakshatra}<br>
+        Nakshatra Lord: ${info.lord}<br>
+        Position in Segment: ${info.segmentPercent}
+      `;
+      container.appendChild(div);
+    });
+  </script></body>
 </html>

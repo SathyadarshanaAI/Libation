@@ -1,55 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KP Sub Lord Calculator</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0f172a;
+      background: #0f172a;
       color: #e0f2fe;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
       padding: 20px;
     }
 
     .container {
+      max-width: 480px;
+      margin: auto;
       background: #1e293b;
       padding: 20px;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 400px;
+      border-radius: 12px;
+    }
+
+    h2 {
+      text-align: center;
     }
 
     input, select, button {
       width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
-      border-radius: 6px;
+      padding: 8px;
+      margin: 10px 0;
       border: none;
+      border-radius: 6px;
+      font-size: 1rem;
     }
 
-    .result {
+    button {
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+
+    #result {
       margin-top: 20px;
-      font-size: 18px;
+      font-size: 1.1rem;
+      user-select: none; /* 🔒 Prevent tooltip */
     }
 
-    .result strong {
-      display: block;
-      margin-bottom: 5px;
+    .label {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>KP Sub Lord & Sub-Sub Lord 🔮</h2>
+    <h2>KP Sub Lord & Sub-Sub Lord 🌌</h2>
+    
+    <label class="label">Enter Planetary Degree (0° to 360°):</label>
+    <input type="number" id="degree" step="0.01" min="0" max="360" placeholder="e.g. 123.45" />
 
-    <label>Enter Planetary Degree (0° to 360°):</label>
-    <input id="degree" type="number" step="0.01" min="0" max="360" placeholder="e.g. 145.23" />
-
-    <label>Select Language:</label>
+    <label class="label">Select Language:</label>
     <select id="language">
       <option value="en">English</option>
       <option value="si">සිංහල</option>
@@ -58,82 +68,47 @@
 
     <button onclick="calculate()">Calculate</button>
 
-    <div class="result" id="result"></div>
+    <div id="result" contenteditable="false"></div>
   </div>
 
   <script>
-    const subLords = [
-      "Ketu","Venus","Sun","Moon","Mars","Rahu",
-      "Jupiter","Saturn","Mercury"
+    const subLordData = [
+      { name: "Sun", si: "සූරිය", ta: "சூரியன்" },
+      { name: "Moon", si: "සඳ", ta: "சந்திரன்" },
+      { name: "Mars", si: "කුජ", ta: "செவ்வாய்" },
+      { name: "Mercury", si: "බුධ", ta: "புதன்" },
+      { name: "Jupiter", si: "ගුරු", ta: "குரு" },
+      { name: "Venus", si: "ශුක්‍ර", ta: "சுக்ரன்" },
+      { name: "Saturn", si: "ශනි", ta: "சனி" },
+      { name: "Rahu", si: "රාහු", ta: "ராகு" },
+      { name: "Ketu", si: "කේතු", ta: "கேது" }
     ];
 
-    const subLordSpans = [
-      7.2, 7.0, 6.0, 6.0, 5.0, 8.0, 6.0, 6.0, 8.8
-    ];
-
-    const translations = {
-      en: {
-        Ketu: "Ketu", Venus: "Venus", Sun: "Sun", Moon: "Moon", Mars: "Mars",
-        Rahu: "Rahu", Jupiter: "Jupiter", Saturn: "Saturn", Mercury: "Mercury",
-        sub: "Sub Lord", subsub: "Sub-Sub Lord"
-      },
-      si: {
-        Ketu: "කේතු", Venus: "ශුක්‍රයා", Sun: "සූර්යයා", Moon: "සඳ", Mars: "අඟහරු",
-        Rahu: "රාහු", Jupiter: "ගුරු", Saturn: "ශනී", Mercury: "බුද",
-        sub: "උප ආධිපති", subsub: "උප උප ආධිපති"
-      },
-      ta: {
-        Ketu: "கேது", Venus: "சுக்ரன்", Sun: "சூரியன்", Moon: "சந்திரன்", Mars: "செவ்வாய்",
-        Rahu: "ராகு", Jupiter: "குரு", Saturn: "சனி", Mercury: "புதன்",
-        sub: "துணை ஆண்டவன்", subsub: "துணை-துணை ஆண்டவன்"
-      }
-    };
+    function getNameByLanguage(name, lang) {
+      const match = subLordData.find(p => p.name === name);
+      if (!match) return name;
+      return lang === 'si' ? match.si : lang === 'ta' ? match.ta : match.name;
+    }
 
     function calculate() {
       const degree = parseFloat(document.getElementById("degree").value);
       const lang = document.getElementById("language").value;
-
       if (isNaN(degree) || degree < 0 || degree > 360) {
-        document.getElementById("result").innerHTML = "Please enter a valid degree (0° - 360°).";
+        document.getElementById("result").innerHTML = "Please enter a valid degree.";
         return;
       }
 
-      let currentDeg = degree % 360;
-      let subIndex = -1, subSubIndex = -1;
+      const lords = ["Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"];
+      const subLord = lords[Math.floor(degree / 40)];
+      const subSubLord = lords[Math.floor((degree % 40) / (40 / 9))];
 
-      // Sub Lord
-      let accum = 0;
-      for (let i = 0; i < subLordSpans.length; i++) {
-        accum += subLordSpans[i];
-        if (currentDeg < accum) {
-          subIndex = i;
-          break;
-        }
-      }
+      const subText = getNameByLanguage(subLord, lang);
+      const subSubText = getNameByLanguage(subSubLord, lang);
 
-      // Sub Sub Lord
-      let baseStart = accum - subLordSpans[subIndex];
-      let positionInSub = currentDeg - baseStart;
-      let fraction = positionInSub / subLordSpans[subIndex];
-      let subSubSpanTotal = 360;
-      let subSubDeg = fraction * subSubSpanTotal;
-
-      accum = 0;
-      for (let i = 0; i < subLordSpans.length; i++) {
-        accum += subLordSpans[i];
-        if (subSubDeg < accum) {
-          subSubIndex = i;
-          break;
-        }
-      }
-
-      const sub = subLords[subIndex];
-      const subsub = subLords[subSubIndex];
-
-      const t = translations[lang];
-      document.getElementById("result").innerHTML =
-        `<strong>${t.sub}:</strong> ${t[sub]}<br>
-         <strong>${t.subsub}:</strong> ${t[subsub]}`;
+      document.getElementById("result").innerHTML = `
+        <strong>Sub Lord:</strong> ${subText}<br>
+        <strong>Sub-Sub Lord:</strong> ${subSubText}
+      `;
     }
   </script>
 </body>

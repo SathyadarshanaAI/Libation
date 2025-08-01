@@ -1,91 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Astrology Dashboard | KP Sub Lord</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KP Sub Lord Calculator</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #0f172a;
-      color: #e0f2fe;
-      padding: 20px;
+      background-color: #0f172a;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 1rem;
     }
-    section {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 40px;
-    }
-    input, select, button {
-      padding: 10px;
-      margin: 10px 0;
-      width: 100%;
-      background: #334155;
-      color: #e0f2fe;
-      border: none;
-      border-radius: 5px;
-    }
-    button {
-      background: #3b82f6;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #2563eb;
+    .container {
+      background-color: #1e293b;
+      border-radius: 12px;
+      padding: 1rem;
+      max-width: 500px;
+      margin: auto;
     }
     h2 {
-      color: #7dd3fc;
+      color: #60a5fa;
+      margin-bottom: 1rem;
     }
-    #output {
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 15px;
-      font-size: 1.1em;
+    input, select, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 1rem;
+      background: #334155;
+      padding: 0.5rem;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
-
-  <section id="kp-sub-lord">
+  <div class="container">
     <h2>KP Sub Lord & Sub-Sub Lord 🔮</h2>
-    <label for="degree">Enter Planetary Degree (0° to 360°):</label>
-    <input type="number" id="degree" min="0" max="360" step="0.01" />
 
-    <label for="lang">Select Language:</label>
-    <select id="lang">
-      <option value="en-US">English</option>
-      <option value="si-LK">සිංහල</option>
-      <option value="ta-IN">தமிழ்</option>
+    <label>Enter Planetary Degree (0° to 360°):</label>
+    <input type="number" id="degree" step="0.01" min="0" max="360" placeholder="e.g., 180.55">
+
+    <label>Select Language:</label>
+    <select id="language">
+      <option value="en">English</option>
+      <option value="si">සිංහල</option>
+      <option value="ta">தமிழ்</option>
     </select>
 
-    <button onclick="calculateSubLord()">Calculate</button>
-    <button onclick="speakResult()">🔊 Speak</button>
+    <button onclick="calculate()">Calculate</button>
+    <button onclick="speak()">🔊 Speak</button>
 
-    <div id="output"></div>
-  </section>
+    <div class="result" id="result"></div>
+  </div>
 
   <script>
-    function calculateSubLord() {
-      const degree = parseFloat(document.getElementById("degree").value);
-      const planets = ["Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"];
-      const subIndex = Math.floor(degree / 13.33) % 9;
-      const subSubIndex = Math.floor((degree * 2) / 13.33) % 9;
-      const subLord = planets[subIndex];
-      const subSubLord = planets[subSubIndex];
+    const subLords = [
+      "Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"
+    ];
+    const segment = 13.33333333 / 9;
 
-      document.getElementById("output").innerHTML =
-        `<strong>Sub Lord:</strong> ${subLord}<br><strong>Sub-Sub Lord:</strong> ${subSubLord}`;
+    function calculate() {
+      const degree = parseFloat(document.getElementById("degree").value);
+      const lang = document.getElementById("language").value;
+      if (isNaN(degree) || degree < 0 || degree > 360) {
+        document.getElementById("result").innerText = "Please enter a valid degree between 0 and 360.";
+        return;
+      }
+
+      const subIndex = Math.floor((degree % 13.33333333) / segment);
+      const subLord = subLords[subIndex];
+      const subSubIndex = Math.floor((((degree % 13.33333333) % segment) / segment) * 9);
+      const subSubLord = subLords[subSubIndex];
+
+      const translations = {
+        en: `Sub Lord: ${subLord}<br>Sub-Sub Lord: ${subSubLord}`,
+        si: `උප සවාමිකයා: ${subLord}<br>උප-උප සවාමිකයා: ${subSubLord}`,
+        ta: `துணை ஆண்டவர்: ${subLord}<br>துணை துணை ஆண்டவர்: ${subSubLord}`
+      };
+      document.getElementById("result").innerHTML = translations[lang];
     }
 
-    function speakResult() {
-      const output = document.getElementById("output").innerText;
-      const lang = document.getElementById("lang").value;
-      const msg = new SpeechSynthesisUtterance(output);
-      msg.lang = lang;
-      window.speechSynthesis.speak(msg);
+    function speak() {
+      const lang = document.getElementById("language").value;
+      const text = document.getElementById("result").innerText;
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = text;
+      msg.lang = lang === 'si' ? 'si-LK' : lang === 'ta' ? 'ta-IN' : 'en-US';
+      speechSynthesis.speak(msg);
     }
   </script>
-
 </body>
 </html>

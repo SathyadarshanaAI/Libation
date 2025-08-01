@@ -1,121 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>KP Sub Lord & Sub-Sub Lord 🔮</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KP Sub Lord Calculator</title>
   <style>
     body {
-      background: #0f172a;
-      color: #fff;
+      background-color: #0f172a;
+      color: #e0f2fe;
       font-family: Arial, sans-serif;
+      text-align: center;
       padding: 2rem;
     }
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background: #1e293b;
-      padding: 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #38bdf8;
-    }
     input, select, button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #3b82f6;
-      color: white;
-      cursor: pointer;
+      margin: 0.5rem;
+      padding: 0.5rem;
+      font-size: 1rem;
     }
     .result {
-      margin-top: 15px;
-      background: #334155;
-      padding: 10px;
-      border-radius: 5px;
+      margin-top: 1rem;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>KP Sub Lord & Sub-Sub Lord 🌌</h2>
+  <h2>KP Sub Lord & Sub-Sub Lord</h2>
+  <label>Enter Planetary Degree (0° to 360°):</label><br>
+  <input type="number" id="degree" min="0" max="360" /><br>
 
-    <label>Enter Planetary Degree (0° to 360°):</label>
-    <input type="number" id="degree" placeholder="13.20" />
+  <label>Select Language:</label><br>
+  <select id="language">
+    <option value="English">English</option>
+    <option value="Sinhala">සිංහල</option>
+    <option value="Tamil">தமிழ்</option>
+  </select><br>
 
-    <label>Select Language:</label>
-    <select id="language">
-      <option value="en">English</option>
-      <option value="si">සිංහල</option>
-      <option value="ta">தமிழ்</option>
-    </select>
+  <button onclick="calculate()">Find Sub Lords</button>
+  <button onclick="speakResult()">🔊 Speak</button>
 
-    <button onclick="calculate()">🔮 Calculate</button>
-    <button onclick="speakResult()">🔈 Speak</button>
-
-    <div class="result">
-      <p><strong>Sub Lord:</strong> <span id="sub-lord">-</span></p>
-      <p><strong>Sub-Sub Lord:</strong> <span id="sub-sub-lord">-</span></p>
-    </div>
-  </div>
+  <div class="result" id="result"></div>
 
   <script>
-    function calculate() {
-      const deg = parseFloat(document.getElementById('degree').value);
-      let sub = '', subsub = '';
+    const subLordData = [
+      { start: 0, end: 13.333, sub: "Sun", subsub: "Moon" },
+      { start: 13.334, end: 26.666, sub: "Moon", subsub: "Venus" },
+      { start: 26.667, end: 40, sub: "Venus", subsub: "Mercury" },
+      { start: 270, end: 300, sub: "Sun", subsub: "Rahu" }, // example for test
+      { start: 300, end: 330, sub: "Mars", subsub: "Jupiter" },
+      { start: 330, end: 360, sub: "Jupiter", subsub: "Saturn" }
+    ];
 
-      if (deg >= 0 && deg <= 13.33) {
-        sub = 'Ketu';
-        subsub = 'Venus';
-      } else if (deg <= 26.66) {
-        sub = 'Venus';
-        subsub = 'Sun';
-      } else {
-        sub = 'Sun';
-        subsub = 'Moon';
+    const translations = {
+      Sun: { si: "සූර්යයා", ta: "சூரியன்" },
+      Moon: { si: "චන්ද්‍රයා", ta: "சந்திரன்" },
+      Mars: { si: "කුජ", ta: "செவ்வாய்" },
+      Mercury: { si: "බුධයා", ta: "புதன்" },
+      Jupiter: { si: "ගුරු", ta: "குரு" },
+      Venus: { si: "ශුක්‍රයා", ta: "சுக்ரன்" },
+      Saturn: { si: "ශනි", ta: "சனி" },
+      Rahu: { si: "රාහු", ta: "ராகு" },
+      Ketu: { si: "කේතු", ta: "கேது" }
+    };
+
+    let lastResult = "";
+    let lastLang = "en";
+
+    function calculate() {
+      const degree = parseFloat(document.getElementById("degree").value);
+      const lang = document.getElementById("language").value;
+      if (isNaN(degree) || degree < 0 || degree > 360) {
+        document.getElementById("result").innerText = "Invalid degree.";
+        return;
       }
 
-      document.getElementById('sub-lord').textContent = sub;
-      document.getElementById('sub-sub-lord').textContent = subsub;
+      const match = subLordData.find(d => degree >= d.start && degree <= d.end);
+      if (!match) {
+        document.getElementById("result").innerText = "No data.";
+        return;
+      }
+
+      const sub = match.sub;
+      const subsub = match.subsub;
+
+      let display = "";
+      if (lang === "Sinhala") {
+        display = `අනුධිපති: ${translations[sub].si}, උප අනුධිපති: ${translations[subsub].si}`;
+        lastResult = display;
+        lastLang = "si-LK";
+      } else if (lang === "Tamil") {
+        display = `உபநாதன்: ${translations[sub].ta}, துணை உபநாதன்: ${translations[subsub].ta}`;
+        lastResult = display;
+        lastLang = "ta-IN";
+      } else {
+        display = `Sub Lord: ${sub}, Sub-Sub Lord: ${subsub}`;
+        lastResult = display;
+        lastLang = "en-US";
+      }
+
+      document.getElementById("result").innerText = display;
     }
 
     function speakResult() {
-      const lang = document.getElementById('language').value;
-      const sub = document.getElementById('sub-lord').textContent;
-      const subsub = document.getElementById('sub-sub-lord').textContent;
-
-      let message = '';
-      if (lang === 'si') {
-        message = `ඔබගේ උප උප ප්‍රභූවන් වන්නේ: ${subsub}, සහ උප ප්‍රභූවන් වන්නේ: ${sub}`;
-        speakText(message, 'si-LK');
-      } else if (lang === 'ta') {
-        message = `உங்கள் உப லோர்ட்: ${sub}, உப சப் லோர்ட்: ${subsub}`;
-        speakText(message, 'ta-IN');
-      } else {
-        message = `Your Sub Lord is ${sub}, and Sub Sub Lord is ${subsub}`;
-        speakText(message, 'en-US');
-      }
+      if (!lastResult) return;
+      const msg = new SpeechSynthesisUtterance(lastResult);
+      msg.lang = lastLang;
+      window.speechSynthesis.speak(msg);
     }
-
-    function speakText(text, langCode) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      const voices = speechSynthesis.getVoices();
-
-      let selectedVoice = voices.find(v => v.lang.startsWith(langCode));
-      if (!selectedVoice) {
-        selectedVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
-      }
-
-      utterance.voice = selectedVoice;
-      utterance.lang = selectedVoice.lang;
-      speechSynthesis.speak(utterance);
-    }
-
-    window.speechSynthesis.onvoiceschanged = () => {
-      speechSynthesis.getVoices();
-    };
   </script>
 </body>
 </html>

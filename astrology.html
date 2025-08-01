@@ -1,102 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KP Sub Lord Calculator</title>
-  <style>
-    body {
-      background-color: #0f172a;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 1rem;
-    }
-    .container {
-      background-color: #1e293b;
-      border-radius: 12px;
-      padding: 1rem;
-      max-width: 500px;
-      margin: auto;
-    }
-    h2 {
-      color: #60a5fa;
-      margin-bottom: 1rem;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border: none;
-      border-radius: 8px;
-    }
-    button {
-      background-color: #3b82f6;
-      color: white;
-      cursor: pointer;
-    }
-    .result {
-      margin-top: 1rem;
-      background: #334155;
-      padding: 0.5rem;
-      border-radius: 8px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2>KP Sub Lord & Sub-Sub Lord 🔮</h2>
-
-    <label>Enter Planetary Degree (0° to 360°):</label>
-    <input type="number" id="degree" step="0.01" min="0" max="360" placeholder="e.g., 180.55">
-
-    <label>Select Language:</label>
-    <select id="language">
-      <option value="en">English</option>
-      <option value="si">සිංහල</option>
-      <option value="ta">தமிழ்</option>
-    </select>
-
-    <button onclick="calculate()">Calculate</button>
-    <button onclick="speak()">🔊 Speak</button>
-
-    <div class="result" id="result"></div>
+<section id="voice-summary" style="margin-top: 50px;">
+  <h2 style="color:#38bdf8; text-align:center;">🗣️ KP Voice Summary Generator</h2>
+  <div style="background-color: #1e293b; padding: 20px; border-radius: 12px; box-shadow: 0 0 25px #38bdf8; max-width: 600px; margin: auto;">
+    <textarea id="textInput" placeholder="Enter astrology summary here..." style="width:100%; height:120px; border-radius:10px; padding:10px;"></textarea>
+    <button onclick="generateVoice()" style="margin-top:10px; background-color:#0ea5e9; border:none; border-radius:8px; padding:10px; width:100%;">🔊 Play Voice</button>
+    <button onclick="downloadPDF()" style="margin-top:10px; background-color:#38bdf8; border:none; border-radius:8px; padding:10px; width:100%;">📄 Download PDF</button>
+    <audio id="audioPlayer" controls hidden style="margin-top:10px;"></audio>
   </div>
+</section>
 
-  <script>
-    const subLords = [
-      "Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"
-    ];
-    const segment = 13.33333333 / 9;
+<!-- Add html2pdf.js if not already in astrology.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    function calculate() {
-      const degree = parseFloat(document.getElementById("degree").value);
-      const lang = document.getElementById("language").value;
-      if (isNaN(degree) || degree < 0 || degree > 360) {
-        document.getElementById("result").innerText = "Please enter a valid degree between 0 and 360.";
-        return;
-      }
-
-      const subIndex = Math.floor((degree % 13.33333333) / segment);
-      const subLord = subLords[subIndex];
-      const subSubIndex = Math.floor((((degree % 13.33333333) % segment) / segment) * 9);
-      const subSubLord = subLords[subSubIndex];
-
-      const translations = {
-        en: `Sub Lord: ${subLord}<br>Sub-Sub Lord: ${subSubLord}`,
-        si: `උප සවාමිකයා: ${subLord}<br>උප-උප සවාමිකයා: ${subSubLord}`,
-        ta: `துணை ஆண்டவர்: ${subLord}<br>துணை துணை ஆண்டவர்: ${subSubLord}`
-      };
-      document.getElementById("result").innerHTML = translations[lang];
+<script>
+  function generateVoice() {
+    const text = document.getElementById("textInput").value;
+    if (!text.trim()) {
+      alert("Please enter some summary text first.");
+      return;
     }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    speechSynthesis.speak(utterance);
+  }
 
-    function speak() {
-      const lang = document.getElementById("language").value;
-      const text = document.getElementById("result").innerText;
-      const msg = new SpeechSynthesisUtterance();
-      msg.text = text;
-      msg.lang = lang === 'si' ? 'si-LK' : lang === 'ta' ? 'ta-IN' : 'en-US';
-      speechSynthesis.speak(msg);
-    }
-  </script>
-</body>
-</html>
+  function downloadPDF() {
+    const element = document.createElement('div');
+    element.innerHTML = `<h2 style="color:#38bdf8;">KP Voice Summary</h2><p>${document.getElementById("textInput").value}</p><footer style="margin-top:20px; font-size:12px;">© Sathyadarshana | Light of Truth</footer>`;
+    html2pdf().from(element).set({
+      margin: 1,
+      filename: 'KP_Voice_Summary.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    }).save();
+  }
+</script>

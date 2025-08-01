@@ -1,50 +1,144 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>KP Sub Lord Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: sans-serif;
-      background: #0f172a;
+      background-color: #0f172a;
       color: #e0f2fe;
+      font-family: 'Segoe UI', sans-serif;
       padding: 20px;
     }
-    input, button {
-      margin: 10px 0;
-      padding: 8px;
-      width: 100%;
-    }
-    #output {
-      margin-top: 20px;
+    .container {
+      max-width: 600px;
+      margin: auto;
       background: #1e293b;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 20px #38bdf8;
+    }
+    h2 {
+      text-align: center;
+      color: #38bdf8;
+    }
+    label, input {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      background-color: #38bdf8;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      width: 100%;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      background: #0ea5e9;
       padding: 15px;
-      border-radius: 10px;
+      border-radius: 8px;
+      color: #000;
     }
   </style>
 </head>
 <body>
-  <h2>KP Sub Lord Calculator (Manual)</h2><label for="degree">Enter Planetary Degree (0° to 360°):</label> <input type="number" id="degree" min="0" max="360" step="0.01" />
+  <div class="container">
+    <h2>🔭 KP Sub Lord Calculator</h2>
+    <label>Name:
+      <input type="text" id="name" placeholder="e.g. Anuruddha">
+    </label>
+    <label>Birth Date:
+      <input type="date" id="dob">
+    </label>
+    <label>Birth Time:
+      <input type="time" id="time">
+    </label>
+    <label>Degree (0° - 360°):
+      <input type="number" id="degree" min="0" max="360" step="0.0001" placeholder="e.g. 123.4567">
+    </label>
+    <button onclick="calculate()">Calculate Sub Lords</button>
 
-<button onclick="calculateSubLord()">Calculate Sub Lord</button>
+    <div class="result" id="output" style="display:none;"></div>
+  </div>
 
-  <div id="output"></div>  <script>
-    function calculateSubLord() {
-      const degree = parseFloat(document.getElementById("degree").value);
-      let subLord = "";
+  <script>
+    const nakshatras = [
+      { name: "Ashwini", lord: "Ketu", start: 0, end: 13.3333 },
+      { name: "Bharani", lord: "Venus", start: 13.3333, end: 26.6666 },
+      { name: "Krittika", lord: "Sun", start: 26.6666, end: 40 },
+      { name: "Rohini", lord: "Moon", start: 40, end: 53.3333 },
+      { name: "Mrigashira", lord: "Mars", start: 53.3333, end: 66.6666 },
+      { name: "Ardra", lord: "Rahu", start: 66.6666, end: 80 },
+      { name: "Punarvasu", lord: "Jupiter", start: 80, end: 93.3333 },
+      { name: "Pushya", lord: "Saturn", start: 93.3333, end: 106.6666 },
+      { name: "Ashlesha", lord: "Mercury", start: 106.6666, end: 120 },
+      { name: "Magha", lord: "Ketu", start: 120, end: 133.3333 },
+      { name: "Purva Phalguni", lord: "Venus", start: 133.3333, end: 146.6666 },
+      { name: "Uttara Phalguni", lord: "Sun", start: 146.6666, end: 160 },
+      { name: "Hasta", lord: "Moon", start: 160, end: 173.3333 },
+      { name: "Chitra", lord: "Mars", start: 173.3333, end: 186.6666 },
+      { name: "Swati", lord: "Rahu", start: 186.6666, end: 200 },
+      { name: "Vishakha", lord: "Jupiter", start: 200, end: 213.3333 },
+      { name: "Anuradha", lord: "Saturn", start: 213.3333, end: 226.6666 },
+      { name: "Jyeshtha", lord: "Mercury", start: 226.6666, end: 240 },
+      { name: "Mula", lord: "Ketu", start: 240, end: 253.3333 },
+      { name: "Purva Ashadha", lord: "Venus", start: 253.3333, end: 266.6666 },
+      { name: "Uttara Ashadha", lord: "Sun", start: 266.6666, end: 280 },
+      { name: "Shravana", lord: "Moon", start: 280, end: 293.3333 },
+      { name: "Dhanishta", lord: "Mars", start: 293.3333, end: 306.6666 },
+      { name: "Shatabhisha", lord: "Rahu", start: 306.6666, end: 320 },
+      { name: "Purva Bhadrapada", lord: "Jupiter", start: 320, end: 333.3333 },
+      { name: "Uttara Bhadrapada", lord: "Saturn", start: 333.3333, end: 346.6666 },
+      { name: "Revati", lord: "Mercury", start: 346.6666, end: 360 }
+    ];
 
-      if (degree >= 0 && degree < 13.2) subLord = "Ketu";
-      else if (degree < 26.4) subLord = "Venus";
-      else if (degree < 39.6) subLord = "Sun";
-      else if (degree < 52.8) subLord = "Moon";
-      else if (degree < 66.0) subLord = "Mars";
-      else if (degree < 79.2) subLord = "Rahu";
-      else if (degree < 92.4) subLord = "Jupiter";
-      else if (degree < 105.6) subLord = "Saturn";
-      else if (degree < 118.8) subLord = "Mercury";
-      else subLord = "Unknown";
+    const planetOrder = ["Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"];
 
-      document.getElementById("output").innerHTML =
-        `<strong>Sub Lord:</strong> ${subLord}`;
+    function calculate() {
+      const name = document.getElementById("name").value;
+      const dob = document.getElementById("dob").value;
+      const time = document.getElementById("time").value;
+      const deg = parseFloat(document.getElementById("degree").value);
+
+      if (isNaN(deg) || deg < 0 || deg >= 360) {
+        alert("Please enter a valid degree between 0° and 360°.");
+        return;
+      }
+
+      const nak = nakshatras.find(n => deg >= n.start && deg < n.end);
+      const nakDeg = deg - nak.start;
+      const percent = nakDeg / 13.3333;
+
+      const subLordIndex = Math.floor(percent * 9) % 9;
+      const subSubLordIndex = Math.floor((percent * 9 * 9)) % 9;
+
+      const subLord = planetOrder[subLordIndex];
+      const subSubLord = planetOrder[subSubLordIndex];
+
+      const output = `
+        🔹 <strong>Name:</strong> ${name}<br>
+        🔹 <strong>Birth:</strong> ${dob} at ${time}<br>
+        🔹 <strong>Degree:</strong> ${deg.toFixed(4)}°<br><br>
+        🔮 <strong>Nakshatra:</strong> ${nak.name} (${nak.lord})<br>
+        🔮 <strong>Sub Lord:</strong> ${subLord}<br>
+        🔮 <strong>Sub Sub Lord:</strong> ${subSubLord}
+      `;
+
+      const outputDiv = document.getElementById("output");
+      outputDiv.innerHTML = output;
+      outputDiv.style.display = "block";
     }
-  </script></body>
+  </script>
+</body>
 </html>

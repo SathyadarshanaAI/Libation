@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KP Chart Drawing Example</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #e0f2fe;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #38bdf8;
+    }
+
+    .chart-container {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-template-rows: repeat(4, 100px);
+      gap: 2px;
+      margin-top: 2rem;
+    }
+
+    .cell {
+      background: rgba(30,41,59,0.9);
+      border: 1px solid #475569;
+      border-radius: 0.4rem;
+      text-align: center;
+      padding: 0.4rem;
+      font-size: 0.75rem;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #facc15;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔮 KP Chart Drawing (12 Bhava)</h1>
+
+  <div class="chart-container" id="kpChart"></div>
+
+  <script>
+    const chartData = {
+      1: "Lagna<br>Moon",
+      2: "Empty",
+      3: "Sun<br>Mercury",
+      4: "Mars",
+      5: "Jupiter",
+      6: "Empty",
+      7: "Empty",
+      8: "Rahu",
+      9: "Ketu",
+      10: "Venus",
+      11: "Saturn (R)",
+      12: "Empty"
+    };
+
+    const order = [12, 1, 2, 3, 11, '', '', 4, 10, '', '', 5, 9, 8, 7, 6];
+
+    const container = document.getElementById("kpChart");
+
+    order.forEach(num => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      if (num) {
+        cell.innerHTML = `<div class="label">[${num}]</div>${chartData[num]}`;
+      }
+      container.appendChild(cell);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!-- File: Quamtem/kp-chart.html --><!DOCTYPE html><html lang="si">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KP ප්‍රස්ථාරය | Sathyadarshana</title>
+  <style>
+    body {
+      background: radial-gradient(circle at center, #0f172a, #000);
+      color: #e0f2fe;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 1rem;
+    }
+    .kp-chart {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      max-width: 400px;
+      height: 400px;
+      margin: 2rem auto;
+      border: 2px solid #0ea5e9;
+      position: relative;
+    }
+    .box {
+      border: 1px solid #0284c7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 0.3rem;
+    }
+    .center {
+      grid-column: 2 / span 1;
+      grid-row: 2 / span 1;
+      background: #0c4a6e;
+      color: #fff;
+    }
+    .title {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .note {
+      font-size: 0.95rem;
+      margin-top: 1.5rem;
+      color: #94a3b8;
+    }
+    .lang-btns {
+      margin-top: 1rem;
+    }
+    .lang-btns button {
+      margin: 0 0.3rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      background: #0284c7;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">🔯 ඔබගේ KP ජාතක ප්‍රස්ථාරය</div>  <div class="kp-chart">
+    <div class="box">12<br/>☉</div>
+    <div class="box">1<br/>☽</div>
+    <div class="box">2</div>
+    <div class="box">11</div>
+    <div class="box center">KP<br/>Chart</div>
+    <div class="box">3</div>
+    <div class="box">10</div>
+    <div class="box">9</div>
+    <div class="box">4</div>
+  </div>  <div class="lang-btns">
+    <button onclick="translate('en')">English</button>
+    <button onclick="translate('si')">සිංහල</button>
+    <button onclick="translate('ta')">தமிழ்</button>
+  </div>  <div class="note">
+    * මෙය උදාහරණයක් පමණි. අනාගතයේදී NASA/AI දත්ත සමඟ ස්වයංක්‍රියව දෘශ්‍ය පරිවර්තනය සිදු වේ.
+  </div>  <script>
+    function translate(lang) {
+      alert("Language switch not active yet — selected: " + lang);
+    }
+  </script></body>
+</html>

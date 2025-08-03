@@ -2,79 +2,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>KP Chart Drawing Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🪐 KP Chart Drawing (12 Bhava)</title>
   <style>
     body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
       background: #0f172a;
       color: #e0f2fe;
-      font-family: sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem;
+      padding: 1rem;
     }
-
-    h1 {
-      color: #38bdf8;
+    nav {
+      width: 100%;
+      background: #1e293b;
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      border-bottom: 1px solid #38bdf8;
     }
-
-    .chart-container {
-      display: grid;
-      grid-template-columns: repeat(4, 100px);
-      grid-template-rows: repeat(4, 100px);
-      gap: 2px;
-      margin-top: 2rem;
-    }
-
-    .cell {
-      background: rgba(30,41,59,0.9);
-      border: 1px solid #475569;
-      border-radius: 0.4rem;
-      text-align: center;
-      padding: 0.4rem;
-      font-size: 0.75rem;
-    }
-
-    .label {
+    nav a, nav button {
+      color: #7dd3fc;
       font-weight: bold;
-      color: #facc15;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 0.5rem;
+    }
+    .chart {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      grid-template-rows: repeat(4, 80px);
+      gap: 6px;
+      margin-top: 1.5rem;
+    }
+    .cell {
+      background: rgba(30, 41, 59, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 4px;
     }
   </style>
 </head>
 <body>
 
-  <h1>🔮 KP Chart Drawing (12 Bhava)</h1>
+  <nav>
+    <a href="/astrology.html">🔙 Astrology Home</a>
+    <div>
+      <button onclick="translatePage('si')">සිංහල</button>
+      <button onclick="translatePage('ta')">தமிழ்</button>
+      <button onclick="translatePage('en')">English</button>
+    </div>
+  </nav>
 
-  <div class="chart-container" id="kpChart"></div>
+  <h2>🔮 KP Chart Drawing (12 Bhava)</h2>
 
-  <script>
-    const chartData = {
-      1: "Lagna<br>Moon",
-      2: "Empty",
-      3: "Sun<br>Mercury",
-      4: "Mars",
-      5: "Jupiter",
-      6: "Empty",
-      7: "Empty",
-      8: "Rahu",
-      9: "Ketu",
-      10: "Venus",
-      11: "Saturn (R)",
-      12: "Empty"
-    };
+  <div class="chart">
+    <div class="cell">[12]<br>Empty</div>
+    <div class="cell">[1]<br>Lagna<br>Moon</div>
+    <div class="cell">[2]<br>Empty</div>
+    <div class="cell">[11]<br>Saturn (R)</div>
+    <div class="cell"></div>
+    <div class="cell">[3]<br>Sun<br>Mercury</div>
+    <div class="cell">[10]<br>Venus</div>
+    <div class="cell"></div>
+    <div class="cell">[4]<br>Mars</div>
+    <div class="cell">[9]<br>Ketu</div>
+    <div class="cell">[8]<br>Rahu</div>
+    <div class="cell">[5]<br>Jupiter</div>
+  </div>
 
-    const order = [12, 1, 2, 3, 11, '', '', 4, 10, '', '', 5, 9, 8, 7, 6];
+  <div id="google_translate_element" style="margin-top: 20px;"></div>
 
-    const container = document.getElementById("kpChart");
+  <script type="text/javascript">
+    function translatePage(lang) {
+      const gt = document.createElement('script');
+      gt.type = 'text/javascript';
+      gt.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.head.appendChild(gt);
 
-    order.forEach(num => {
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      if (num) {
-        cell.innerHTML = `<div class="label">[${num}]</div>${chartData[num]}`;
-      }
-      container.appendChild(cell);
-    });
+      window.googleTranslateElementInit = () => {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,si,ta',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+      };
+    }
   </script>
 </body>
 </html>

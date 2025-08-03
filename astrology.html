@@ -70,9 +70,31 @@
       font-size: 0.95rem;
       color: #7dd3fc;
     }
+    #languageSwitcher button {
+      background: #1e293b;
+      color: #bae6fd;
+      border: none;
+      padding: 6px 10px;
+      margin: 2px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #languageSwitcher button:hover {
+      background: #0ea5e9;
+      color: white;
+    }
   </style>
 </head>
 <body>
+
+  <a href="/index.html" style="position: fixed; top: 12px; left: 12px; background: #0f172a; color: #7dd3fc; padding: 6px 12px; border-radius: 8px; text-decoration: none; z-index: 999;">← Home</a>
+
+  <div id="languageSwitcher" style="position: fixed; top: 12px; right: 12px; z-index: 999;">
+    <button onclick="translatePage('en')">EN</button>
+    <button onclick="translatePage('si')">සිං</button>
+    <button onclick="translatePage('ta')">தமி</button>
+  </div>
+
   <header>
     <h1>Astrology Dashboard</h1>
     <p>Explore the universe within your birth</p>
@@ -115,5 +137,24 @@
     &copy; 2025 Sathyadarshana – Light of Truth<br>
     Designed by Anurudda & Buddhi AI • All Rights Reserved
   </footer>
+
+  <script>
+    function translatePage(lang) {
+      if (!window.googleTranslateScriptLoaded) {
+        var script = document.createElement('script');
+        script.src = "//translate.google.com/translate_a/element.js?cb=initGoogleTranslate";
+        document.body.appendChild(script);
+        window.googleTranslateScriptLoaded = true;
+      }
+
+      window.initGoogleTranslate = function () {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,si,ta',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'languageSwitcher');
+      };
+    }
+  </script>
 </body>
 </html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Astrology Report | Sathyadarshana</title>
+  <link rel="icon" href="assets/favicon.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e0f2fe;
+      padding: 20px;
+      text-align: center;
+    }
+    #reportBox {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2563eb;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .lang-switch {
+      font-size: 14px;
+    }
+    .lang-switch a {
+      margin: 0 5px;
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    .lang-switch a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="astrology.html" style="color:#e0f2fe; text-decoration:none;">🔮 Astrology Home</a>
+    <div class="lang-switch">
+      🌐 <a href="?lang=si">සිංහල</a> | <a href="?lang=ta">தமிழ்</a> | <a href="?lang=en">English</a>
+    </div>
+  </div>
+
+  <div id="reportBox">
+    <h2>🪐 Birth Report for Anuruddha</h2>
+    <p><strong>Date of Birth:</strong> 1985-10-15</p>
+    <p><strong>Time of Birth:</strong> 14:20</p>
+    <p><strong>Place of Birth:</strong> Anuradhapura, Sri Lanka</p>
+    <hr>
+    <p>🌟 This is a sample KP-based astrological report.</p>
+    <p>Lagna: Aries | Sun + Mercury in 3rd House | Venus in 10th House</p>
+    <p>Saturn (R) in 11th House – Influencing Karma</p>
+    <p>More insights will appear in the PDF.</p>
+  </div>
+
+  <button onclick="downloadPDF()">📥 Download PDF</button>
+
+  <!-- PDF Script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    function downloadPDF() {
+      const element = document.getElementById("reportBox");
+      const opt = {
+        margin: 0.5,
+        filename: 'birth-report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+  </script>
+
+</body>
+</html>

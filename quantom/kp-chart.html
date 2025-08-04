@@ -1,4 +1,6 @@
-<!-- File: Quamtem/kp-chart.html --><!DOCTYPE html><html lang="si">
+<!-- File: quantom/kp-chart.html -->
+<!DOCTYPE html>
+<html lang="si">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,6 +31,7 @@
       font-weight: bold;
       font-size: 1.1rem;
       padding: 0.3rem;
+      flex-direction: column;
     }
     .center {
       grid-column: 2 / span 1;
@@ -60,25 +63,34 @@
   </style>
 </head>
 <body>
-  <div class="title">🔯 ඔබගේ KP ජාතක ප්‍රස්ථාරය</div>  <div class="kp-chart">
-    <div class="box">12<br/>☉</div>
-    <div class="box">1<br/>☽</div>
-    <div class="box">2</div>
-    <div class="box">11</div>
+  <div class="title">🔯 ඔබගේ KP ජාතක ප්‍රස්ථාරය</div>
+  <div class="kp-chart">
+    <div class="box" data-house="12">12</div>
+    <div class="box" data-house="1">1</div>
+    <div class="box" data-house="2">2</div>
+    <div class="box" data-house="11">11</div>
     <div class="box center">KP<br/>Chart</div>
-    <div class="box">3</div>
-    <div class="box">10</div>
-    <div class="box">9</div>
-    <div class="box">4</div>
-  </div>  <div class="lang-btns">
+    <div class="box" data-house="3">3</div>
+    <div class="box" data-house="10">10</div>
+    <div class="box" data-house="9">9</div>
+    <div class="box" data-house="4">4</div>
+  </div>
+
+  <div class="lang-btns">
     <button onclick="translate('en')">English</button>
     <button onclick="translate('si')">සිංහල</button>
     <button onclick="translate('ta')">தமிழ்</button>
-  </div>  <div class="note">
-    * මෙය උදාහරණයක් පමණි.අනාගතයේදී NASA/AI දත්ත සමඟ ස්වයංක්‍රියව දෘශ්‍ය පරිවර්තනය සිදු වේ.
-  </div>  <script>
+  </div>
+
+  <div class="note">
+    * මෙය උදාහරණයක් පමණි. NASA/AI දත්ත සමඟ ස්වයංක්‍රියව පසුකාලීනව සැකසෙයි.
+  </div>
+
+  <script src="kp-calc-engine.js"></script>
+  <script>
     function translate(lang) {
       alert("Language switch not active yet — selected: " + lang);
     }
-  </script></body>
+  </script>
+</body>
 </html>

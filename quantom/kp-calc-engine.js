@@ -1,37 +1,27 @@
-// quantom/kp-calc-engine.js
-
-// 🔭 KP Astrology Engine (Placeholder Data)
-// TODO: Replace with NASA/API integration later
+// File: quantom/kp-calc-engine.js
 
 document.addEventListener("DOMContentLoaded", () => {
-  const chartBox = document.getElementById("chart-container");
-  if (!chartBox) return;
-
   const planetaryData = [
-    { planet: "☀ Sun", degree: "22° Taurus", house: "2" },
-    { planet: "🌙 Moon", degree: "03° Cancer", house: "4" },
-    { planet: "♂ Mars", degree: "15° Gemini", house: "3" },
-    { planet: "☿ Mercury", degree: "08° Taurus", house: "2" },
-    { planet: "♃ Jupiter", degree: "29° Pisces", house: "12" },
-    { planet: "♀ Venus", degree: "12° Aries", house: "1" },
-    { planet: "♄ Saturn", degree: "05° Aquarius", house: "11" },
-    { planet: "☊ Rahu", degree: "18° Leo", house: "5" },
-    { planet: "☋ Ketu", degree: "18° Aquarius", house: "11" },
-    { planet: "♅ Uranus", degree: "11° Taurus", house: "2" },
-    { planet: "♆ Neptune", degree: "23° Pisces", house: "12" },
-    { planet: "♇ Pluto", degree: "01° Capricorn", house: "10" }
+    { planet: "☀ Sun", house: "2" },
+    { planet: "🌙 Moon", house: "1" },
+    { planet: "♂ Mars", house: "3" },
+    { planet: "☿ Mercury", house: "2" },
+    { planet: "♃ Jupiter", house: "12" },
+    { planet: "♀ Venus", house: "1" },
+    { planet: "♄ Saturn", house: "11" },
+    { planet: "☊ Rahu", house: "5" },
+    { planet: "☋ Ketu", house: "11" },
+    { planet: "♅ Uranus", house: "2" },
+    { planet: "♆ Neptune", house: "12" },
+    { planet: "♇ Pluto", house: "10" }
   ];
 
-  const chartHTML = planetaryData.map(p => 
-    `<p><strong>${p.planet}:</strong> ${p.degree}, House ${p.house}</p>`
-  ).join("");
-
-  chartBox.innerHTML += `
-    <hr />
-    <h3>🔭 KP Planetary Chart</h3>
-    ${chartHTML}
-    <p style="margin-top:1.5rem;color:#94a3b8;font-size:0.9rem;">
-      <em>Note: This is sample data. Real-time planetary positions will be integrated soon.</em>
-    </p>
-  `;
+  planetaryData.forEach(p => {
+    const box = document.querySelector(`.box[data-house="${p.house}"]`);
+    if (box) {
+      const span = document.createElement("span");
+      span.textContent = p.planet;
+      box.appendChild(span);
+    }
+  });
 });

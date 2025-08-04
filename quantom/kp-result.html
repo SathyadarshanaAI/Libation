@@ -1,6 +1,11 @@
-<!-- ... (unchanged head and style) ... -->
-<a id="backLink" href="#">← Back to KP Astrology Engine</a>
-<!-- ... (unchanged footer) ... -->
+<!-- Show KP Chart Summary -->
+<div id="chart-container">
+  <h2>🧑 Name: [Name]</h2>
+  <p><strong>🌀 Gender:</strong> [Gender]</p>
+  <p><strong>📅 Date of Birth:</strong> [DOB]</p>
+  <p><strong>⏰ Time of Birth:</strong> [Time]</p>
+  <p><strong>🌍 Birth Place:</strong> [Place]</p>
+</div>
 
 <script>
   window.onload = function () {
@@ -21,9 +26,5 @@
       <hr style="margin:1.5rem 0;" />
       <p>🪐 <em>Your KP chart will be generated soon using Sub-Lord logic and planetary positions.</em></p>
     `;
-
-    // Update "Back" link with full parameters (for continuity)
-    const backLink = document.getElementById('backLink');
-    backLink.href = `kp-astrology-engine.html?name=${encodeURIComponent(name)}&gender=${gender}&dob=${dob}&time=${time}&place=${encodeURIComponent(place)}`;
-  };
+  }
 </script>

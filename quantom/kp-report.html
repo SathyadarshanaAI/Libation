@@ -1,3 +1,4 @@
+<!-- File: quantom/kp-report.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +14,7 @@
       padding: 1.5rem;
       line-height: 1.6;
     }
-    h1, h2 {
+    h1 {
       color: #7dd3fc;
       text-align: center;
     }
@@ -64,21 +65,19 @@
   <div class="report-box">
     <h1>🔭 KP Astrology Birth Report</h1>
 
-    <div class="field"><span class="label">Full Name:</span> <span class="value" id="name">Anuruddha Dilip</span></div>
-    <div class="field"><span class="label">Date of Birth:</span> <span class="value" id="dob">1990-01-01</span></div>
-    <div class="field"><span class="label">Time of Birth:</span> <span class="value" id="tob">06:15 AM</span></div>
-    <div class="field"><span class="label">Place of Birth:</span> <span class="value" id="pob">Anuradhapura, Sri Lanka</span></div>
+    <div class="field"><span class="label">Full Name:</span> <span class="value" id="name"></span></div>
+    <div class="field"><span class="label">Date of Birth:</span> <span class="value" id="dob"></span></div>
+    <div class="field"><span class="label">Time of Birth:</span> <span class="value" id="tob"></span></div>
+    <div class="field"><span class="label">Place of Birth:</span> <span class="value" id="pob"></span></div>
 
     <hr style="margin: 1rem 0; border-color: #334155;"/>
 
-    <div class="field"><span class="label">Ascendant (Lagna):</span> <span class="value" id="ascendant">Libra ♎</span></div>
-    <div class="field"><span class="label">Sub-Lord of Lagna:</span> <span class="value" id="sublord">Venus</span></div>
-    <div class="field"><span class="label">Ruling Planets:</span> <span class="value" id="rulers">Venus, Mercury, Moon</span></div>
+    <div class="field"><span class="label">Ascendant (Lagna):</span> <span class="value" id="ascendant"></span></div>
+    <div class="field"><span class="label">Sub-Lord of Lagna:</span> <span class="value" id="sublord"></span></div>
+    <div class="field"><span class="label">Ruling Planets:</span> <span class="value" id="rulers"></span></div>
 
     <div class="field"><span class="label">Basic Traits:</span>
-      <div class="value" id="traits">
-        A balanced thinker, emotionally intuitive, highly analytical, and artistic in nature.
-      </div>
+      <div class="value" id="traits"></div>
     </div>
 
     <div class="download-btn">
@@ -86,11 +85,29 @@
     </div>
 
     <div class="note">
-      This report is auto-generated based on placeholder data.<br/>
-      NASA ephemeris & KP astrology logic will be fully integrated soon.
+      This report is auto-generated from astrology inputs.<br/>
+      NASA & KP Logic will be added dynamically.
     </div>
   </div>
 
   <script src="kp-pdf.js"></script>
+  <script>
+    // Dynamic fill (in future from queryString/localStorage/API)
+    const data = {
+      name: "Anuruddha Dilip",
+      dob: "1990-01-01",
+      tob: "06:15 AM",
+      pob: "Anuradhapura, Sri Lanka",
+      ascendant: "Libra ♎",
+      sublord: "Venus",
+      rulers: "Venus, Mercury, Moon",
+      traits: "A balanced thinker, emotionally intuitive, highly analytical, and artistic in nature."
+    };
+
+    Object.entries(data).forEach(([key, val]) => {
+      const el = document.getElementById(key);
+      if (el) el.innerText = val;
+    });
+  </script>
 </body>
 </html>

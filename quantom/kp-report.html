@@ -1,3 +1,24 @@
+<!-- KP Report Display -->
+<div class="report-container">
+  <h2>🔮 KP Birth Report</h2>
+
+  <p><strong>👤 Name:</strong> <span id="name">-</span></p>
+  <p><strong>📅 Date of Birth:</strong> <span id="dob">-</span></p>
+  <p><strong>⏰ Time of Birth:</strong> <span id="tob">-</span></p>
+  <p><strong>📍 Place of Birth:</strong> <span id="pob">-</span></p>
+
+  <hr style="margin: 1.2rem 0; border-color: #38bdf8;" />
+
+  <p><strong>🪐 Ascendant (Lagna):</strong> <span id="ascendant">-</span></p>
+  <p><strong>🌟 Sub Lord:</strong> <span id="sublord">-</span></p>
+  <p><strong>🧿 Ruling Planets:</strong> <span id="rulers">-</span></p>
+  <p><strong>🧠 Traits:</strong> <span id="traits">-</span></p>
+
+  <div id="kpChart" class="kp-chart-container"></div>
+  <div id="prediction" class="kp-prediction-box"></div>
+</div>
+
+<!-- Data Fetching + Logic -->
 <script>
   const data = JSON.parse(localStorage.getItem('kpData'));
   if (data) {
@@ -6,7 +27,7 @@
     document.getElementById("tob").innerText = data.tob;
     document.getElementById("pob").innerText = data.pob;
 
-    // Temporary KP logic (can replace with real logic)
+    // Temporary KP logic (replace later)
     document.getElementById("ascendant").innerText = "Libra ♎";
     document.getElementById("sublord").innerText = "Venus";
     document.getElementById("rulers").innerText = "Venus, Mercury, Moon";
@@ -14,3 +35,6 @@
       "Creative, emotionally aware, thoughtful, balanced judgment.";
   }
 </script>
+
+<!-- KP Chart Engine -->
+<script src="kp-calc-engine.js"></script>

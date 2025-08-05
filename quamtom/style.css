@@ -1,0 +1,23 @@
+body {
+  background: #0f172a;
+  color: #e0f2fe;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 2rem;
+  line-height: 1.6;
+}
+.report-container {
+  background: #1e293b;
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #38bdf8;
+}
+h1 {
+  color: #38bdf8;
+  text-align: center;
+}
+.field {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}

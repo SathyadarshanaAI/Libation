@@ -1,38 +1,32 @@
-<script>
-  window.onload = () => {
-    const downloadBtn = document.createElement('button');
-    downloadBtn.textContent = '📄 Download as PDF';
-    downloadBtn.style.cssText =
-      'position:fixed;top:12px;right:12px;padding:8px 14px;border-radius:6px;background:#0ea5e9;color:black;font-weight:bold;cursor:pointer;border:none;z-index:1000;';
-    document.body.appendChild(downloadBtn);
-
-    downloadBtn.addEventListener('click', () => {
-      window.print(); // Native browser print dialog (allows Save as PDF)
-    });
-  };
-</script>
-<script>
-  window.onload = () => {
-    const downloadBtn = document.createElement('button');
-    downloadBtn.textContent = '📄 Download as PDF';
-    downloadBtn.style.cssText =
-      'position:fixed;top:12px;right:12px;padding:8px 14px;border-radius:6px;background:#0ea5e9;color:black;font-weight:bold;cursor:pointer;border:none;z-index:1000;';
-    document.body.appendChild(downloadBtn);
-
-    downloadBtn.addEventListener('click', () => {
-      window.print(); // Native browser print dialog (allows Save as PDF)
-    });
-  };
-</script>...
-  <!-- Your content -->
-
-  <script>
-    // your code from above
-  </script>
-</body><style>
-  @media print {
-    button {
-      display: none;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🪐 KP Report - Preview</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #e0f2fe;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
+      line-height: 1.6;
     }
-  }
-</style>
+    .report-container {
+      background: #1e293b;
+      max-width: 800px;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #38bdf8;
+    }
+    h1, h2 {
+      color: #38bdf8;
+      text-align: center;
+    }
+    .field {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* 🖨️ Print styling */

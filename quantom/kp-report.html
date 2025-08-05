@@ -1,40 +1,20 @@
-<!-- KP Report Display -->
-<div class="report-container">
-  <h2>🔮 KP Birth Report</h2>
+<form id="kpForm" onsubmit="saveKpData(event)">
+  <input type="text" id="name" placeholder="Full Name" required />
+  <input type="date" id="dob" required />
+  <input type="time" id="tob" required />
+  <input type="text" id="pob" placeholder="Place of Birth" required />
+  <button type="submit">Generate KP Report</button>
+</form><script>
+  function saveKpData(e) {
+    e.preventDefault();
+    const name = document.getElementById("name").value;
+    const dob = document.getElementById("dob").value;
+    const tob = document.getElementById("tob").value;
+    const pob = document.getElementById("pob").value;
 
-  <p><strong>👤 Name:</strong> <span id="name">-</span></p>
-  <p><strong>📅 Date of Birth:</strong> <span id="dob">-</span></p>
-  <p><strong>⏰ Time of Birth:</strong> <span id="tob">-</span></p>
-  <p><strong>📍 Place of Birth:</strong> <span id="pob">-</span></p>
+    const kpData = { name, dob, tob, pob };
+    localStorage.setItem("kpData", JSON.stringify(kpData));
 
-  <hr style="margin: 1.2rem 0; border-color: #38bdf8;" />
-
-  <p><strong>🪐 Ascendant (Lagna):</strong> <span id="ascendant">-</span></p>
-  <p><strong>🌟 Sub Lord:</strong> <span id="sublord">-</span></p>
-  <p><strong>🧿 Ruling Planets:</strong> <span id="rulers">-</span></p>
-  <p><strong>🧠 Traits:</strong> <span id="traits">-</span></p>
-
-  <div id="kpChart" class="kp-chart-container"></div>
-  <div id="prediction" class="kp-prediction-box"></div>
-</div>
-
-<!-- Data Fetching + Logic -->
-<script>
-  const data = JSON.parse(localStorage.getItem('kpData'));
-  if (data) {
-    document.getElementById("name").innerText = data.name;
-    document.getElementById("dob").innerText = data.dob;
-    document.getElementById("tob").innerText = data.tob;
-    document.getElementById("pob").innerText = data.pob;
-
-    // Temporary KP logic (replace later)
-    document.getElementById("ascendant").innerText = "Libra ♎";
-    document.getElementById("sublord").innerText = "Venus";
-    document.getElementById("rulers").innerText = "Venus, Mercury, Moon";
-    document.getElementById("traits").innerText =
-      "Creative, emotionally aware, thoughtful, balanced judgment.";
+    window.location.href = "/quantom/kp-report.html";
   }
 </script>
-
-<!-- KP Chart Engine -->
-<script src="kp-calc-engine.js"></script>

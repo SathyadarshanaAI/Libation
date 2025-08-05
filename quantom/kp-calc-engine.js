@@ -1,37 +1,25 @@
-// quantom/kp-calc-engine.js
+// 📁 File: quantom/kp-calc-engine.js
 
-// 🔭 KP Astrology Engine (Placeholder Data)
-// TODO: Replace with NASA/API integration later
+window.addEventListener('DOMContentLoaded', () => { const data = JSON.parse(localStorage.getItem('kpData'));
 
-document.addEventListener("DOMContentLoaded", () => {
-  const chartBox = document.getElementById("chart-container");
-  if (!chartBox) return;
+if (!data) return;
 
-  const planetaryData = [
-    { planet: "☀ Sun", degree: "22° Taurus", house: "2" },
-    { planet: "🌙 Moon", degree: "03° Cancer", house: "4" },
-    { planet: "♂ Mars", degree: "15° Gemini", house: "3" },
-    { planet: "☿ Mercury", degree: "08° Taurus", house: "2" },
-    { planet: "♃ Jupiter", degree: "29° Pisces", house: "12" },
-    { planet: "♀ Venus", degree: "12° Aries", house: "1" },
-    { planet: "♄ Saturn", degree: "05° Aquarius", house: "11" },
-    { planet: "☊ Rahu", degree: "18° Leo", house: "5" },
-    { planet: "☋ Ketu", degree: "18° Aquarius", house: "11" },
-    { planet: "♅ Uranus", degree: "11° Taurus", house: "2" },
-    { planet: "♆ Neptune", degree: "23° Pisces", house: "12" },
-    { planet: "♇ Pluto", degree: "01° Capricorn", house: "10" }
-  ];
+// 🟦 Insert data into report fields document.getElementById("name").innerText = data.name; document.getElementById("dob").innerText = data.dob; document.getElementById("tob").innerText = data.tob; document.getElementById("pob").innerText = data.pob;
 
-  const chartHTML = planetaryData.map(p => 
-    `<p><strong>${p.planet}:</strong> ${p.degree}, House ${p.house}</p>`
-  ).join("");
+// 🌀 Generate mock KP chart logic (Replace later with real logic) const grahas = [ "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu" ]; const subs = ["Venus", "Mars", "Mercury", "Saturn", "Moon", "Jupiter"];
 
-  chartBox.innerHTML += `
-    <hr />
-    <h3>🔭 KP Planetary Chart</h3>
-    ${chartHTML}
-    <p style="margin-top:1.5rem;color:#94a3b8;font-size:0.9rem;">
-      <em>Note: This is sample data. Real-time planetary positions will be integrated soon.</em>
-    </p>
-  `;
-});
+const kpChartDiv = document.getElementById("kpChart"); kpChartDiv.innerHTML = "";
+
+for (let i = 1; i <= 12; i++) { const graha = grahas[Math.floor(Math.random() * grahas.length)]; const sub = subs[Math.floor(Math.random() * subs.length)];
+
+const box = document.createElement("div");
+box.className = "chart-box";
+box.innerHTML = `<strong>House ${i}</strong><br>${graha}<br><small>Sub: ${sub}</small>`;
+kpChartDiv.appendChild(box);
+
+}
+
+// 🔮 Sample mock prediction (to be replaced with AI-powered logic later) const prediction = According to your birth chart, you are influenced by ${grahas[0]} and Sub Lord ${subs[0]}, indicating a spiritual nature and leadership quality.;
+
+const predictionDiv = document.getElementById("prediction"); predictionDiv.innerText = prediction; });
+

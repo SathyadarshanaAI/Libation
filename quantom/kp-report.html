@@ -1,65 +1,13 @@
-<!-- File: quantom/kp-report.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KP Birth Report</title>
-  <style>
-    body {
-      background: #0f172a;
-      color: #e0f2fe;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: left;
-      padding: 2rem;
-    }
-    .report-box {
-      background: #1e293b;
-      max-width: 600px;
-      margin: auto;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #38bdf8;
-    }
-    h1 {
-      text-align: center;
-      color: #7dd3fc;
-    }
-    .item {
-      margin: 1rem 0;
-      font-size: 1.1rem;
-    }
-    .label {
-      font-weight: bold;
-      color: #38bdf8;
-    }
-  </style>
-</head>
-<body>
-  <h1>🔮 KP Birth Report</h1>
-  <div class="report-box">
-    <div class="item"><span class="label">👤 Name:</span> <span id="name">-</span></div>
-    <div class="item"><span class="label">📅 Date of Birth:</span> <span id="dob">-</span></div>
-    <div class="item"><span class="label">⏰ Time of Birth:</span> <span id="tob">-</span></div>
-    <div class="item"><span class="label">📍 Place of Birth:</span> <span id="pob">-</span></div>
-    <hr style="border-color: #38bdf8; margin: 1.5rem 0;">
-    <div class="item"><span class="label">🔭 Ascendant (Lagna):</span> Libra ♎</div>
-    <div class="item"><span class="label">🌞 Sub Lord:</span> Venus</div>
-    <div class="item"><span class="label">🔵 Ruling Planets:</span> Venus, Mercury, Moon</div>
-    <div class="item"><span class="label">❤️ Traits:</span> Balanced, analytical, emotionally aware, artistic.</div>
-  </div>
+<script>
+  window.onload = () => {
+    const downloadBtn = document.createElement('button');
+    downloadBtn.textContent = '📄 Download as PDF';
+    downloadBtn.style.cssText =
+      'position:fixed;top:12px;right:12px;padding:8px 14px;border-radius:6px;background:#0ea5e9;color:black;font-weight:bold;cursor:pointer;border:none;z-index:1000;';
+    document.body.appendChild(downloadBtn);
 
-  <script>
-    const data = JSON.parse(localStorage.getItem("kpData"));
-    if (!data) {
-      document.body.innerHTML = "<h2 style='color:red;'>❌ No birth data found! Please go back and enter details.</h2>";
-      throw new Error("No data in localStorage");
-    }
-
-    document.getElementById("name").innerText = data.name;
-    document.getElementById("dob").innerText = data.dob;
-    document.getElementById("tob").innerText = data.tob;
-    document.getElementById("pob").innerText = data.pob;
-  </script>
-</body>
-</html>
+    downloadBtn.addEventListener('click', () => {
+      window.print(); // Native browser print dialog (allows Save as PDF)
+    });
+  };
+</script>

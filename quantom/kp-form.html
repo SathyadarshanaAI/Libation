@@ -1,5 +1,4 @@
-<!-- File: quantom/kp-form.html -->
-<form id="kpForm">
+<form id="kpForm" onsubmit="saveKpData(event)">
   <input type="text" id="name" placeholder="Full Name" required />
   <input type="date" id="dob" required />
   <input type="time" id="tob" required />
@@ -8,15 +7,17 @@
 </form>
 
 <script>
-  document.getElementById('kpForm').onsubmit = function(e) {
+  function saveKpData(e) {
     e.preventDefault();
-    const data = {
-      name: document.getElementById('name').value,
-      dob: document.getElementById('dob').value,
-      tob: document.getElementById('tob').value,
-      pob: document.getElementById('pob').value
-    };
-    localStorage.setItem('kpData', JSON.stringify(data));
-    window.location.href = '/quantom/kp-report.html';
-  };
+    const name = document.getElementById("name").value;
+    const dob = document.getElementById("dob").value;
+    const tob = document.getElementById("tob").value;
+    const pob = document.getElementById("pob").value;
+
+    const kpData = { name, dob, tob, pob };
+    localStorage.setItem("kpData", JSON.stringify(kpData));
+
+    // ✅ Redirect after saving
+    window.location.href = "/quantom/kp-report.html";
+  }
 </script>

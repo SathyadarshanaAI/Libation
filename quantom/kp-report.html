@@ -1,20 +1,66 @@
-<form id="kpForm" onsubmit="saveKpData(event)">
-  <input type="text" id="name" placeholder="Full Name" required />
-  <input type="date" id="dob" required />
-  <input type="time" id="tob" required />
-  <input type="text" id="pob" placeholder="Place of Birth" required />
-  <button type="submit">Generate KP Report</button>
-</form><script>
-  function saveKpData(e) {
-    e.preventDefault();
-    const name = document.getElementById("name").value;
-    const dob = document.getElementById("dob").value;
-    const tob = document.getElementById("tob").value;
-    const pob = document.getElementById("pob").value;
+<!-- File: quantom/kp-form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generate KP Report</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #e0f2fe;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    form {
+      background: #1e293b;
+      max-width: 500px;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #38bdf8;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      margin: 0.7rem 0;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+    button {
+      background: #0ea5e9;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔭 KP Report Generator</h1>
+  <form id="kpForm">
+    <input type="text" id="name" placeholder="Full Name" required />
+    <input type="date" id="dob" required />
+    <input type="time" id="tob" required />
+    <input type="text" id="pob" placeholder="Place of Birth" required />
+    <button type="submit">Generate KP Report</button>
+  </form>
 
-    const kpData = { name, dob, tob, pob };
-    localStorage.setItem("kpData", JSON.stringify(kpData));
-
-    window.location.href = "/quantom/kp-report.html";
-  }
-</script>
+  <script>
+    const form = document.getElementById("kpForm");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const data = {
+        name: document.getElementById("name").value,
+        dob: document.getElementById("dob").value,
+        tob: document.getElementById("tob").value,
+        pob: document.getElementById("pob").value
+      };
+      localStorage.setItem("kpData", JSON.stringify(data));
+      window.location.href = "/quantom/kp-report.html"; // ✅ redirect
+    });
+  </script>
+</body>
+</html>

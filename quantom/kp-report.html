@@ -1,66 +1,75 @@
-<!-- File: quantom/kp-form.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generate KP Report</title>
+  <title>KP Birth Report</title>
   <style>
     body {
-      background: #0f172a;
-      color: #e0f2fe;
+      background: #020617;
+      color: #e2e8f0;
       font-family: 'Segoe UI', sans-serif;
-      text-align: center;
       padding: 2rem;
     }
-    form {
+    .report-box {
       background: #1e293b;
-      max-width: 500px;
-      margin: auto;
-      padding: 2rem;
       border-radius: 12px;
-      box-shadow: 0 0 15px #38bdf8;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 12px #38bdf8aa;
     }
-    input, button {
-      display: block;
-      width: 100%;
-      margin: 0.7rem 0;
-      padding: 0.8rem;
-      border-radius: 8px;
-      border: none;
-      font-size: 1rem;
+    h2 {
+      text-align: center;
+      color: #7dd3fc;
+      margin-bottom: 1.5rem;
     }
-    button {
-      background: #0ea5e9;
-      color: black;
+    .label {
       font-weight: bold;
-      cursor: pointer;
+      color: #38bdf8;
+    }
+    .value {
+      color: #f1f5f9;
+      margin-bottom: 1rem;
+      display: block;
     }
   </style>
 </head>
 <body>
-  <h1>🔭 KP Report Generator</h1>
-  <form id="kpForm">
-    <input type="text" id="name" placeholder="Full Name" required />
-    <input type="date" id="dob" required />
-    <input type="time" id="tob" required />
-    <input type="text" id="pob" placeholder="Place of Birth" required />
-    <button type="submit">Generate KP Report</button>
-  </form>
+
+  <div class="report-box">
+    <h2>🔮 KP Birth Report</h2>
+    <div><span class="label">👤 Name:</span> <span id="name" class="value">-</span></div>
+    <div><span class="label">📅 Date of Birth:</span> <span id="dob" class="value">-</span></div>
+    <div><span class="label">⏰ Time of Birth:</span> <span id="tob" class="value">-</span></div>
+    <div><span class="label">📍 Place of Birth:</span> <span id="pob" class="value">-</span></div>
+
+    <hr style="margin: 1.5rem 0; border: 1px solid #334155;"/>
+
+    <div><span class="label">🥄 Ascendant (Lagna):</span> <span id="ascendant" class="value">-</span></div>
+    <div><span class="label">🌞 Sub Lord:</span> <span id="sublord" class="value">-</span></div>
+    <div><span class="label">🔵 Ruling Planets:</span> <span id="rulers" class="value">-</span></div>
+    <div><span class="label">❤️ Traits:</span> <span id="traits" class="value">-</span></div>
+  </div>
 
   <script>
-    const form = document.getElementById("kpForm");
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const data = {
-        name: document.getElementById("name").value,
-        dob: document.getElementById("dob").value,
-        tob: document.getElementById("tob").value,
-        pob: document.getElementById("pob").value
-      };
-      localStorage.setItem("kpData", JSON.stringify(data));
-      window.location.href = "/quantom/kp-report.html"; // ✅ redirect
-    });
+    const data = JSON.parse(localStorage.getItem("kpData"));
+    if (data) {
+      document.getElementById("name").innerText = data.name || "-";
+      document.getElementById("dob").innerText = data.dob || "-";
+      document.getElementById("tob").innerText = data.tob || "-";
+      document.getElementById("pob").innerText = data.pob || "-";
+
+      // Temporary logic for visual effect
+      document.getElementById("ascendant").innerText = "Libra ♎";
+      document.getElementById("sublord").innerText = "Venus";
+      document.getElementById("rulers").innerText = "Venus, Mercury, Moon";
+      document.getElementById("traits").innerText = "Balanced, analytical, emotionally aware, and artistic.";
+    } else {
+      alert("No data found. Please go back and submit the form.");
+      window.location.href = "/quantom/kp-form.html";
+    }
   </script>
+
 </body>
 </html>

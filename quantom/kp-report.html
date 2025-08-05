@@ -11,3 +11,28 @@
     });
   };
 </script>
+<script>
+  window.onload = () => {
+    const downloadBtn = document.createElement('button');
+    downloadBtn.textContent = '📄 Download as PDF';
+    downloadBtn.style.cssText =
+      'position:fixed;top:12px;right:12px;padding:8px 14px;border-radius:6px;background:#0ea5e9;color:black;font-weight:bold;cursor:pointer;border:none;z-index:1000;';
+    document.body.appendChild(downloadBtn);
+
+    downloadBtn.addEventListener('click', () => {
+      window.print(); // Native browser print dialog (allows Save as PDF)
+    });
+  };
+</script>...
+  <!-- Your content -->
+
+  <script>
+    // your code from above
+  </script>
+</body><style>
+  @media print {
+    button {
+      display: none;
+    }
+  }
+</style>

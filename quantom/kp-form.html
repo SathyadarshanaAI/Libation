@@ -8,7 +8,7 @@
 
 <script>
   function saveKpData(e) {
-    e.preventDefault(); // Stop default form submission
+    e.preventDefault();
     const name = document.getElementById("name").value;
     const dob = document.getElementById("dob").value;
     const tob = document.getElementById("tob").value;
@@ -16,8 +16,6 @@
 
     const kpData = { name, dob, tob, pob };
     localStorage.setItem("kpData", JSON.stringify(kpData));
-
-    // Redirect to KP Report page
     window.location.href = "/quantom/kp-report.html";
   }
 </script>

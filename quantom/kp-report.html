@@ -1,75 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KP Birth Report</title>
-  <style>
-    body {
-      background: #020617;
-      color: #e2e8f0;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 2rem;
-    }
-    .report-box {
-      background: #1e293b;
-      border-radius: 12px;
-      padding: 2rem;
-      max-width: 600px;
-      margin: auto;
-      box-shadow: 0 0 12px #38bdf8aa;
-    }
-    h2 {
-      text-align: center;
-      color: #7dd3fc;
-      margin-bottom: 1.5rem;
-    }
-    .label {
-      font-weight: bold;
-      color: #38bdf8;
-    }
-    .value {
-      color: #f1f5f9;
-      margin-bottom: 1rem;
-      display: block;
-    }
-  </style>
-</head>
-<body>
+<script>
+  const data = JSON.parse(localStorage.getItem("kpData"));
 
-  <div class="report-box">
-    <h2>🔮 KP Birth Report</h2>
-    <div><span class="label">👤 Name:</span> <span id="name" class="value">-</span></div>
-    <div><span class="label">📅 Date of Birth:</span> <span id="dob" class="value">-</span></div>
-    <div><span class="label">⏰ Time of Birth:</span> <span id="tob" class="value">-</span></div>
-    <div><span class="label">📍 Place of Birth:</span> <span id="pob" class="value">-</span></div>
-
-    <hr style="margin: 1.5rem 0; border: 1px solid #334155;"/>
-
-    <div><span class="label">🥄 Ascendant (Lagna):</span> <span id="ascendant" class="value">-</span></div>
-    <div><span class="label">🌞 Sub Lord:</span> <span id="sublord" class="value">-</span></div>
-    <div><span class="label">🔵 Ruling Planets:</span> <span id="rulers" class="value">-</span></div>
-    <div><span class="label">❤️ Traits:</span> <span id="traits" class="value">-</span></div>
-  </div>
-
-  <script>
-    const data = JSON.parse(localStorage.getItem("kpData"));
-    if (data) {
-      document.getElementById("name").innerText = data.name || "-";
-      document.getElementById("dob").innerText = data.dob || "-";
-      document.getElementById("tob").innerText = data.tob || "-";
-      document.getElementById("pob").innerText = data.pob || "-";
-
-      // Temporary logic for visual effect
-      document.getElementById("ascendant").innerText = "Libra ♎";
-      document.getElementById("sublord").innerText = "Venus";
-      document.getElementById("rulers").innerText = "Venus, Mercury, Moon";
-      document.getElementById("traits").innerText = "Balanced, analytical, emotionally aware, and artistic.";
-    } else {
-      alert("No data found. Please go back and submit the form.");
-      window.location.href = "/quantom/kp-form.html";
-    }
-  </script>
-
-</body>
-</html>
+  if (!data) {
+    document.body.innerHTML = "<h2 style='color:red;text-align:center;'>⚠️ KP Data not found. Please go back and fill the form.</h2><br><a href='/quantom/kp-form.html' style='color:skyblue;text-align:center;display:block;'>← Go Back to Form</a>";
+  } else {
+    document.write(`
+      <div style="padding:20px;font-family:'Segoe UI';color:#e0f2fe;background:#0f172a;">
+        <h2>🔮 KP Birth Report</h2>
+        <p><strong>👤 Name:</strong> ${data.name}</p>
+        <p><strong>📅 Date of Birth:</strong> ${data.dob}</p>
+        <p><strong>⏰ Time of Birth:</strong> ${data.tob}</p>
+        <p><strong>📍 Place of Birth:</strong> ${data.pob}</p>
+        <hr>
+        <p><strong>🔭 Ascendant (Lagna):</strong> Libra ♎</p>
+        <p><strong>🌞 Sub Lord:</strong> Venus</p>
+        <p><strong>🔵 Ruling Planets:</strong> Venus, Mercury, Moon</p>
+        <p><strong>❤️ Traits:</strong> Balanced, analytical, emotionally aware, artistic.</p>
+      </div>
+    `);
+  }
+</script>

@@ -1,178 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sathyadarshana | Astrology</title>
-  <meta name="description" content="Explore KP Astrology, NASA Planetary Positions, Numerology, Palmistry, and Nadi Jyotisha with Sathyadarshana.">
-  <link rel="icon" href="/assets/favicon.png">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
-      color: #e0f2fe;
-      text-align: center;
-      min-height: 100vh;
-    }
-    header {
-      padding: 2rem 0 1rem;
-    }
-    header h1 {
-      font-size: 2.2em;
-      color: #7dd3fc;
-    }
-    header p {
-      font-size: 1.1em;
-      color: #bae6fd;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      max-width: 1000px;
-      margin: 2.5rem auto;
-      padding: 0 1rem;
-    }
-    .card {
-      background: rgba(30, 41, 59, 0.95);
-      padding: 1.4rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 14px #38bdf833;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      color: #e0f2fe;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 180px;
-      border: 2px solid transparent;
-    }
-    .card:hover {
-      transform: translateY(-7px) scale(1.03);
-      box-shadow: 0 6px 20px #38bdf888;
-      border: 2px solid #38bdf8;
-      background: rgba(2,6,23,0.94);
-    }
-    .card span {
-      font-size: 2rem;
-      margin-bottom: 0.6rem;
-    }
-    .card h2 {
-      font-size: 1.2rem;
-      color: #38bdf8;
-      margin-bottom: 0.4rem;
-    }
-    footer {
-      margin-top: 2.5rem;
-      padding: 1rem;
-      border-top: 1px solid #38bdf8;
-      font-size: 0.95rem;
-      color: #7dd3fc;
-    }
-    #languageSwitcher button {
-      background: #1e293b;
-      color: #bae6fd;
-      border: none;
-      padding: 6px 10px;
-      margin: 2px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    #languageSwitcher button:hover {
-      background: #0ea5e9;
-      color: white;
-    }
-
-    /* 🔵 KP Report Button */
-    .kp-report-link {
-      margin-top: 1rem;
-      display: inline-block;
-      background: #1e293b;
-      padding: 10px 18px;
-      border-radius: 8px;
-      color: #7dd3fc;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background 0.3s;
-    }
-    .kp-report-link:hover {
-      background: #0ea5e9;
-      color: white;
-    }
-  </style>
-</head>
-<body>
-
-  <a href="/index.html" style="position: fixed; top: 12px; left: 12px; background: #0f172a; color: #7dd3fc; padding: 6px 12px; border-radius: 8px; text-decoration: none; z-index: 999;">← Home</a>
-
-  <div id="languageSwitcher" style="position: fixed; top: 12px; right: 12px; z-index: 999;">
-    <button onclick="translatePage('en')">EN</button>
-    <button onclick="translatePage('si')">සිං</button>
-    <button onclick="translatePage('ta')">தமி</button>
-  </div>
-
-  <header>
-    <h1>Astrology Dashboard</h1>
-    <p>Explore the universe within your birth</p>
-    <a href="/quantom/kp-report.html" target="_blank" class="kp-report-link">📄 Generate KP Report</a>
-  </header>
-
-  <div class="grid">
-    <a href="/kp-draw-chart.html" class="card">
-      <span>🪐</span>
-      <h2>KP Chart</h2>
-      <div>Sub Lord & Cusp Analysis</div>
-    </a>
-    <a href="/vedic-astrology.html" class="card">
-      <span>📜</span>
-      <h2>Vedic Astrology</h2>
-      <div>Traditional Janma Kundali</div>
-    </a>
-    <a href="/numerology.html" class="card">
-      <span>🔢</span>
-      <h2>Numerology</h2>
-      <div>Life Path & Destiny Numbers</div>
-    </a>
-    <a href="/palmistry.html" class="card">
-      <span>✋</span>
-      <h2>Palmistry</h2>
-      <div>Hand Line Analysis</div>
-    </a>
-    <a href="/nadi-kp.html" class="card">
-      <span>📚</span>
-      <h2>Nadi + KP</h2>
-      <div>Combined Ancient Techniques</div>
-    </a>
-    <a href="/geo-vision.html" class="card">
-      <span>🌐</span>
-      <h2>Geo Vision</h2>
-      <div>Planetary Motion & Maps</div>
-    </a>
-  </div>
-
-  <footer>
-    &copy; 2025 Sathyadarshana – Light of Truth<br>
-    Designed by Anurudda & Buddhi AI • All Rights Reserved
-  </footer>
-
-  <script>
-    function translatePage(lang) {
-      if (!window.googleTranslateScriptLoaded) {
-        var script = document.createElement('script');
-        script.src = "//translate.google.com/translate_a/element.js?cb=initGoogleTranslate";
-        document.body.appendChild(script);
-        window.googleTranslateScriptLoaded = true;
-      }
-
-      window.initGoogleTranslate = function () {
-        new google.translate.TranslateElement({
-          pageLanguage: 'en',
-          includedLanguages: 'en,si,ta',
-          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'languageSwitcher');
-      };
-    }
-  </script>
-</body>
-</html>
+<a href="/quantom/kp-report.html" class="card">
+  <span>🪐</span>
+  <h2>KP Chart</h2>
+  <div>Sub Lord & Cusp Analysis</div>
+</a>
+<a href="/quantom/vedic-astrology.html" class="card">
+  <span>📜</span>
+  <h2>Vedic Astrology</h2>
+  <div>Traditional Janma Kundali</div>
+</a>
+<a href="/quantom/numerology.html" class="card">
+  <span>🔢</span>
+  <h2>Numerology</h2>
+  <div>Life Path & Destiny Numbers</div>
+</a>
+<a href="/quantom/palmistry.html" class="card">
+  <span>✋</span>
+  <h2>Palmistry</h2>
+  <div>Hand Line Analysis</div>
+</a>
+<a href="/quantom/nadi-kp.html" class="card">
+  <span>📚</span>
+  <h2>Nadi + KP</h2>
+  <div>Combined Ancient Techniques</div>
+</a>
+<a href="/quantom/geo-vision.html" class="card">
+  <span>🌐</span>
+  <h2>Geo Vision</h2>
+  <div>Planetary Motion & Maps</div>
+</a>

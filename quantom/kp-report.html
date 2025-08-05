@@ -1,22 +1,31 @@
 <script>
-  const data = JSON.parse(localStorage.getItem("kpData"));
+  function downloadPDF() {
+    const data = JSON.parse(localStorage.getItem("kpData"));
+    if (!data) {
+      alert("No data available to generate the report.");
+      return;
+    }
 
-  if (!data) {
-    document.body.innerHTML = "<h2 style='color:red;text-align:center;'>⚠️ KP Data not found. Please go back and fill the form.</h2><br><a href='/quantom/kp-form.html' style='color:skyblue;text-align:center;display:block;'>← Go Back to Form</a>";
-  } else {
-    document.write(`
-      <div style="padding:20px;font-family:'Segoe UI';color:#e0f2fe;background:#0f172a;">
-        <h2>🔮 KP Birth Report</h2>
-        <p><strong>👤 Name:</strong> ${data.name}</p>
-        <p><strong>📅 Date of Birth:</strong> ${data.dob}</p>
-        <p><strong>⏰ Time of Birth:</strong> ${data.tob}</p>
-        <p><strong>📍 Place of Birth:</strong> ${data.pob}</p>
-        <hr>
-        <p><strong>🔭 Ascendant (Lagna):</strong> Libra ♎</p>
-        <p><strong>🌞 Sub Lord:</strong> Venus</p>
-        <p><strong>🔵 Ruling Planets:</strong> Venus, Mercury, Moon</p>
-        <p><strong>❤️ Traits:</strong> Balanced, analytical, emotionally aware, artistic.</p>
-      </div>
-    `);
+    const content = `
+      🔭 Sathyadarshana - KP Astrology Birth Report
+
+      📌 Full Name: ${data.name}
+      📅 Date of Birth: ${data.dob}
+      ⏰ Time of Birth: ${data.tob}
+      🌍 Place of Birth: ${data.pob}
+
+      🧭 Ascendant (Lagna): Libra ♎
+      🔸 Sub-Lord: Venus
+      🌟 Ruling Planets: Venus, Mercury, Moon
+
+      🧠 Traits:
+      Balanced, artistic, emotionally sensitive, spiritually inclined.
+    `;
+
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "kp_report.txt";
+    link.click();
   }
 </script>

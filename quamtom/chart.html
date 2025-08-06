@@ -1,0 +1,53 @@
+<!-- File: quamtom/chart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🪐 KP Chart - NASA Based</title>
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    #chart-container {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 0 20px #38bdf8;
+      max-width: 800px;
+      margin: auto;
+      margin-top: 2rem;
+      color: #e0f2fe;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    h1 {
+      text-align: center;
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌌 KP Chart - Based on NASA Ephemeris</h1>
+  <div id="chart-container">⏳ Loading Chart...</div>
+
+  <!-- ✅ Corrected relative paths for scripts -->
+  <script src="./nasa-fetch.js"></script>
+  <script src="./chart-engine.js"></script>
+  <script src="./chart-ui.js"></script>
+
+  <script>
+    window.onload = async () => {
+      const dateTime = '2025-08-05T07:45:00'; // Replace with dynamic data later
+      const latitude = 7.2906;  // Example: Kandy
+      const longitude = 80.6337;
+
+      try {
+        const positions = await fetchAllPlanets(dateTime, `${latitude},${longitude},0`);
+        const chart = renderChart(positions);
+        renderChartUI(chart, 'chart-container');
+      } catch (err) {
+        document.getElementById('chart-container').innerText = '❌ Error fetching chart data.';
+        console.error('Chart Error:', err);
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+/* 🎨 quamtom/chart-style.css — KP Chart Canvas Styling */
+
+.kp-chart-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+canvas.kp-chart {
+  background: #0f172a;
+  border: 2px solid #38bdf8;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #0ea5e9aa;
+  max-width: 100%;
+  height: auto;
+}

@@ -56,11 +56,26 @@
     </table>
   </div>
 
-  <!-- ✅ Load chart engine -->
-  <script src="chart-engine.js"></script>
+  <!-- ✅ Load Chart Engine -->
+  <script src="quamtom/chart-engine.js"></script>
   <script>
     const tableBody = document.querySelector('#chartTable tbody');
-    const chart = renderChart(); // from chart-engine.js
+
+    // 🚀 Sample or fallback data
+    const samplePositions = {
+      Sun: 123.5,
+      Moon: 83.2,
+      Mars: 15.8,
+      Mercury: 140.3,
+      Jupiter: 280.1,
+      Venus: 210.5,
+      Saturn: 305.0,
+      Rahu: 66.6,
+      Ketu: 246.6,
+      Ascendant: 97.3
+    };
+
+    const chart = renderChart(samplePositions); // From chart-engine.js
 
     for (const planet in chart) {
       const row = document.createElement('tr');

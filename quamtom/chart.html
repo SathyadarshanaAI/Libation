@@ -4,30 +4,73 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🔮 KP Chart Viewer</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="quamtom/chart-style.css">
+  <link rel="stylesheet" href="chart-style.css" />
+  <style>
+    body {
+      background: #0f172a;
+      color: #e0f2fe;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
+    }
+    h1 {
+      color: #38bdf8;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .chart-box {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 0 20px #38bdf8;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #38bdf8;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #0ea5e9;
+      color: #000;
+    }
+  </style>
 </head>
 <body>
-  <div class="report-container">
-    <h1>🔮 KP Chart Viewer</h1>
-    <div id="chart-display"></div>
+  <h1>🪐 KP Birth Chart (Summary)</h1>
+  <div class="chart-box">
+    <table id="chartTable">
+      <thead>
+        <tr>
+          <th>Planet</th>
+          <th>Zodiac Sign</th>
+          <th>Degree</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <!-- ✅ Load chart engine -->
-  <script src="quamtom/chart-engine.js"></script>
+  <script src="chart-engine.js"></script>
   <script>
-    // ✅ Attach the module globally if using module.exports (Node-style)
-    if (typeof require === 'function') {
-      window.kpChartEngine = require('quamtom/chart-engine.js');
-    } else if (typeof renderChart === 'function') {
-      window.kpChartEngine = {
-        renderChart: renderChart,
-        getZodiacPosition: getZodiacPosition
-      };
+    const tableBody = document.querySelector('#chartTable tbody');
+    const chart = renderChart(); // from chart-engine.js
+
+    for (const planet in chart) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${planet}</td>
+        <td>${chart[planet].sign}</td>
+        <td>${chart[planet].degree}°</td>
+      `;
+      tableBody.appendChild(row);
     }
   </script>
-
-  <!-- ✅ Load chart UI renderer -->
-  <script src="quamtom/chart-ui.js"></script>
 </body>
 </html>

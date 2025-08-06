@@ -74,12 +74,13 @@
       const tob = document.getElementById('tob').value;
       const place = document.getElementById('place').value;
 
-      console.log("📥 Collected Data:", { name, dob, tob, place });
+      const birthData = { name, dob, tob, place };
 
-      // 👉 You can redirect to chart.html with query params or use localStorage/sessionStorage
-      // Example:
-      // localStorage.setItem('birthData', JSON.stringify({ name, dob, tob, place }));
-      // window.location.href = 'chart.html';
+      // ✅ Save to localStorage
+      localStorage.setItem('birthData', JSON.stringify(birthData));
+
+      // ✅ Redirect to chart.html
+      window.location.href = "chart.html";
     });
   </script>
 </body>

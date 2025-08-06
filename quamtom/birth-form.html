@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -19,7 +18,7 @@
       margin-bottom: 0.5rem;
       color: #7dd3fc;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 0.6rem;
       margin-bottom: 1.2rem;
@@ -50,22 +49,27 @@
     <h1 style="text-align:center;">🔮 Enter Birth Details</h1>
     <form id="birthForm">
       <label for="name">Name</label>
-      <input type="text" id="name" required />
+      <input type="text" id="name" required /><label for="dob">Date of Birth</label>
+  <input type="date" id="dob" required />
 
-      <label for="dob">Date of Birth</label>
-      <input type="date" id="dob" required />
+  <label for="tob">Time of Birth</label>
+  <input type="time" id="tob" required />
 
-      <label for="tob">Time of Birth</label>
-      <input type="time" id="tob" required />
+  <label for="place">Place of Birth</label>
+  <input type="text" id="place" required />
 
-      <label for="place">Place of Birth</label>
-      <input type="text" id="place" required />
+  <label for="gender">Gender</label>
+  <select id="gender" required>
+    <option value="">-- Select --</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Other">Other</option>
+  </select>
 
-      <button type="submit">Generate Chart</button>
-    </form>
-  </div>
+  <button type="submit">Generate Chart</button>
+</form>
 
-  <script>
+  </div>  <script>
     document.getElementById('birthForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -73,8 +77,9 @@
       const dob = document.getElementById('dob').value;
       const tob = document.getElementById('tob').value;
       const place = document.getElementById('place').value;
+      const gender = document.getElementById('gender').value;
 
-      const birthData = { name, dob, tob, place };
+      const birthData = { name, dob, tob, place, gender };
 
       // ✅ Save to localStorage
       localStorage.setItem('birthData', JSON.stringify(birthData));
@@ -82,6 +87,5 @@
       // ✅ Redirect to chart.html
       window.location.href = "chart.html";
     });
-  </script>
-</body>
+  </script></body>
 </html>

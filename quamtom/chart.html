@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🔮 KP Chart Viewer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="quamtom/chart-style.css">
+</head>
+<body>
+  <div class="report-container">
+    <h1>🔮 KP Chart Viewer</h1>
+    <div id="chart-display"></div>
+  </div>
+
+  <!-- ✅ Load chart engine -->
+  <script src="quamtom/chart-engine.js"></script>
+  <script>
+    // ✅ Attach the module globally if using module.exports (Node-style)
+    if (typeof require === 'function') {
+      window.kpChartEngine = require('quamtom/chart-engine.js');
+    } else if (typeof renderChart === 'function') {
+      window.kpChartEngine = {
+        renderChart: renderChart,
+        getZodiacPosition: getZodiacPosition
+      };
+    }
+  </script>
+
+  <!-- ✅ Load chart UI renderer -->
+  <script src="quamtom/chart-ui.js"></script>
+</body>
+</html>

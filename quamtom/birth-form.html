@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -49,27 +50,30 @@
     <h1 style="text-align:center;">🔮 Enter Birth Details</h1>
     <form id="birthForm">
       <label for="name">Name</label>
-      <input type="text" id="name" required /><label for="dob">Date of Birth</label>
-  <input type="date" id="dob" required />
+      <input type="text" id="name" required />
 
-  <label for="tob">Time of Birth</label>
-  <input type="time" id="tob" required />
+      <label for="dob">Date of Birth</label>
+      <input type="date" id="dob" required />
 
-  <label for="place">Place of Birth</label>
-  <input type="text" id="place" required />
+      <label for="tob">Time of Birth</label>
+      <input type="time" id="tob" required />
 
-  <label for="gender">Gender</label>
-  <select id="gender" required>
-    <option value="">-- Select --</option>
-    <option value="Male">Male</option>
-    <option value="Female">Female</option>
-    <option value="Other">Other</option>
-  </select>
+      <label for="place">Place of Birth</label>
+      <input type="text" id="place" required />
 
-  <button type="submit">Generate Chart</button>
-</form>
+      <label for="gender">Gender</label>
+      <select id="gender" required>
+        <option value="">-- Select --</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
 
-  </div>  <script>
+      <button type="submit">Generate Chart</button>
+    </form>
+  </div>
+
+  <script>
     document.getElementById('birthForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -81,11 +85,10 @@
 
       const birthData = { name, dob, tob, place, gender };
 
-      // ✅ Save to localStorage
       localStorage.setItem('birthData', JSON.stringify(birthData));
 
-      // ✅ Redirect to chart.html
       window.location.href = "chart.html";
     });
-  </script></body>
+  </script>
+</body>
 </html>

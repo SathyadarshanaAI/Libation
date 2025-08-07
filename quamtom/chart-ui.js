@@ -1,14 +1,8 @@
-// 🪐 quamtom/chart-ui.js — KP Chart Canvas Renderer (Uses chart-style.css)
+// ✅ quamtom/chart-ui.js — KP Chart UI Renderer (Fixed)
 
-// ⛺ Wait for DOM to render
-window.onload = () => {
-  const container = document.createElement('div');
-  container.className = 'report-container';
-  document.body.appendChild(container);
-
-  const title = document.createElement('h1');
-  title.textContent = '🪐 KP Birth Chart View';
-  container.appendChild(title);
+function renderChartUI(chartData, containerId = 'chart-container') {
+  const container = document.getElementById(containerId);
+  if (!container || !chartData) return;
 
   // 🎯 Create canvas
   const canvas = document.createElement('canvas');
@@ -20,22 +14,11 @@ window.onload = () => {
 
   const ctx = canvas.getContext('2d');
 
-  // 🔄 Load chart data from chart-engine.js
-  const { renderChart } = window.kpChartEngine || {}; // assume it's attached globally
-  const positions = renderChart && renderChart();
-
-  if (!positions) {
-    ctx.fillStyle = '#e11d48';
-    ctx.fillText('Error: No chart data found.', 50, 50);
-    return;
-  }
-
   // ♻️ Draw circular chart
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
   const radius = 200;
 
-  // 🟢 Circle outline
   ctx.strokeStyle = '#38bdf8';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -43,10 +26,9 @@ window.onload = () => {
   ctx.stroke();
 
   // 🧭 Plot planets
-  const planets = Object.keys(positions);
-  planets.forEach((planet, index) => {
-    const deg360 = samplePositions[planet]; // use global positions
-    const angle = (deg360 * Math.PI) / 180;
+  Object.entries(chartData).forEach(([planet, info], index) => {
+    const totalDegree = zodiacSigns.indexOf(info.sign) * 30 + parseFloat(info.degree);
+    const angle = (totalDegree * Math.PI) / 180;
     const x = centerX + radius * Math.cos(angle);
     const y = centerY + radius * Math.sin(angle);
 
@@ -54,4 +36,4 @@ window.onload = () => {
     ctx.font = '14px Segoe UI';
     ctx.fillText(planet, x - 15, y);
   });
-};
+}

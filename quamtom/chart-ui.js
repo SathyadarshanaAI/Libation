@@ -1,51 +1,37 @@
-// ✅ quamtom/chart-ui.js — KP Chart UI Renderer (Fixed)
+// 📊 quamtom/chart-ui.js — Handles UI and Canvas Setup for KP Chart
 
-// Zodiac signs array (required for plotting)
-const zodiacSigns = [
-  'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-  'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
-];
+window.onload = () => {
+  // 🖼️ Dynamically add canvas to report if not present
+  const reportContainer = document.querySelector(".report-container");
+  if (!reportContainer) return;
 
-function renderChartUI(chartData, containerId = 'chart-container') {
-  const container = document.getElementById(containerId);
-  if (!container || !chartData) return;
+  const canvas = document.createElement("canvas");
+  canvas.id = "kpCanvas";
+  canvas.width = 400;
+  canvas.height = 400;
+  canvas.style.display = "block";
+  canvas.style.margin = "2rem auto";
+  canvas.style.border = "2px solid #38bdf8";
+  canvas.style.borderRadius = "12px";
+  canvas.style.backgroundColor = "#1e293b";
 
-  // 🎯 Clear container first
-  container.innerHTML = '';
+  reportContainer.appendChild(canvas);
 
-  // 🎯 Create canvas
-  const canvas = document.createElement('canvas');
-  canvas.width = 600;
-  canvas.height = 600;
-  canvas.style.display = 'block';
-  canvas.style.margin = '2rem auto';
-  container.appendChild(canvas);
+  // 🌌 Sample dummy data (will later fetch real planet positions from ephemeris)
+  const sampleChartData = {
+    planets: [
+      { name: "☉ Sun", degree: 120 },
+      { name: "☽ Moon", degree: 245 },
+      { name: "♂ Mars", degree: 330 },
+      { name: "♀ Venus", degree: 75 },
+      { name: "☿ Mercury", degree: 180 },
+      { name: "♃ Jupiter", degree: 60 },
+      { name: "♄ Saturn", degree: 310 },
+      { name: "☊ Rahu", degree: 45 },
+      { name: "☋ Ketu", degree: 225 },
+    ],
+  };
 
-  const ctx = canvas.getContext('2d');
-
-  // ♻️ Draw circular chart
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-  const radius = 200;
-
-  ctx.strokeStyle = '#38bdf8';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-  ctx.stroke();
-
-  // 🧭 Plot planets
-  Object.entries(chartData).forEach(([planet, info]) => {
-    const signIndex = zodiacSigns.indexOf(info.sign);
-    if (signIndex === -1) return;
-
-    const totalDegree = signIndex * 30 + parseFloat(info.degree);
-    const angle = (totalDegree - 90) * Math.PI / 180; // -90 to align Aries to top
-    const x = centerX + radius * Math.cos(angle);
-    const y = centerY + radius * Math.sin(angle);
-
-    ctx.fillStyle = '#e0f2fe';
-    ctx.font = '13px Segoe UI';
-    ctx.fillText(planet, x - 15, y);
-  });
-}
+  // 🧠 Draw the chart
+  drawKPChart("kpCanvas", sampleChartData);
+};

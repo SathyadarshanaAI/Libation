@@ -1,53 +1,76 @@
-<!-- File: quamtom/chart.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🪐 KP Chart - NASA Based</title>
-  <link rel="stylesheet" href="../style.css" />
+  <title>🔮 KP Chart Viewer</title>
+  <link rel="stylesheet" href="chart-style.css" />
   <style>
-    #chart-container {
-      background: #1e293b;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 0 20px #38bdf8;
-      max-width: 800px;
-      margin: auto;
-      margin-top: 2rem;
+    body {
+      background: #0f172a;
       color: #e0f2fe;
       font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
     }
     h1 {
-      text-align: center;
       color: #38bdf8;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .chart-box {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 0 20px #38bdf8;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #38bdf8;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #0ea5e9;
+      color: #000;
     }
   </style>
 </head>
 <body>
-  <h1>🌌 KP Chart - Based on NASA Ephemeris</h1>
-  <div id="chart-container">⏳ Loading Chart...</div>
+  <h1>🪐 KP Birth Chart (Summary)</h1>
+  <div class="chart-box">
+    <table id="chartTable">
+      <thead>
+        <tr>
+          <th>Planet</th>
+          <th>Zodiac Sign</th>
+          <th>Degree</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-  <!-- ✅ Corrected relative paths for scripts -->
-  <script src="./nasa-fetch.js"></script>
-  <script src="./chart-engine.js"></script>
-  <script src="./chart-ui.js"></script>
-
+  <!-- ✅ Load chart engine -->
+  <script src="chart-engine.js"></script>
   <script>
-    window.onload = async () => {
-      const dateTime = '2025-08-05T07:45:00'; // Replace with dynamic data later
-      const latitude = 7.2906;  // Example: Kandy
-      const longitude = 80.6337;
+    const tableBody = document.querySelector('#chartTable tbody');
+    const chart = renderChart(); // from chart-engine.js
 
-      try {
-        const positions = await fetchAllPlanets(dateTime, `${latitude},${longitude},0`);
-        const chart = renderChart(positions);
-        renderChartUI(chart, 'chart-container');
-      } catch (err) {
-        document.getElementById('chart-container').innerText = '❌ Error fetching chart data.';
-        console.error('Chart Error:', err);
-      }
-    };
+    for (const planet in chart) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${planet}</td>
+        <td>${chart[planet].sign}</td>
+        <td>${chart[planet].degree}°</td>
+      `;
+      tableBody.appendChild(row);
+    }
   </script>
 </body>
 </html>

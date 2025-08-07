@@ -1,6 +1,6 @@
 // 🌌 quamtom/chart-engine.js — Render KP Style Birth Chart (No UI, Data Only)
 
-// Zodiac signs in 30° steps
+// ♈ Zodiac signs in 30° steps
 const zodiacSigns = [
   'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
@@ -37,11 +37,22 @@ function renderChart(positions = samplePositions) {
   return chart;
 }
 
-// 🧪 Example usage:
+// 🧪 Example usage (for developer test only)
 const chartData = renderChart();
 console.table(chartData);
 
-// Export module
+// 🖥️ Export for Node.js usage (backend)
 if (typeof module !== 'undefined') {
-  module.exports = { renderChart, getZodiacPosition };
+  module.exports = {
+    renderChart,
+    getZodiacPosition
+  };
+}
+
+// 🌍 Export for Browser access (frontend UI)
+if (typeof window !== 'undefined') {
+  window.kpChartEngine = {
+    renderChart,
+    getZodiacPosition
+  };
 }

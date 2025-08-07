@@ -3,24 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🪐 KP Report - Quantum Version</title>
+  <title>Quantum Astrology Dashboard</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
+      color: #e0f2fe;
+      text-align: center;
+      min-height: 100vh;
+    }
+    a.home-btn {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      background: #0f172a;
+      color: #7dd3fc;
+      padding: 6px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      z-index: 999;
+    }
+    h1 {
+      font-size: 2.2em;
+      color: #7dd3fc;
+      margin-top: 2.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: rgba(30, 41, 59, 0.95);
+      padding: 1.4rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 14px #38bdf833;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #e0f2fe;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 160px;
+      border: 2px solid transparent;
+    }
+    .card:hover {
+      transform: translateY(-7px) scale(1.03);
+      box-shadow: 0 6px 20px #38bdf888;
+      border: 2px solid #38bdf8;
+      background: rgba(2,6,23,0.94);
+    }
+    .card span {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      color: #38bdf8;
+      margin-bottom: 0.3rem;
+    }
+    footer {
+      margin-top: 2rem;
+      padding: 1rem;
+      font-size: 0.95rem;
+      color: #7dd3fc;
+    }
+  </style>
 </head>
 <body>
-  <div class="report-container">
-    <h1>🪐 KP Astrology Report</h1>
-    <div class="field"><strong>Name:</strong> <span id="name">Loading...</span></div>
-    <div class="field"><strong>Date of Birth:</strong> <span id="dob">Loading...</span></div>
-    <div class="field"><strong>Time of Birth:</strong> <span id="tob">Loading...</span></div>
-    <div class="field"><strong>Place of Birth:</strong> <span id="pob">Loading...</span></div>
-    <div class="field"><strong>🌙 Moon Degree:</strong> <span id="moonDeg">Loading...</span></div>
-    <hr style="margin: 2rem 0; border-color: #38bdf8;">
-    <div class="field"><strong>🧠 Sub-Lord Prediction:</strong><br><span id="sublord">Loading...</span></div>
+
+  <a class="home-btn" href="/index.html">← Home</a>
+
+  <h1>Quantum Astrology Dashboard</h1>
+
+  <div class="grid">
+    <a href="/quantom/birth-form.html" class="card">
+      <span>🪐</span>
+      <h2>Generate KP Chart</h2>
+      <div>Enter your birth details</div>
+    </a>
+    <a href="/vedic-astrology.html" class="card">
+      <span>📜</span>
+      <h2>Vedic Astrology</h2>
+      <div>Traditional Janma Kundali</div>
+    </a>
+    <a href="/numerology.html" class="card">
+      <span>🔢</span>
+      <h2>Numerology</h2>
+      <div>Life Path & Destiny</div>
+    </a>
+    <a href="/palmistry.html" class="card">
+      <span>✋</span>
+      <h2>Palmistry</h2>
+      <div>Analyze your hand lines</div>
+    </a>
   </div>
 
-  <script src="ephemeris-data.js"></script>
-  <script src="kp-subload.js"></script>
-  <script src="kp-astro.js"></script>
-  <script src="print-report.js"></script>
+  <footer>
+    &copy; 2025 Sathyadarshana – Quantum Edition
+  </footer>
+
 </body>
 </html>

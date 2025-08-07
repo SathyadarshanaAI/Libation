@@ -16,20 +16,19 @@ async function fetchNASAPlanetLongitude(planetId, utcTime, observerLoc = '6.9271
   }
 }
 
-// 🔢 Example IDs
-// Sun = 10, Moon = 301, Mars = 499, Mercury = 199, Jupiter = 599, Venus = 299, Saturn = 699
+// 🔢 Planet IDs (JPL Horizons body IDs)
+const planetIds = {
+  Sun: '10',
+  Moon: '301',
+  Mars: '499',
+  Mercury: '199',
+  Jupiter: '599',
+  Venus: '299',
+  Saturn: '699'
+};
 
 // 🌟 Batch fetch wrapper
 async function fetchAllPlanets(utcTime, observerLoc) {
-  const planetIds = {
-    Sun: '10',
-    Moon: '301',
-    Mars: '499',
-    Mercury: '199',
-    Jupiter: '599',
-    Venus: '299',
-    Saturn: '699'
-  };
   const results = {};
   for (const [planet, id] of Object.entries(planetIds)) {
     const lon = await fetchNASAPlanetLongitude(id, utcTime, observerLoc);
@@ -38,10 +37,10 @@ async function fetchAllPlanets(utcTime, observerLoc) {
   return results;
 }
 
-// 🧪 Example test
+// 🧪 Example usage
 // fetchAllPlanets('2025-08-05T07:45:00', '7.2906,80.6337,0').then(console.log);
 
-// 📦 Export if in module environment
+// 📦 Module export
 if (typeof module !== 'undefined') {
   module.exports = {
     fetchNASAPlanetLongitude,

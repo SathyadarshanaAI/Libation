@@ -1,130 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sathyadarshana | Light of Truth</title>
-  <meta name="description" content="Sathyadarshana - The Light of Truth. AI-powered spirituality, astrology tools, digital library, and more.">
-  <link rel="icon" href="./assets/favicon.png">
-  <style>
-    body {
-      margin: 0; font-family: 'Segoe UI',sans-serif;
-      background: radial-gradient(circle at 20% 20%, #0f172a, #000);
-      color: #e0f2fe; min-height: 100vh;
-      text-align: center;
-    }
-    header { padding: 2rem 0 1rem 0; }
-    header h1 { color: #7dd3fc; font-size: 2.2em; letter-spacing:2px; margin-bottom: 0.2em; }
-    header p { color: #bae6fd; font-size:1.09em; }
-    .main-grid {
-      display: grid; grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
-      gap: 1.3rem; max-width: 1100px; margin: 2.5rem auto 2rem auto; padding: 0 1rem;
-    }
-    .main-card {
-      background: rgba(30,41,59,0.93);
-      border-radius: 1em;
-      box-shadow: 0 0 18px #38bdf833;
-      padding: 1.5em 1em;
-      text-align: center;
-      transition: transform 0.21s, box-shadow 0.21s;
-      color: #e0f2fe;
-      text-decoration: none;
-      display: flex; flex-direction: column; align-items: center;
-      min-height: 180px;
-      border: 2px solid transparent;
-    }
-    .main-card:hover {
-      transform: translateY(-9px) scale(1.04);
-      box-shadow: 0 7px 28px #38bdf888;
-      border: 2px solid #38bdf8;
-      color: #fff;
-      background: rgba(2,6,23,0.95);
-    }
-    .main-card .emoji { font-size:2em; margin-bottom:0.5em; }
-    .main-card h2 { color: #38bdf8; font-size: 1.2em; margin-bottom: 0.3em; }
-    .main-card ul, .main-card div { margin: 0.7em 0 0 0; padding: 0; list-style: none; color:#bae6fd; font-size:0.98em;}
-    .main-card ul li {margin:0.16em 0;}
-    @media (max-width: 700px) {
-      .main-grid { grid-template-columns: 1fr; gap: 0.9rem; }
-      .main-card { padding: 1em 0.6em; min-height: 135px;}
-      header { padding: 1.1rem 0 0.7rem 0;}
-    }
-    footer {
-      margin-top:2.5rem; 
-      color:#7dd3fc; 
-      font-size:0.98rem;
-      padding: 1rem;
-      border-top: 1px solid #38bdf8;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sathyadarshana | The Light of Truth</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
   <header>
-    <h1>Sathyadarshana</h1>
-    <p>The Light of Truth – Explore, Learn, and Grow Spiritually</p>
+    <h1 class="neon-text">🌟 Sathyadarshana</h1>
+    <p class="tagline">Serving the Universe with Serenity, Truth, and Light</p>
   </header>
-  <section>
-    <div class="main-grid">
-      <a href="./astrology.html" class="main-card">
-        <span class="emoji">🪐</span>
-        <h2>Astrology</h2>
-        <ul>
-          <li>KP Charts</li>
-          <li>NASA Data</li>
-          <li>Numerology</li>
-          <li>Palmistry</li>
-          <li>GeoVision</li>
-        </ul>
-      </a>
-      <a href="./library.html" class="main-card">
-        <span class="emoji">📚</span>
-        <h2>Digital Library</h2>
-        <div>Sacred texts & multilingual archives</div>
-      </a>
-      <a href="./dharma-sabha.html" class="main-card">
-        <span class="emoji">🏛️</span>
-        <h2>Dharma Sabha Mandapaya</h2>
-        <div>Live Zoom & Discussions</div>
-      </a>
-      <a href="./doctor-buddhi.html" class="main-card">
-        <span class="emoji">🧑‍⚕️</span>
-        <h2>Doctor Buddhi</h2>
-        <div>Physical & Mental Health</div>
-      </a>
-      <a href="./music-lab.html" class="main-card">
-        <span class="emoji">🎶</span>
-        <h2>Music Lab</h2>
-        <div>Spiritual music & Smule</div>
-      </a>
-      <a href="./news.html" class="main-card">
-        <span class="emoji">📰</span>
-        <h2>News Line</h2>
-        <div>Spiritual & Global news</div>
-      </a>
-      <a href="./anurudda-articles.html" class="main-card">
-        <span class="emoji">✍️</span>
-        <h2>Anurudda’s Articles</h2>
-        <div>Personal spiritual insights</div>
-      </a>
-      <a href="./ai-buddhi-mona.html" class="main-card">
-        <span class="emoji">🤖</span>
-        <h2>AI Buddhi & Mona</h2>
-        <div>Dual AI wisdom & coding</div>
-      </a>
-      <a href="./community-writers.html" class="main-card">
-        <span class="emoji">🧑‍🤝‍🧑</span>
-        <h2>Community Writers</h2>
-        <div>Articles from spiritual writers</div>
-      </a>
-    </div>
+
+  <!-- Navigation -->
+  <nav class="scroll-nav">
+    <a href="astrology.html">🔮 Astrology</a>
+    <a href="doctor-buddhi.html">⚕️ Doctor Buddhi</a>
+    <a href="library.html">📚 Library</a>
+    <a href="music-lab.html">🎵 Music Lab</a>
+    <a href="smule.html">🎤 Smule</a>
+    <a href="dharma-sabha-mandapaya.html">🏛️ Dharma Sabha Mandapaya</a>
+    <a href="anurudda-articles.html">📝 Anurudda Articles</a>
+    <a href="ai-buddhi.html">🤖 AI Buddhi & Mona</a>
+    <a href="community-writers.html">✍️ Community Writers</a>
+  </nav>
+
+  <!-- Main Sections -->
+  <section class="scroll-section">
+    <h2 class="neon-text">Welcome to Sathyadarshana</h2>
+    <p>Explore spirituality, astrology, music, health, and wisdom through one unified platform — guided by AI Buddhi.</p>
   </section>
 
+  <!-- Floating AI Buddhi Button -->
+  <a href="ai-buddhi.html" class="floating-ai-btn" title="Talk to AI Buddhi">🤖</a>
+
   <footer>
-    &copy; 2025 Sathyadarshana.  
-    <br>
-    Creative Concept by Anurudda | Executed by Buddhi AI.  
-    <br>
-    <strong>All Rights Reserved – High Copyright Protection Enabled</strong>
+    <p class="footer-text">
+      Created by Anuruddha Dilip | Designed & Developed by ChatGPT AI Buddhi & AI Copilot | © 2025 Sathyadarshana
+    </p>
   </footer>
+
 </body>
 </html>

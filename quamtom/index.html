@@ -1,24 +1,35 @@
- <form id="birthForm" class="card" style="margin:14px">
-  <label>Name</label>
-  <input id="name" required placeholder="Your name"/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KP – Start</title>
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <form id="birthForm" class="card" style="margin:14px">
+    <label>Name</label>
+    <input id="name" required placeholder="Your name"/>
 
-  <label>Birth Date & Time</label>
-  <input id="datetime" type="datetime-local" required/>
+    <label>Birth Date & Time</label>
+    <input id="datetime" type="datetime-local" required/>
 
-  <label>Lat, Lon (deg)</label>
-  <input id="latlon" required placeholder="6.9271,79.8612"/>
+    <label>Lat, Lon (deg)</label>
+    <input id="latlon" required placeholder="6.9271,79.8612"/>
 
-  <button type="submit">Start → Chart</button>
-</form>
+    <button type="submit">Start → Chart</button>
+  </form>
 
-<script>
-document.getElementById('birthForm').addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const [lat,lon]=(document.getElementById('latlon').value||"6.9271,79.8612").split(',').map(parseFloat);
-  localStorage.setItem('kp_name', document.getElementById('name').value.trim());
-  localStorage.setItem('kp_dt',   document.getElementById('datetime').value);
-  localStorage.setItem('kp_lat',  lat); 
-  localStorage.setItem('kp_lon',  lon);
-  location.href = './chart.html';
-});
-</script>
+  <script>
+  document.getElementById('birthForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const [lat,lon]=(document.getElementById('latlon').value||"6.9271,79.8612").split(',').map(parseFloat);
+    localStorage.setItem('kp_name', document.getElementById('name').value.trim());
+    localStorage.setItem('kp_dt',   document.getElementById('datetime').value);
+    localStorage.setItem('kp_lat',  lat);
+    localStorage.setItem('kp_lon',  lon);
+    location.href = './chart.html';
+  });
+  </script>
+</body>
+</html>

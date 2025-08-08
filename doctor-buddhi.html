@@ -1,0 +1,73 @@
+<!-- 🩺 Doctor Buddhi - Medical Guidance Page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor Buddhi | Medical Guidance</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <style>
+    .goog-te-banner-frame.skiptranslate,
+    body > .skiptranslate {
+      display: none !important;
+    }
+    body {
+      top: 0px !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Language Switch -->
+  <div id="google_translate_element" class="floating-lang-btn"></div>
+
+  <!-- Header -->
+  <header>
+    <h1 class="neon-text">🩺 Doctor Buddhi</h1>
+    <p>Your compassionate guide for mind & body wellness</p>
+  </header>
+
+  <!-- Main Section -->
+  <section class="scroll-section">
+    <img src="assets/doctor-buddhi.jpg" alt="Doctor Buddhi" class="section-image" />
+    <h2>About Doctor Buddhi</h2>
+    <p>
+      Doctor Buddhi provides free health guidance for those who cannot afford medical consultation.
+      This includes physical and mental health advice, awareness on common illnesses, and spiritual healing methods.
+    </p>
+  </section>
+
+  <section class="scroll-section">
+    <h2>Request Guidance</h2>
+    <form class="contact-form">
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Your Email / Phone:</label>
+      <input type="text" id="email" name="email" required>
+
+      <label for="message">Describe Your Issue:</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <button type="submit" class="neon-btn">📩 Submit Request</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p class="footer-text">
+      © 2025 Sathyadarshana | Doctor Buddhi Medical Guidance
+    </p>
+  </footer>
+
+</body>
+</html>

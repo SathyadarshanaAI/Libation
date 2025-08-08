@@ -4,52 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sathyadarshana | Astrology</title>
-  <meta name="description" content="Explore KP Astrology, NASA Planetary Positions, Numerology, Palmistry, and Nadi Jyotisha with Sathyadarshana.">
-  <link rel="icon" href="/assets/favicon.png">
+  <meta name="description" content="Explore KP Astrology, NASA Planetary Positions, Numerology, Palmistry, and Nadi Jyotisha.">
+  <link rel="icon" href="./assets/favicon.png">
   <style>
-    :root{--bg1:#0f172a;--txt:#e0f2fe;--muted:#bae6fd;--brand:#7dd3fc;--card:rgba(30,41,59,.95)}
+    :root{--bg:#0f172a;--txt:#e0f2fe;--muted:#bae6fd;--brand:#7dd3fc;--card:rgba(30,41,59,.95)}
     *{box-sizing:border-box}
-    body{
-      margin:0;font-family:system-ui,"Segoe UI",Arial;
-      background:radial-gradient(circle at 20% 20%, var(--bg1), #000);
-      color:var(--txt);text-align:center;min-height:100vh
-    }
+    body{margin:0;font-family:system-ui,"Segoe UI",Arial;background:radial-gradient(circle at 20% 20%,var(--bg),#000);color:var(--txt);text-align:center;min-height:100vh}
     header{padding:2rem 0 1rem}
-    header h1{font-size:2.2em;color:var(--brand)}
-    header p{font-size:1.1em;color:var(--muted)}
-    .grid{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:1.5rem;max-width:1000px;margin:2.5rem auto;padding:0 1rem
-    }
-    .card{
-      background:var(--card);padding:1.4rem;border-radius:1rem;
-      box-shadow:0 0 14px #38bdf833;transition:.25s ease;
-      text-decoration:none;color:var(--txt);display:flex;flex-direction:column;
-      align-items:center;min-height:180px;border:2px solid transparent
-    }
-    .card:hover{transform:translateY(-7px) scale(1.03);
-      box-shadow:0 6px 20px #38bdf888;border:2px solid #38bdf8;background:rgba(2,6,23,.94)}
-    .card span{font-size:2rem;margin-bottom:.6rem}
-    .card h2{font-size:1.2rem;color:#38bdf8;margin-bottom:.4rem}
-    footer{margin-top:2.5rem;padding:1rem;border-top:1px solid #38bdf8;font-size:.95rem;color:var(--brand)}
-    #languageSwitcher button{
-      background:#1e293b;color:#bae6fd;border:none;padding:6px 10px;margin:2px;border-radius:6px;cursor:pointer
-    }
-    #languageSwitcher button:hover{background:#0ea5e9;color:#fff}
-
-    /* 👇 mobile “tap to search / text select” අහමාරු කිරීම් */
+    header h1{font-size:2.2rem;color:var(--brand)}
+    header p{font-size:1.05rem;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;max-width:1000px;margin:2rem auto;padding:0 1rem}
+    .card{display:flex;flex-direction:column;align-items:center;min-height:180px;padding:1.4rem;border-radius:1rem;background:var(--card);
+      text-decoration:none;color:var(--txt);box-shadow:0 0 14px #38bdf833;border:2px solid transparent;transition:.25s}
+    .card:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 6px 20px #38bdf888;border-color:#38bdf8;background:rgba(2,6,23,.94)}
+    .card span{font-size:2rem;margin-bottom:.5rem}
+    .card h2{font-size:1.15rem;margin:.2rem 0;color:#38bdf8}
+    footer{margin:2.5rem 0 1rem;border-top:1px solid #38bdf8;padding-top:1rem;color:#7dd3fc}
+    /* mobile niceties */
     .card{user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+    .toplink{position:fixed;left:12px;top:12px;background:#0b1220;color:#7dd3fc;padding:6px 12px;border-radius:8px;text-decoration:none;z-index:5}
   </style>
 </head>
 <body>
 
-  <a href="/index.html" style="position:fixed;top:12px;left:12px;background:#0f172a;color:#7dd3fc;padding:6px 12px;border-radius:8px;text-decoration:none;z-index:999">← Home</a>
-
-  <div id="languageSwitcher" style="position:fixed;top:12px;right:12px;z-index:999">
-    <button onclick="translatePage('en')">EN</button>
-    <button onclick="translatePage('si')">සිං</button>
-    <button onclick="translatePage('ta')">தமி</button>
-  </div>
+  <a class="toplink" href="./index.html">← Home</a>
 
   <header>
     <h1>Astrology Dashboard</h1>
@@ -57,38 +35,38 @@
   </header>
 
   <div class="grid">
-    <!-- ✅ KP card → single birth-form flow under quamtom -->
-    <a href="/quamtom/index.html" class="card">
+    <!-- ✅ KP card → quamtom/index.html -->
+    <a href="./quamtom/index.html" class="card">
       <span>📝</span>
-      <h2>Krishnamurti Paddhati Astrology Report</h2>
-      <div>Fill birth details & view report</div>
+      <h2>KP Astrology Report</h2>
+      <div>Fill birth details → Chart & Report</div>
     </a>
 
-    <a href="/vedic-astrology.html" class="card">
+    <a href="./vedic-astrology.html" class="card">
       <span>📜</span>
       <h2>Vedic Astrology</h2>
       <div>Traditional Janma Kundali</div>
     </a>
 
-    <a href="/numerology.html" class="card">
+    <a href="./numerology.html" class="card">
       <span>🔢</span>
       <h2>Numerology</h2>
       <div>Life Path & Destiny Numbers</div>
     </a>
 
-    <a href="/palmistry.html" class="card">
+    <a href="./palmistry.html" class="card">
       <span>✋</span>
       <h2>Palmistry</h2>
       <div>Hand Line Analysis</div>
     </a>
 
-    <a href="/nadi-kp.html" class="card">
+    <a href="./nadi-kp.html" class="card">
       <span>📚</span>
       <h2>Nadi + KP</h2>
       <div>Combined Ancient Techniques</div>
     </a>
 
-    <a href="/geo-vision.html" class="card">
+    <a href="./geo-vision.html" class="card">
       <span>🌐</span>
       <h2>Geo Vision</h2>
       <div>Planetary Motion & Maps</div>
@@ -96,26 +74,7 @@
   </div>
 
   <footer>
-    &copy; 2025 Sathyadarshana – Light of Truth<br/>
-    Designed by Anurudda & Buddhi AI • All Rights Reserved
+    &copy; 2025 Sathyadarshana – Light of Truth • All Rights Reserved
   </footer>
-
-  <script>
-    function translatePage(lang){
-      if(!window.googleTranslateScriptLoaded){
-        const s=document.createElement('script');
-        s.src='//translate.google.com/translate_a/element.js?cb=initGoogleTranslate';
-        document.body.appendChild(s);
-        window.googleTranslateScriptLoaded=true;
-      }
-      window.initGoogleTranslate=function(){
-        new google.translate.TranslateElement({
-          pageLanguage:'en',
-          includedLanguages:'en,si,ta',
-          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'languageSwitcher');
-      };
-    }
-  </script>
 </body>
 </html>

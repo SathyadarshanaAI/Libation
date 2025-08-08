@@ -16,9 +16,12 @@
     <p class="small" id="info"></p>
     <canvas id="wheel" width="600" height="600"></canvas>
     <pre id="debug" class="small"></pre>
+    <form action="chart.html" method="get">
+      <button type="submit">Start → Chart</button>
+    </form>
   </main>
 
-  <!-- Scripts -->
+  <!-- ✅ correct load order + correct filenames -->
   <script src="./ephemeris-data.js"></script>
   <script src="./kp-astro.js"></script>
   <script src="./chart-engine.js"></script>

@@ -1,19 +1,55 @@
-<script src="./ephemeris-data.js"></script>
-<script src="./kp-astro.js"></script>
-<script src="./chart-engine.js"></script>
-<script src="./chart-ui.js"></script>
-<script>
-const KP = {
-  name: localStorage.getItem('kp_name')||'',
-  dt:   localStorage.getItem('kp_dt')  || new Date().toISOString().slice(0,16),
-  lat:  parseFloat(localStorage.getItem('kp_lat')||6.9271),
-  lon:  parseFloat(localStorage.getItem('kp_lon')||79.8612),
-};
-window.addEventListener('load', ()=>{
-  const eph = computeMockEphemeris(KP.dt, KP.lat, KP.lon);
-  drawWheel(document.getElementById('wheel'), eph);
-  document.getElementById('out').textContent = JSON.stringify({KP,eph}, null, 2);
-});
-// “Next → Sub-Lord”
-function goNext(){ location.href='./sublord.html'; }
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KP Chart</title>
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <header>
+    <h1>🪐 KP Chart</h1>
+    <nav><a href="./index.html">← Back</a></nav>
+  </header>
+
+  <main class="card">
+    <p class="small" id="info"></p>
+    <canvas id="wheel" width="600" height="600"></canvas>
+    <pre id="debug" class="small"></pre>
+  </main>
+
+  <!-- ✅ correct load order + correct filenames -->
+  <script src="./ephemeris-data.js"></script>
+  <script src="./kp-astro.js"></script>
+  <script src="./chart-engine.js"></script>
+  <script src="./chart-ui.js"></script>
+
+  <script>
+    function showErr(e){
+      const box = document.createElement('pre');
+      box.style.color = '#ff9aa2';
+      box.style.background = '#2a0f0f';
+      box.style.padding = '10px';
+      box.textContent = 'ERROR: ' + (e && e.message ? e.message : e);
+      document.body.appendChild(box);
+      console.error(e);
+    }
+
+    window.addEventListener('load', () => {
+      try {
+        const name = localStorage.getItem('kp_name') || '';
+        const dt   = localStorage.getItem('kp_dt')   || new Date().toISOString().slice(0,16);
+        const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
+        const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
+
+        document.getElementById('info').textContent =
+          `Loaded: ${name || '—'} • ${dt} • ${lat}, ${lon}`;
+
+        const eph = computeMockEphemeris(dt, lat, lon);   // from chart-engine.js
+        drawWheel(document.getElementById('wheel'), eph); // from chart-ui.js
+        document.getElementById('debug').textContent = JSON.stringify(eph, null, 2);
+      } catch (e) { showErr(e); }
+    });
+  </script>
+</body>
+</html>

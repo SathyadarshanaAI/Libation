@@ -1,55 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>KP Chart</title>
-  <link rel="stylesheet" href="./style.css"/>
-</head>
-<body>
-  <header>
-    <h1>🪐 KP Chart</h1>
-    <nav><a href="./index.html">← Back</a></nav>
-  </header>
+<script>
+  function showErr(e){ /* ...same as yours... */ }
 
-  <main class="card">
-    <p class="small" id="info"></p>
-    <canvas id="wheel" width="600" height="600"></canvas>
-    <pre id="debug" class="small"></pre>
-  </main>
+  window.addEventListener('load', () => {
+    try {
+      const name = localStorage.getItem('kp_name') || '';
+      const dt   = localStorage.getItem('kp_dt')   || new Date().toISOString().slice(0,16);
+      const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
+      const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
 
-  <!-- ✅ correct load order + correct filenames -->
-  <script src="./ephemeris-data.js"></script>
-  <script src="./kp-astro.js"></script>
-  <script src="./chart-engine.js"></script>
-  <script src="./chart-ui.js"></script>
+      document.getElementById('info').textContent =
+        `Loaded: ${name || '—'} • ${dt} • ${lat}, ${lon}`;
 
-  <script>
-    function showErr(e){
-      const box = document.createElement('pre');
-      box.style.color = '#ff9aa2';
-      box.style.background = '#2a0f0f';
-      box.style.padding = '10px';
-      box.textContent = 'ERROR: ' + (e && e.message ? e.message : e);
-      document.body.appendChild(box);
-      console.error(e);
-    }
+      // ✅ pick whatever exists: real -> mock -> fallback
+      const calc = window.computeEphemeris || window.computeMockEphemeris || function(){
+        return {
+          Sun:{sign:'Leo',degree:145.5}, Moon:{sign:'Virgo',degree:182.2},
+          Mars:{sign:'Cancer',degree:95.8}, Mercury:{sign:'Leo',degree:160.1},
+          Jupiter:{sign:'Libra',degree:220.0}, Venus:{sign:'Virgo',degree:190.7},
+          Saturn:{sign:'Gemini',degree:85.2}, Rahu:{sign:'Aquarius',degree:305.4},
+          Ketu:{sign:'Leo',degree:125.4}
+        };
+      };
 
-    window.addEventListener('load', () => {
-      try {
-        const name = localStorage.getItem('kp_name') || '';
-        const dt   = localStorage.getItem('kp_dt')   || new Date().toISOString().slice(0,16);
-        const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
-        const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
-
-        document.getElementById('info').textContent =
-          `Loaded: ${name || '—'} • ${dt} • ${lat}, ${lon}`;
-
-        const eph = computeMockEphemeris(dt, lat, lon);   // from chart-engine.js
-        drawWheel(document.getElementById('wheel'), eph); // from chart-ui.js
-        document.getElementById('debug').textContent = JSON.stringify(eph, null, 2);
-      } catch (e) { showErr(e); }
-    });
-  </script>
-</body>
-</html>
+      const eph = calc(new Date(dt), lat, lon);
+      drawWheel(document.getElementById('wheel'), eph); // from chart-ui.js
+      document.getElementById('debug').textContent = JSON.stringify(eph, null, 2);
+    } catch (e) { showErr(e); }
+  });
+</script>

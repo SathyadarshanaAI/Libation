@@ -1,57 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>KP Chart</title>
-  <link rel="stylesheet" href="./style.css"/>
-</head>
-<body>
-  <header>
-    <h1>🪐 KP Chart</h1>
-    <nav><a href="./index.html">← Back</a></nav>
-  </header>
+<canvas id="wheel" width="600" height="600"></canvas>
+<script>
+  window.addEventListener('load', () => {
+    const name = localStorage.getItem('kp_name') || '';
+    const dt   = localStorage.getItem('kp_dt')   || new Date().toISOString().slice(0,16);
+    const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
+    const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
 
-  <main class="card">
-    <p class="small" id="info"></p>
-    <!-- keep the static canvas (DON'T create it in JS) -->
-    <canvas id="wheel" width="600" height="600"></canvas>
-    <pre id="debug" class="small"></pre>
-  </main>
-
-  <!-- Load order matters: data/libs → engine → ui -->
-  <script src="./ephemeris-data.js"></script>
-  <script src="./kp-astro.js"></script>
-  <script src="./chart-engine.js"></script>
-  <script src="./chart-ui.js"></script>
-
-  <script>
-    function showErr(e){
-      const box = document.createElement('pre');
-      box.style.color = '#ff9aa2';
-      box.style.background = '#2a0f0f';
-      box.style.padding = '10px';
-      box.textContent = 'ERROR: ' + (e && e.message ? e.message : e);
-      document.body.appendChild(box);
-      console.error(e);
-    }
-
-    window.addEventListener('load', () => {
-      try {
-        const name = localStorage.getItem('kp_name') || '';
-        const dt   = localStorage.getItem('kp_dt')   || new Date().toISOString().slice(0,16);
-        const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
-        const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
-
-        document.getElementById('info').textContent =
-          `Loaded: ${name || '—'} • ${dt} • ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-
-        // both functions are defined as globals in the JS files below
-        const eph = window.computeMockEphemeris(dt, lat, lon);
-        window.drawWheel(document.getElementById('wheel'), eph);
-        document.getElementById('debug').textContent = JSON.stringify(eph, null, 2);
-      } catch (e) { showErr(e); }
-    });
-  </script>
-</body>
-</html>
+    const eph = window.computeMockEphemeris(dt, lat, lon);
+    window.drawWheel(document.getElementById('wheel'), eph);
+  });
+</script>

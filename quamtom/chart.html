@@ -1,22 +1,48 @@
-<html>
-<head></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KP Chart</title>
+  <style>
+    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;margin:0;padding:16px;text-align:center}
+    #wheel{display:block;margin:12px auto;background:#0b1220;border-radius:50%;border:1px solid #1e293b}
+    #err{color:#fca5a5;margin-top:8px}
+  </style>
+</head>
 <body>
-  <canvas id="wheel" width="600" height="600"></canvas>
+  <a href="./">← Back to Start</a>
+  <h2 style="margin:6px 0 12px">KP Chart Wheel</h2>
 
-  <!-- Required JS files in correct order -->
-  <script src="./quamtom/ephemeris-data.js"></script>
-  <script src="./quamtom/kp-astro.js"></script>
-  <script src="./quamtom/chart-engine.js"></script>
-  <script src="./quamtom/chart-ui.js"></script>
+  <canvas id="wheel" width="600" height="600"></canvas>
+  <div id="err"></div>
+
+  <!-- Load scripts from /kp/js/ -->
+  <script src="./js/ephemeris-data.js"></script>
+  <script src="./js/kp-astro.js"></script>
+  <script src="./js/chart-engine.js"></script>
+  <script src="./js/chart-ui.js"></script>
 
   <script>
-    window.addEventListener('load', () => {
-      const name = localStorage.getItem('kp_name') || '';
-      const dt   = localStorage.getItem('kp_dt') || new Date().toISOString().slice(0,16);
-      const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
-      const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
+    const showErr = m => (document.getElementById('err').textContent = '⚠ ' + m);
 
-      const eph = window.computeEphemeris(dt, lat, lon);
+    window.addEventListener('load', () => {
+      // Fallbacks
+      const dt  = localStorage.getItem('kp_dt')  || new Date().toISOString().slice(0,16);
+      const lat = +(localStorage.getItem('kp_lat')|| 6.9271);
+      const lon = +(localStorage.getItem('kp_lon')|| 79.8612);
+
+      if (typeof window.drawWheel !== 'function') {
+        showErr('drawWheel() missing — check /kp/js/chart-ui.js path.');
+        return;
+      }
+      if (typeof window.computeEphemeris !== 'function' &&
+          typeof window.computeMockEphemeris !== 'function') {
+        showErr('Ephemeris engine missing — check /kp/js/chart-engine.js path.');
+        return;
+      }
+
+      const eph = (window.computeEphemeris || window.computeMockEphemeris)(dt, lat, lon);
       window.drawWheel(document.getElementById('wheel'), eph);
     });
   </script>

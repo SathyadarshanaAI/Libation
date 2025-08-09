@@ -1,5 +1,8 @@
 // --- KP Sub-Lord (browser JS) ---
-// Vimshottari dasha order + years
+// Depends on: ephemeris-data.js (NAKSHATRAS), kp-astro.js (norm360, rasiOf),
+// optionally chart-engine.js (computeMockEphemeris).
+
+// Vimshottari order + years
 const VIM_ORDER = [
   { lord: 'Ketu',     years: 7  },
   { lord: 'Venus',    years: 20 },
@@ -11,71 +14,85 @@ const VIM_ORDER = [
   { lord: 'Saturn',   years: 19 },
   { lord: 'Mercury',  years: 17 },
 ];
-const TOTAL_YEARS = 120;            // Vimshottari cycle total
-const NAK_LEN_MIN = 13*60 + 20;     // 800 minutes
+const TOTAL_YEARS = 120;           // Vimshottari total
+const NAK_LEN_MIN = 13*60 + 20;    // 800 minutes (13°20')
 
-// Find nakshatra index (0..26) and lord from ephemeris-data.js
-function getNakIndex(deg) {
-  return Math.floor(norm360(deg) / (360/27));
+// fallbacks
+function _norm360(x){ const v=(x%360+360)%360; return isNaN(v)?0:v; }
+function norm360Safe(x){ return (typeof norm360==='function') ? norm360(x) : _norm360(x); }
+
+// --- helpers ---
+function getNakIndex(deg){
+  return Math.floor(norm360Safe(deg) / (360/27)); // 0..26
 }
 
-// Build sub-lord segments for a given starting lord (nak lord)
-function buildSublordSegments(startLord) {
-  // rotate VIM_ORDER to start from startLord
+function buildSublordSegments(startLord){
   const startIdx = VIM_ORDER.findIndex(x => x.lord === startLord);
-  const seq = [...VIM_ORDER.slice(startIdx), ...VIM_ORDER.slice(0, startIdx)];
+  if (startIdx < 0) throw new Error('Invalid startLord: '+startLord);
 
-  // segment length (in minutes) proportional to years/120
+  const seq = [...VIM_ORDER.slice(startIdx), ...VIM_ORDER.slice(0, startIdx)];
   let acc = 0;
   const segs = seq.map(item => {
     const len = NAK_LEN_MIN * (item.years / TOTAL_YEARS); // minutes
     const from = acc;
-    const to   = acc + len; // not inclusive of end
+    const to = acc + len;
     acc = to;
     return { lord: item.lord, from, to };
   });
-  // numerical drift guard: force last to end at 800
-  segs[segs.length - 1].to = NAK_LEN_MIN;
+  segs[segs.length - 1].to = NAK_LEN_MIN; // guard drift → exactly 800
   return segs;
 }
 
-// Main: determine Nakshatra, Star Lord, Sub-Lord
-function kpSubLordFromMoonDeg(moonDeg) {
-  const nakIndex = getNakIndex(moonDeg);
-  const nak      = NAKSHATRAS[nakIndex]; // from ephemeris-data.js
-  const nakLord  = nak.lord;
+// --- core: from any ecliptic degree (0..360) ---
+function kpSubLordFromDegree(deg){
+  if (typeof NAKSHATRAS==='undefined' || !Array.isArray(NAKSHATRAS)){
+    throw new Error('NAKSHATRAS not found — load ephemeris-data.js first.');
+  }
+  const nakIndex = getNakIndex(deg);
+  const nak = NAKSHATRAS[nakIndex];
+  const nakLord = nak.lord;
 
-  // minutes into current nakshatra
+  // minutes into this nakshatra
   const startDeg = nakIndex * (360/27);
-  const deltaDeg = norm360(moonDeg - startDeg);
-  const minutesIntoNak = (deltaDeg * 60); // 1° = 60'
+  const deltaDeg = norm360Safe(deg - startDeg);
+  const minutesIntoNak = deltaDeg * 60; // 1° = 60'
 
   const segs = buildSublordSegments(nakLord);
   const sub = segs.find(s => minutesIntoNak >= s.from && minutesIntoNak < s.to) || segs[segs.length-1];
+
+  const rasiName = (typeof rasiOf==='function') ? rasiOf(deg) : undefined;
 
   return {
     nakIndex,
     nakName: nak.name,
     starLord: nakLord,
     subLord: sub.lord,
-    moonDeg: +norm360(moonDeg).toFixed(4),
-    rasi: rasiOf(moonDeg) // from kp-astro.js
+    degree: +norm360Safe(deg).toFixed(4),
+    rasi: rasiName
   };
 }
 
-// Convenience: from date (uses mock or your real ephemeris if available)
-function getSubLordFromDate(dt, moonDegOverride = null, lat = 0, lon = 0) {
+// --- Moon-focused API (keeps original shape) ---
+function kpSubLordFromMoonDeg(moonDeg){
+  return kpSubLordFromDegree(moonDeg);
+}
+
+// from date/time (uses mock or your real ephemeris)
+function getSubLordFromDate(dt, moonDegOverride=null, lat=0, lon=0){
   let moonDeg;
   if (moonDegOverride !== null && !isNaN(moonDegOverride)) {
-    moonDeg = norm360(moonDegOverride);
+    moonDeg = norm360Safe(moonDegOverride);
   } else {
-    // If you have a real Moon calculator, replace this with real value.
-    // For now use the mock engine to stay fully client-side.
-    const eph = computeMockEphemeris(dt, lat, lon); // from chart-engine.js
-    moonDeg   = eph.positions.Moon;
+    if (typeof computeMockEphemeris !== 'function'){
+      throw new Error('computeMockEphemeris not found — provide Moon degree or load chart-engine.js');
+    }
+    const eph = computeMockEphemeris(dt, lat, lon); // { positions: { Moon: deg, ... } }
+    moonDeg = eph.positions.Moon;
   }
   return kpSubLordFromMoonDeg(moonDeg);
 }
 
-// export (optional for modules)
-// window.getSubLordFromDate = getSubLordFromDate;
+// exports (globals)
+window.kpSubLordFromDegree = kpSubLordFromDegree;
+window.kpSubLordFromMoonDeg = kpSubLordFromMoonDeg;
+window.getSubLordFromDate = getSubLordFromDate;

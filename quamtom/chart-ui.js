@@ -1,37 +1,63 @@
-// 📊 quamtom/chart-ui.js — Handles UI and Canvas Setup for KP Chart
+// quamtom/chart-ui.js — draw wheel on an existing <canvas id="wheel">
 
-window.onload = () => {
-  // 🖼️ Dynamically add canvas to report if not present
-  const reportContainer = document.querySelector(".report-container");
-  if (!reportContainer) return;
+(function () {
+  // expose as global for chart.html
+  window.drawWheel = function drawWheel(canvasOrEl, eph) {
+    const canvas = typeof canvasOrEl === 'string'
+      ? document.getElementById(canvasOrEl)
+      : canvasOrEl;
+    if (!canvas) throw new Error('Canvas not found');
 
-  const canvas = document.createElement("canvas");
-  canvas.id = "kpCanvas";
-  canvas.width = 400;
-  canvas.height = 400;
-  canvas.style.display = "block";
-  canvas.style.margin = "2rem auto";
-  canvas.style.border = "2px solid #38bdf8";
-  canvas.style.borderRadius = "12px";
-  canvas.style.backgroundColor = "#1e293b";
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W/2, cy = H/2;
+    const R  = Math.min(W, H)/2 - 20;
 
-  reportContainer.appendChild(canvas);
+    // clear
+    ctx.clearRect(0,0,W,H);
 
-  // 🌌 Sample dummy data (will later fetch real planet positions from ephemeris)
-  const sampleChartData = {
-    planets: [
-      { name: "☉ Sun", degree: 120 },
-      { name: "☽ Moon", degree: 245 },
-      { name: "♂ Mars", degree: 330 },
-      { name: "♀ Venus", degree: 75 },
-      { name: "☿ Mercury", degree: 180 },
-      { name: "♃ Jupiter", degree: 60 },
-      { name: "♄ Saturn", degree: 310 },
-      { name: "☊ Rahu", degree: 45 },
-      { name: "☋ Ketu", degree: 225 },
-    ],
+    // bg
+    ctx.fillStyle = '#0b1220';
+    ctx.fillRect(0,0,W,H);
+
+    // outer circle
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI*2);
+    ctx.stroke();
+
+    // 12 houses
+    ctx.save();
+    ctx.translate(cx, cy);
+    for (let i=0;i<12;i++){
+      const ang = (i/12)*Math.PI*2;
+      ctx.rotate(Math.PI/6);
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.lineTo(0,-R);
+      ctx.strokeStyle = '#1f8aa6';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // planets
+    if (eph && Array.isArray(eph.planets)){
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '12px system-ui, sans-serif';
+      eph.planets.forEach(p=>{
+        const rad = (p.degree % 360) * Math.PI/180;
+        const r2  = R - 20;
+        const x = cx + r2*Math.cos(-rad + Math.PI/2);
+        const y = cy + r2*Math.sin(-rad + Math.PI/2);
+        ctx.beginPath();
+        ctx.arc(x,y,3,0,Math.PI*2);
+        ctx.fill();
+
+        // label
+        ctx.fillText(p.name, x+6, y-6);
+      });
+    }
   };
-
-  // 🧠 Draw the chart
-  drawKPChart("kpCanvas", sampleChartData);
-};
+})();

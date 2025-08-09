@@ -11,18 +11,16 @@
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,"Segoe UI",Arial;background:radial-gradient(circle at 20% 20%,var(--bg),#000);color:var(--txt);text-align:center;min-height:100vh}
     header{padding:2rem 0 1rem}
-    header h1{font-size:2.2rem;color:var(--brand)}
-    header p{font-size:1.05rem;color:var(--muted)}
+    header h1{font-size:2.2rem;color:var(--brand);margin:0 0 .25rem}
+    header p{font-size:1.05rem;color:var(--muted);margin:0}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;max-width:1000px;margin:2rem auto;padding:0 1rem}
     .card{display:flex;flex-direction:column;align-items:center;min-height:180px;padding:1.4rem;border-radius:1rem;background:var(--card);
       text-decoration:none;color:var(--txt);box-shadow:0 0 14px #38bdf833;border:2px solid transparent;transition:.25s}
     .card:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 6px 20px #38bdf888;border-color:#38bdf8;background:rgba(2,6,23,.94)}
     .card span{font-size:2rem;margin-bottom:.5rem}
     .card h2{font-size:1.15rem;margin:.2rem 0;color:#38bdf8}
-    footer{margin:2.5rem 0 1rem;border-top:1px solid #38bdf8;padding-top:1rem;color:#7dd3fc}
-    /* mobile niceties */
-    .card{user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
     .toplink{position:fixed;left:12px;top:12px;background:#0b1220;color:#7dd3fc;padding:6px 12px;border-radius:8px;text-decoration:none;z-index:5}
+    footer{margin:2.5rem 0 1rem;border-top:1px solid #38bdf8;padding-top:1rem;color:#7dd3fc}
   </style>
 </head>
 <body>
@@ -42,6 +40,7 @@
       <div>Fill birth details → Chart & Report</div>
     </a>
 
+    <!-- Keep these linking wherever your working pages are -->
     <a href="./vedic-astrology.html" class="card">
       <span>📜</span>
       <h2>Vedic Astrology</h2>

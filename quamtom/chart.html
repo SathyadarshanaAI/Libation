@@ -4,10 +4,10 @@
   <canvas id="wheel" width="600" height="600"></canvas>
 
   <!-- Required JS files in correct order -->
-  <script src="./ephemeris-data.js"></script>
-  <script src="./kp-astro.js"></script>
-  <script src="./chart-engine.js"></script>
-  <script src="./chart-ui.js"></script>
+  <script src="./quamtom/ephemeris-data.js"></script>
+  <script src="./quamtom/kp-astro.js"></script>
+  <script src="./quamtom/chart-engine.js"></script>
+  <script src="./quamtom/chart-ui.js"></script>
 
   <script>
     window.addEventListener('load', () => {
@@ -16,7 +16,6 @@
       const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
       const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
 
-      // Original function instead of mock
       const eph = window.computeEphemeris(dt, lat, lon);
       window.drawWheel(document.getElementById('wheel'), eph);
     });

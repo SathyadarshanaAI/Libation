@@ -4,21 +4,29 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>KP – Start</title>
-  <link rel="stylesheet" href="./style.css"/>
+  <style>
+    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;margin:0;padding:16px}
+    .card{max-width:420px;margin:24px auto;background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:16px}
+    label{display:block;margin:8px 0 4px;color:#93c5fd}
+    input,button{width:100%;padding:10px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe}
+    button{margin-top:12px;cursor:pointer}
+    a{color:#7dd3fc;text-decoration:none}
+  </style>
 </head>
 <body>
-  <form id="birthForm" class="card" style="margin:14px">
-    <label>Name</label>
-    <input id="name" required placeholder="Your name"/>
-
-    <label>Birth Date & Time</label>
-    <input id="datetime" type="datetime-local" required/>
-
-    <label>Lat, Lon (deg)</label>
-    <input id="latlon" required placeholder="6.9271,79.8612"/>
-
-    <button type="submit">Start → Chart</button>
-  </form>
+  <div class="card">
+    <h2 style="margin:6px 0 12px">KP – Start</h2>
+    <form id="birthForm">
+      <label>Name</label>
+      <input id="name" required placeholder="Your name"/>
+      <label>Birth Date & Time</label>
+      <input id="datetime" type="datetime-local" required/>
+      <label>Lat, Lon (deg)</label>
+      <input id="latlon" required placeholder="6.9271,79.8612"/>
+      <button type="submit">Start → Chart</button>
+    </form>
+    <p style="margin-top:10px"><a href="/">← Home</a></p>
+  </div>
 
   <script>
   document.getElementById('birthForm').addEventListener('submit', (e)=>{
@@ -28,7 +36,7 @@
     localStorage.setItem('kp_dt',   document.getElementById('datetime').value);
     localStorage.setItem('kp_lat',  lat);
     localStorage.setItem('kp_lon',  lon);
-    location.href = './chart.html';
+    location.href = './kp-chart.html';
   });
   </script>
 </body>

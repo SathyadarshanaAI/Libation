@@ -1,12 +1,25 @@
-<canvas id="wheel" width="600" height="600"></canvas>
-<script>
-  window.addEventListener('load', () => {
-    const name = localStorage.getItem('kp_name') || '';
-    const dt   = localStorage.getItem('kp_dt')   || new Date().toISOString().slice(0,16);
-    const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
-    const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
+<html>
+<head></head>
+<body>
+  <canvas id="wheel" width="600" height="600"></canvas>
 
-    const eph = window.computeMockEphemeris(dt, lat, lon);
-    window.drawWheel(document.getElementById('wheel'), eph);
-  });
-</script>
+  <!-- Required JS files in correct order -->
+  <script src="./ephemeris-data.js"></script>
+  <script src="./kp-astro.js"></script>
+  <script src="./chart-engine.js"></script>
+  <script src="./chart-ui.js"></script>
+
+  <script>
+    window.addEventListener('load', () => {
+      const name = localStorage.getItem('kp_name') || '';
+      const dt   = localStorage.getItem('kp_dt') || new Date().toISOString().slice(0,16);
+      const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
+      const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
+
+      // Original function instead of mock
+      const eph = window.computeEphemeris(dt, lat, lon);
+      window.drawWheel(document.getElementById('wheel'), eph);
+    });
+  </script>
+</body>
+</html>

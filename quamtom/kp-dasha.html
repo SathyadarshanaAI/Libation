@@ -1,74 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <title>KP Vimshottari Dasha</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <title>KP Astrology Wheel</title>
   <style>
-    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;margin:0;padding:20px}
-    a{color:#7dd3fc;text-decoration:none}
-    table{width:100%;border-collapse:collapse;margin-top:14px}
-    th,td{border:1px solid #334155;padding:6px;text-align:center}
-    th{background:rgba(125,211,252,.18)}
+    body {
+      text-align: center;
+      background: #0f172a;
+      color: #e0f2fe;
+      font-family: Arial, sans-serif;
+    }
+    a.dasha-link {
+      display: inline-block;
+      margin-top: 15px;
+      color: #7dd3fc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a.dasha-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <p style="text-align:right;margin:0">
-    <a href="/kp-chart.html">🪐 Go to KP Wheel</a>
-  </p>
+  <canvas id="wheel" width="600" height="600"></canvas>
 
-  <h1>Vimshottari Dasha (MD→AD→PD)</h1>
-  <div id="info"></div>
-  <div id="result"></div>
+  <!-- Link to Dasha page -->
+  <div>
+    <a href="./kp-dasa.html" class="dasha-link">📅 View Vimshottari Dasha</a>
+  </div>
 
-  <!-- Base deps (relative to /quamtom/) -->
-  <script src="../ephemeris-data.js"></script>
-  <script src="../kp-astro.js"></script>
-  <script src="../chart-engine.js"></script>
-
-  <!-- Dasha engine (ensure this file exists) -->
-  <script src="./dasa.js"></script>
+  <!-- Required JS files in correct order -->
+  <script src="./ephemeris-data.js"></script>
+  <script src="./kp-astro.js"></script>
+  <script src="./chart-engine.js"></script>
+  <script src="./chart-ui.js"></script>
 
   <script>
-    (function init(){
-      const ls = localStorage.getItem('kp_dt');
-      const dt = (ls || new Date().toISOString()).slice(0,16);
-      const lat = +(localStorage.getItem('kp_lat') || 6.9271);
-      const lon = +(localStorage.getItem('kp_lon') || 79.8612);
+    window.addEventListener('load', () => {
+      const name = localStorage.getItem('kp_name') || '';
+      const dt   = localStorage.getItem('kp_dt') || new Date().toISOString().slice(0,16);
+      const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
+      const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
 
-      // Moon degree (auto)
-      const eph = (typeof computeEphemeris==='function') ? computeEphemeris(dt, lat, lon)
-                 : (typeof computeMockEphemeris==='function') ? computeMockEphemeris(dt, lat, lon)
-                 : { positions:{ Moon:0 } };
-      const moon = eph.positions?.Moon ?? 0;
-
-      if (typeof generateFullDasha !== 'function'){
-        document.getElementById('result').innerHTML = '<p>⚠ quamtom/dasa.js load වෙනවදැයි බලන්න.</p>';
-        return;
-      }
-
-      const list = generateFullDasha(moon, dt);
-
-      document.getElementById('info').innerHTML =
-        `<p><b>Date/Time:</b> ${dt} | <b>Moon°:</b> ${moon.toFixed(4)}</p>`;
-
-      let html = '<table><tr><th>Type</th><th>Main</th><th>Sub</th><th>PD</th><th>Start</th><th>End</th></tr>';
-      list.forEach(d => {
-        const s = (d.start instanceof Date)? d.start : new Date(d.start);
-        const e = (d.end   instanceof Date)? d.end   : new Date(d.end);
-        html += `<tr>
-          <td>${d.type||'MD'}</td>
-          <td>${d.mainLord||d.lord||''}</td>
-          <td>${d.subLord||''}</td>
-          <td>${d.pdLord||''}</td>
-          <td>${s.toISOString().slice(0,10)}</td>
-          <td>${e.toISOString().slice(0,10)}</td>
-        </tr>`;
-      });
-      html += '</table>';
-
-      document.getElementById('result').innerHTML = html;
-    })();
+      const eph = window.computeEphemeris(dt, lat, lon);
+      window.drawWheel(document.getElementById('wheel'), eph);
+    });
   </script>
 </body>
 </html>

@@ -8,48 +8,47 @@
     body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;margin:0;padding:16px;text-align:center}
     .topbar{display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto 8px}
     .topbar a{color:#7dd3fc;text-decoration:none}
-    #wheel{display:block;margin:12px auto;background:#0b1220;border-radius:50%}
+    #wheel{display:block;margin:12px auto;background:#0b1220;border-radius:50%; border:1px solid #1e293b}
   </style>
 </head>
 <body>
   <div class="topbar">
-    <a href="./index.html">← Back to Start</a>
+    <a href="./">← Back to Start</a>
     <h2 style="margin:4px 0">KP Chart Wheel</h2>
-    <a href="./quamtom/kp-dasa.html">🧭 Vimshottari Dasha</a>
+    <a href="./kp-dasa.html">🧭 Vimshottari Dasha</a>
   </div>
 
   <canvas id="wheel" width="600" height="600"></canvas>
 
-  <!-- Required JS files in correct order -->
-  <script src="./ephemeris-data.js"></script>
-  <script src="./kp-astro.js"></script>
-  <script src="./chart-engine.js"></script>
-  <script src="./chart-ui.js"></script>
+  <!-- Root scripts live one level up -->
+  <script src="../ephemeris-data.js"></script>
+  <script src="../kp-astro.js"></script>
+  <script src="../chart-engine.js"></script>
+  <script src="../chart-ui.js"></script>
 
   <script>
-    function safeEphemeris(dt, lat, lon){
+    function safeEph(dt, lat, lon){
       try{
-        if (typeof window.computeEphemeris === 'function') return window.computeEphemeris(dt, lat, lon);
-        if (typeof window.computeMockEphemeris === 'function') return window.computeMockEphemeris(dt, lat, lon);
+        if (typeof computeEphemeris==='function') return computeEphemeris(dt,lat,lon);
+        if (typeof computeMockEphemeris==='function') return computeMockEphemeris(dt,lat,lon);
       }catch(e){ console.error(e); }
-      return { positions: { Moon: 0 } };
+      return { positions:{ Moon:0 } };
     }
 
     window.addEventListener('load', () => {
-      const name = localStorage.getItem('kp_name') || '';
-      const dt   = localStorage.getItem('kp_dt') || new Date().toISOString().slice(0,16);
-      const lat  = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
-      const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
+      const dt  = localStorage.getItem('kp_dt')  || new Date().toISOString().slice(0,16);
+      const lat = +(localStorage.getItem('kp_lat')|| 6.9271);
+      const lon = +(localStorage.getItem('kp_lon')|| 79.8612);
 
-      const eph = safeEphemeris(dt, lat, lon);
-      console.log('KP Chart — inputs:', { name, dt, lat, lon });
-      console.log('Ephemeris:', eph);
+      const eph = safeEph(dt, lat, lon);
+      const cv  = document.getElementById('wheel');
 
-      const cv = document.getElementById('wheel');
-      if (typeof window.drawWheel === 'function'){
-        window.drawWheel(cv, eph);
+      // Quick sanity in case drawWheel missing
+      console.log('types:', {computeEphemeris: typeof computeEphemeris, drawWheel: typeof drawWheel});
+      if (typeof drawWheel==='function') {
+        drawWheel(cv, eph);
       } else {
-        console.error('drawWheel() is not defined. Check chart-ui.js path/order.');
+        cv.insertAdjacentHTML('afterend','<p style="color:#fba">⚠️ chart-ui.js load වෙලා නෑ. Path එක ../chart-ui.js ද කියලා check කරන්න.</p>');
       }
     });
   </script>

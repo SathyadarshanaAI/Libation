@@ -1,133 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8"/>
-  <title>Vimshottari Dasha Timeline</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8">
+  <title>Vimshottari Dasha</title>
   <style>
-    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial}
-    .wrap{max-width:980px;margin:24px auto;padding:12px}
-    h1{font-size:1.6rem;margin:0 0 8px}
-    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-    .row>*{flex:1 1 220px}
-    input,select,button{width:100%;padding:8px;border-radius:8px;border:1px solid #1e293b;background:#0b1220;color:#cdeafe}
-    button{cursor:pointer}
-    table{width:100%;border-collapse:collapse;margin-top:12px}
-    th,td{border:1px solid #1f3b55;padding:6px;text-align:center}
-    th{background:rgba(125,211,252,.15)}
-    .muted{opacity:.85;font-size:.92rem}
-    details{margin-top:12px}
-    summary{cursor:pointer}
+    body {
+      background: #0f172a;
+      color: #e0f2fe;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+    a {
+      color: #7dd3fc;
+      text-decoration: none;
+    }
+    h1 {
+      color: #93c5fd;
+    }
+    .muted {
+      color: #94a3b8;
+      font-size: 0.9em;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Vimshottari Dasha Timeline (Separate)</h1>
-    <p class="muted">Wheel පිටුව වෙනම තබලා, මෙත්දි Dasha levels පමණයි.</p>
+  <p style="text-align:right;margin:0 0 10px">
+    <a href="/kp-chart.html">🪐 Go to KP Wheel</a>
+  </p>
 
-    <div class="row">
-      <div>
-        <label>Date/Time (ISO)</label>
-        <input id="dt" type="datetime-local"/>
-      </div>
-      <div>
-        <label>Latitude</label>
-        <input id="lat" type="number" step="0.0001" value="6.9271"/>
-      </div>
-      <div>
-        <label>Longitude</label>
-        <input id="lon" type="number" step="0.0001" value="79.8612"/>
-      </div>
-      <div>
-        <label>Depth</label>
-        <select id="depth">
-          <option value="1">Mahadasha (MD)</option>
-          <option value="2" selected>MD + Antardasha (AD)</option>
-          <option value="3">MD + AD + Pratyantar (PD)</option>
-        </select>
-      </div>
-      <div>
-        <button id="gen">Generate</button>
-      </div>
-    </div>
+  <h1>Vimshottari Dasha — Mahadasha (MD)</h1>
+  <p class="muted">
+    This page shows the Mahadasha timeline based on your birth data.<br>
+    Wheel drawing is available separately on the KP Wheel page.
+  </p>
 
-    <div id="info" style="margin-top:10px"></div>
-    <div id="tables" style="margin-top:10px"></div>
-  </div>
+  <div id="dasha"></div>
 
-  <!-- Base deps (Moon degree ලබාගන්න) -->
+  <!-- Required JS -->
   <script src="./ephemeris-data.js"></script>
   <script src="./kp-astro.js"></script>
-  <script src="./chart-engine.js"></script>
   <script src="./kp-subload.js"></script>
 
-  <!-- Dasha logic (no wheel) -->
-  <script src="./vimshottari.js"></script>
-
   <script>
-    // Prefill from localStorage
-    (function initDT(){
-      const fromLS = localStorage.getItem('kp_dt');
-      const iso = (fromLS || new Date().toISOString()).slice(0,16);
-      document.getElementById('dt').value = iso;
-      const latLS = localStorage.getItem('kp_lat'); if(latLS) document.getElementById('lat').value = latLS;
-      const lonLS = localStorage.getItem('kp_lon'); if(lonLS) document.getElementById('lon').value = lonLS;
-    })();
+    window.addEventListener('load', () => {
+      const dt  = localStorage.getItem('kp_dt') || new Date().toISOString().slice(0,16);
+      const lat = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
+      const lon = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
 
-    document.getElementById('gen').addEventListener('click', () => {
-      const dt  = document.getElementById('dt').value || new Date().toISOString().slice(0,16);
-      const lat = parseFloat(document.getElementById('lat').value);
-      const lon = parseFloat(document.getElementById('lon').value);
-      const depth = parseInt(document.getElementById('depth').value, 10);
-
-      const eph = (typeof window.computeEphemeris==='function')
-        ? window.computeEphemeris(dt, lat, lon)
-        : computeMockEphemeris(dt, lat, lon);
-
+      const eph = window.computeEphemeris(dt, lat, lon);
       const moonDeg = eph.positions.Moon;
 
-      // Basis from Moon
-      const basis = vimGetStartBasisFromMoon(moonDeg);
-      document.getElementById('info').innerHTML = `
-        <b>Nakshatra:</b> ${basis.nakName} |
-        <b>Start Lord (MD):</b> ${basis.startLord} |
-        <b>Remaining at birth:</b> ${basis.remYears.toFixed(3)} years
-      `;
+      console.log("Ephemeris:", eph);
+      console.log("Moon Degree:", moonDeg);
 
-      // MD timeline (one full cycle forward)
-      const mdList = vimBuildMDTimeline(dt, basis.startLord, basis.remYears, 9);
+      if (typeof generateFullDasha === 'function') {
+        const mdList = generateFullDasha(moonDeg, dt);
+        console.log("MD List:", mdList);
 
-      let out = '';
-      out += '<h3>Mahadasha</h3>';
-      out += vimRenderTable(['Lord','Start','End','Years'],
-        mdList.map(x => [x.lord, x.start.slice(0,10), x.end.slice(0,10), x.years.toFixed(3)]));
+        let html = `<table border="1" cellpadding="5" style="border-collapse:collapse;color:#e0f2fe">
+          <tr><th>Mahadasha Lord</th><th>Start Date</th><th>End Date</th></tr>`;
 
-      if (depth >= 2){
-        out += '<details open><summary><b>Antardasha (Bhukti)</b></summary>';
         mdList.forEach(md => {
-          const ad = vimBuildSubTimeline(md, 'AD');
-          out += `<h4>${md.lord} MD (${md.start.slice(0,10)} → ${md.end.slice(0,10)})</h4>`;
-          out += vimRenderTable(['AD Lord','Start','End','Days'],
-            ad.map(y => [y.lord, y.start.slice(0,10), y.end.slice(0,10), y.days.toFixed(1)]));
+          html += `<tr>
+            <td>${md.lord}</td>
+            <td>${md.start}</td>
+            <td>${md.end}</td>
+          </tr>`;
         });
-        out += '</details>';
-      }
 
-      if (depth >= 3){
-        // PD for first MD (UI අතිශය දිගවෙලා නොයන්න)
-        const firstMD = mdList[0];
-        const ad = vimBuildSubTimeline(firstMD, 'AD');
-        out += '<details open><summary><b>Pratyantar (PD) — first MD only</b></summary>';
-        ad.forEach(adSeg => {
-          const pd = vimBuildSubTimeline(adSeg, 'PD');
-          out += `<h4>${firstMD.lord} MD → ${adSeg.lord} AD (${adSeg.start.slice(0,10)} → ${adSeg.end.slice(0,10)})</h4>`;
-          out += vimRenderTable(['PD Lord','Start','End','Days'],
-            pd.map(z => [z.lord, z.start.slice(0,10), z.end.slice(0,10), z.days.toFixed(2)]));
-        });
-        out += '</details>';
+        html += `</table>`;
+        document.getElementById('dasha').innerHTML = html;
+      } else {
+        document.getElementById('dasha').innerHTML = "<p>⚠ Dasha calculation not available.</p>";
       }
-
-      document.getElementById('tables').innerHTML = out;
     });
   </script>
 </body>

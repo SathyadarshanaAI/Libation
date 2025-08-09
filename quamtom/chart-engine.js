@@ -1,47 +1,46 @@
-// 🌌 quamtom/chart-engine.js — Render KP Style Birth Chart (No UI, Data Only)
+// quamtom/chart-engine.js
+(function () {
+  function drawWheel(canvas, eph) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 20;
 
-// Zodiac signs in 30° steps
-const zodiacSigns = [
-  'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-  'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
-];
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0b1220';
+    ctx.fillRect(0, 0, W, H);
 
-// 🪐 Sample planetary positions (degrees in 360° format)
-const samplePositions = {
-  Sun: 123.5,
-  Moon: 83.2,
-  Mars: 15.8,
-  Mercury: 140.3,
-  Jupiter: 280.1,
-  Venus: 210.5,
-  Saturn: 305.0,
-  Rahu: 66.6,
-  Ketu: 246.6,
-  Ascendant: 97.3
-};
+    // outer circle
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
 
-// 🔁 Convert degree to sign and degree-within-sign
-function getZodiacPosition(degree) {
-  const signIndex = Math.floor(degree / 30);
-  const sign = zodiacSigns[signIndex % 12];
-  const signDegree = degree % 30;
-  return { sign, degree: signDegree.toFixed(2) };
-}
+    // zodiac sectors
+    ctx.save();
+    ctx.translate(cx, cy);
+    for (let i = 0; i < 12; i++) {
+      ctx.rotate(Math.PI / 6);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(R, 0);
+      ctx.strokeStyle = '#1f3b5b';
+      ctx.stroke();
+    }
+    ctx.restore();
 
-// 🧾 Render chart data summary (like traditional chart sheet)
-function renderChart(positions = samplePositions) {
-  const chart = {};
-  for (const [planet, deg] of Object.entries(positions)) {
-    chart[planet] = getZodiacPosition(deg);
+    // planets
+    ctx.fillStyle = '#e5e7eb';
+    ctx.font = '12px sans-serif';
+    for (const p of (eph?.planets || [])) {
+      const a = (p.degree - 90) * Math.PI / 180;
+      const x = cx + Math.cos(a) * (R - 20);
+      const y = cy + Math.sin(a) * (R - 20);
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText(p.name, x + 6, y - 6);
+    }
   }
-  return chart;
-}
-
-// 🧪 Example usage:
-const chartData = renderChart();
-console.table(chartData);
-
-// Export module
-if (typeof module !== 'undefined') {
-  module.exports = { renderChart, getZodiacPosition };
-}
+  window.drawWheel = drawWheel; // expose globally
+})();

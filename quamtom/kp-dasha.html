@@ -1,78 +1,117 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Vimshottari Dasha</title>
+  <meta charset="utf-8" />
+  <title>KP Vimshottari Dasha (MD → AD → PD)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      background: #0f172a;
-      color: #e0f2fe;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 20px;
-    }
-    a {
-      color: #7dd3fc;
-      text-decoration: none;
-    }
-    h1 {
-      color: #93c5fd;
-    }
-    .muted {
-      color: #94a3b8;
-      font-size: 0.9em;
-    }
+    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;margin:0;padding:20px}
+    a{color:#7dd3fc;text-decoration:none}
+    h1{margin:.2rem 0 1rem}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:12px 0}
+    .row>*{flex:1 1 220px}
+    label{display:block;margin-bottom:4px;color:#93c5fd}
+    input,button{width:100%;padding:8px;border-radius:8px;border:1px solid #1e293b;background:#0b1220;color:#cdeafe}
+    button{cursor:pointer}
+    table{width:100%;border-collapse:collapse;margin-top:14px}
+    th,td{border:1px solid #334155;padding:6px;text-align:center}
+    th{background:rgba(125,211,252,.18)}
+    .topbar{display:flex;justify-content:space-between;align-items:center}
   </style>
 </head>
 <body>
-  <p style="text-align:right;margin:0 0 10px">
-    <a href="/kp-chart.html">🪐 Go to KP Wheel</a>
-  </p>
+  <div class="topbar">
+    <h1>Vimshottari Dasha (MD → AD → PD)</h1>
+    <p><a href="../kp-chart.html">🪐 Go to KP Wheel</a></p>
+  </div>
+  <div class="row">
+    <div>
+      <label>Date/Time (ISO)</label>
+      <input id="dt" type="datetime-local" />
+    </div>
+    <div>
+      <label>Latitude</label>
+      <input id="lat" type="number" step="0.0001" value="6.9271" />
+    </div>
+    <div>
+      <label>Longitude</label>
+      <input id="lon" type="number" step="0.0001" value="79.8612" />
+    </div>
+    <div>
+      <label>Moon Degree (override, optional)</label>
+      <input id="moonDeg" type="number" step="0.0001" placeholder="leave blank to auto-calc" />
+    </div>
+    <div>
+      <button id="gen">Generate</button>
+    </div>
+  </div>
 
-  <h1>Vimshottari Dasha — Mahadasha (MD)</h1>
-  <p class="muted">
-    This page shows the Mahadasha timeline based on your birth data.<br>
-    Wheel drawing is available separately on the KP Wheel page.
-  </p>
+  <div id="info"></div>
+  <div id="result"></div>
 
-  <div id="dasha"></div>
+  <!-- Base deps (relative to /quamtom/) -->
+  <script src="../ephemeris-data.js"></script>
+  <script src="../kp-astro.js"></script>
+  <script src="../chart-engine.js"></script>
 
-  <!-- Required JS -->
-  <script src="./ephemeris-data.js"></script>
-  <script src="./kp-astro.js"></script>
-  <script src="./kp-subload.js"></script>
+  <!-- Dasha engine (your file from quamtom/) -->
+  <script src="./dasa.js"></script>
 
   <script>
-    window.addEventListener('load', () => {
-      const dt  = localStorage.getItem('kp_dt') || new Date().toISOString().slice(0,16);
-      const lat = parseFloat(localStorage.getItem('kp_lat') || '6.9271');
-      const lon = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
+    // Prefill
+    (function init(){
+      const ls = localStorage.getItem('kp_dt');
+      document.getElementById('dt').value = (ls || new Date().toISOString()).slice(0,16);
+      const latLS = localStorage.getItem('kp_lat'); if (latLS) document.getElementById('lat').value = latLS;
+      const lonLS = localStorage.getItem('kp_lon'); if (lonLS) document.getElementById('lon').value = lonLS;
+    })();
 
-      const eph = window.computeEphemeris(dt, lat, lon);
-      const moonDeg = eph.positions.Moon;
+    function safeEph(dt, lat, lon){
+      try{
+        if (typeof window.computeEphemeris === 'function') return window.computeEphemeris(dt, lat, lon);
+        if (typeof window.computeMockEphemeris === 'function') return window.computeMockEphemeris(dt, lat, lon);
+      }catch(e){ console.error(e); }
+      return { positions: { Moon: 0 } };
+    }
 
-      console.log("Ephemeris:", eph);
-      console.log("Moon Degree:", moonDeg);
+    function render(){
+      const dt  = document.getElementById('dt').value || new Date().toISOString().slice(0,16);
+      const lat = parseFloat(document.getElementById('lat').value);
+      const lon = parseFloat(document.getElementById('lon').value);
+      const override = document.getElementById('moonDeg').value;
 
-      if (typeof generateFullDasha === 'function') {
-        const mdList = generateFullDasha(moonDeg, dt);
-        console.log("MD List:", mdList);
+      const eph = safeEph(dt, lat, lon);
+      const moon = (override !== '') ? parseFloat(override) : (eph.positions?.Moon ?? 0);
 
-        let html = `<table border="1" cellpadding="5" style="border-collapse:collapse;color:#e0f2fe">
-          <tr><th>Mahadasha Lord</th><th>Start Date</th><th>End Date</th></tr>`;
-
-        mdList.forEach(md => {
-          html += `<tr>
-            <td>${md.lord}</td>
-            <td>${md.start}</td>
-            <td>${md.end}</td>
-          </tr>`;
-        });
-
-        html += `</table>`;
-        document.getElementById('dasha').innerHTML = html;
-      } else {
-        document.getElementById('dasha').innerHTML = "<p>⚠ Dasha calculation not available.</p>";
+      if (typeof window.generateFullDasha !== 'function') {
+        document.getElementById('result').innerHTML = '<p>⚠ Dasha engine not loaded (quamtom/dasa.js).</p>';
+        return;
       }
-    });
+
+      const list = window.generateFullDasha(moon, dt);
+
+      document.getElementById('info').innerHTML =
+        `<p><b>Date/Time:</b> ${dt} &nbsp;|&nbsp; <b>Lat/Lon:</b> ${lat}, ${lon} &nbsp;|&nbsp; <b>Moon°:</b> ${moon.toFixed(4)}</p>`;
+
+      let html = '<table><tr><th>Type</th><th>Main Lord</th><th>Sub Lord</th><th>PD Lord</th><th>Start</th><th>End</th></tr>';
+      list.forEach(d => {
+        const s = (d.start instanceof Date) ? d.start : new Date(d.start);
+        const e = (d.end   instanceof Date) ? d.end   : new Date(d.end);
+        html += `<tr>
+          <td>${d.type || 'MD'}</td>
+          <td>${d.mainLord || d.lord || ''}</td>
+          <td>${d.subLord || ''}</td>
+          <td>${d.pdLord || ''}</td>
+          <td>${s.toISOString().slice(0,10)}</td>
+          <td>${e.toISOString().slice(0,10)}</td>
+        </tr>`;
+      });
+      html += '</table>';
+      document.getElementById('result').innerHTML = html;
+    }
+
+    document.getElementById('gen').addEventListener('click', render);
+    window.addEventListener('load', render);
   </script>
 </body>
 </html>

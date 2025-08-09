@@ -14,14 +14,12 @@
 
   <main class="card">
     <p class="small" id="info"></p>
+    <!-- keep the static canvas (DON'T create it in JS) -->
     <canvas id="wheel" width="600" height="600"></canvas>
     <pre id="debug" class="small"></pre>
-    <form action="chart.html" method="get">
-      <button type="submit">Start → Chart</button>
-    </form>
   </main>
 
-  <!-- ✅ correct load order + correct filenames -->
+  <!-- Load order matters: data/libs → engine → ui -->
   <script src="./ephemeris-data.js"></script>
   <script src="./kp-astro.js"></script>
   <script src="./chart-engine.js"></script>
@@ -46,10 +44,11 @@
         const lon  = parseFloat(localStorage.getItem('kp_lon') || '79.8612');
 
         document.getElementById('info').textContent =
-          `Loaded: ${name || '—'} • ${dt} • ${lat}, ${lon}`;
+          `Loaded: ${name || '—'} • ${dt} • ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
 
-        const eph = computeMockEphemeris(dt, lat, lon);   // from chart-engine.js
-        drawWheel(document.getElementById('wheel'), eph); // from chart-ui.js
+        // both functions are defined as globals in the JS files below
+        const eph = window.computeMockEphemeris(dt, lat, lon);
+        window.drawWheel(document.getElementById('wheel'), eph);
         document.getElementById('debug').textContent = JSON.stringify(eph, null, 2);
       } catch (e) { showErr(e); }
     });

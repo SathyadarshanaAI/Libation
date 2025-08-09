@@ -5,25 +5,25 @@
   <title>Vimshottari Dasha Timeline</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <style>
-    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;}
+    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial}
     .wrap{max-width:980px;margin:24px auto;padding:12px}
     h1{font-size:1.6rem;margin:0 0 8px}
     .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-    .row > *{flex:1 1 220px}
+    .row>*{flex:1 1 220px}
     input,select,button{width:100%;padding:8px;border-radius:8px;border:1px solid #1e293b;background:#0b1220;color:#cdeafe}
     button{cursor:pointer}
     table{width:100%;border-collapse:collapse;margin-top:12px}
     th,td{border:1px solid #1f3b55;padding:6px;text-align:center}
     th{background:rgba(125,211,252,.15)}
-    .muted{opacity:.8;font-size:.9rem}
+    .muted{opacity:.85;font-size:.92rem}
     details{margin-top:12px}
     summary{cursor:pointer}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Vimshottari Dasha Timeline (Separate from Wheel)</h1>
-    <p class="muted">This page only shows Dasha levels. Your wheel stays on its own page.</p>
+    <h1>Vimshottari Dasha Timeline (Separate)</h1>
+    <p class="muted">Wheel පිටුව වෙනම තබලා, මෙත්දි Dasha levels පමණයි.</p>
 
     <div class="row">
       <div>
@@ -42,7 +42,7 @@
         <label>Depth</label>
         <select id="depth">
           <option value="1">Mahadasha (MD)</option>
-          <option value="2" selected>MD + Antardasha (Bhukti)</option>
+          <option value="2" selected>MD + Antardasha (AD)</option>
           <option value="3">MD + AD + Pratyantar (PD)</option>
         </select>
       </div>
@@ -55,17 +55,17 @@
     <div id="tables" style="margin-top:10px"></div>
   </div>
 
-  <!-- Required base deps (for Moon degree) -->
+  <!-- Base deps (Moon degree ලබාගන්න) -->
   <script src="./ephemeris-data.js"></script>
   <script src="./kp-astro.js"></script>
   <script src="./chart-engine.js"></script>
   <script src="./kp-subload.js"></script>
 
-  <!-- Vimshottari logic (no wheel) -->
+  <!-- Dasha logic (no wheel) -->
   <script src="./vimshottari.js"></script>
 
   <script>
-    // Prefill dt from localStorage or now
+    // Prefill from localStorage
     (function initDT(){
       const fromLS = localStorage.getItem('kp_dt');
       const iso = (fromLS || new Date().toISOString()).slice(0,16);
@@ -80,35 +80,29 @@
       const lon = parseFloat(document.getElementById('lon').value);
       const depth = parseInt(document.getElementById('depth').value, 10);
 
-      // Use your real ephemeris (or mock inside chart-engine.js)
-      const eph = (typeof window.computeEphemeris === 'function')
+      const eph = (typeof window.computeEphemeris==='function')
         ? window.computeEphemeris(dt, lat, lon)
         : computeMockEphemeris(dt, lat, lon);
 
       const moonDeg = eph.positions.Moon;
 
-      // Calculate Nakshatra, Start Lord, Remaining balance
-      const basis = vimGetStartBasisFromMoon(moonDeg); // {nakName, startLord, fracIntoNak, remYears}
-      const infoEl = document.getElementById('info');
-      infoEl.innerHTML = `
+      // Basis from Moon
+      const basis = vimGetStartBasisFromMoon(moonDeg);
+      document.getElementById('info').innerHTML = `
         <b>Nakshatra:</b> ${basis.nakName} |
         <b>Start Lord (MD):</b> ${basis.startLord} |
         <b>Remaining at birth:</b> ${basis.remYears.toFixed(3)} years
       `;
 
-      // Build timelines
-      const mdList = vimBuildMDTimeline(dt, basis.startLord, basis.remYears, 9); // one full cycle
-      const tablesEl = document.getElementById('tables');
-      let out = '';
+      // MD timeline (one full cycle forward)
+      const mdList = vimBuildMDTimeline(dt, basis.startLord, basis.remYears, 9);
 
-      // MD table
+      let out = '';
       out += '<h3>Mahadasha</h3>';
-      out += vimRenderTable(['Lord','Start','End','Years'], mdList.map(x => [
-        x.lord, x.start.slice(0,10), x.end.slice(0,10), x.years.toFixed(3)
-      ]));
+      out += vimRenderTable(['Lord','Start','End','Years'],
+        mdList.map(x => [x.lord, x.start.slice(0,10), x.end.slice(0,10), x.years.toFixed(3)]));
 
       if (depth >= 2){
-        // AD for each MD
         out += '<details open><summary><b>Antardasha (Bhukti)</b></summary>';
         mdList.forEach(md => {
           const ad = vimBuildSubTimeline(md, 'AD');
@@ -120,7 +114,7 @@
       }
 
       if (depth >= 3){
-        // PD for first MD (to avoid huge output; expand as needed)
+        // PD for first MD (UI අතිශය දිගවෙලා නොයන්න)
         const firstMD = mdList[0];
         const ad = vimBuildSubTimeline(firstMD, 'AD');
         out += '<details open><summary><b>Pratyantar (PD) — first MD only</b></summary>';
@@ -133,7 +127,7 @@
         out += '</details>';
       }
 
-      tablesEl.innerHTML = out;
+      document.getElementById('tables').innerHTML = out;
     });
   </script>
 </body>

@@ -11,32 +11,70 @@
     input,button{width:100%;padding:10px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe}
     button{margin-top:12px;cursor:pointer}
     a{color:#7dd3fc;text-decoration:none}
+    small{color:#94a3b8}
   </style>
 </head>
 <body>
   <div class="card">
     <h2 style="margin:6px 0 12px">KP – Start</h2>
-    <form id="birthForm">
+    <form id="birthForm" novalidate>
       <label>Name</label>
       <input id="name" required placeholder="Your name"/>
+
       <label>Birth Date & Time</label>
       <input id="datetime" type="datetime-local" required/>
+
       <label>Lat, Lon (deg)</label>
-      <input id="latlon" required placeholder="6.9271,79.8612"/>
+      <input id="latlon" required placeholder="6.9271, 79.8612"/>
+      <small>Format: latitude, longitude (e.g., 6.9271, 79.8612)</small>
+
       <button type="submit">Start → Chart</button>
     </form>
     <p style="margin-top:10px"><a href="/">← Home</a></p>
   </div>
 
   <script>
+  // Prefill datetime (now or previously saved)
+  window.addEventListener('load', ()=>{
+    const prev = localStorage.getItem('kp_dt');
+    const val = (prev || new Date().toISOString()).slice(0,16);
+    document.getElementById('datetime').value = val;
+    if (localStorage.getItem('kp_name')) {
+      document.getElementById('name').value = localStorage.getItem('kp_name');
+    }
+    if (localStorage.getItem('kp_lat') && localStorage.getItem('kp_lon')) {
+      document.getElementById('latlon').value =
+        `${localStorage.getItem('kp_lat')}, ${localStorage.getItem('kp_lon')}`;
+    }
+  });
+
   document.getElementById('birthForm').addEventListener('submit', (e)=>{
     e.preventDefault();
-    const [lat,lon]=(document.getElementById('latlon').value||"6.9271,79.8612").split(',').map(parseFloat);
-    localStorage.setItem('kp_name', document.getElementById('name').value.trim());
-    localStorage.setItem('kp_dt',   document.getElementById('datetime').value);
+
+    const name = (document.getElementById('name').value || '').trim();
+    const dt   = document.getElementById('datetime').value;
+
+    // Parse "lat,lon" with trimming
+    const raw  = document.getElementById('latlon').value || "6.9271,79.8612";
+    const parts = raw.split(',').map(s=>s.trim());
+    const lat = parseFloat(parts[0]);
+    const lon = parseFloat(parts[1]);
+
+    // Basic validation
+    if (!name) { alert('Please enter your name.'); return; }
+    if (!dt)   { alert('Please select birth date & time.'); return; }
+    if (Number.isNaN(lat) || Number.isNaN(lon)) { alert('Please enter latitude, longitude as numbers.'); return; }
+    if (lat < -90 || lat > 90)   { alert('Latitude must be between -90 and 90.'); return; }
+    if (lon < -180 || lon > 180) { alert('Longitude must be between -180 and 180.'); return; }
+
+    // Save
+    localStorage.setItem('kp_name', name);
+    localStorage.setItem('kp_dt',   dt);
     localStorage.setItem('kp_lat',  lat);
     localStorage.setItem('kp_lon',  lon);
-    location.href = './quamtom/chart.html'; // redirect to chart
+
+    // Redirect to chart inside /quamtom/
+    location.href = './quamtom/chart.html';
   });
   </script>
 </body>

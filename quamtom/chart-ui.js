@@ -1,7 +1,5 @@
 // quamtom/chart-ui.js — draw wheel on an existing <canvas id="wheel">
-
 (function () {
-  // expose as global for chart.html
   window.drawWheel = function drawWheel(canvasOrEl, eph) {
     const canvas = typeof canvasOrEl === 'string'
       ? document.getElementById(canvasOrEl)
@@ -31,7 +29,6 @@
     ctx.save();
     ctx.translate(cx, cy);
     for (let i=0;i<12;i++){
-      const ang = (i/12)*Math.PI*2;
       ctx.rotate(Math.PI/6);
       ctx.beginPath();
       ctx.moveTo(0,0);
@@ -54,8 +51,6 @@
         ctx.beginPath();
         ctx.arc(x,y,3,0,Math.PI*2);
         ctx.fill();
-
-        // label
         ctx.fillText(p.name, x+6, y-6);
       });
     }

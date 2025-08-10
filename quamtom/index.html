@@ -5,62 +5,162 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>KP – Start</title>
   <style>
-    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;margin:0;padding:16px}
-    .card{max-width:420px;margin:24px auto;background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:16px}
-    label{display:block;margin:8px 0 4px;color:#93c5fd}
-    input,button{width:100%;padding:10px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe}
-    button{margin-top:12px;cursor:pointer}
-    a{color:#7dd3fc;text-decoration:none}
+    :root{--bg:#0f172a;--card:#0b1220;--line:#1e293b;--txt:#e0f2fe;--muted:#93c5fd;--accent:#38bdf8}
+    *{box-sizing:border-box}
+    body{background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial;margin:0;padding:16px}
+    .card{max-width:520px;margin:24px auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+    label{display:block;margin:8px 0 4px;color:var(--muted)}
+    input,button{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#091426;color:#cdeafe}
+    button{cursor:pointer}
+    .row{display:grid;grid-template-columns:1fr auto auto;gap:8px}
+    .hint{font-size:12px;color:#9cc7ff;margin-top:4px}
+    .results{margin-top:8px;border:1px solid var(--line);border-radius:8px;max-height:200px;overflow:auto;display:none;background:#061226}
+    .res{padding:10px;border-bottom:1px solid #0f2339;cursor:pointer}
+    .res:last-child{border-bottom:none}
+    .res:hover{background:#0b1b33}
+    .actions{display:flex;gap:8px;margin-top:12px}
+    .copy{width:auto;padding:8px 10px}
   </style>
 </head>
 <body>
   <div class="card">
     <h2 style="margin:6px 0 12px">KP – Start</h2>
+
     <form id="birthForm" novalidate>
       <label>Name</label>
       <input id="name" required placeholder="Your name"/>
-      <label>Birth Date & Time</label>
+
+      <label>Birth Date & Time (local)</label>
       <input id="datetime" type="datetime-local" required/>
+
+      <label>Place (city / hospital / area)</label>
+      <div class="row">
+        <input id="place" placeholder="e.g., Kandy General Hospital, Sri Lanka"/>
+        <button type="button" id="searchBtn" title="Search place">Search</button>
+        <button type="button" id="gpsBtn"    title="Use device location">Use GPS</button>
+      </div>
+      <div id="results" class="results"></div>
+      <div class="hint">Tip: pick a suggestion or press GPS; coordinates will auto-fill below.</div>
+
       <label>Lat, Lon (deg)</label>
-      <input id="latlon" required placeholder="6.9271, 79.8612"/>
-      <button type="submit">Start → Chart</button>
+      <div class="actions">
+        <input id="latlon" required placeholder="6.9271,79.8612"/>
+        <button type="button" class="copy" id="copyBtn">Copy</button>
+      </div>
+
+      <button style="margin-top:12px" type="submit">Start → Chart</button>
     </form>
+
     <p style="margin-top:10px"><a href="/">← Home</a></p>
   </div>
 
   <script>
-  // Prefill from prior session
+  // Prefill datetime
   window.addEventListener('load', ()=>{
-    const prevDt  = localStorage.getItem('kp_dt');
-    const prevNm  = localStorage.getItem('kp_name');
-    const prevLat = localStorage.getItem('kp_lat');
-    const prevLon = localStorage.getItem('kp_lon');
-
-    document.getElementById('datetime').value = (prevDt || new Date().toISOString()).slice(0,16);
-    if (prevNm)  document.getElementById('name').value = prevNm;
-    if (prevLat && prevLon) document.getElementById('latlon').value = `${prevLat}, ${prevLon}`;
+    const prev = localStorage.getItem('kp_dt');
+    document.getElementById('datetime').value = (prev || new Date().toISOString()).slice(0,16);
+    // If previous coords exist, show them
+    const lat = localStorage.getItem('kp_lat');
+    const lon = localStorage.getItem('kp_lon');
+    if(lat && lon) document.getElementById('latlon').value = `${(+lat).toFixed(6)},${(+lon).toFixed(6)}`;
   });
 
+  // --- Tiny helpers
+  const qS = sel => document.querySelector(sel);
+  const resultsBox = qS('#results');
+  function setLatLon(lat, lon){
+    qS('#latlon').value = `${(+lat).toFixed(6)},${(+lon).toFixed(6)}`;
+  }
+  function showResults(items){
+    resultsBox.innerHTML = '';
+    if(!items || !items.length){ resultsBox.style.display='none'; return; }
+    items.forEach(it=>{
+      const div = document.createElement('div');
+      const label = [it.name, it.admin1, it.country].filter(Boolean).join(', ');
+      div.className = 'res';
+      div.textContent = label + `  —  ${it.latitude.toFixed(6)}, ${it.longitude.toFixed(6)}`;
+      div.addEventListener('click', ()=>{
+        qS('#place').value = label;
+        setLatLon(it.latitude, it.longitude);
+        resultsBox.style.display='none';
+      });
+      resultsBox.appendChild(div);
+    });
+    resultsBox.style.display='block';
+  }
+
+  // --- Open-Meteo Geocoding (free, no key) ---
+  async function geocodePlace(q){
+    if(!q || q.trim().length < 2){ showResults([]); return; }
+    const url = 'https://geocoding-api.open-meteo.com/v1/search?name='
+                + encodeURIComponent(q) + '&count=8&language=en&format=json';
+    try{
+      const res = await fetch(url);
+      const data = await res.json();
+      showResults(data.results || []);
+      // If exactly one, auto-apply
+      if(data.results && data.results.length === 1){
+        const r = data.results[0];
+        qS('#place').value = [r.name, r.admin1, r.country].filter(Boolean).join(', ');
+        setLatLon(r.latitude, r.longitude);
+        resultsBox.style.display='none';
+      }
+    }catch(err){
+      console.error(err);
+      showResults([]);
+    }
+  }
+
+  // --- Reverse geocode for GPS
+  async function reverseGeocode(lat, lon){
+    const url = `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en&format=json`;
+    try{
+      const r = await fetch(url);
+      const d = await r.json();
+      const best = d && d.results && d.results[0];
+      if(best){
+        qS('#place').value = [best.name, best.admin1, best.country].filter(Boolean).join(', ');
+      }
+    }catch(e){ console.warn('Reverse geocode fail', e); }
+  }
+
+  // Events
+  qS('#searchBtn').addEventListener('click', ()=> geocodePlace(qS('#place').value));
+  qS('#place').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); geocodePlace(qS('#place').value); } });
+
+  qS('#gpsBtn').addEventListener('click', ()=>{
+    if(!navigator.geolocation){ alert('Geolocation not supported.'); return; }
+    navigator.geolocation.getCurrentPosition(async pos=>{
+      const {latitude, longitude} = pos.coords;
+      setLatLon(latitude, longitude);
+      await reverseGeocode(latitude, longitude);
+    }, err=>{
+      alert('GPS failed: ' + err.message);
+    }, {enableHighAccuracy:true, timeout:12000, maximumAge:0});
+  });
+
+  qS('#copyBtn').addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(qS('#latlon').value.trim());
+      qS('#copyBtn').textContent = 'Copied!';
+      setTimeout(()=> qS('#copyBtn').textContent='Copy', 1200);
+    }catch{ alert('Copy failed'); }
+  });
+
+  // Submit → chart
   document.getElementById('birthForm').addEventListener('submit', (e)=>{
     e.preventDefault();
-    const name=(document.getElementById('name').value||'').trim();
-    const dt=document.getElementById('datetime').value;
-    const raw=document.getElementById('latlon').value||"6.9271,79.8612";
-    const [lat,lon]=raw.split(',').map(s=>parseFloat(s.trim()));
+    const name=(qS('#name').value||'').trim();
+    const dt=qS('#datetime').value;
+    let [lat,lon]=(qS('#latlon').value||"").split(',').map(s=>parseFloat((s||'').trim()));
+    if(!name||!dt||Number.isNaN(lat)||Number.isNaN(lon)){ alert('Fill all fields (name, datetime, lat, lon).'); return; }
 
-    if(!name||!dt||Number.isNaN(lat)||Number.isNaN(lon)){
-      alert('Fill all fields (Name, Date/Time, Lat,Lon).'); return;
-    }
-    if(lat<-90||lat>90){ alert('Latitude must be between -90 and 90.'); return; }
-    if(lon<-180||lon>180){ alert('Longitude must be between -180 and 180.'); return; }
+    localStorage.setItem('kp_name', name);
+    localStorage.setItem('kp_dt', dt);
+    localStorage.setItem('kp_lat', lat);
+    localStorage.setItem('kp_lon', lon);
 
-    localStorage.setItem('kp_name',name);
-    localStorage.setItem('kp_dt',dt);
-    localStorage.setItem('kp_lat',lat);
-    localStorage.setItem('kp_lon',lon);
-
-    // same folder chart
-    location.href = './kp-chart.html';
+    location.href = './chart.html';
   });
   </script>
 </body>

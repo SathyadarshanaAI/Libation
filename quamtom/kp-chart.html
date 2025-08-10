@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>KP – Live Chart</title>
+  <title>KP – සජීවී චාට්</title>
   <style>
     :root{--bg:#0f172a;--card:#0b1220;--line:#1e293b;--txt:#e0f2fe;--muted:#93c5fd;--accent:#38bdf8}
     *{box-sizing:border-box}
@@ -14,11 +14,8 @@
     .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
     .row{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
     .pill{background:#091426;border:1px solid var(--line);border-radius:999px;padding:7px 10px}
-    #wheel{
-      width:100%;aspect-ratio:1/1;max-width:680px;margin:0 auto;
-      background:#071224;border:1px solid var(--line);border-radius:12px;display:block
-    }
-    #kpboxes{width:100%;height:320px;background:#071224;border:1px solid var(--line);border-radius:12px;display:block}
+    #wheel{width:100%;aspect-ratio:1/1;max-width:680px;margin:0 auto;background:#071224;border:1px solid var(--line);border-radius:12px;display:block}
+    #kpboxes{width:100%;height:320px;background:#071224;border:1px solid:var(--line);border-radius:12px;display:block}
     h2{margin:6px 0 12px}
     h3{margin:12px 0;color:var(--muted);font-weight:600}
     table{width:100%;border-collapse:collapse;font-size:14px}
@@ -26,30 +23,33 @@
     th{color:var(--muted)}
     .mono{font-variant-numeric:tabular-nums}
     #err{color:#fca5a5;margin-top:8px}
+    .switch{display:flex;gap:8px;align-items:center;margin:6px 0 12px}
     @media (max-width:860px){ .grid{grid-template-columns:1fr} #kpboxes{height:280px} }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <p><a href="./">← Back</a></p>
+    <p><a href="./">← ආපසු</a></p>
 
     <div class="card">
-      <h2>KP – Live Chart</h2>
+      <h2>KP – සජීවී චාට්</h2>
       <div class="row" id="summary"></div>
 
+      <div class="switch">
+        <label><input id="sidToggle" type="checkbox"> Sidereal (Lahiri) — KP සඳහා නිර්දේශිත</label>
+      </div>
+
       <div class="grid">
-        <!-- Left: Wheel -->
         <div>
           <canvas id="wheel"></canvas>
           <div id="err"></div>
         </div>
 
-        <!-- Right: Table + KP 12-house boxes -->
         <div>
-          <h3>Calculated Positions</h3>
+          <h3>ගණනය කල ස්ථාන</h3>
           <table id="calcTable">
             <thead>
-              <tr><th>Planet</th><th>Sign</th><th>Deg (D°M′)</th><th class="mono">° (0–360)</th></tr>
+              <tr><th>ග්‍රහ</th><th>රැශිය</th><th>ඩිග් (D°M′)</th><th class="mono">° (0–360)</th></tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -57,7 +57,7 @@
           <div id="moonExtra" style="margin-top:10px;color:var(--muted)"></div>
           <div id="ascExtra"  style="margin-top:6px;color:var(--muted)"></div>
 
-          <h3>KP 12-House Chart</h3>
+          <h3>KP 12-කොටු සටහන</h3>
           <canvas id="kpboxes"></canvas>
         </div>
       </div>
@@ -71,44 +71,52 @@
   <script src="./chart-engine.js"></script>
 
   <script>
-    // ---------- helpers ----------
-    const SIGNS=["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+    // ---------- constants ----------
+    const SIGNS=["Mesha","Vrishabha","Mithuna","Kataka","Simha","Kanya","Tula","Vrischika","Dhanu","Makara","Kumbha","Meena"];
     const ABBR ={Sun:"Su",Moon:"Mo",Mars:"Ma",Mercury:"Me",Jupiter:"Ju",Venus:"Ve",Saturn:"Sa",Rahu:"Ra",Ketu:"Ke"};
     const norm360=d=>((d%360)+360)%360;
-    const toDMS=deg=>{const d=Math.floor(deg),m=Math.floor((deg-d)*60);return `${d}°${String(m).padStart(2,'0')}′`;};
+    const toDMS=deg=>{const d=Math.floor(deg),m=Math.round((deg-d)*60);return `${d}°${String(m).padStart(2,'0')}′`;};
 
-    // Ascendant fallback (if ephemeris didn’t add it)
-    function computeAscendant(dt, lat, lon){
-      const date = new Date(dt || Date.now());
-      const JD = date.getTime()/86400000 + 2440587.5;
-      const T  = (JD-2451545.0)/36525.0;
-      const eps=(23.439291 - 0.0130042*T)*Math.PI/180;
-      let GMST=280.46061837 + 360.98564736629*(JD-2451545) + 0.000387933*T*T - (T*T*T)/38710000;
-      const LST = norm360(GMST + (+lon)) * Math.PI/180;
-      const phi = (+lat) * Math.PI/180;
+    // ---------- robust time / asc ----------
+    function parseLocalISO(iso){
+      if(!iso) return new Date();
+      const [d,t='00:00:00'] = iso.split('T');
+      const [Y,M,D] = d.split('-').map(Number);
+      const [h,m,s=0] = t.split(':').map(Number);
+      return new Date(Y, M-1, D, h, m, s); // local wall time
+    }
+    function jdFromLocalISO(iso){
+      const dt = parseLocalISO(iso);
+      return dt.getTime()/86400000 + 2440587.5; // -> JD(UTC)
+    }
+    function gstDeg(JD){
+      const T=(JD-2451545)/36525;
+      let G = 280.46061837 + 360.98564736629*(JD-2451545) + 0.000387933*T*T - (T*T*T)/38710000;
+      return ((G%360)+360)%360;
+    }
+    function computeAscendantStrict(dtISO, latDeg, lonDeg){
+      const JD  = jdFromLocalISO(dtISO);
+      const eps = (23.439291 - 0.0130042*((JD-2451545)/36525)) * Math.PI/180;
+      const LST = ((gstDeg(JD) + (+lonDeg))%360) * Math.PI/180;
+      const φ   = (+latDeg) * Math.PI/180;
       const num = -Math.cos(LST);
-      const den =  Math.sin(LST)*Math.cos(eps) + Math.tan(phi)*Math.sin(eps);
-      return norm360(Math.atan2(num,den)*180/Math.PI);
+      const den =  Math.sin(LST)*Math.cos(eps) + Math.tan(φ)*Math.sin(eps);
+      const λ   = Math.atan2(num, den)*180/Math.PI;
+      return ((λ%360)+360)%360; // tropical
     }
 
-    // crisp & no clipping
-    function fitCanvas(canvas){
-      const cssW = Math.max(10, canvas.clientWidth);
-      const cssH = Math.max(10, canvas.clientHeight);
-      if (canvas.width!==cssW || canvas.height!==cssH){
-        canvas.width = cssW;
-        canvas.height = cssH;
-      }
-      canvas.getContext('2d').setTransform(1,0,0,1,0,0);
+    // ---------- Lahiri ayanāṁśa (simple, close to Swiss) ----------
+    // 2000.0 ≈ 23.856° ; rate ≈ 50.29" per year
+    function yearFromJD(JD){ return 2000 + (JD-2451545.0)/365.2425; }
+    function lahiriAyanamsa(JD){
+      const y = yearFromJD(JD);
+      const base = 23.856111;               // deg at 2000.0
+      const rate = 50.290966/3600;          // deg per year
+      return base + (y-2000)*rate;          // good to ~±0.1°
     }
 
-    // ---------- KP 12-house boxes (Asc = 1) ----------
-    // House layout (row-major 3×4 grid):
-    // [ 3, 2, 1,12 ]
-    // [ 4, 9,10,11 ]
-    // [ 5, 6, 7, 8 ]
+    // ---------- KP 12-box (equal-house from Asc) ----------
     const KP_HOUSE_AT_IDX = [3,2,1,12, 4,9,10,11, 5,6,7,8];
-
     function drawKPBoxes(canvas, planets, ascDeg){
       canvas.width  = canvas.clientWidth;
       canvas.height = canvas.clientHeight;
@@ -117,130 +125,102 @@
       const pad=10, cols=4, rows=3;
       const gw=W-pad*2, gh=H-pad*2, cw=gw/cols, rh=gh/rows;
 
-      // bg + grid
       ctx.clearRect(0,0,W,H);
       ctx.fillStyle='#071224'; ctx.fillRect(0,0,W,H);
       ctx.strokeStyle='#1e293b'; ctx.lineWidth=1;
       for(let c=0;c<=cols;c++){ const x=pad+c*cw; ctx.beginPath(); ctx.moveTo(x,pad); ctx.lineTo(x,pad+gh); ctx.stroke(); }
       for(let r=0;r<=rows;r++){ const y=pad+r*rh; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(pad+gw,y); ctx.stroke(); }
 
-      // corner diagonals (as in your sketch)
       const diag=(c,r,dir)=>{ const x=pad+c*cw,y=pad+r*rh; ctx.beginPath();
         if(dir==='\\'){ctx.moveTo(x,y);ctx.lineTo(x+cw,y+rh);} else {ctx.moveTo(x+cw,y);ctx.lineTo(x,y+rh);} ctx.stroke();
       };
       diag(0,0,'\\'); diag(3,0,'/'); diag(0,2,'/'); diag(3,2,'\\');
 
-      // house buckets via equal-house from Asc
-      const buckets = Array.from({length:13},()=>[]);
-      const getHouse = deg => {
-        const rel = ((deg - ascDeg) % 360 + 360) % 360;    // deg from Asc
-        return Math.floor(rel / 30) + 1;                   // 1..12
-      };
-      (planets||[]).forEach(p=>{
-        const h = getHouse(p.degree);
-        buckets[h].push(ABBR[p.name]||p.name.slice(0,2));
-      });
+      // bucket planets by equal 30° houses from Asc
+      const buckets=Array.from({length:13},()=>[]);
+      const getH=deg=>Math.floor(((deg-ascDeg)%360+360)%360/30)+1;
+      planets.forEach(p=>buckets[getH(p.degree)].push(ABBR[p.name]||p.name.slice(0,2)));
 
-      // draw boxes
       ctx.font='13px system-ui,Segoe UI,Arial';
       for(let r=0;r<rows;r++){
         for(let c=0;c<cols;c++){
-          const idx=r*4+c, house = KP_HOUSE_AT_IDX[idx];
-          const x0=pad+c*cw, y0=pad+r*rh;
-
-          // highlight 1st house
-          if(house===1){
-            ctx.strokeStyle='#38bdf8'; ctx.lineWidth=2;
-            ctx.strokeRect(x0+2,y0+2,cw-4,rh-4);
-            ctx.strokeStyle='#1e293b'; ctx.lineWidth=1;
-          }
-
-          // house number (fixed)
-          ctx.fillStyle='#93c5fd';
-          ctx.textAlign='right'; ctx.fillText(String(house), x0+cw-6, y0+16);
-          ctx.textAlign='left';
-
-          // planet tags inside that house
-          ctx.fillStyle='#e5e7eb';
+          const idx=r*4+c, house=KP_HOUSE_AT_IDX[idx];
+          const x0=pad+c*cw,y0=pad+r*rh;
+          if(house===1){ ctx.strokeStyle='#38bdf8'; ctx.lineWidth=2; ctx.strokeRect(x0+2,y0+2,cw-4,rh-4); ctx.strokeStyle='#1e293b'; ctx.lineWidth=1; }
+          ctx.fillStyle='#93c5fd'; ctx.textAlign='right'; ctx.fillText(String(house), x0+cw-6, y0+16);
+          ctx.textAlign='left'; ctx.fillStyle='#e5e7eb';
           buckets[house].forEach((t,i)=>ctx.fillText(t, x0+6, y0+34+i*16));
         }
       }
     }
 
-    // ---------- page init ----------
-    const name=localStorage.getItem('kp_name')||'';
-    const dt  =localStorage.getItem('kp_dt')  ||'';
-    const lat =localStorage.getItem('kp_lat');
-    const lon =localStorage.getItem('kp_lon');
-    if(!name||!dt||lat===null||lon===null){ alert('Missing birth data. Please start again.'); location.href='./'; }
+    // ---------- UI + render ----------
+    const name=localStorage.getItem('kp_name')||''; const dt=localStorage.getItem('kp_dt')||''; const lat=localStorage.getItem('kp_lat'); const lon=localStorage.getItem('kp_lon');
+    if(!name||!dt||lat===null||lon===null){ alert('දත්ත අඩුයි. මුලෙන් පටන් ගන්න.'); location.href='./'; }
 
-    // summary pills
     const s=document.getElementById('summary');
     const pill=t=>{const b=document.createElement('span'); b.className='pill'; b.textContent=t; return b;};
-    s.append(pill(`Name: ${name}`));
-    s.append(pill(`Date/Time: ${dt}`));
-    s.append(pill(`Lat: ${Number(lat).toFixed(4)}`));
-    s.append(pill(`Lon: ${Number(lon).toFixed(4)}`));
+    s.append(pill(`නම: ${name}`)); s.append(pill(`දි/වේලාව: ${dt}`)); s.append(pill(`අක්ෂාංශ: ${Number(lat).toFixed(4)}`)); s.append(pill(`දේශාංශ: ${Number(lon).toFixed(4)}`));
 
-    const wheelCanvas=document.getElementById('wheel');
+    const sidToggle=document.getElementById('sidToggle');
+    sidToggle.checked = JSON.parse(localStorage.getItem('kp_sidereal')||'true'); // KP default: sidereal
 
-    function redrawAll(){
-      if(!window.eph) return;
-      fitCanvas(wheelCanvas);
-      if(typeof window.drawWheel==='function') window.drawWheel(wheelCanvas, eph);
-      else if(typeof window.renderWheelEngine==='function') window.renderWheelEngine(wheelCanvas, eph);
+    function computeAndRender(){
+      // base ephemeris (mock or real)
+      const eph=(window.computeEphemeris||window.computeMockEphemeris)(dt,+lat,+lon);
+      // strict tropical Asc
+      const ascTrop = computeAscendantStrict(dt, +lat, +lon);
 
-      const asc = (eph.positions && typeof eph.positions.Asc==='number') ? eph.positions.Asc : null;
-      drawKPBoxes(document.getElementById('kpboxes'), eph.planets, asc);
+      // apply sidereal if needed
+      let ephUse = JSON.parse(JSON.stringify(eph));
+      let ascUse = ascTrop;
+      let ay = 0;
+      if(sidToggle.checked){
+        const JD = jdFromLocalISO(dt);
+        ay = lahiriAyanamsa(JD);
+        ascUse = norm360(ascTrop - ay);
+        ephUse.planets.forEach(p=>p.degree = norm360(p.degree - ay));
+      }
+      ephUse.positions = ephUse.positions || {};
+      ephUse.positions.Asc = ascUse;
+
+      // table
+      const tb=document.querySelector('#calcTable tbody'); tb.innerHTML='';
+      ephUse.planets.forEach(p=>{
+        const abs=norm360(p.degree);
+        const sIx=Math.floor(abs/30), ins=abs-sIx*30;
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${p.name}</td><td>${SIGNS[sIx]}</td><td class="mono">${toDMS(ins)}</td><td class="mono">${abs.toFixed(2)}</td>`;
+        tb.appendChild(tr);
+      });
+
+      // moon sub-lord
+      const moon=ephUse.planets.find(x=>x.name==='Moon');
+      if(moon){
+        const sl=(typeof window.calculateSubLord==='function')? window.calculateSubLord(moon.degree) : 'Mock-SL';
+        document.getElementById('moonExtra').innerHTML=`🌙 සඳ උප අධිපති: <b style="color:var(--accent)">${sl}</b>`;
+      }
+      // asc text
+      const absAsc=ascUse, sIxAsc=Math.floor(absAsc/30), inSign=absAsc - sIxAsc*30;
+      document.getElementById('ascExtra').innerHTML = `🧭 ලඟ්නය (Asc): <b style="color:var(--accent)">${SIGNS[sIxAsc]}</b> ${toDMS(inSign)} (${absAsc.toFixed(2)}°) ${sidToggle.checked?`• Lahiri ay (${ay.toFixed(2)}°)`:''}`;
+
+      // draw
+      const wcv=document.getElementById('wheel');
+      if(wcv.width!==wcv.clientWidth){ wcv.width=wcv.clientWidth; wcv.height=wcv.clientWidth; }
+      if(typeof window.drawWheel==='function') window.drawWheel(wcv, ephUse);
+      drawKPBoxes(document.getElementById('kpboxes'), ephUse.planets, ascUse);
     }
 
-    window.addEventListener('load', ()=>{
-      try{
-        // ephemeris
-        window.eph=(window.computeEphemeris||window.computeMockEphemeris)?.(dt,+lat,+lon);
-        if(!eph) throw new Error('Ephemeris not available');
+    sidToggle.addEventListener('change',()=>{ localStorage.setItem('kp_sidereal', sidToggle.checked); computeAndRender(); });
 
-        // ensure Asc present
-        let ascDeg = (eph.positions && typeof eph.positions.Asc === 'number')
-          ? eph.positions.Asc
-          : computeAscendant(dt, +lat, +lon);
-        eph.positions = eph.positions || {}; eph.positions.Asc = ascDeg;
+    // global error surface
+    (function(){ const box=document.getElementById('err');
+      window.onerror=(m,s,l,c,e)=>{ box&&(box.textContent='⚠ '+(e?.message||m)); };
+      window.addEventListener('unhandledrejection',e=>{ box&&(box.textContent='⚠ '+(e.reason?.message||e.reason)); });
+    })();
 
-        // positions table
-        const tb=document.querySelector('#calcTable tbody'); tb.innerHTML='';
-        (eph.planets||[]).forEach(p=>{
-          const abs=norm360(p.degree), sIx=Math.floor(abs/30), ins=abs-sIx*30;
-          const tr=document.createElement('tr');
-          tr.innerHTML=`<td>${p.name}</td><td>${SIGNS[sIx]}</td>
-                        <td class="mono">${toDMS(ins)}</td><td class="mono">${abs.toFixed(2)}</td>`;
-          tb.appendChild(tr);
-        });
-
-        // Moon Sub-Lord
-        const moon=(eph.planets||[]).find(x=>x.name==='Moon');
-        if(moon){
-          let sl = (typeof window.calculateSubLord==='function')
-            ? window.calculateSubLord(norm360(moon.degree))
-            : 'Mock-SL';
-          document.getElementById('moonExtra').innerHTML =
-            `🌙 Moon Sub-Lord: <b style="color:var(--accent)">${sl}</b>`;
-        }
-
-        // Lagna text
-        const absAsc = norm360(ascDeg);
-        const sIxAsc = Math.floor(absAsc/30);
-        const inSign = absAsc - sIxAsc*30;
-        document.getElementById('ascExtra').innerHTML =
-          `⬆️ Lagna (Asc): <b style="color:var(--accent)">${SIGNS[sIxAsc]}</b> ${toDMS(inSign)} (${absAsc.toFixed(2)}°)`;
-
-        // draw + responsive
-        redrawAll();
-        new ResizeObserver(redrawAll).observe(wheelCanvas);
-        addEventListener('resize', redrawAll);
-      }catch(err){
-        console.error(err); document.getElementById('err').textContent='⚠ '+(err.message||err);
-      }
-    });
+    window.addEventListener('load', computeAndRender);
+    addEventListener('resize', computeAndRender);
   </script>
 </body>
 </html>

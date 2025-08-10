@@ -1,6 +1,6 @@
 // quamtom/chart-engine.js
 (function () {
-  function drawWheel(canvas, eph) {
+  function renderWheelEngine(canvas, eph) {
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
     const cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 20;
@@ -25,14 +25,15 @@
       ctx.moveTo(0, 0);
       ctx.lineTo(R, 0);
       ctx.strokeStyle = '#1f3b5b';
+      ctx.lineWidth = 1;
       ctx.stroke();
     }
     ctx.restore();
 
     // planets
     ctx.fillStyle = '#e5e7eb';
-    ctx.font = '12px sans-serif';
-    for (const p of (eph?.planets || [])) {
+    ctx.font = '12px system-ui, sans-serif';
+    (eph?.planets || []).forEach(p => {
       const a = (p.degree - 90) * Math.PI / 180;
       const x = cx + Math.cos(a) * (R - 20);
       const y = cy + Math.sin(a) * (R - 20);
@@ -40,7 +41,9 @@
       ctx.arc(x, y, 3, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillText(p.name, x + 6, y - 6);
-    }
+    });
   }
-  window.drawWheel = drawWheel; // expose globally
+
+  // ⚠️ renamed so it won't override chart-ui.js's drawWheel
+  window.renderWheelEngine = renderWheelEngine;
 })();

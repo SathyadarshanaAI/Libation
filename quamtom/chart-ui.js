@@ -1,58 +1,38 @@
-// quamtom/chart-ui.js — draw wheel on an existing <canvas id="wheel">
+// quamtom/chart-ui.js
 (function () {
-  window.drawWheel = function drawWheel(canvasOrEl, eph) {
-    const canvas = typeof canvasOrEl === 'string'
-      ? document.getElementById(canvasOrEl)
-      : canvasOrEl;
-    if (!canvas) throw new Error('Canvas not found');
-
+  function drawWheel(canvas, eph) {
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
-    const cx = W/2, cy = H/2;
-    const R  = Math.min(W, H)/2 - 20;
+    const cx = W/2, cy = H/2, R = Math.min(W,H)/2 - 20;
 
-    // clear
     ctx.clearRect(0,0,W,H);
-
-    // bg
     ctx.fillStyle = '#0b1220';
     ctx.fillRect(0,0,W,H);
 
-    // outer circle
+    // outer
     ctx.strokeStyle = '#38bdf8';
     ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI*2);
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
 
-    // 12 houses
-    ctx.save();
-    ctx.translate(cx, cy);
+    // 12 spokes
+    ctx.save(); ctx.translate(cx,cy);
+    ctx.strokeStyle = '#1f3b5b'; ctx.lineWidth = 1;
     for (let i=0;i<12;i++){
-      ctx.rotate(Math.PI/6);
-      ctx.beginPath();
-      ctx.moveTo(0,0);
-      ctx.lineTo(0,-R);
-      ctx.strokeStyle = '#1f8aa6';
-      ctx.lineWidth = 1;
-      ctx.stroke();
+      const a = i*Math.PI/6;
+      ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(R*Math.cos(a), R*Math.sin(a)); ctx.stroke();
     }
     ctx.restore();
 
     // planets
-    if (eph && Array.isArray(eph.planets)){
-      ctx.fillStyle = '#f8fafc';
-      ctx.font = '12px system-ui, sans-serif';
-      eph.planets.forEach(p=>{
-        const rad = (p.degree % 360) * Math.PI/180;
-        const r2  = R - 20;
-        const x = cx + r2*Math.cos(-rad + Math.PI/2);
-        const y = cy + r2*Math.sin(-rad + Math.PI/2);
-        ctx.beginPath();
-        ctx.arc(x,y,3,0,Math.PI*2);
-        ctx.fill();
-        ctx.fillText(p.name, x+6, y-6);
-      });
-    }
-  };
+    ctx.fillStyle = '#e5e7eb';
+    ctx.font = '12px system-ui, sans-serif';
+    (eph?.planets||[]).forEach(p=>{
+      const a = (p.degree-90)*Math.PI/180;
+      const x = cx + Math.cos(a)*(R-20);
+      const y = cy + Math.sin(a)*(R-20);
+      ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+      ctx.fillText(p.name, x+6, y-6);
+    });
+  }
+  window.drawWheel = drawWheel;
 })();

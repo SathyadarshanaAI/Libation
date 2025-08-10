@@ -1,51 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🪐 KP Chart</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KP – Chart</title>
   <style>
-    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;text-align:center;margin:0;padding:20px}
-    canvas{background:#071224;border-radius:50%;box-shadow:0 0 20px #38bdf8;display:block;margin:12px auto}
+    :root{--bg:#0f172a;--txt:#e0f2fe;--line:#1e293b;--card:#0b1220}
+    body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial}
+    .wrap{max-width:980px;margin:24px auto;padding:16px}
     a{color:#7dd3fc;text-decoration:none}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+    #wheel{display:block;margin:12px auto;background:#071224;border:1px solid var(--line);border-radius:12px}
+    #err{color:#fca5a5;margin-top:8px;text-align:center;min-height:22px}
   </style>
 </head>
 <body>
-  <a href="./index.html">← Back</a>
-  <h1>KP Chart</h1>
-  <canvas id="wheel" width="600" height="600"></canvas>
+  <div class="wrap">
+    <p><a href="./">← Back</a></p>
+    <div class="card">
+      <h2 style="margin:6px 0 12px">KP – Live Chart</h2>
+      <canvas id="wheel" width="640" height="640"></canvas>
+      <div id="err"></div>
+    </div>
+  </div>
 
-  <!-- 🔗 All JS files live in the SAME folder (quamtom) -->
+  <!-- 🔗 ALL JS are in the same /quamtom/ folder -->
   <script src="./ephemeris-data.js"></script>
   <script src="./kp-astro.js"></script>
   <script src="./chart-engine.js"></script>
   <script src="./chart-ui.js"></script>
 
   <script>
+    const showErr = m => { document.getElementById('err').textContent = '⚠ ' + m; console.error(m); };
+
+    function fitCanvasSquare(el){
+      // keep a nice square, responsive
+      const max = Math.min(680, Math.min(window.innerWidth-48, 960-48));
+      el.width = max; el.height = max;
+    }
+
     function safeEphemeris(dt, lat, lon){
       if (typeof window.computeEphemeris === 'function') return window.computeEphemeris(dt, lat, lon);
       if (typeof window.computeMockEphemeris === 'function') return window.computeMockEphemeris(dt, lat, lon);
-      console.error('No ephemeris engine found (computeEphemeris / computeMockEphemeris).');
-      return { planets: [], positions: {} };
+      throw new Error('Ephemeris engine not found (ephemeris-data.js)');
     }
 
-    function drawChart(){
-      // values saved by quamtom/index.html
-      const dt  = localStorage.getItem('kp_dt')  || new Date().toISOString().slice(0,16);
-      const lat = +(localStorage.getItem('kp_lat') || 6.9271);
-      const lon = +(localStorage.getItem('kp_lon') || 79.8612);
-
-      const eph = safeEphemeris(dt, lat, lon);
-
+    function render(){
       const cv = document.getElementById('wheel');
-      if (typeof window.drawWheel === 'function'){
+      fitCanvasSquare(cv);
+
+      const name = localStorage.getItem('kp_name') || '';
+      const dt   = localStorage.getItem('kp_dt')   || new Date().toISOString().slice(0,16);
+      const lat  = +(localStorage.getItem('kp_lat')|| 6.9271);
+      const lon  = +(localStorage.getItem('kp_lon')|| 79.8612);
+
+      try{
+        const eph = safeEphemeris(dt, lat, lon);
+        console.log('Inputs:', {name, dt, lat, lon});
+        console.log('Ephemeris:', eph);
+
+        if (typeof window.drawWheel !== 'function'){
+          showErr('drawWheel() not found (chart-ui.js)');
+          return;
+        }
         window.drawWheel(cv, eph);
-      } else {
-        console.error('drawWheel() is not defined. Check chart-ui.js load/order.');
+        showErr(''); // clear
+      }catch(err){
+        showErr(err.message || String(err));
       }
     }
 
-    window.addEventListener('load', drawChart);
+    window.addEventListener('load', render);
+    window.addEventListener('resize', ()=>{ requestAnimationFrame(render); });
   </script>
 </body>
 </html>

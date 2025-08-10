@@ -14,7 +14,9 @@
     .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
     .row{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
     .pill{background:#091426;border:1px solid var(--line);border-radius:999px;padding:8px 12px}
-    canvas{width:100%;height:540px;display:block;background:#071224;border:1px solid var(--line);border-radius:12px}
+    canvas{width:100%;display:block;background:#071224;border:1px solid var(--line);border-radius:12px}
+    #wheel{height:540px}
+    #kpboxes{height:320px;margin-top:12px}
     h2{margin:6px 0 12px}
     h3{margin:0 0 12px;color:var(--muted);font-weight:600}
     table{width:100%;border-collapse:collapse;font-size:14px}
@@ -22,7 +24,7 @@
     th{color:var(--muted);font-weight:600}
     .mono{font-variant-numeric:tabular-nums}
     #err{color:#fca5a5;margin-top:8px}
-    @media (max-width: 860px){ .grid{grid-template-columns:1fr} canvas{height:480px} }
+    @media (max-width: 860px){ .grid{grid-template-columns:1fr} #wheel{height:480px} }
   </style>
 </head>
 <body>
@@ -40,7 +42,7 @@
           <div id="err"></div>
         </div>
 
-        <!-- Right: Calculations -->
+        <!-- Right: Calculations + KP 12-box -->
         <div>
           <h3>Calculated Positions</h3>
           <table id="calcTable">
@@ -56,74 +58,63 @@
           </table>
 
           <div id="moonExtra" style="margin-top:12px;color:var(--muted)"></div>
+
+          <h3 style="margin-top:16px">KP 12-Box Chart</h3>
+          <canvas id="kpboxes"></canvas>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- libs (all inside /quamtom/) -->
+  <!-- libs inside /quamtom/ -->
   <script src="./ephemeris-data.js"></script>
   <script src="./kp-astro.js"></script>
   <script src="./chart-ui.js"></script>
-  <script src="./chart-engine.js"></script> <!-- fallback renderer -->
+  <script src="./chart-engine.js"></script>
 
   <script>
     // ---- helpers ----
     const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+    const ABBR  = {Sun:'Su', Moon:'Mo', Mars:'Ma', Mercury:'Me', Jupiter:'Ju', Venus:'Ve', Saturn:'Sa', Rahu:'Ra', Ketu:'Ke'};
     const norm360 = d => ((d % 360) + 360) % 360;
-    const toDMS = deg => {
-      const d = Math.floor(deg);
-      const m = Math.floor((deg - d) * 60);
-      return `${d}°${m.toString().padStart(2,'0')}′`;
-    };
+    const toDMS = deg => { const d=Math.floor(deg), m=Math.floor((deg-d)*60); return `${d}°${String(m).padStart(2,'0')}′`; };
 
     const name = localStorage.getItem('kp_name') || '';
     const dt   = localStorage.getItem('kp_dt')   || '';
     const lat  = localStorage.getItem('kp_lat');
     const lon  = localStorage.getItem('kp_lon');
-
-    if (!name || !dt || lat === null || lon === null) {
-      alert('Missing birth data. Please start again.');
-      location.href = './';
-    }
+    if (!name || !dt || lat===null || lon===null) { alert('Missing birth data. Please start again.'); location.href='./'; }
 
     // summary pills
     const s = document.getElementById('summary');
-    const pill = t => { const b = document.createElement('span'); b.className='pill'; b.textContent=t; return b; };
+    const pill = t => { const b=document.createElement('span'); b.className='pill'; b.textContent=t; return b; };
     s.append(pill(`Name: ${name}`));
     s.append(pill(`Date/Time: ${dt}`));
     s.append(pill(`Lat: ${Number(lat).toFixed(4)}`));
     s.append(pill(`Lon: ${Number(lon).toFixed(4)}`));
 
     const cv = document.getElementById('wheel');
-    // match canvas to CSS size
-    cv.width  = cv.clientWidth;
-    cv.height = cv.clientHeight;
+    cv.width  = cv.clientWidth;  cv.height = cv.clientHeight;
 
     const showErr = m => (document.getElementById('err').textContent = '⚠ ' + m);
 
     window.addEventListener('load', () => {
-      try {
-        const eph = (window.computeEphemeris || window.computeMockEphemeris)?.(dt, +lat, +lon);
-        if (!eph) { showErr('Ephemeris not available'); return; }
+      try{
+        window.eph = (window.computeEphemeris || window.computeMockEphemeris)?.(dt, +lat, +lon);
+        if (!window.eph) { showErr('Ephemeris not available'); return; }
 
-        // 1) Draw wheel
-        if (typeof window.drawWheel === 'function') {
-          window.drawWheel(cv, eph);
-        } else if (typeof window.renderWheelEngine === 'function') {
-          window.renderWheelEngine(cv, eph);
-        } else {
-          showErr('No wheel renderer found. Check chart-ui.js / chart-engine.js');
-        }
+        // Draw wheel
+        if (typeof window.drawWheel === 'function') window.drawWheel(cv, eph);
+        else if (typeof window.renderWheelEngine === 'function') window.renderWheelEngine(cv, eph);
+        else showErr('No wheel renderer found. Check chart-ui.js / chart-engine.js');
 
-        // 2) Build calculations table
+        // Calculations table
         const tbody = document.querySelector('#calcTable tbody');
         tbody.innerHTML = '';
         (eph.planets || []).forEach(p => {
           const degAbs = norm360(p.degree);
-          const signIx = Math.floor(degAbs / 30);
-          const degInSign = degAbs - signIx * 30;
-
+          const signIx = Math.floor(degAbs/30);
+          const degInSign = degAbs - signIx*30;
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${p.name}</td>
@@ -134,18 +125,86 @@
           tbody.appendChild(tr);
         });
 
-        // 3) Extra (Moon Sub-Lord) if your kp-astro.js provides it
-        const moon = (eph.planets || []).find(x => x.name === 'Moon');
+        // Moon Sub-Lord (if provided by kp-astro.js)
+        const moon = (eph.planets||[]).find(x=>x.name==='Moon');
         if (moon && typeof window.calculateSubLord === 'function') {
           const sl = window.calculateSubLord(norm360(moon.degree));
-          document.getElementById('moonExtra').innerHTML =
-            `🌙 Moon Sub-Lord: <b style="color:var(--accent)">${sl}</b>`;
+          document.getElementById('moonExtra').innerHTML = `🌙 Moon Sub-Lord: <b style="color:var(--accent)">${sl}</b>`;
         }
-      } catch (err) {
-        console.error(err);
-        showErr(err.message || 'Unknown error while drawing chart');
-      }
+
+        // KP 12-box chart
+        const box = document.getElementById('kpboxes');
+        drawKPBoxes(box, eph.planets, (eph.positions && typeof eph.positions.Asc==='number') ? eph.positions.Asc : null);
+
+        // redraw on resize
+        addEventListener('resize', ()=>{
+          cv.width=cv.clientWidth; cv.height=cv.clientHeight;
+          if (typeof window.drawWheel==='function') window.drawWheel(cv, eph);
+          else if (typeof window.renderWheelEngine==='function') window.renderWheelEngine(cv, eph);
+          drawKPBoxes(box, eph.planets, (eph.positions && eph.positions.Asc));
+        });
+
+      }catch(err){ console.error(err); showErr(err.message||'Unknown error'); }
     });
+
+    // --- KP 12-box (South-Indian) ---
+    function drawKPBoxes(canvas, planets, ascDeg=null){
+      canvas.width  = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const pad = 10, cols=4, rows=3;
+      const gw = W - pad*2, gh = H - pad*2;
+      const cw = gw/cols, rh = gh/rows;
+
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = '#071224'; ctx.fillRect(0,0,W,H);
+      ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
+
+      // grid
+      for(let c=0;c<=cols;c++){ const x=pad+c*cw; ctx.beginPath(); ctx.moveTo(x,pad); ctx.lineTo(x,pad+gh); ctx.stroke(); }
+      for(let r=0;r<=rows;r++){ const y=pad+r*rh; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(pad+gw,y); ctx.stroke(); }
+
+      // corners (as in your sketch)
+      const diag = (c,r,dir)=>{ const x=pad+c*cw, y=pad+r*rh; ctx.beginPath();
+        if(dir==='\\') { ctx.moveTo(x,y); ctx.lineTo(x+cw,y+rh); }
+        else           { ctx.moveTo(x+cw,y); ctx.lineTo(x,y+rh); }
+        ctx.stroke();
+      };
+      diag(0,0,'\\'); diag(3,0,'/'); diag(0,2,'/'); diag(3,2,'\\');
+
+      // group by sign
+      const bySign = Array.from({length:12}, ()=>[]);
+      (planets||[]).forEach(p=>{
+        const s = Math.floor(norm360(p.degree)/30);
+        bySign[s].push(ABBR[p.name]||p.name.slice(0,2));
+      });
+
+      // Asc highlight (optional)
+      const ascSign = (ascDeg!=null && !isNaN(ascDeg)) ? Math.floor(norm360(ascDeg)/30) : null;
+
+      ctx.font = '13px system-ui,Segoe UI,Arial';
+      for(let s=0;s<12;s++){
+        const r = Math.floor(s/4), c = s%4;
+        const x0 = pad + c*cw, y0 = pad + r*rh;
+
+        // box border highlight for asc
+        if (s===ascSign){
+          ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2;
+          ctx.strokeRect(x0+2,y0+2,cw-4,rh-4);
+          ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
+        }
+
+        // sign number
+        ctx.fillStyle = '#93c5fd';
+        ctx.fillText(String(s+1), x0+6, y0+16);
+
+        // planets stack
+        ctx.fillStyle = '#e5e7eb';
+        bySign[s].forEach((t,i)=> ctx.fillText(t, x0+6, y0+34+i*16));
+      }
+    }
   </script>
 </body>
 </html>

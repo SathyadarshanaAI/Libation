@@ -1,38 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KP Chart</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🪐 KP Chart</title>
   <style>
-    body {
-      background: #0f172a;
-      color: #e0f2fe;
-      font-family: system-ui, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    canvas {
-      background: #111;
-      border-radius: 50%;
-      box-shadow: 0 0 20px #38bdf8;
-    }
+    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;text-align:center;margin:0;padding:20px}
+    canvas{background:#071224;border-radius:50%;box-shadow:0 0 20px #38bdf8;display:block;margin:12px auto}
+    a{color:#7dd3fc;text-decoration:none}
   </style>
 </head>
 <body>
-  <h1>🪐 KP Chart</h1>
+  <a href="./index.html">← Back</a>
+  <h1>KP Chart</h1>
   <canvas id="wheel" width="600" height="600"></canvas>
 
-  <!-- JS Files -->
+  <!-- 🔗 All JS files live in the SAME folder (quamtom) -->
   <script src="./ephemeris-data.js"></script>
   <script src="./kp-astro.js"></script>
   <script src="./chart-engine.js"></script>
   <script src="./chart-ui.js"></script>
 
   <script>
-    window.addEventListener('load', () => {
-      drawChart();
-    });
+    function safeEphemeris(dt, lat, lon){
+      if (typeof window.computeEphemeris === 'function') return window.computeEphemeris(dt, lat, lon);
+      if (typeof window.computeMockEphemeris === 'function') return window.computeMockEphemeris(dt, lat, lon);
+      console.error('No ephemeris engine found (computeEphemeris / computeMockEphemeris).');
+      return { planets: [], positions: {} };
+    }
+
+    function drawChart(){
+      // values saved by quamtom/index.html
+      const dt  = localStorage.getItem('kp_dt')  || new Date().toISOString().slice(0,16);
+      const lat = +(localStorage.getItem('kp_lat') || 6.9271);
+      const lon = +(localStorage.getItem('kp_lon') || 79.8612);
+
+      const eph = safeEphemeris(dt, lat, lon);
+
+      const cv = document.getElementById('wheel');
+      if (typeof window.drawWheel === 'function'){
+        window.drawWheel(cv, eph);
+      } else {
+        console.error('drawWheel() is not defined. Check chart-ui.js load/order.');
+      }
+    }
+
+    window.addEventListener('load', drawChart);
   </script>
 </body>
 </html>

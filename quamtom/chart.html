@@ -5,39 +5,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>KP Chart</title>
   <style>
-    body {
-      background:#0f172a;
-      color:#e0f2fe;
-      font-family:system-ui,Segoe UI,Arial;
-      margin:0;
-      padding:16px;
-      text-align:center;
-    }
-    #wheel {
-      display:block;
-      margin:12px auto;
-      background:#0b1220;
-      border-radius:50%;
-      border:1px solid #1e293b;
-    }
-    #err {
-      color:#fca5a5;
-      margin-top:8px;
-    }
+    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;margin:0;padding:16px;text-align:center}
+    #wheel{display:block;margin:12px auto;background:#0b1220;border-radius:50%;border:1px solid #1e293b}
+    #err{color:#fca5a5;margin-top:8px}
   </style>
 </head>
 <body>
-  <a href="./">← Back to Start</a>
+  <a href="./index.html">← Back to Start</a>
   <h2 style="margin:6px 0 12px">KP Chart Wheel</h2>
 
   <canvas id="wheel" width="600" height="600"></canvas>
   <div id="err"></div>
 
-  <!-- Load scripts from /quamtom/ -->
-  <script src="./quamtom/ephemeris-data.js"></script>
-  <script src="./quamtom/kp-astro.js"></script>
-  <script src="./quamtom/chart-engine.js"></script>
-  <script src="./quamtom/chart-ui.js"></script>
+  <!-- ✅ ALL scripts live in /quamtom/ -->
+  <script src="./ephemeris-data.js"></script>
+  <script src="./kp-astro.js"></script>
+  <script src="./chart-engine.js"></script>
+  <script src="./chart-ui.js"></script>
 
   <script>
     const showErr = m => (document.getElementById('err').textContent = '⚠ ' + m);
@@ -48,12 +32,12 @@
       const lon = +(localStorage.getItem('kp_lon')|| 79.8612);
 
       if (typeof window.drawWheel !== 'function') {
-        showErr('drawWheel() missing — check /quamtom/chart-ui.js path.');
+        showErr('drawWheel() missing — check ./chart-ui.js');
         return;
       }
       if (typeof window.computeEphemeris !== 'function' &&
           typeof window.computeMockEphemeris !== 'function') {
-        showErr('Ephemeris engine missing — check /quamtom/chart-engine.js path.');
+        showErr('Ephemeris engine missing — check ./chart-engine.js');
         return;
       }
 

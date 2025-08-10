@@ -17,12 +17,10 @@
   <canvas id="wheel" width="600" height="600"></canvas>
   <div id="err"></div>
 
-  <!-- ✅ ALL scripts live in /quamtom/ -->
+  <!-- ✅ ALL scripts in /quamtom/ -->
   <script src="./ephemeris-data.js"></script>
-  <script src="./kp-astro.js"></script>
-  <script src="./chart-engine.js"></script>
   <script src="./chart-ui.js"></script>
-
+  <script src="./chart-engine.js"></script> <!-- now exports renderWheelEngine (no clash) -->
   <script>
     const showErr = m => (document.getElementById('err').textContent = '⚠ ' + m);
 
@@ -31,18 +29,19 @@
       const lat = +(localStorage.getItem('kp_lat')|| 6.9271);
       const lon = +(localStorage.getItem('kp_lon')|| 79.8612);
 
-      if (typeof window.drawWheel !== 'function') {
-        showErr('drawWheel() missing — check ./chart-ui.js');
-        return;
-      }
-      if (typeof window.computeEphemeris !== 'function' &&
-          typeof window.computeMockEphemeris !== 'function') {
-        showErr('Ephemeris engine missing — check ./chart-engine.js');
-        return;
-      }
+      const eph = (window.computeEphemeris || window.computeMockEphemeris)?.(dt, lat, lon);
+      if (!eph) { showErr('Ephemeris not available'); return; }
 
-      const eph = (window.computeEphemeris || window.computeMockEphemeris)(dt, lat, lon);
-      window.drawWheel(document.getElementById('wheel'), eph);
+      const canvas = document.getElementById('wheel');
+
+      // Prefer chart-ui's drawWheel; fallback to chart-engine's renderWheelEngine
+      if (typeof window.drawWheel === 'function') {
+        window.drawWheel(canvas, eph);
+      } else if (typeof window.renderWheelEngine === 'function') {
+        window.renderWheelEngine(canvas, eph);
+      } else {
+        showErr('No wheel renderer found. Check chart-ui.js / chart-engine.js');
+      }
     });
   </script>
 </body>

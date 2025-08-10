@@ -4,164 +4,160 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>KP – Start</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
   <style>
     :root{--bg:#0f172a;--card:#0b1220;--line:#1e293b;--txt:#e0f2fe;--muted:#93c5fd;--accent:#38bdf8}
     *{box-sizing:border-box}
-    body{background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial;margin:0;padding:16px}
-    .card{max-width:520px;margin:24px auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-    label{display:block;margin:8px 0 4px;color:var(--muted)}
+    body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial}
+    a{color:#7dd3fc;text-decoration:none}
+    .wrap{max-width:980px;margin:24px auto;padding:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+    label{display:block;margin:10px 0 6px;color:var(--muted)}
     input,button{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#091426;color:#cdeafe}
     button{cursor:pointer}
-    .row{display:grid;grid-template-columns:1fr auto auto;gap:8px}
-    .hint{font-size:12px;color:#9cc7ff;margin-top:4px}
-    .results{margin-top:8px;border:1px solid var(--line);border-radius:8px;max-height:200px;overflow:auto;display:none;background:#061226}
-    .res{padding:10px;border-bottom:1px solid #0f2339;cursor:pointer}
-    .res:last-child{border-bottom:none}
-    .res:hover{background:#0b1b33}
-    .actions{display:flex;gap:8px;margin-top:12px}
-    .copy{width:auto;padding:8px 10px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+    .chip{padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:#0b162a;color:#cdeafe;cursor:pointer}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}
+    #map{height:220px;border:1px solid var(--line);border-radius:12px}
+    .results{background:#0b162a;border:1px solid var(--line);border-radius:8px;margin-top:8px;max-height:180px;overflow:auto}
+    .results button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #0f2339;background:transparent;padding:10px}
+    .results button:last-child{border-bottom:0}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2 style="margin:6px 0 12px">KP – Start</h2>
+  <div class="wrap">
+    <div class="card">
+      <h2 style="margin:0 0 10px">KP – Start</h2>
 
-    <form id="birthForm" novalidate>
-      <label>Name</label>
-      <input id="name" required placeholder="Your name"/>
+      <form id="birthForm" novalidate>
+        <label>Name</label>
+        <input id="name" required placeholder="Your name"/>
 
-      <label>Birth Date & Time (local)</label>
-      <input id="datetime" type="datetime-local" required/>
+        <label>Birth Date & Time (local)</label>
+        <input id="datetime" type="datetime-local" required/>
 
-      <label>Place (city / hospital / area)</label>
-      <div class="row">
-        <input id="place" placeholder="e.g., Kandy General Hospital, Sri Lanka"/>
-        <button type="button" id="searchBtn" title="Search place">Search</button>
-        <button type="button" id="gpsBtn"    title="Use device location">Use GPS</button>
-      </div>
-      <div id="results" class="results"></div>
-      <div class="hint">Tip: pick a suggestion or press GPS; coordinates will auto-fill below.</div>
+        <label>Quick Places (tap to fill)</label>
+        <div class="row" id="chips">
+          <button type="button" class="chip" data-lat="6.9271" data-lon="79.8612">Colombo</button>
+          <button type="button" class="chip" data-lat="7.2862"  data-lon="80.6316">Kandy General Hospital</button>
+          <button type="button" class="chip" data-lat="6.0535"  data-lon="80.2210">Galle</button>
+          <button type="button" class="chip" data-lat="9.6615"  data-lon="80.0255">Jaffna</button>
+          <button type="button" class="chip" data-lat="51.5074" data-lon="-0.1278">London</button>
+        </div>
 
-      <label>Lat, Lon (deg)</label>
-      <div class="actions">
-        <input id="latlon" required placeholder="6.9271,79.8612"/>
-        <button type="button" class="copy" id="copyBtn">Copy</button>
-      </div>
+        <div class="grid">
+          <div>
+            <label>Search place</label>
+            <div class="row" style="gap:8px">
+              <input id="searchBox" placeholder="Type a place… e.g., Kandy General Hospital"/>
+              <button type="button" id="searchBtn" style="max-width:140px">Search</button>
+            </div>
+            <div id="searchResults" class="results" hidden></div>
 
-      <button style="margin-top:12px" type="submit">Start → Chart</button>
-    </form>
+            <label>Pick on map</label>
+            <div id="map"></div>
+          </div>
 
-    <p style="margin-top:10px"><a href="/">← Home</a></p>
+          <div>
+            <label>Latitude, Longitude</label>
+            <input id="latlon" required placeholder="7.2862, 80.6316"/>
+
+            <button type="submit" style="margin-top:12px">Start → Chart</button>
+            <p style="margin-top:10px"><a href="/astrology.html">← Back</a></p>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
   <script>
-  // Prefill datetime
-  window.addEventListener('load', ()=>{
-    const prev = localStorage.getItem('kp_dt');
-    document.getElementById('datetime').value = (prev || new Date().toISOString()).slice(0,16);
-    // If previous coords exist, show them
-    const lat = localStorage.getItem('kp_lat');
-    const lon = localStorage.getItem('kp_lon');
-    if(lat && lon) document.getElementById('latlon').value = `${(+lat).toFixed(6)},${(+lon).toFixed(6)}`;
-  });
+    // Prefill datetime
+    (function(){
+      const prev = localStorage.getItem('kp_dt');
+      document.getElementById('datetime').value = (prev || new Date().toISOString()).slice(0,16);
+      document.getElementById('name').value = localStorage.getItem('kp_name') || '';
+    })();
 
-  // --- Tiny helpers
-  const qS = sel => document.querySelector(sel);
-  const resultsBox = qS('#results');
-  function setLatLon(lat, lon){
-    qS('#latlon').value = `${(+lat).toFixed(6)},${(+lon).toFixed(6)}`;
-  }
-  function showResults(items){
-    resultsBox.innerHTML = '';
-    if(!items || !items.length){ resultsBox.style.display='none'; return; }
-    items.forEach(it=>{
-      const div = document.createElement('div');
-      const label = [it.name, it.admin1, it.country].filter(Boolean).join(', ');
-      div.className = 'res';
-      div.textContent = label + `  —  ${it.latitude.toFixed(6)}, ${it.longitude.toFixed(6)}`;
-      div.addEventListener('click', ()=>{
-        qS('#place').value = label;
-        setLatLon(it.latitude, it.longitude);
-        resultsBox.style.display='none';
-      });
-      resultsBox.appendChild(div);
-    });
-    resultsBox.style.display='block';
-  }
+    // Leaflet map (no geolocation permission needed)
+    const map = L.map('map',{zoomControl:true}).setView([7.8731,80.7718], 7); // Sri Lanka center
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom: 19,
+      attribution:'© OpenStreetMap'
+    }).addTo(map);
+    let marker = L.marker([7.8731,80.7718],{draggable:true}).addTo(map);
 
-  // --- Open-Meteo Geocoding (free, no key) ---
-  async function geocodePlace(q){
-    if(!q || q.trim().length < 2){ showResults([]); return; }
-    const url = 'https://geocoding-api.open-meteo.com/v1/search?name='
-                + encodeURIComponent(q) + '&count=8&language=en&format=json';
-    try{
-      const res = await fetch(url);
-      const data = await res.json();
-      showResults(data.results || []);
-      // If exactly one, auto-apply
-      if(data.results && data.results.length === 1){
-        const r = data.results[0];
-        qS('#place').value = [r.name, r.admin1, r.country].filter(Boolean).join(', ');
-        setLatLon(r.latitude, r.longitude);
-        resultsBox.style.display='none';
-      }
-    }catch(err){
-      console.error(err);
-      showResults([]);
+    function setLatLon(lat, lon, zoom=12){
+      const box = document.getElementById('latlon');
+      box.value = `${(+lat).toFixed(6)}, ${(+lon).toFixed(6)}`;
+      marker.setLatLng([+lat,+lon]);
+      map.setView([+lat,+lon], zoom);
     }
-  }
 
-  // --- Reverse geocode for GPS
-  async function reverseGeocode(lat, lon){
-    const url = `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en&format=json`;
-    try{
-      const r = await fetch(url);
-      const d = await r.json();
-      const best = d && d.results && d.results[0];
-      if(best){
-        qS('#place').value = [best.name, best.admin1, best.country].filter(Boolean).join(', ');
+    // Chips
+    document.getElementById('chips').addEventListener('click', (e)=>{
+      const b = e.target.closest('.chip'); if(!b) return;
+      setLatLon(b.dataset.lat, b.dataset.lon, 14);
+    });
+
+    // Map click & drag
+    map.on('click', (e)=> setLatLon(e.latlng.lat, e.latlng.lng, map.getZoom()));
+    marker.on('dragend', ()=> {
+      const p = marker.getLatLng(); setLatLon(p.lat, p.lng, map.getZoom());
+    });
+
+    // Search (Nominatim)
+    async function doSearch(){
+      const q = document.getElementById('searchBox').value.trim();
+      const box = document.getElementById('searchResults');
+      box.innerHTML = '';
+      if(!q){ box.hidden = true; return; }
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=6`;
+      try{
+        const res = await fetch(url, {headers:{'Accept':'application/json'}});
+        const data = await res.json();
+        if(!data.length){ box.hidden=true; return; }
+        data.forEach(item=>{
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = item.display_name;
+          btn.addEventListener('click', ()=>{
+            setLatLon(item.lat, item.lon, 15);
+            box.hidden = true;
+          });
+          box.appendChild(btn);
+        });
+        box.hidden = false;
+      }catch(err){
+        box.hidden = true;
+        alert('Search failed. Please try again.');
       }
-    }catch(e){ console.warn('Reverse geocode fail', e); }
-  }
+    }
+    document.getElementById('searchBtn').addEventListener('click', doSearch);
+    document.getElementById('searchBox').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doSearch(); } });
 
-  // Events
-  qS('#searchBtn').addEventListener('click', ()=> geocodePlace(qS('#place').value));
-  qS('#place').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); geocodePlace(qS('#place').value); } });
-
-  qS('#gpsBtn').addEventListener('click', ()=>{
-    if(!navigator.geolocation){ alert('Geolocation not supported.'); return; }
-    navigator.geolocation.getCurrentPosition(async pos=>{
-      const {latitude, longitude} = pos.coords;
-      setLatLon(latitude, longitude);
-      await reverseGeocode(latitude, longitude);
-    }, err=>{
-      alert('GPS failed: ' + err.message);
-    }, {enableHighAccuracy:true, timeout:12000, maximumAge:0});
-  });
-
-  qS('#copyBtn').addEventListener('click', async ()=>{
-    try{
-      await navigator.clipboard.writeText(qS('#latlon').value.trim());
-      qS('#copyBtn').textContent = 'Copied!';
-      setTimeout(()=> qS('#copyBtn').textContent='Copy', 1200);
-    }catch{ alert('Copy failed'); }
-  });
-
-  // Submit → chart
-  document.getElementById('birthForm').addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const name=(qS('#name').value||'').trim();
-    const dt=qS('#datetime').value;
-    let [lat,lon]=(qS('#latlon').value||"").split(',').map(s=>parseFloat((s||'').trim()));
-    if(!name||!dt||Number.isNaN(lat)||Number.isNaN(lon)){ alert('Fill all fields (name, datetime, lat, lon).'); return; }
-
-    localStorage.setItem('kp_name', name);
-    localStorage.setItem('kp_dt', dt);
-    localStorage.setItem('kp_lat', lat);
-    localStorage.setItem('kp_lon', lon);
-
-    location.href = './chart.html';
-  });
+    // Form submit
+    document.getElementById('birthForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const name = (document.getElementById('name').value||'').trim();
+      const dt   = document.getElementById('datetime').value;
+      const [lat,lon] = (document.getElementById('latlon').value||'').split(',').map(s=>parseFloat(s.trim()));
+      if(!name || !dt || Number.isNaN(lat) || Number.isNaN(lon)){ alert('Please fill all fields.'); return; }
+      localStorage.setItem('kp_name', name);
+      localStorage.setItem('kp_dt',   dt);
+      localStorage.setItem('kp_lat',  lat);
+      localStorage.setItem('kp_lon',  lon);
+      location.href = './chart.html';
+    });
   </script>
 </body>
 </html>

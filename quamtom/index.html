@@ -44,9 +44,9 @@
         <label>Quick Places (tap to fill)</label>
         <div class="row" id="chips">
           <button type="button" class="chip" data-lat="6.9271" data-lon="79.8612">Colombo</button>
-          <button type="button" class="chip" data-lat="7.2862"  data-lon="80.6316">Kandy General Hospital</button>
-          <button type="button" class="chip" data-lat="6.0535"  data-lon="80.2210">Galle</button>
-          <button type="button" class="chip" data-lat="9.6615"  data-lon="80.0255">Jaffna</button>
+          <button type="button" class="chip" data-lat="7.2862" data-lon="80.6316">Kandy General Hospital</button>
+          <button type="button" class="chip" data-lat="6.0535" data-lon="80.2210">Galle</button>
+          <button type="button" class="chip" data-lat="9.6615" data-lon="80.0255">Jaffna</button>
           <button type="button" class="chip" data-lat="51.5074" data-lon="-0.1278">London</button>
         </div>
 
@@ -68,7 +68,7 @@
             <input id="latlon" required placeholder="7.2862, 80.6316"/>
 
             <button type="submit" style="margin-top:12px">Start → Chart</button>
-            <p style="margin-top:10px"><a href="/astrology.html">← Back</a></p>
+            <p style="margin-top:10px"><a href="../astrology.html">← Back</a></p>
           </div>
         </div>
       </form>
@@ -81,14 +81,14 @@
     crossorigin=""
   ></script>
   <script>
-    // Prefill datetime
+    // Prefill datetime & name
     (function(){
       const prev = localStorage.getItem('kp_dt');
       document.getElementById('datetime').value = (prev || new Date().toISOString()).slice(0,16);
       document.getElementById('name').value = localStorage.getItem('kp_name') || '';
     })();
 
-    // Leaflet map (no geolocation permission needed)
+    // Leaflet map
     const map = L.map('map',{zoomControl:true}).setView([7.8731,80.7718], 7); // Sri Lanka center
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
       maxZoom: 19,
@@ -115,13 +115,13 @@
       const p = marker.getLatLng(); setLatLon(p.lat, p.lng, map.getZoom());
     });
 
-    // Search (Nominatim)
+    // Search (Nominatim) – LK-first
     async function doSearch(){
       const q = document.getElementById('searchBox').value.trim();
       const box = document.getElementById('searchResults');
       box.innerHTML = '';
       if(!q){ box.hidden = true; return; }
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=6`;
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=6&countrycodes=lk&accept-language=en`;
       try{
         const res = await fetch(url, {headers:{'Accept':'application/json'}});
         const data = await res.json();

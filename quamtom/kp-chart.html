@@ -1,83 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>KP – Chart</title>
   <style>
-    body{margin:0;background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial}
-    .wrap{max-width:960px;margin:24px auto;padding:16px}
-    .card{background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:16px}
-    .row{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
-    .pill{background:#091426;border:1px solid #1e293b;border-radius:999px;padding:8px 12px}
-    canvas{width:100%;height:520px;display:block;background:#071224;border:1px solid #1e293b;border-radius:12px}
+    :root{--bg:#0f172a;--card:#0b1220;--line:#1e293b;--txt:#e0f2fe;--muted:#93c5fd;--accent:#38bdf8}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial}
     a{color:#7dd3fc;text-decoration:none}
+    .wrap{max-width:1100px;margin:24px auto;padding:16px}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+    .row{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
+    .pill{background:#091426;border:1px solid var(--line);border-radius:999px;padding:8px 12px}
+    canvas{width:100%;height:540px;display:block;background:#071224;border:1px solid var(--line);border-radius:12px}
+    h2{margin:6px 0 12px}
+    h3{margin:0 0 12px;color:var(--muted);font-weight:600}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:8px;border-bottom:1px solid #0f2339;text-align:left}
+    th{color:var(--muted);font-weight:600}
+    .mono{font-variant-numeric:tabular-nums}
     #err{color:#fca5a5;margin-top:8px}
+    @media (max-width: 860px){ .grid{grid-template-columns:1fr} canvas{height:480px} }
   </style>
 </head>
 <body>
   <div class="wrap">
     <p><a href="./">← Back</a></p>
+
     <div class="card">
-      <h2 style="margin:6px 0 12px">KP – Live Chart</h2>
+      <h2>KP – Live Chart</h2>
       <div class="row" id="summary"></div>
-      <canvas id="wheel" width="900" height="520"></canvas>
-      <div id="err"></div>
+
+      <div class="grid">
+        <!-- Left: Wheel -->
+        <div>
+          <canvas id="wheel"></canvas>
+          <div id="err"></div>
+        </div>
+
+        <!-- Right: Calculations -->
+        <div>
+          <h3>Calculated Positions</h3>
+          <table id="calcTable">
+            <thead>
+              <tr>
+                <th>Planet</th>
+                <th>Sign</th>
+                <th>Deg (D°M′)</th>
+                <th class="mono">° (0–360)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <div id="moonExtra" style="margin-top:12px;color:var(--muted)"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ✅ use the real libs from /quamtom/ -->
+  <!-- libs (all inside /quamtom/) -->
   <script src="./ephemeris-data.js"></script>
+  <script src="./kp-astro.js"></script>
   <script src="./chart-ui.js"></script>
-  <script src="./chart-engine.js"></script> <!-- provides renderWheelEngine fallback -->
+  <script src="./chart-engine.js"></script> <!-- fallback renderer -->
 
   <script>
-    // Read saved inputs
+    // ---- helpers ----
+    const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+    const norm360 = d => ((d % 360) + 360) % 360;
+    const toDMS = deg => {
+      const d = Math.floor(deg);
+      const m = Math.floor((deg - d) * 60);
+      return `${d}°${m.toString().padStart(2,'0')}′`;
+    };
+
     const name = localStorage.getItem('kp_name') || '';
     const dt   = localStorage.getItem('kp_dt')   || '';
     const lat  = localStorage.getItem('kp_lat');
     const lon  = localStorage.getItem('kp_lon');
 
-    // Guard if someone loads this page directly
     if (!name || !dt || lat === null || lon === null) {
       alert('Missing birth data. Please start again.');
       location.href = './';
     }
 
-    // Show summary pills
+    // summary pills
     const s = document.getElementById('summary');
-    const pill = (t) => {
-      const b = document.createElement('span');
-      b.className = 'pill';
-      b.textContent = t;
-      return b;
-    };
+    const pill = t => { const b = document.createElement('span'); b.className='pill'; b.textContent=t; return b; };
     s.append(pill(`Name: ${name}`));
     s.append(pill(`Date/Time: ${dt}`));
     s.append(pill(`Lat: ${Number(lat).toFixed(4)}`));
     s.append(pill(`Lon: ${Number(lon).toFixed(4)}`));
 
-    // Render the real wheel
-    const cv  = document.getElementById('wheel');
-    // match canvas to CSS size (simple, avoids blur)
+    const cv = document.getElementById('wheel');
+    // match canvas to CSS size
     cv.width  = cv.clientWidth;
     cv.height = cv.clientHeight;
 
     const showErr = m => (document.getElementById('err').textContent = '⚠ ' + m);
 
     window.addEventListener('load', () => {
-      try{
+      try {
         const eph = (window.computeEphemeris || window.computeMockEphemeris)?.(dt, +lat, +lon);
         if (!eph) { showErr('Ephemeris not available'); return; }
 
+        // 1) Draw wheel
         if (typeof window.drawWheel === 'function') {
-          window.drawWheel(cv, eph);                                // primary
+          window.drawWheel(cv, eph);
         } else if (typeof window.renderWheelEngine === 'function') {
-          window.renderWheelEngine(cv, eph);                        // fallback if you kept engine
+          window.renderWheelEngine(cv, eph);
         } else {
           showErr('No wheel renderer found. Check chart-ui.js / chart-engine.js');
         }
-      } catch(err){
+
+        // 2) Build calculations table
+        const tbody = document.querySelector('#calcTable tbody');
+        tbody.innerHTML = '';
+        (eph.planets || []).forEach(p => {
+          const degAbs = norm360(p.degree);
+          const signIx = Math.floor(degAbs / 30);
+          const degInSign = degAbs - signIx * 30;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${p.name}</td>
+            <td>${SIGNS[signIx]}</td>
+            <td class="mono">${toDMS(degInSign)}</td>
+            <td class="mono">${degAbs.toFixed(2)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // 3) Extra (Moon Sub-Lord) if your kp-astro.js provides it
+        const moon = (eph.planets || []).find(x => x.name === 'Moon');
+        if (moon && typeof window.calculateSubLord === 'function') {
+          const sl = window.calculateSubLord(norm360(moon.degree));
+          document.getElementById('moonExtra').innerHTML =
+            `🌙 Moon Sub-Lord: <b style="color:var(--accent)">${sl}</b>`;
+        }
+      } catch (err) {
         console.error(err);
         showErr(err.message || 'Unknown error while drawing chart');
       }

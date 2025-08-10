@@ -3,54 +3,61 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>KP – Start</title>
+  <title>KP – Chart</title>
   <style>
-    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;margin:0;padding:16px}
-    .card{max-width:420px;margin:24px auto;background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:16px}
-    label{display:block;margin:8px 0 4px;color:#93c5fd}
-    input,button{width:100%;padding:10px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe}
-    button{margin-top:12px;cursor:pointer}
+    body{margin:0;background:#0f172a;color:#e0f2fe;font-family:system-ui, Segoe UI, Arial}
+    .wrap{max-width:960px;margin:24px auto;padding:16px}
+    .card{background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:16px}
+    .row{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
+    .pill{background:#091426;border:1px solid #1e293b;border-radius:999px;padding:8px 12px}
+    canvas{width:100%;height:520px;display:block;background:#071224;border:1px solid #1e293b;border-radius:12px}
     a{color:#7dd3fc;text-decoration:none}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2 style="margin:6px 0 12px">KP – Start</h2>
-    <form id="birthForm" novalidate>
-      <label>Name</label>
-      <input id="name" required placeholder="Your name"/>
-      <label>Birth Date & Time</label>
-      <input id="datetime" type="datetime-local" required/>
-      <label>Lat, Lon (deg)</label>
-      <input id="latlon" required placeholder="6.9271, 79.8612"/>
-      <button type="submit">Start → Chart</button>
-    </form>
-    <p style="margin-top:10px"><a href="/">← Home</a></p>
+  <div class="wrap">
+    <p><a href="./">← Back</a></p>
+    <div class="card">
+      <h2 style="margin:6px 0 12px">KP – Live Chart</h2>
+      <div class="row" id="summary"></div>
+      <canvas id="wheel" width="900" height="520"></canvas>
+    </div>
   </div>
 
+  <!-- hook your real libs here, keep them in /quamtom/ -->
+  <!-- <script src="./ephemeris-data.js"></script>
+  <script src="./kp-astro.js"></script>
+  <script src="./chart-engine.js"></script>
+  <script src="./chart-ui.js"></script> -->
+
   <script>
-  // Prefill datetime
-  window.addEventListener('load', ()=>{
-    const prev = localStorage.getItem('kp_dt');
-    document.getElementById('datetime').value = (prev || new Date().toISOString()).slice(0,16);
-  });
+    // Read saved inputs
+    const name = localStorage.getItem('kp_name') || '';
+    const dt   = localStorage.getItem('kp_dt')   || '';
+    const lat  = localStorage.getItem('kp_lat');
+    const lon  = localStorage.getItem('kp_lon');
 
-  document.getElementById('birthForm').addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const name=(document.getElementById('name').value||'').trim();
-    const dt=document.getElementById('datetime').value;
-    const [lat,lon]=(document.getElementById('latlon').value||"6.9271,79.8612")
-      .split(',').map(s=>parseFloat(s.trim()));
-    if(!name||!dt||Number.isNaN(lat)||Number.isNaN(lon)){ alert('Fill all fields'); return; }
+    // Guard if someone loads this page directly
+    if(!name || !dt || lat === null || lon === null){
+      alert('Missing birth data. Please start again.'); location.href='./'; 
+    }
 
-    localStorage.setItem('kp_name',name);
-    localStorage.setItem('kp_dt',dt);
-    localStorage.setItem('kp_lat',lat);
-    localStorage.setItem('kp_lon',lon);
+    // Show summary pills
+    const s = document.getElementById('summary');
+    const pill = (t)=>{ const b=document.createElement('span'); b.className='pill'; b.textContent=t; return b; };
+    s.append(pill(`Name: ${name}`));
+    s.append(pill(`Date/Time: ${dt}`));
+    s.append(pill(`Lat: ${Number(lat).toFixed(4)}`));
+    s.append(pill(`Lon: ${Number(lon).toFixed(4)}`));
 
-    // same folder chart
-    location.href = './kp-chart.html';
-  });
+    // TEMP demo: draw a simple ring so we see the canvas
+    const ctx = document.getElementById('wheel').getContext('2d');
+    const cx=450, cy=260, r=240;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.strokeStyle='#1e293b'; ctx.lineWidth=2; ctx.stroke();
+    ctx.font='16px system-ui'; ctx.fillStyle='#93c5fd'; ctx.fillText('KP wheel placeholder — plug chart-engine.js here', 20, 28);
+
+    // TODO: replace with your engine:
+    // const jd = toJulian(dt); const planets = computePlanets(jd, lat, lon); drawWheel(ctx, planets);
   </script>
 </body>
 </html>

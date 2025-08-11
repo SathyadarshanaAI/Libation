@@ -1,227 +1,56 @@
-<!-- quamtom/index.html -->
+<!-- quamtom/kp-chart.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>KP – Start</title>
-
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin="anonymous"/>
-
+  <title>KP Astrology Chart</title>
   <style>
-    :root{--bg:#0f172a;--txt:#e0f2fe;--muted:#93c5fd;--card:#0b1220;--line:#1e293b}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial}
-    a{color:#7dd3fc;text-decoration:none}
-    .wrap{max-width:1024px;margin:18px auto;padding:12px}
-    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .home{background:#0b1220;border:1px solid var(--line);padding:6px 10px;border-radius:8px}
-    #google_translate_element{background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:4px 8px}
-
-    .grid{display:grid;grid-template-columns:1.35fr .65fr;gap:14px}
+    :root{--bg:#0f172a;--card:rgba(17,24,39,.9);--line:#334155;--text:#e2e8f0;--accent:#38bdf8}
+    body{margin:0;font-family:'Segoe UI',system-ui,Arial;background:var(--bg);color:var(--text)}
+    .topbar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;position:sticky;top:0;z-index:10;background:rgba(2,6,23,.95);border-bottom:1px solid var(--line)}
+    .topbar a{color:#7dd3fc;text-decoration:none;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:#0b1220}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.45)}
+    #wheel{width:100%;max-width:520px;aspect-ratio:1/1;display:block;margin:auto;background:#071224;border:1px solid var(--line);border-radius:12px}
+    #dashaWrap{margin:16px;padding:16px;background:rgba(15,23,42,.85);border:1px solid var(--line);border-radius:12px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #0f243a}
+    th{color:#93c5fd;text-align:left}
+    .mono{font-variant-numeric:tabular-nums}
     @media (max-width:860px){ .grid{grid-template-columns:1fr} }
-
-    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-    .card h2{margin:6px 0 12px}
-    label{display:block;margin:10px 0 6px;color:var(--muted)}
-    input,button,textarea{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#091426;color:#cdeafe;font-size:15px}
-    button{cursor:pointer}
-    .btn{margin-top:12px}
-    .pill{display:inline-block;border:1px solid var(--line);background:#091426;border-radius:999px;padding:6px 10px;margin-top:8px}
-    .ok{border-color:#22c55e}
-    #map{height:230px;border:1px solid var(--line);border-radius:10px}
-
-    .hint{color:#93c5fd;font-size:14px}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <a class="home" href="/">← Home</a>
-      <div id="google_translate_element"></div>
+  <!-- Top -->
+  <div class="topbar">
+    <p style="margin:0">
+      <a href="./">← Back</a> &nbsp;|&nbsp;
+      <a href="#dashaWrap" title="Jump to Vimshottari Dasha">↯ Dasha</a>
+    </p>
+    <div id="google_translate_element"></div>
+  </div>
+
+  <!-- Chart + Details -->
+  <div class="grid">
+    <div class="card">
+      <h2>KP Chart</h2>
+      <canvas id="wheel"></canvas>
     </div>
-
-    <div class="grid">
-      <!-- Left: Birth form -->
-      <div class="card">
-        <h2>KP – Start</h2>
-        <form id="birthForm" novalidate>
-          <label>Name</label>
-          <input id="name" required placeholder="Your name"/>
-
-          <label>Birth Date & Time</label>
-          <input id="datetime" type="datetime-local" required/>
-
-          <label>Lat, Lon (deg)</label>
-          <input id="latlon" required placeholder="7.2862, 80.6316"/>
-
-          <button class="btn" type="submit">Start → Chart</button>
-        </form>
-        <div class="pill" id="status">Waiting…</div>
-      </div>
-
-      <!-- Right: Helper + Map -->
-      <div class="card">
-        <h2>SAT / Maps Helper</h2>
-        <div class="hint">
-          Type your <b>birth place & country</b> (e.g., <i>Kandy, Sri Lanka</i>) and click <b>Extract</b>.
-          You can also paste raw <b>Latitude,Longitude</b> or a link with <code>@lat,lon</code>.
-        </div>
-
-        <label style="margin-top:12px">Enter place or paste coords</label>
-        <textarea id="pasteBox" rows="3"
-          placeholder="e.g., Kandy, Sri Lanka  — or  7.2862, 80.6316  — or a link with @lat,lon"></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button id="btnPaste" type="button">📋 Paste</button>
-          <button id="btnExtract" type="button">🔍 Extract</button>
-        </div>
-        <div id="found" class="hint" style="margin-top:8px"></div>
-
-        <label style="margin-top:12px">Pick on Map</label>
-        <div id="map"></div>
-        <!-- tip message removed -->
+    <div class="card">
+      <h2>Details</h2>
+      <div id="chartDetails">Loading chart data…</div>
+      <div id="calcTableWrap" style="margin-top:12px;overflow:auto">
+        <table id="calcTable">
+          <thead>
+          <tr><th>Body</th><th>Sign</th><th>Deg (D°M′)</th><th class="mono">° (0–360)</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <!-- Google Translate -->
-  <script>
-    function googleTranslateElementInit(){
-      new google.translate.TranslateElement({
-        pageLanguage:'en', includedLanguages:'en,si,ta',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
-    }
-  </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-          crossorigin="anonymous"></script>
-
-  <script>
-    // Prefill
-    window.addEventListener('load', ()=>{
-      const dt  = localStorage.getItem('kp_dt');
-      const nm  = localStorage.getItem('kp_name');
-      const la  = localStorage.getItem('kp_lat');
-      const lo  = localStorage.getItem('kp_lon');
-      document.getElementById('datetime').value = (dt || new Date().toISOString()).slice(0,16);
-      if(nm) document.getElementById('name').value = nm;
-      if(la && lo) document.getElementById('latlon').value = `${la}, ${lo}`;
-    });
-
-    // Parse helpers
-    function parseCoords(text){
-      if(!text) return null;
-      let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
-      if(m) return {lat:+m[1], lon:+m[3]};
-      m = text.match(/@(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/);
-      if(m) return {lat:+m[1], lon:+m[3]};
-      return null;
-    }
-    const status = (msg, ok=false)=>{
-      const el = document.getElementById('status');
-      el.textContent = msg; el.className = 'pill' + (ok?' ok':'');
-    };
-
-    // Simple geocoder (Nominatim)
-    async function geocodePlace(q){
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
-      const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
-      if(!res.ok) throw new Error('Search failed');
-      const data = await res.json();
-      if(!data.length) return null;
-      return { lat: +data[0].lat, lon: +data[0].lon, label: data[0].display_name };
-    }
-
-    // Leaflet Map
-    const map = L.map('map',{zoomControl:true});
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      maxZoom:19, attribution:'© OpenStreetMap'
-    }).addTo(map);
-    let marker = L.marker([7.8731,80.7718],{draggable:true}).addTo(map);
-    map.setView([7.8731,80.7718], 7); // Sri Lanka default
-
-    function setMap(lat, lon, zoom){
-      marker.setLatLng([lat,lon]);
-      map.setView([lat,lon], zoom || map.getZoom());
-    }
-    // Click to set
-    map.on('click', e=>{
-      const {lat,lng} = e.latlng;
-      document.getElementById('latlon').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-      setMap(lat,lng);
-    });
-    // Drag to set
-    marker.on('dragend', ()=>{
-      const p = marker.getLatLng();
-      document.getElementById('latlon').value = `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`;
-    });
-    // If field already has coords, center map there
-    (function syncInitial(){
-      const raw = (document.getElementById('latlon').value||'').trim();
-      const c = parseCoords(raw);
-      if(c) setMap(c.lat,c.lon,12);
-    })();
-
-    // Paste & Extract
-    document.getElementById('btnPaste').addEventListener('click', async ()=>{
-      try{
-        const t = await navigator.clipboard.readText();
-        document.getElementById('pasteBox').value = t || '';
-      }catch{/* ignore */}
-    });
-    document.getElementById('btnExtract').addEventListener('click', async ()=>{
-      const t = document.getElementById('pasteBox').value.trim();
-      const out = document.getElementById('found');
-
-      // 1) direct coords?
-      const c = parseCoords(t);
-      if(c){
-        document.getElementById('latlon').value = `${c.lat}, ${c.lon}`;
-        setMap(c.lat, c.lon, 13);
-        out.textContent = `Detected → ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)} (filled)`;
-        return;
-      }
-      // 2) geocode place
-      if(!t){ out.textContent = 'Enter a place (e.g., Kandy, Sri Lanka).'; return; }
-      out.textContent = 'Searching…';
-      try{
-        const g = await geocodePlace(t);
-        if(!g){ out.textContent = 'No results. Try a broader place or add the country.'; return; }
-        document.getElementById('latlon').value = `${g.lat.toFixed(6)}, ${g.lon.toFixed(6)}`;
-        setMap(g.lat, g.lon, 13);
-        out.textContent = `Found: ${g.label} → ${g.lat.toFixed(6)}, ${g.lon.toFixed(6)} (filled)`;
-      }catch(e){
-        out.textContent = 'Search failed. Please try again.';
-      }
-    });
-
-    // Submit → chart
-    document.getElementById('birthForm').addEventListener('submit', e=>{
-      e.preventDefault();
-      const name=(document.getElementById('name').value||'').trim();
-      const dt=document.getElementById('datetime').value;
-      const cc = parseCoords(document.getElementById('latlon').value||'');
-      if(!name||!dt||!cc){ status('Fill all fields (Name, Date/Time, Lat,Lon).'); return; }
-      const {lat,lon} = cc;
-      if(lat<-90||lat>90){ status('Latitude must be between -90 and 90.'); return; }
-      if(lon<-180||lon>180){ status('Longitude must be between -180 and 180.'); return; }
-
-      localStorage.setItem('kp_name',name);
-      localStorage.setItem('kp_dt',dt);
-      localStorage.setItem('kp_lat',lat);
-      localStorage.setItem('kp_lon',lon);
-
-      status('Saved. Opening chart…', true);
-      location.href='./kp-chart.html';
-    });
-  </script>
-</body>
-</html>
+  <!-- Dasha -->
+  <div id="dashaWrap" class="card">
+    <h2

@@ -1,28 +1,68 @@
-index...
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🪐 KP Report - Quantum Version</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KP – Start</title>
+  <style>
+    body{background:#0f172a;color:#e0f2fe;font-family:system-ui,Segoe UI,Arial;margin:0;padding:16px}
+    .card{max-width:420px;margin:24px auto;background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:16px}
+    label{display:block;margin:8px 0 4px;color:#93c5fd}
+    input,button{width:100%;padding:10px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe}
+    button{margin-top:12px;cursor:pointer}
+    a{color:#7dd3fc;text-decoration:none}
+  </style>
 </head>
 <body>
-  <div class="report-container">
-    <h1>🪐 KP Astrology Report</h1>
-    <div class="field"><strong>Name:</strong> <span id="name">Loading...</span></div>
-    <div class="field"><strong>Date of Birth:</strong> <span id="dob">Loading...</span></div>
-    <div class="field"><strong>Time of Birth:</strong> <span id="tob">Loading...</span></div>
-    <div class="field"><strong>Place of Birth:</strong> <span id="pob">Loading...</span></div>
-    <div class="field"><strong>🌙 Moon Degree:</strong> <span id="moonDeg">Loading...</span></div>
-    <hr style="margin: 2rem 0; border-color: #38bdf8;">
-    <div class="field"><strong>🧠 Sub-Lord Prediction:</strong><br><span id="sublord">Loading...</span></div>
+  <div class="card">
+    <h2 style="margin:6px 0 12px">KP – Start</h2>
+    <form id="birthForm" novalidate>
+      <label>Name</label>
+      <input id="name" required placeholder="Your name"/>
+      <label>Birth Date & Time</label>
+      <input id="datetime" type="datetime-local" required/>
+      <label>Lat, Lon (deg)</label>
+      <input id="latlon" required placeholder="6.9271, 79.8612"/>
+      <button type="submit">Start → Chart</button>
+    </form>
+    <p style="margin-top:10px"><a href="/">← Home</a></p>
   </div>
 
-  <script src="ephemeris-data.js"></script>
-  <script src="kp-subload.js"></script>
-  <script src="kp-astro.js"></script>
-  <script src="print-report.js"></script>
+  <script>
+  // Prefill from prior session
+  window.addEventListener('load', ()=>{
+    const prevDt  = localStorage.getItem('kp_dt');
+    const prevNm  = localStorage.getItem('kp_name');
+    const prevLat = localStorage.getItem('kp_lat');
+    const prevLon = localStorage.getItem('kp_lon');
+
+    document.getElementById('datetime').value = (prevDt || new Date().toISOString()).slice(0,16);
+    if (prevNm)  document.getElementById('name').value = prevNm;
+    if (prevLat && prevLon) document.getElementById('latlon').value = `${prevLat}, ${prevLon}`;
+  });
+
+  document.getElementById('birthForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name=(document.getElementById('name').value||'').trim();
+    const dt=document.getElementById('datetime').value;
+    const raw=document.getElementById('latlon').value||"6.9271,79.8612";
+    const [lat,lon]=raw.split(',').map(s=>parseFloat(s.trim()));
+
+    if(!name||!dt||Number.isNaN(lat)||Number.isNaN(lon)){
+      alert('Fill all fields (Name, Date/Time, Lat,Lon).'); return;
+    }
+    if(lat<-90||lat>90){ alert('Latitude must be between -90 and 90.'); return; }
+    if(lon<-180||lon>180){ alert('Longitude must be between -180 and 180.'); return; }
+
+    localStorage.setItem('kp_name',name);
+    localStorage.setItem('kp_dt',dt);
+    localStorage.setItem('kp_lat',lat);
+    localStorage.setItem('kp_lon',lon);
+
+    // same folder chart
+    location.href = './kp-chart.html';
+  });
+  </script>
 </body>
 </html>
+Index....quam

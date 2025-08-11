@@ -1,160 +1,80 @@
-<!-- quamtom/index.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Enter Birth Details</title>
+<script>
+  // --- helper: parse "7.28, 80.63"
+  function tryParseCoords(txt){
+    const m = (txt||'').match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
+    return m ? {lat:+m[1], lon:+m[3]} : null;
+  }
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous"/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+  // --- helper: geocode with Nominatim
+  async function geocodePlace(q){
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
+    if(!res.ok) throw new Error('geocode failed');
+    const data = await res.json();
+    if(!data.length) return null;
+    return { lat:+data[0].lat, lon:+data[0].lon, label:data[0].display_name };
+  }
 
-  <!-- ⭐ Search control (Leaflet Control Geocoder) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
-  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  // --- fill lat/lon from the "place" input if possible
+  async function autoFillFromPlace() {
+    const place = (document.getElementById('place').value || '').trim();
+    const latEl = document.getElementById('lat');
+    const lonEl = document.getElementById('lon');
 
-  <style>
-    :root{--bg:#0f172a;--card:#0b1220;--line:#1e293b;--txt:#e2e8f0;--muted:#93c5fd;--accent:#38bdf8}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial}
-    .wrap{max-width:900px;margin:18px auto;padding:16px}
-    h1{margin:0 0 16px;color:#a5d8ff;text-align:center}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-    label{display:block;margin:10px 0 6px;color:var(--muted)}
-    input,select,button{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#091426;color:#cdeafe;font-size:15px}
-    button{cursor:pointer;background:#0e2a46}
-    button.primary{background:#0b4a75;border-color:#0b4a75}
-    #map{height:300px;border:1px solid var(--line);border-radius:10px;margin-top:10px}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media (max-width:720px){.row{grid-template-columns:1fr}}
-    .hint{color:#93c5fd;font-size:13px;margin-top:6px}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>Enter Birth Details</h1>
-    <div class="card">
-      <form id="birthForm" novalidate>
-        <label>Name:</label>
-        <input id="name" placeholder="Your name" required/>
+    // Already filled? stop.
+    if(latEl.value && lonEl.value) return true;
+    if(!place) return false;
 
-        <div class="row">
-          <div>
-            <label>Date of Birth:</label>
-            <input id="date" type="date" required/>
-          </div>
-          <div>
-            <label>Time of Birth:</label>
-            <input id="time" type="time" required/>
-          </div>
-        </div>
-
-        <label>Place of Birth:</label>
-        <input id="place" placeholder="Search or pick from map"/>
-        <div class="hint">Use the 🔍 icon on the map to search. You can also tap the map to set a point.</div>
-        <div id="map"></div>
-
-        <div class="row" style="margin-top:10px">
-          <div>
-            <label>Latitude:</label>
-            <input id="lat" inputmode="decimal" placeholder="e.g. 7.2862" required/>
-          </div>
-          <div>
-            <label>Longitude:</label>
-            <input id="lon" inputmode="decimal" placeholder="e.g. 80.6316" required/>
-          </div>
-        </div>
-
-        <button class="primary" type="submit" style="margin-top:14px">Generate Chart</button>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    // Prefill from previous run
-    window.addEventListener('load', () => {
-      const nm  = localStorage.getItem('kp_name') || '';
-      const dt  = localStorage.getItem('kp_dt')   || '';
-      const la  = localStorage.getItem('kp_lat')  || '';
-      const lo  = localStorage.getItem('kp_lon')  || '';
-      if(nm) document.getElementById('name').value = nm;
-      if(dt){
-        const [d,t] = dt.split('T');
-        if(d) document.getElementById('date').value = d;
-        if(t) document.getElementById('time').value = t.slice(0,5);
-      }
-      if(la) document.getElementById('lat').value = la;
-      if(lo) document.getElementById('lon').value = lo;
-    });
-
-    // Leaflet map
-    const map = L.map('map');
-    const SL = [7.8731, 80.7718]; // Sri Lanka center
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19, attribution:'© OpenStreetMap'}).addTo(map);
-    map.setView(SL, 7);
-    let marker = L.marker(SL, {draggable:true}).addTo(map);
-
-    function updateLatLng(lat, lng){
-      document.getElementById('lat').value = (+lat).toFixed(6);
-      document.getElementById('lon').value = (+lng).toFixed(6);
+    // 1) direct coords typed
+    const c = tryParseCoords(place);
+    if(c){
+      latEl.value = c.lat.toFixed(6);
+      lonEl.value = c.lon.toFixed(6);
+      marker.setLatLng([c.lat, c.lon]); map.setView([c.lat, c.lon], 13);
+      return true;
     }
 
-    // Click on map → set marker
-    map.on('click', (e)=>{
-      marker.setLatLng(e.latlng);
-      updateLatLng(e.latlng.lat, e.latlng.lng);
-    });
-    // Drag marker → update fields
-    marker.on('dragend', ()=>{
-      const p = marker.getLatLng();
-      updateLatLng(p.lat, p.lng);
-    });
+    // 2) geocode the place text
+    const g = await geocodePlace(place);
+    if(!g) return false;
+    latEl.value = g.lat.toFixed(6);
+    lonEl.value = g.lon.toFixed(6);
+    marker.setLatLng([g.lat, g.lon]); map.setView([g.lat, g.lon], 13);
+    return true;
+  }
 
-    // ⭐ Add search control (Leaflet Control Geocoder)
-    const geocoder = L.Control.geocoder({ defaultMarkGeocode:false }).on('markgeocode', function(e){
-      const ll = e.geocode.center;
-      marker.setLatLng(ll);
-      map.setView(ll, 13);
-      updateLatLng(ll.lat, ll.lng);
-      document.getElementById('place').value = e.geocode.name || '';
-    }).addTo(map);
+  // Place field loses focus → try to fill coords
+  document.getElementById('place').addEventListener('blur', ()=>{ autoFillFromPlace(); });
+  document.getElementById('place').addEventListener('change', ()=>{ autoFillFromPlace(); });
 
-    // If user types coords in place box (e.g. "7.28, 80.63")
-    function tryParseCoords(txt){
-      const m = (txt||'').match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
-      return m ? {lat:+m[1], lon:+m[3]} : null;
+  // ---- SUBMIT ----
+  document.getElementById('birthForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+
+    // If lat/lon empty but place given, try to fill now
+    await autoFillFromPlace();
+
+    const name = (document.getElementById('name').value||'').trim();
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const lat  = parseFloat(document.getElementById('lat').value);
+    const lon  = parseFloat(document.getElementById('lon').value);
+
+    if(!name || !date || !time || isNaN(lat) || isNaN(lon)){
+      alert('Fill all fields.'); 
+      return;
     }
-    document.getElementById('place').addEventListener('change', (e)=>{
-      const c = tryParseCoords(e.target.value);
-      if(c){
-        marker.setLatLng([c.lat,c.lon]);
-        map.setView([c.lat,c.lon], 13);
-        updateLatLng(c.lat,c.lon);
-      }
-    });
+    if(lat<-90||lat>90 || lon<-180||lon>180){
+      alert('Invalid coordinates.');
+      return;
+    }
 
-    // Submit → save + go
-    document.getElementById('birthForm').addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const name = (document.getElementById('name').value||'').trim();
-      const date = document.getElementById('date').value;
-      const time = document.getElementById('time').value;
-      const lat  = parseFloat(document.getElementById('lat').value);
-      const lon  = parseFloat(document.getElementById('lon').value);
-      if(!name || !date || !time || isNaN(lat) || isNaN(lon)){ alert('Fill all fields.'); return; }
-      if(lat<-90||lat>90 || lon<-180||lon>180){ alert('Invalid coordinates.'); return; }
+    const dtISO = `${date}T${time}`;
+    localStorage.setItem('kp_name', name);
+    localStorage.setItem('kp_dt', dtISO);
+    localStorage.setItem('kp_lat', lat);
+    localStorage.setItem('kp_lon', lon);
 
-      const dtISO = `${date}T${time}`;
-      localStorage.setItem('kp_name', name);
-      localStorage.setItem('kp_dt', dtISO);
-      localStorage.setItem('kp_lat', lat);
-      localStorage.setItem('kp_lon', lon);
-
-      location.href = './kp-chart.html';
-    });
-  </script>
-</body>
-</html>
+    location.href = './kp-chart.html';
+  });
+</script>

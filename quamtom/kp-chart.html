@@ -35,9 +35,10 @@
     .kpList{font-size:14px;color:#cfeaff;line-height:1.25}
     #ascNote{max-width:680px;margin:6px auto 0;color:#93c5fd;text-align:center}
 
-    /* Dasha table */
+    /* Dasha tables */
     #dashaWrap{margin-top:18px}
     #dashaWrap table th:nth-child(1){width:36px}
+    .bhukti-btn{padding:4px 10px;font-size:12px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe;cursor:pointer}
     @media (max-width:860px){ .grid{grid-template-columns:1fr} }
   </style>
 </head>
@@ -73,9 +74,27 @@
                   <th>Start</th>
                   <th>End</th>
                   <th class="mono">Years</th>
+                  <th>Bhukti</th><!-- NEW -->
                 </tr>
               </thead>
               <tbody id="dashaBody"></tbody>
+            </table>
+          </div>
+
+          <!-- Bhukti (Sub-Dasha) table -->
+          <div id="bhuktiWrap" class="card" style="margin-top:12px">
+            <h3>Bhukti (Sub-Dasha)</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Lord</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th class="mono">Years</th>
+                </tr>
+              </thead>
+              <tbody id="bhuktiBody"></tbody>
             </table>
           </div>
         </div>
@@ -209,6 +228,30 @@
       note.textContent = `Ascendant: ${SIGNS[ascSign]} ${norm360(ascDeg).toFixed(2)}°`;
     }
 
+    // ---- add Bhukti buttons to MD table rows
+    function attachBhuktiButtons() {
+      const host = document.getElementById('dashaBody');
+      if (!host || !window.__MD_ROWS) return;
+
+      const rows = host.querySelectorAll('tr');
+      rows.forEach((row, idx) => {
+        if (row.querySelector('.bhukti-btn')) return;
+        const td = document.createElement('td');
+        const btn = document.createElement('button');
+        btn.className = 'bhukti-btn';
+        btn.textContent = 'View Bhukti';
+        btn.addEventListener('click', () => {
+          const md = window.__MD_ROWS[idx];
+          if (!md || !window.computeBhuktiForMahadasha || !window.renderBhuktiTable) return;
+          const bhuktis = window.computeBhuktiForMahadasha(md.lord, md.start, md.years);
+          window.renderBhuktiTable('bhuktiBody', bhuktis);
+          document.getElementById('bhuktiWrap')?.scrollIntoView({ behavior: 'smooth' });
+        });
+        td.appendChild(btn);
+        row.appendChild(td);
+      });
+    }
+
     function render(){
       try{
         fitCanvasSquare(cv);
@@ -258,7 +301,10 @@
         const moonBody = (eph.planets||[]).find(p=>p.name==='Moon');
         if(moonBody && window.computeVimshottariDasha && window.renderDashaTable){
           const md = window.computeVimshottariDasha(norm360(moonBody.degree), dt, 120);
-          window.renderDashaTable('dashaBody', md.slice(0,18));
+          const list = md.slice(0,18);
+          window.renderDashaTable('dashaBody', list);
+          window.__MD_ROWS = list;           // keep what we rendered
+          attachBhuktiButtons();             // add "View Bhukti" buttons
         }
 
         showErr('');
@@ -273,4 +319,3 @@
   </script>
 </body>
 </html>
-14.37

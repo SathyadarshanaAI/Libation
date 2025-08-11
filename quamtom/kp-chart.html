@@ -1,3 +1,4 @@
+<!-- quamtom/kp-chart.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +12,8 @@
     a{color:#7dd3fc;text-decoration:none}
     .wrap{max-width:1100px;margin:24px auto;padding:16px}
     .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    #google_translate_element{background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+
     .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
     .row{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
@@ -23,6 +26,7 @@
     th{color:var(--muted);font-weight:600}
     .mono{font-variant-numeric:tabular-nums}
     #err{color:#fca5a5;margin-top:8px}
+
     /* KP 12-box grid */
     #kpGrid{max-width:680px;margin:16px auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     .kpBox{background:#0b1220;border:1px solid #1e293b;border-radius:10px;padding:10px;min-height:78px;text-align:center}
@@ -30,8 +34,11 @@
     .kpTitle{color:#7dd3fc;font-weight:600;margin-bottom:6px}
     .kpList{font-size:14px;color:#cfeaff;line-height:1.25}
     #ascNote{max-width:680px;margin:6px auto 0;color:#93c5fd;text-align:center}
+
+    /* Dasha table */
+    #dashaWrap{margin-top:18px}
+    #dashaWrap table th:nth-child(1){width:36px}
     @media (max-width:860px){ .grid{grid-template-columns:1fr} }
-    #google_translate_element{background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:4px 8px}
   </style>
 </head>
 <body>
@@ -54,6 +61,23 @@
           <!-- KP 12-box grid -->
           <div id="kpGrid"></div>
           <div id="ascNote"></div>
+
+          <!-- Dasha (below wheel/grid on left for wide space on mobile) -->
+          <div id="dashaWrap" class="card" style="margin-top:12px">
+            <h3>Vimshottari Maha Dasha</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Lord</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th class="mono">Years</th>
+                </tr>
+              </thead>
+              <tbody id="dashaBody"></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Right: Calculations -->
@@ -70,29 +94,30 @@
             </thead>
             <tbody></tbody>
           </table>
+
           <div id="moonExtra" style="margin-top:12px;color:var(--muted)"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Google Translate -->
-  <script>
-    function googleTranslateElementInit(){
-      new google.translate.TranslateElement({
-        pageLanguage:'en',
-        includedLanguages:'en,si,ta',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
-    }
-  </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
   <!-- libs (all inside /quamtom/) -->
   <script src="./ephemeris-data.js"></script>
   <script src="./kp-astro.js"></script>
   <script src="./chart-ui.js"></script>
   <script src="./chart-engine.js"></script>
+  <script src="./dasha.js"></script>
+
+  <!-- Google Translate -->
+  <script>
+    function googleTranslateElementInit(){
+      new google.translate.TranslateElement({
+        pageLanguage:'en', includedLanguages:'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
   <script>
     // ---------- helpers ----------
@@ -101,7 +126,6 @@
     const signIndex = deg => Math.floor(norm360(deg)/30);
     const toDMS = deg => { const d=Math.floor(deg), m=Math.floor((deg-d)*60); return `${d}°${String(m).padStart(2,'0')}′`; };
 
-    // Strict Ascendant (tropical) from local ISO, lat, lon
     function parseLocalISO(iso){
       if(!iso) return new Date();
       const [d,t='00:00'] = iso.split('T');
@@ -159,7 +183,7 @@
       const buckets = Array.from({length:12}, ()=>[]);
 
       (eph.planets || []).forEach(p=>{
-        const h = (signIndex(p.degree) - ascSign + 12) % 12; // 0..11
+        const h = (signIndex(p.degree) - ascSign + 12) % 12;
         buckets[h].push(p);
       });
 
@@ -229,6 +253,14 @@
         // Ascendant & KP boxes
         const ascDeg = computeAscendantStrict(dt, +lat, +lon);
         drawKPBoxes(eph, ascDeg);
+
+        // Vimshottari Dasha (needs Moon degree)
+        const moonBody = (eph.planets||[]).find(p=>p.name==='Moon');
+        if(moonBody && window.computeVimshottariDasha && window.renderDashaTable){
+          const md = window.computeVimshottariDasha(dt, moonBody.degree, 120);
+          window.renderDashaTable('dashaBody', md.slice(0, 18)); // show ~first 18 rows
+        }
+
         showErr('');
       }catch(e){
         console.error(e);

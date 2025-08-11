@@ -1,70 +1,89 @@
-// 📆 Vimshottari Dasha Period Generator (KP-Compatible)
+// quamtom/dasha.js
+(function(){
+  const MD_ORDER = [
+    { lord: "Ketu",    years: 7  },
+    { lord: "Venus",   years: 20 },
+    { lord: "Sun",     years: 6  },
+    { lord: "Moon",    years: 10 },
+    { lord: "Mars",    years: 7  },
+    { lord: "Rahu",    years: 18 },
+    { lord: "Jupiter", years: 16 },
+    { lord: "Saturn",  years: 19 },
+    { lord: "Mercury", years: 17 },
+  ];
+  const NAK_LEN = 360/27;
+  const norm360 = d => ((d % 360) + 360) % 360;
 
-const dashaSequence = [
-  { lord: 'Ketu', span: 7 },
-  { lord: 'Venus', span: 20 },
-  { lord: 'Sun', span: 6 },
-  { lord: 'Moon', span: 10 },
-  { lord: 'Mars', span: 7 },
-  { lord: 'Rahu', span: 18 },
-  { lord: 'Jupiter', span: 16 },
-  { lord: 'Saturn', span: 19 },
-  { lord: 'Mercury', span: 17 },
-];
-
-// 🧠 Get starting Dasha index based on Moon position
-function getDashaStartIndex(moonDegree) {
-  const totalNakshatras = 27;
-  const nakIndex = Math.floor(moonDegree / (360 / totalNakshatras));
-  return nakIndex % dashaSequence.length;
-}
-
-// 🧮 Generate full Dasha timeline
-function generateDashaTimeline(startLord, birthYear) {
-  let idx = dashaSequence.findIndex(d => d.lord === startLord);
-  let currentYear = birthYear;
-  const timeline = [];
-
-  for (let i = 0; i < dashaSequence.length; i++) {
-    const dasha = dashaSequence[idx];
-    timeline.push({
-      lord: dasha.lord,
-      start: currentYear,
-      end: currentYear + dasha.span
-    });
-    currentYear += dasha.span;
-    idx = (idx + 1) % dashaSequence.length;
+  function parseLocalISO(iso){
+    if(!iso) return new Date();
+    const [d,t='00:00'] = iso.split('T');
+    const [Y,M,D] = d.split('-').map(Number);
+    const [h,m]   = t.split(':').map(Number);
+    return new Date(Y, M-1, D, h||0, m||0, 0);
   }
-  return timeline;
-}
+  function addDays(date, days){
+    const d = new Date(date.getTime());
+    d.setDate(d.getDate() + days);
+    return d;
+  }
+  const Y2D = y => y * 365.2425;
+  const fmt = d => {
+    const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${dd}`;
+  };
 
-// 📌 Render Dasha in HTML
-function renderDasha(moonDegree, birthYear) {
-  if (!moonDegree && moonDegree !== 0) {
-    document.getElementById('dashaOutput').innerHTML =
-      `<p style="color:red;">Moon not found for Dasha.</p>`;
-    return;
+  function nakshatraLordIndex(moonDeg){
+    const ix27 = Math.floor(norm360(moonDeg) / NAK_LEN);
+    return ix27 % 9;
   }
 
-  const startIdx = getDashaStartIndex(moonDegree);
-  const startLord = dashaSequence[startIdx].lord;
-  const timeline = generateDashaTimeline(startLord, birthYear);
+  function computeVimshottariDasha(moonDeg, birthISO, maxYears=120){
+    const startDate = parseLocalISO(birthISO);
+    const orderStart = nakshatraLordIndex(moonDeg);
+    const posInNak = norm360(moonDeg) % NAK_LEN;
+    const fracLeft = 1 - (posInNak / NAK_LEN);
+    const startLord = MD_ORDER[orderStart];
 
-  let html = `<h3>Vimshottari Dasha</h3><table border="1" cellpadding="5"><tr><th>Lord</th><th>Start Year</th><th>End Year</th></tr>`;
-  timeline.forEach(d => {
-    html += `<tr><td>${d.lord}</td><td>${d.start}</td><td>${d.end}</td></tr>`;
-  });
-  html += `</table>`;
+    const out = [];
+    let cursor = new Date(startDate.getTime());
 
-  document.getElementById('dashaOutput').innerHTML = html;
-}
+    const firstYears = startLord.years * fracLeft;
+    let end = addDays(cursor, Y2D(firstYears));
+    out.push({ lord:startLord.lord, start:new Date(cursor), end, years:firstYears });
+    cursor = new Date(end.getTime());
 
-// 🛰️ Get Moon degree from planetary data
-function initDashaFromPlanets(planets, birthYear) {
-  const moon = planets.find(p => p.Body?.toLowerCase() === "moon");
-  if (moon) {
-    renderDasha(parseFloat(moon.Deg360), birthYear);
-  } else {
-    renderDasha(null, birthYear);
+    let totalYears = firstYears;
+    let i = (orderStart + 1) % 9;
+    while (totalYears < maxYears - 1e-6) {
+      const lord = MD_ORDER[i];
+      const durYears = Math.min(lord.years, Math.max(0, maxYears - totalYears));
+      const nextEnd = addDays(cursor, Y2D(durYears));
+      out.push({ lord: lord.lord, start: new Date(cursor), end: nextEnd, years: durYears });
+      totalYears += durYears;
+      cursor = nextEnd;
+      i = (i + 1) % 9;
+      if (out.length > 60) break;
+    }
+    return out;
   }
-}
+
+  function renderDashaTable(targetId, list){
+    const host = document.getElementById(targetId);
+    if(!host) return;
+    host.innerHTML =
+      '<table style="width:100%;border-collapse:collapse">' +
+      '<thead><tr><th>#</th><th>Lord</th><th>Start</th><th>End</th><th style="font-variant-numeric:tabular-nums">Years</th></tr></thead>' +
+      '<tbody>' +
+      list.map((r,i)=>`<tr>
+        <td>${i+1}</td>
+        <td>${r.lord}</td>
+        <td>${fmt(r.start)}</td>
+        <td>${fmt(r.end)}</td>
+        <td style="font-variant-numeric:tabular-nums">${r.years.toFixed(2)}</td>
+      </tr>`).join('') +
+      '</tbody></table>';
+  }
+
+  window.computeVimshottariDasha = computeVimshottariDasha;
+  window.renderDashaTable = renderDashaTable;
+})();

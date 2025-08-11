@@ -1,94 +1,108 @@
-// 📆 quamtom/dasa.js — Vimshottari Dasha Calculator (MD → AD → PD)
+<!-- quamtom/dasha.js -->
+<script>
+(function(){
+  // ---------- Vimshottari Maha Dasha (MD) ----------
+  // Order + years
+  const MD_ORDER = [
+    { lord: "Ketu",    years: 7  },
+    { lord: "Venus",   years: 20 },
+    { lord: "Sun",     years: 6  },
+    { lord: "Moon",    years: 10 },
+    { lord: "Mars",    years: 7  },
+    { lord: "Rahu",    years: 18 },
+    { lord: "Jupiter", years: 16 },
+    { lord: "Saturn",  years: 19 },
+    { lord: "Mercury", years: 17 },
+  ];
+  const NAK_LEN = 360/27; // 13.333...
 
-// Vimshottari sequence & years
-const dashaSequence = [
-  { lord: 'Ketu', span: 7 },
-  { lord: 'Venus', span: 20 },
-  { lord: 'Sun', span: 6 },
-  { lord: 'Moon', span: 10 },
-  { lord: 'Mars', span: 7 },
-  { lord: 'Rahu', span: 18 },
-  { lord: 'Jupiter', span: 16 },
-  { lord: 'Saturn', span: 19 },
-  { lord: 'Mercury', span: 17 },
-];
+  const norm360 = d => ((d % 360) + 360) % 360;
 
-// Calculate starting index from Nakshatra degree
-function getDashaStartIndex(degree) {
-  const totalNakshatras = 27;
-  const nakIndex = Math.floor(degree / (360 / totalNakshatras));
-  return nakIndex % dashaSequence.length;
-}
-
-// Major Dasha generation
-function generateMajorDasha(startLord, birthDate) {
-  const dashas = [];
-  let date = new Date(birthDate);
-  let idx = startLord;
-
-  for (let i = 0; i < dashaSequence.length; i++) {
-    const lord = dashaSequence[idx];
-    const start = new Date(date);
-    const end = new Date(start);
-    end.setFullYear(end.getFullYear() + lord.span);
-    dashas.push({ type: 'MD', lord: lord.lord, start, end });
-
-    date = new Date(end);
-    idx = (idx + 1) % dashaSequence.length;
+  function parseLocalISO(iso){
+    if(!iso) return new Date();
+    const [d,t='00:00'] = iso.split('T');
+    const [Y,M,D] = d.split('-').map(Number);
+    const [h,m]   = t.split(':').map(Number);
+    return new Date(Y, M-1, D, h||0, m||0, 0);
   }
-  return dashas;
-}
-
-// Antardasha generation
-function generateAntardasha(md) {
-  const adList = [];
-  let startDate = new Date(md.start);
-
-  for (let i = 0; i < dashaSequence.length; i++) {
-    const lord = dashaSequence[i];
-    const years = md.end - md.start;
-    const portion = years * (lord.span / 120);
-    const endDate = new Date(startDate.getTime() + portion);
-    adList.push({ type: 'AD', mainLord: md.lord, subLord: lord.lord, start: startDate, end: endDate });
-    startDate = new Date(endDate);
+  function addDays(date, days){
+    const d = new Date(date.getTime());
+    d.setDate(d.getDate() + days);
+    return d;
   }
-  return adList;
-}
+  const Y2D = y => y * 365.2425; // approx tropical year
 
-// Pratyantardasha generation
-function generatePratyantardasha(ad) {
-  const pdList = [];
-  let startDate = new Date(ad.start);
-
-  for (let i = 0; i < dashaSequence.length; i++) {
-    const lord = dashaSequence[i];
-    const duration = ad.end - ad.start;
-    const portion = duration * (lord.span / 120);
-    const endDate = new Date(startDate.getTime() + portion);
-    pdList.push({ type: 'PD', mainLord: ad.mainLord, subLord: ad.subLord, pdLord: lord.lord, start: startDate, end: endDate });
-    startDate = new Date(endDate);
+  function formatLocal(d){
+    const y = d.getFullYear();
+    const m = (d.getMonth()+1).toString().padStart(2,'0');
+    const dd= d.getDate().toString().padStart(2,'0');
+    return `${y}-${m}-${dd}`;
   }
-  return pdList;
-}
 
-// Generate Full Dasha List
-function generateFullDasha(degree, birthDate) {
-  const startIndex = getDashaStartIndex(degree);
-  const major = generateMajorDasha(startIndex, birthDate);
-  const fullList = [];
+  // Determine nakshatra lord sequence index for a given Moon degree
+  function nakshatraLordIndex(moonDeg){
+    const ix27 = Math.floor(norm360(moonDeg) / NAK_LEN); // 0..26
+    return ix27 % 9; // maps into MD_ORDER
+  }
 
-  major.forEach(md => {
-    fullList.push(md);
-    const ads = generateAntardasha(md);
-    ads.forEach(ad => {
-      fullList.push(ad);
-      const pds = generatePratyantardasha(ad);
-      fullList.push(...pds);
+  // Build Maha Dasha list from birth ISO & Moon degree at birth
+  function computeVimshottariDasha(birthISO, moonDeg, maxYears=120){
+    const startDate = parseLocalISO(birthISO);
+    const orderStart = nakshatraLordIndex(moonDeg);
+
+    // Balance left in current nakshatra
+    const posInNak = norm360(moonDeg) % NAK_LEN; // [0..13.33)
+    const fracLeft = 1 - (posInNak / NAK_LEN);   // portion remaining
+    const startLord = MD_ORDER[orderStart];
+
+    const out = [];
+    let cursor = new Date(startDate.getTime());
+
+    // 1) first (balance) dasha
+    const firstYears = startLord.years * fracLeft;
+    let end = addDays(cursor, Y2D(firstYears));
+    out.push({ lord:startLord.lord, start:new Date(cursor), end, years:firstYears });
+
+    cursor = new Date(end.getTime());
+
+    // 2) subsequent full dashas until maxYears
+    let totalYears = firstYears;
+    let i = (orderStart + 1) % 9;
+    while (totalYears < maxYears - 1e-6) {
+      const lord = MD_ORDER[i];
+      const durYears = Math.min(lord.years, Math.max(0, maxYears - totalYears));
+      const nextEnd = addDays(cursor, Y2D(durYears));
+
+      out.push({ lord: lord.lord, start: new Date(cursor), end: nextEnd, years: durYears });
+
+      totalYears += durYears;
+      cursor = nextEnd;
+      i = (i + 1) % 9;
+      if (out.length > 60) break; // safety
+    }
+    return out;
+  }
+
+  // Render helper (simple table body fill)
+  function renderDashaTable(targetTbodyId, dashaList){
+    const tb = document.getElementById(targetTbodyId);
+    if(!tb) return;
+    tb.innerHTML = '';
+    dashaList.forEach((row, idx)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${idx+1}</td>
+        <td>${row.lord}</td>
+        <td>${formatLocal(row.start)}</td>
+        <td>${formatLocal(row.end)}</td>
+        <td class="mono">${row.years.toFixed(2)}</td>
+      `;
+      tb.appendChild(tr);
     });
-  });
+  }
 
-  return fullList;
-}
-
-// Export to window for HTML usage
-window.generateFullDasha = generateFullDasha;
+  // expose
+  window.computeVimshottariDasha = computeVimshottariDasha;
+  window.renderDashaTable = renderDashaTable;
+})();
+</script>

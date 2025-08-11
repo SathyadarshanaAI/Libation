@@ -5,180 +5,137 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🪐 KP Report - Quantum Version</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="../assets/favicon.png">
   <style>
-    :root{--bg:#0f172a;--card:#0b1220;--line:#1e293b;--txt:#e0f2fe;--mut:#93c5fd;--accent:#38bdf8}
-    body{background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial;margin:0}
-    a.home{position:fixed;top:10px;left:10px;background:#0b1220;color:#7dd3fc;text-decoration:none;
-      padding:6px 12px;border-radius:8px;z-index:10}
-    #google_translate_element{position:fixed;right:10px;top:10px;z-index:10}
-    .wrap{max-width:1100px;margin:64px auto 24px;padding:0 16px}
-    .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
-    @media (max-width:920px){.grid{grid-template-columns:1fr}}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-    .card h2{margin:0 0 10px}
-    .row{display:flex;gap:8px;flex-wrap:wrap}
-    label{display:block;margin:6px 0 4px;color:var(--mut)}
-    input,textarea,button{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);
-      background:#091426;color:#cdeafe}
-    button{cursor:pointer}
-    small.mut{color:var(--mut)}
-    .pill{padding:.35rem .6rem;border-radius:999px;border:1px solid var(--line);background:#0b162a}
-    .ok{border-color:#16a34a}.bad{border-color:#ef4444}
-    .report-container{margin-top:16px}
+    /* minimal additions, original colors untouched */
+    .floating-btn{position:fixed;z-index:999;border-radius:10px;padding:8px 12px;background:#0f172a;color:#7dd3fc;text-decoration:none;font-size:14px;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+    .home-btn{top:12px;left:12px}
+    .translate-btn{top:12px;right:12px}
+    .helper{max-width:860px;margin:18px auto 0;background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:14px}
+    .helper h3{margin:.2rem 0 6px;color:#7dd3fc;font-size:1.05rem}
+    .helper small{color:#93c5fd;line-height:1.5}
+    .helper .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .helper textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe}
+    .helper button{padding:9px 12px;border-radius:8px;border:1px solid #1e293b;background:#0f172a;color:#cdeafe;cursor:pointer}
+    .pill{padding:6px 10px;border-radius:999px;border:1px solid #1e293b;background:#0b162a;color:#cdeafe}
+    .ok{border-color:#065f46;background:#063a2c}
+    .bad{border-color:#7f1d1d;background:#3b0a0a}
+    #google_translate_container{position:fixed;top:52px;right:12px;background:#0b1220;border:1px solid #1e293b;border-radius:10px;padding:8px;z-index:999}
   </style>
 </head>
 <body>
-  <!-- Home & Translate -->
-  <a class="home" href="../index.html">🏠 Home</a>
-  <div id="google_translate_element"></div>
+  <!-- floating buttons -->
+  <a href="index.html" class="floating-btn home-btn">🏠 Home</a>
+  <a href="#" id="openTranslate" class="floating-btn translate-btn">🌐 Translate</a>
+  <div id="google_translate_container" style="display:none;">
+    <div id="google_translate_element"></div>
+  </div>
 
-  <div class="wrap">
-    <div class="grid">
-      <!-- LEFT: Bigger Birth Form + Report (structure unchanged for report) -->
-      <div>
-        <div class="card">
-          <h2>Birth Details</h2>
-          <div class="row">
-            <div style="flex:1">
-              <label>Name</label>
-              <input id="in_name" placeholder="Your name">
-            </div>
-          </div>
-          <div class="row">
-            <div style="flex:1">
-              <label>Date</label>
-              <input id="in_dob" type="date">
-            </div>
-            <div style="flex:1">
-              <label>Time</label>
-              <input id="in_tob" type="time">
-            </div>
-          </div>
-          <div class="row">
-            <div style="flex:1">
-              <label>Latitude</label>
-              <input id="in_lat" placeholder="7.2862">
-            </div>
-            <div style="flex:1">
-              <label>Longitude</label>
-              <input id="in_lon" placeholder="80.6316">
-            </div>
-          </div>
-          <div class="row">
-            <button id="btnSave">💾 Save Details</button>
-            <span id="saveStatus" class="pill">Waiting…</span>
-          </div>
-          <small class="mut" id="saveInfo"></small>
-        </div>
+  <div class="report-container">
+    <h1>🪐 KP Astrology Report</h1>
+    <div class="field"><strong>Name:</strong> <span id="name">Loading...</span></div>
+    <div class="field"><strong>Date of Birth:</strong> <span id="dob">Loading...</span></div>
+    <div class="field"><strong>Time of Birth:</strong> <span id="tob">Loading...</span></div>
+    <div class="field"><strong>Place of Birth:</strong> <span id="pob">Loading...</span></div>
+    <div class="field"><strong>🌙 Moon Degree:</strong> <span id="moonDeg">Loading...</span></div>
+    <hr style="margin: 2rem 0; border-color: #38bdf8;">
+    <div class="field"><strong>🧠 Sub-Lord Prediction:</strong><br><span id="sublord">Loading...</span></div>
+  </div>
 
-        <!-- Your original report block (unchanged structure) -->
-        <div class="report-container card">
-          <h1>🪐 KP Astrology Report</h1>
-          <div class="field"><strong>Name:</strong> <span id="name">Loading...</span></div>
-          <div class="field"><strong>Date of Birth:</strong> <span id="dob">Loading...</span></div>
-          <div class="field"><strong>Time of Birth:</strong> <span id="tob">Loading...</span></div>
-          <div class="field"><strong>Place of Birth:</strong> <span id="pob">Loading...</span></div>
-          <div class="field"><strong>🌙 Moon Degree:</strong> <span id="moonDeg">Loading...</span></div>
-          <hr style="margin: 2rem 0; border-color: #38bdf8;">
-          <div class="field"><strong>🧠 Sub-Lord Prediction:</strong><br><span id="sublord">Loading...</span></div>
-        </div>
-      </div>
+  <!-- SAT copy-paste helper (no maps, quick & simple) -->
+  <div class="helper" id="satHelper">
+    <h3>Enter Birthplace Latitude & Longitude</h3>
+    <small>
+      1) Open your SAT/Maps app • 2) Search your birthplace/country •
+      3) Copy the <b>Latitude, Longitude</b> • 4) Paste below • 5) Click <b>Save Coords</b>
+    </small>
 
-      <!-- RIGHT: Small, simple SAT helper (no map, no iframe) -->
-      <div>
-        <div class="card">
-          <h2>SAT Copy-Paste Helper</h2>
-          <small class="mut">
-            1) Open your SAT/Map app • 2) Find your birth place • 3) Copy the <b>Latitude,Longitude</b> or a link that has <code>@lat,lon</code> • 4) Paste below • 5) Extract → Save.
-          </small>
-          <label style="margin-top:8px">Paste here</label>
-          <textarea id="pasteBox" rows="3" placeholder="e.g., 7.2862, 80.6316  OR  https://.../@7.2862,80.6316,15z"></textarea>
-          <div class="row" style="margin-top:8px">
-            <button id="btnPaste">📋 Paste</button>
-            <button id="btnExtract">🧭 Extract</button>
-            <span id="status" class="pill">Waiting…</span>
-          </div>
-          <small class="mut" style="display:block;margin-top:6px">After Extract, click “Save Details”.</small>
-        </div>
-      </div>
+    <textarea id="pasteBox" rows="3" placeholder="Paste lat, lon or a link containing @lat,lon (e.g. 7.2862, 80.6316)"></textarea>
+    <div class="row">
+      <button id="btnPaste">📋 Paste</button>
+      <button id="btnParse">💾 Save Coords</button>
+      <span id="status" class="pill">Waiting…</span>
+    </div>
+    <div class="row">
+      <button id="btnClear">❌ Clear</button>
+      <small id="savedAs" style="color:#93c5fd"></small>
     </div>
   </div>
 
-  <!-- Engines (unchanged) -->
   <script src="ephemeris-data.js"></script>
   <script src="kp-subload.js"></script>
   <script src="kp-astro.js"></script>
   <script src="print-report.js"></script>
 
+  <!-- translate loader -->
   <script>
-    const $ = id => document.getElementById(id);
-    const ok = (el,msg)=>{ el.className='pill ok'; el.textContent=msg; };
-    const bad= (el,msg)=>{ el.className='pill bad'; el.textContent=msg; };
-
-    // Prefill from saved values
-    (function init(){
-      const dt = localStorage.getItem('kp_dt') || '';
-      if(dt){ const [d,t=''] = dt.split('T'); $('in_dob').value=d||''; $('in_tob').value=(t||'').slice(0,5); }
-      $('in_name').value = localStorage.getItem('kp_name') || '';
-      const la = localStorage.getItem('kp_lat'), lo = localStorage.getItem('kp_lon');
-      if(la && lo){ $('in_lat').value=(+la).toFixed(6); $('in_lon').value=(+lo).toFixed(6); }
-    })();
-
-    // Save details
-    $('btnSave').addEventListener('click', ()=>{
-      const name=$('in_name').value.trim();
-      const dob =$('in_dob').value;
-      const tob =$('in_tob').value;
-      const lat =parseFloat(($('in_lat').value||'').trim());
-      const lon =parseFloat(($('in_lon').value||'').trim());
-      const pill=$('saveStatus');
-
-      if(!name||!dob||!tob||Number.isNaN(lat)||Number.isNaN(lon)){ bad(pill,'Fill all fields'); return; }
-
-      localStorage.setItem('kp_name', name);
-      localStorage.setItem('kp_dt', `${dob}T${tob}`);
-      localStorage.setItem('kp_lat', lat);
-      localStorage.setItem('kp_lon', lon);
-      ok(pill,'Saved');
-      $('saveInfo').textContent = `Saved • ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
-      // let report scripts refresh
-      window.dispatchEvent(new Event('storage'));
+    document.getElementById('openTranslate').addEventListener('click', (e)=>{
+      e.preventDefault();
+      const box = document.getElementById('google_translate_container');
+      box.style.display = (box.style.display==='none') ? 'block' : 'none';
     });
-
-    // Simple extractor
-    function tryParseCoords(text){
-      if(!text) return null;
-      let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
-      if(m) return {lat:+m[1], lon:+m[3]};
-      m = text.match(/@(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/);
-      if(m) return {lat:+m[1], lon:+m[3]};
-      return null;
-    }
-
-    $('btnPaste').addEventListener('click', async ()=>{
-      try{ $('pasteBox').value = await navigator.clipboard.readText(); ok($('status'),'Pasted'); }
-      catch{ bad($('status'),'Clipboard blocked'); }
-    });
-
-    $('btnExtract').addEventListener('click', ()=>{
-      const c = tryParseCoords(($('pasteBox').value||'').trim());
-      if(!c){ bad($('status'),'No coords found'); return; }
-      $('in_lat').value = c.lat.toFixed(6);
-      $('in_lon').value = c.lon.toFixed(6);
-      ok($('status'),'Extracted → Birth form filled');
-    });
-  </script>
-
-  <!-- Google Translate (simple button) -->
-  <script>
-    function googleTranslateElementInit(){
+    function googleTranslateElementInit() {
       new google.translate.TranslateElement({
-        pageLanguage:'en', includedLanguages:'en,si,ta',
+        pageLanguage: 'en',
+        includedLanguages: 'en,si,ta',
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE
       }, 'google_translate_element');
     }
   </script>
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <!-- helper logic -->
+  <script>
+    function tryParseCoords(text){
+      if(!text) return null;
+      let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
+      if(m) return { lat: parseFloat(m[1]), lon: parseFloat(m[3]) };
+      m = text.match(/@(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/);
+      if(m) return { lat: parseFloat(m[1]), lon: parseFloat(m[3]) };
+      return null;
+    }
+    function saveCoords(lat, lon){
+      localStorage.setItem('kp_lat', +lat);
+      localStorage.setItem('kp_lon', +lon);
+      const pob = document.getElementById('pob');
+      if(pob){ pob.textContent = `${(+lat).toFixed(6)}, ${(+lon).toFixed(6)}  (saved)`; }
+      window.dispatchEvent(new CustomEvent('kp:coords-updated', { detail: { lat:+lat, lon:+lon } }));
+    }
+    function ok(msg){ const s=document.getElementById('status'); s.className='pill ok'; s.textContent=msg; }
+    function bad(msg){ const s=document.getElementById('status'); s.className='pill bad'; s.textContent=msg; }
+
+    document.getElementById('btnPaste').addEventListener('click', async ()=>{
+      try{
+        const txt = await navigator.clipboard.readText();
+        document.getElementById('pasteBox').value = txt || '';
+        ok('Pasted. Click “Save Coords”.');
+      }catch(e){ bad('Clipboard blocked. Paste manually.'); }
+    });
+
+    document.getElementById('btnParse').addEventListener('click', ()=>{
+      const txt = document.getElementById('pasteBox').value.trim();
+      const c = tryParseCoords(txt);
+      if(!c){ bad('Could not detect coords.'); return; }
+      saveCoords(c.lat, c.lon);
+      ok('Saved!');
+      document.getElementById('savedAs').textContent = `Saved: ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)}`;
+    });
+
+    document.getElementById('btnClear').addEventListener('click', ()=>{
+      localStorage.removeItem('kp_lat'); localStorage.removeItem('kp_lon');
+      ok('Cleared'); document.getElementById('savedAs').textContent = '';
+      const pob=document.getElementById('pob'); if(pob) pob.textContent='—';
+    });
+
+    // show existing if any
+    (function(){
+      const la = localStorage.getItem('kp_lat'), lo = localStorage.getItem('kp_lon');
+      if(la && lo){
+        const pob = document.getElementById('pob');
+        if(pob){ pob.textContent = `${(+la).toFixed(6)}, ${(+lo).toFixed(6)}  (saved)`; }
+        ok('Loaded saved coords');
+        document.getElementById('savedAs').textContent = `Saved: ${(+la).toFixed(6)}, ${(+lo).toFixed(6)}`;
+      }
+    })();
+  </script>
 </body>
 </html>

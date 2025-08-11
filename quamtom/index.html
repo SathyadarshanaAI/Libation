@@ -35,7 +35,6 @@
     .ok{border-color:#22c55e}
     #map{height:230px;border:1px solid var(--line);border-radius:10px}
 
-    /* small helper text */
     .hint{color:#93c5fd;font-size:14px}
   </style>
 </head>
@@ -84,9 +83,7 @@
 
         <label style="margin-top:12px">Pick on Map</label>
         <div id="map"></div>
-        <div class="hint" style="margin-top:6px">
-          Tip: Tap map to set marker. Drag marker to fine-tune. Field will auto-update.
-        </div>
+        <!-- tip message removed -->
       </div>
     </div>
   </div>
@@ -108,7 +105,7 @@
           crossorigin="anonymous"></script>
 
   <script>
-    // --- Prefill from localStorage ---
+    // Prefill
     window.addEventListener('load', ()=>{
       const dt  = localStorage.getItem('kp_dt');
       const nm  = localStorage.getItem('kp_name');
@@ -119,7 +116,7 @@
       if(la && lo) document.getElementById('latlon').value = `${la}, ${lo}`;
     });
 
-    // --- Small helpers ---
+    // Parse helpers
     function parseCoords(text){
       if(!text) return null;
       let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
@@ -133,7 +130,7 @@
       el.textContent = msg; el.className = 'pill' + (ok?' ok':'');
     };
 
-    // --- Simple geocoder (Nominatim) ---
+    // Simple geocoder (Nominatim)
     async function geocodePlace(q){
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
       const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
@@ -143,45 +140,48 @@
       return { lat: +data[0].lat, lon: +data[0].lon, label: data[0].display_name };
     }
 
-    // --- Leaflet map & syncing ---
+    // Leaflet Map
     const map = L.map('map',{zoomControl:true});
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
       maxZoom:19, attribution:'© OpenStreetMap'
     }).addTo(map);
     let marker = L.marker([7.8731,80.7718],{draggable:true}).addTo(map);
-    map.setView([7.8731,80.7718], 7); // default: Sri Lanka
+    map.setView([7.8731,80.7718], 7); // Sri Lanka default
 
     function setMap(lat, lon, zoom){
       marker.setLatLng([lat,lon]);
       map.setView([lat,lon], zoom || map.getZoom());
     }
+    // Click to set
     map.on('click', e=>{
       const {lat,lng} = e.latlng;
       document.getElementById('latlon').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
       setMap(lat,lng);
     });
+    // Drag to set
     marker.on('dragend', ()=>{
       const p = marker.getLatLng();
       document.getElementById('latlon').value = `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`;
     });
+    // If field already has coords, center map there
     (function syncInitial(){
       const raw = (document.getElementById('latlon').value||'').trim();
       const c = parseCoords(raw);
       if(c) setMap(c.lat,c.lon,12);
     })();
 
-    // --- Paste & Extract actions ---
+    // Paste & Extract
     document.getElementById('btnPaste').addEventListener('click', async ()=>{
       try{
         const t = await navigator.clipboard.readText();
         document.getElementById('pasteBox').value = t || '';
-      }catch{/* clipboard blocked */}
+      }catch{/* ignore */}
     });
     document.getElementById('btnExtract').addEventListener('click', async ()=>{
       const t = document.getElementById('pasteBox').value.trim();
       const out = document.getElementById('found');
 
-      // 1) Direct coordinates?
+      // 1) direct coords?
       const c = parseCoords(t);
       if(c){
         document.getElementById('latlon').value = `${c.lat}, ${c.lon}`;
@@ -189,7 +189,7 @@
         out.textContent = `Detected → ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)} (filled)`;
         return;
       }
-      // 2) Geocode place text
+      // 2) geocode place
       if(!t){ out.textContent = 'Enter a place (e.g., Kandy, Sri Lanka).'; return; }
       out.textContent = 'Searching…';
       try{
@@ -203,7 +203,7 @@
       }
     });
 
-    // --- Submit → kp-chart.html ---
+    // Submit → chart
     document.getElementById('birthForm').addEventListener('submit', e=>{
       e.preventDefault();
       const name=(document.getElementById('name').value||'').trim();

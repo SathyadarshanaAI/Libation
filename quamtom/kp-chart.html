@@ -1,103 +1,171 @@
+<!-- quamtom/kp-chart.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>KP Astrology Chart</title>
 
-  <!-- Axios CDN -->
+  <!-- (optional) Axios CDN if you need it elsewhere -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
   <style>
-    :root {
-      --bg: #0f172a;
-      --card: rgba(17, 24, 39, 0.9);
-      --line: #334155;
-      --text: #e2e8f0;
-    }
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      background: rgba(2, 6, 23, 0.95);
-      position: sticky;
-      top: 0;
-      z-index: 999;
-    }
-    .topbar a {
-      color: #7dd3fc;
-      text-decoration: none;
-      padding: 4px 10px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #0b1220;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      padding: 16px;
-    }
-    .card {
-      background: var(--card);
-      padding: 16px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    }
-    #wheel {
-      width: 100%;
-      max-width: 500px;
-      margin: auto;
-      display: block;
-    }
-    #dashaWrap {
-      margin-top: 40px;
-      padding: 16px;
-      background: rgba(15, 23, 42, 0.8);
-      border-radius: 8px;
-    }
+    :root{--bg:#0f172a;--card:rgba(17,24,39,.9);--line:#334155;--text:#e2e8f0;--accent:#38bdf8}
+    body{margin:0;font-family:'Segoe UI',system-ui,Arial;background:var(--bg);color:var(--text)}
+    .topbar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;position:sticky;top:0;z-index:10;background:rgba(2,6,23,.95);border-bottom:1px solid var(--line)}
+    .topbar a{color:#7dd3fc;text-decoration:none;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:#0b1220}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.45)}
+    #wheel{width:100%;max-width:520px;aspect-ratio:1/1;display:block;margin:auto;background:#071224;border:1px solid var(--line);border-radius:12px}
+    #dashaWrap{margin:16px;padding:16px;background:rgba(15,23,42,.85);border:1px solid var(--line);border-radius:12px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #0f243a}
+    th{color:#93c5fd;text-align:left}
+    .mono{font-variant-numeric:tabular-nums}
+    @media (max-width:860px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <!-- Top Navigation -->
+  <!-- Top -->
   <div class="topbar">
     <p style="margin:0">
-      <a href="./">← Back</a>
-      &nbsp;|&nbsp;
+      <a href="./">← Back</a> &nbsp;|&nbsp;
       <a href="#dashaWrap" title="Jump to Vimshottari Dasha">↯ Dasha</a>
     </p>
     <div id="google_translate_element"></div>
   </div>
 
-  <!-- Chart Section -->
+  <!-- Chart + Details -->
   <div class="grid">
     <div class="card">
       <h2>KP Chart</h2>
-      <canvas id="wheel" width="500" height="500"></canvas>
+      <canvas id="wheel"></canvas>
     </div>
+
     <div class="card">
       <h2>Details</h2>
       <div id="chartDetails">Loading chart data…</div>
+      <div id="calcTableWrap" style="margin-top:12px;overflow:auto">
+        <table id="calcTable">
+          <thead>
+            <tr>
+              <th>Body</th>
+              <th>Sign</th>
+              <th>Deg (D°M′)</th>
+              <th class="mono">° (0–360)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- Dasha Section -->
-  <div id="dashaWrap" class="card" style="margin:16px">
+  <!-- Dasha -->
+  <div id="dashaWrap" class="card">
     <h2>Vimshottari Dasha</h2>
     <div id="dashaTable">Loading Dasha periods…</div>
   </div>
 
-  <script src="ephemeris-data.js"></script>
-  <script src="kp-astro.js"></script>
-  <script src="chart-engine.js"></script>
-  <script src="chart-ui.js"></script>
-  <script src="dasha.js"></script>
+  <!-- libs -->
+  <script src="./ephemeris-data.js"></script>
+  <script src="./kp-astro.js"></script>
+  <script src="./chart-engine.js"></script>
+  <script src="./chart-ui.js"></script>
+  <script src="./dasha.js"></script>
+
+  <!-- Google Translate -->
+  <script>
+    function googleTranslateElementInit(){
+      new google.translate.TranslateElement({
+        pageLanguage:'en', includedLanguages:'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <!-- Page logic -->
+  <script>
+    const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+    const norm360 = d => ((d%360)+360)%360;
+    const toDMS = deg => { const d=Math.floor(deg), m=Math.floor((deg-d)*60); return `${d}°${String(m).padStart(2,'0')}′`; };
+
+    const name = localStorage.getItem('kp_name') || '';
+    const dt   = localStorage.getItem('kp_dt')   || '';
+    const lat  = +localStorage.getItem('kp_lat');
+    const lon  = +localStorage.getItem('kp_lon');
+
+    function fitCanvas(el){
+      const max = Math.min(520, el.clientWidth || el.parentElement.clientWidth || 520);
+      el.width = max; el.height = max;
+    }
+
+    function render(){
+      const cv = document.getElementById('wheel');
+      fitCanvas(cv);
+
+      const eph = (window.computeEphemeris || window.computeMockEphemeris)?.(dt, lat, lon);
+      if(!eph){ document.getElementById('chartDetails').textContent='Ephemeris not available.'; return; }
+
+      // Wheel
+      if(typeof window.drawWheel==='function'){ window.drawWheel(cv, eph); }
+      else if(typeof window.renderWheelEngine==='function'){ window.renderWheelEngine(cv, eph); }
+
+      // Details header
+      document.getElementById('chartDetails').textContent =
+        `${name ? name+' • ' : ''}${dt} • Lat ${lat.toFixed(4)} Lon ${lon.toFixed(4)}`;
+
+      // Table
+      const tb = document.querySelector('#calcTable tbody'); tb.innerHTML='';
+      (eph.planets||[]).forEach(p=>{
+        const abs = norm360(p.degree), sIx = Math.floor(abs/30), inS = abs - sIx*30;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.name}</td><td>${SIGNS[sIx]}</td><td class="mono">${toDMS(inS)}</td><td class="mono">${abs.toFixed(2)}</td>`;
+        tb.appendChild(tr);
+      });
+
+      // Dasha
+      const moon = (eph.planets||[]).find(x=>x.name==='Moon');
+      if(moon && window.computeVimshottariDasha){
+        const rows = window.computeVimshottariDasha(norm360(moon.degree), dt, 120);
+        if(window.renderDashaTable){
+          window.renderDashaTable('dashaTable', rows);
+        }else{
+          const out = document.getElementById('dashaTable');
+          out.innerHTML = '<table><thead><tr><th>#</th><th>Lord</th><th>Start</th><th>End</th><th class="mono">Years</th></tr></thead><tbody>'+
+            rows.map((r,i)=>`<tr><td>${i+1}</td><td>${r.lord}</td><td>${r.start}</td><td>${r.end}</td><td class="mono">${r.years}</td></tr>`).join('')+
+            '</tbody></table>';
+        }
+      }else{
+        document.getElementById('dashaTable').textContent = 'Moon not found for Dasha.';
+      }
+    }
+
+    window.addEventListener('load', render);
+    window.addEventListener('resize', ()=>requestAnimationFrame(render));
+  </script>
+
+  <!-- Secure API test panel (INSIDE body, before closing body/html) -->
+  <div style="max-width:1024px;margin:16px auto;padding:12px;border:1px solid #1e293b;border-radius:10px;background:#0b1220;color:#e0f2fe">
+    <button id="btnSecure" style="padding:8px 12px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe;cursor:pointer">
+      Test Secure API (NASA)
+    </button>
+    <div id="secureOut" style="margin-top:8px;color:#93c5fd"></div>
+  </div>
+  <script>
+    document.getElementById('btnSecure').addEventListener('click', async () => {
+      const out = document.getElementById('secureOut');
+      out.textContent = 'Loading…';
+      try {
+        const r = await fetch('/.netlify/functions/nasa');
+        const data = await r.json();
+        if (!r.ok) throw new Error(data?.error || 'Request failed');
+        out.innerHTML = `✅ <b>${data.title || 'OK'}</b><br>${data.date || ''}<br>${(data.explanation||'').slice(0,140)}…`;
+      } catch (e) {
+        out.textContent = '❌ ' + (e.message || 'Error');
+      }
+    });
+  </script>
 </body>
 </html>

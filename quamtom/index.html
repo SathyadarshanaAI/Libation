@@ -1,80 +1,109 @@
-<script>
-  // --- helper: parse "7.28, 80.63"
-  function tryParseCoords(txt){
-    const m = (txt||'').match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
-    return m ? {lat:+m[1], lon:+m[3]} : null;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter Birth Details</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <h1>Birth Details Form</h1>
 
-  // --- helper: geocode with Nominatim
-  async function geocodePlace(q){
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
-    const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
-    if(!res.ok) throw new Error('geocode failed');
-    const data = await res.json();
-    if(!data.length) return null;
-    return { lat:+data[0].lat, lon:+data[0].lon, label:data[0].display_name };
-  }
+  <div id="google_translate_element"></div>
 
-  // --- fill lat/lon from the "place" input if possible
-  async function autoFillFromPlace() {
-    const place = (document.getElementById('place').value || '').trim();
-    const latEl = document.getElementById('lat');
-    const lonEl = document.getElementById('lon');
+  <form id="birthForm">
+    <label>Name: <input type="text" id="name" required></label><br>
+    <label>Date: <input type="date" id="date" required></label><br>
+    <label>Time: <input type="time" id="time" required></label><br>
+    <label>Place: <input type="text" id="place" placeholder="City or 'lat, lon'"></label><br>
+    <label>Latitude: <input type="number" id="lat" step="0.000001"></label><br>
+    <label>Longitude: <input type="number" id="lon" step="0.000001"></label><br>
+    <button type="submit">Generate Chart</button>
+  </form>
 
-    // Already filled? stop.
-    if(latEl.value && lonEl.value) return true;
-    if(!place) return false;
+  <!-- Google Translate -->
+  <script>
+    function googleTranslateElementInit(){
+      new google.translate.TranslateElement({
+        pageLanguage:'en',
+        includedLanguages:'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
 
-    // 1) direct coords typed
-    const c = tryParseCoords(place);
-    if(c){
-      latEl.value = c.lat.toFixed(6);
-      lonEl.value = c.lon.toFixed(6);
-      marker.setLatLng([c.lat, c.lon]); map.setView([c.lat, c.lon], 13);
+  <!-- Geocode & Form logic -->
+  <script>
+    function tryParseCoords(txt) {
+      const m = (txt || '').match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
+      return m ? { lat: +m[1], lon: +m[3] } : null;
+    }
+
+    async function geocodePlace(q) {
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) throw new Error('geocode failed');
+        const data = await res.json();
+        if (!data.length) return null;
+        return { lat: +data[0].lat, lon: +data[0].lon, label: data[0].display_name };
+      } catch (err) {
+        console.warn('Geocode error:', err);
+        return null;
+      }
+    }
+
+    async function autoFillFromPlace() {
+      const place = (document.getElementById('place').value || '').trim();
+      const latEl = document.getElementById('lat');
+      const lonEl = document.getElementById('lon');
+
+      if (latEl.value && lonEl.value) return true;
+      if (!place) return false;
+
+      const c = tryParseCoords(place);
+      if (c) {
+        latEl.value = c.lat.toFixed(6);
+        lonEl.value = c.lon.toFixed(6);
+        return true;
+      }
+
+      const g = await geocodePlace(place);
+      if (!g) return false;
+      latEl.value = g.lat.toFixed(6);
+      lonEl.value = g.lon.toFixed(6);
       return true;
     }
 
-    // 2) geocode the place text
-    const g = await geocodePlace(place);
-    if(!g) return false;
-    latEl.value = g.lat.toFixed(6);
-    lonEl.value = g.lon.toFixed(6);
-    marker.setLatLng([g.lat, g.lon]); map.setView([g.lat, g.lon], 13);
-    return true;
-  }
+    document.getElementById('birthForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await autoFillFromPlace();
 
-  // Place field loses focus → try to fill coords
-  document.getElementById('place').addEventListener('blur', ()=>{ autoFillFromPlace(); });
-  document.getElementById('place').addEventListener('change', ()=>{ autoFillFromPlace(); });
+      const name = (document.getElementById('name').value || '').trim();
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const lat = parseFloat(document.getElementById('lat').value);
+      const lon = parseFloat(document.getElementById('lon').value);
 
-  // ---- SUBMIT ----
-  document.getElementById('birthForm').addEventListener('submit', async (e)=>{
-    e.preventDefault();
+      if (!name || !date || !time || isNaN(lat) || isNaN(lon)) {
+        alert('Fill all fields.');
+        return;
+      }
 
-    // If lat/lon empty but place given, try to fill now
-    await autoFillFromPlace();
+      if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        alert('Invalid coordinates.');
+        return;
+      }
 
-    const name = (document.getElementById('name').value||'').trim();
-    const date = document.getElementById('date').value;
-    const time = document.getElementById('time').value;
-    const lat  = parseFloat(document.getElementById('lat').value);
-    const lon  = parseFloat(document.getElementById('lon').value);
+      const dtISO = `${date}T${time}`;
+      localStorage.setItem('kp_name', name);
+      localStorage.setItem('kp_dt', dtISO);
+      localStorage.setItem('kp_lat', lat);
+      localStorage.setItem('kp_lon', lon);
 
-    if(!name || !date || !time || isNaN(lat) || isNaN(lon)){
-      alert('Fill all fields.'); 
-      return;
-    }
-    if(lat<-90||lat>90 || lon<-180||lon>180){
-      alert('Invalid coordinates.');
-      return;
-    }
-
-    const dtISO = `${date}T${time}`;
-    localStorage.setItem('kp_name', name);
-    localStorage.setItem('kp_dt', dtISO);
-    localStorage.setItem('kp_lat', lat);
-    localStorage.setItem('kp_lon', lon);
-
-    location.href = './kp-chart.html';
-  });
-</script>
+      location.href = './kp-chart.html';
+    });
+  </script>
+</body>
+</html>

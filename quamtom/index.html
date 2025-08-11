@@ -143,4 +143,26 @@
     window.addEventListener('resize', ()=>requestAnimationFrame(render));
   </script>
 </body>
-</html>
+</html><!-- Secure API test (optional small panel) -->
+<div style="max-width:1024px;margin:16px auto;padding:12px;border:1px solid #1e293b;border-radius:10px;background:#0b1220;color:#e0f2fe">
+  <button id="btnSecure" style="padding:8px 12px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe;cursor:pointer">
+    Test Secure API (NASA)
+  </button>
+  <div id="secureOut" style="margin-top:8px;color:#93c5fd"></div>
+</div>
+
+<script>
+  document.getElementById('btnSecure').addEventListener('click', async () => {
+    const out = document.getElementById('secureOut');
+    out.textContent = 'Loading…';
+    try {
+      // Call the Netlify Function (no API key in the browser!)
+      const r = await fetch('/.netlify/functions/nasa');
+      const data = await r.json();
+      if (!r.ok) throw new Error(data?.error || 'Request failed');
+      out.innerHTML = `✅ <b>${data.title || 'OK'}</b><br>${data.date || ''}<br>${data.explanation?.slice(0,140) || ''}…`;
+    } catch (e) {
+      out.textContent = '❌ ' + (e.message || 'Error');
+    }
+  });
+</script>

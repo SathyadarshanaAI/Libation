@@ -6,10 +6,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>KP – Start</title>
 
-  <!-- Leaflet map CSS -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="anonymous"/>
 
   <style>
     :root{--bg:#0f172a;--txt:#e0f2fe;--muted:#93c5fd;--card:#0b1220;--line:#1e293b}
@@ -33,6 +34,9 @@
     .pill{display:inline-block;border:1px solid var(--line);background:#091426;border-radius:999px;padding:6px 10px;margin-top:8px}
     .ok{border-color:#22c55e}
     #map{height:230px;border:1px solid var(--line);border-radius:10px}
+
+    /* small helper text */
+    .hint{color:#93c5fd;font-size:14px}
   </style>
 </head>
 <body>
@@ -63,8 +67,8 @@
 
       <!-- Right: Helper + Map -->
       <div class="card">
-        <h2>SAT Copy-Paste Helper</h2>
-        <div style="color:#93c5fd">
+        <h2>SAT / Maps Helper</h2>
+        <div class="hint">
           Type your <b>birth place & country</b> (e.g., <i>Kandy, Sri Lanka</i>) and click <b>Extract</b>.
           You can also paste raw <b>Latitude,Longitude</b> or a link with <code>@lat,lon</code>.
         </div>
@@ -76,11 +80,11 @@
           <button id="btnPaste" type="button">📋 Paste</button>
           <button id="btnExtract" type="button">🔍 Extract</button>
         </div>
-        <div id="found" style="margin-top:8px;color:#93c5fd"></div>
+        <div id="found" class="hint" style="margin-top:8px"></div>
 
         <label style="margin-top:12px">Pick on Map</label>
         <div id="map"></div>
-        <div style="margin-top:6px;color:#93c5fd;font-size:14px">
+        <div class="hint" style="margin-top:6px">
           Tip: Tap map to set marker. Drag marker to fine-tune. Field will auto-update.
         </div>
       </div>
@@ -98,12 +102,13 @@
   </script>
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <!-- Leaflet map JS -->
+  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin="anonymous"></script>
 
   <script>
-    // Prefill
+    // --- Prefill from localStorage ---
     window.addEventListener('load', ()=>{
       const dt  = localStorage.getItem('kp_dt');
       const nm  = localStorage.getItem('kp_name');
@@ -114,7 +119,7 @@
       if(la && lo) document.getElementById('latlon').value = `${la}, ${lo}`;
     });
 
-    // Parse direct coordinates
+    // --- Small helpers ---
     function parseCoords(text){
       if(!text) return null;
       let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
@@ -128,7 +133,7 @@
       el.textContent = msg; el.className = 'pill' + (ok?' ok':'');
     };
 
-    // Simple geocoder (Nominatim)
+    // --- Simple geocoder (Nominatim) ---
     async function geocodePlace(q){
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
       const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
@@ -138,13 +143,13 @@
       return { lat: +data[0].lat, lon: +data[0].lon, label: data[0].display_name };
     }
 
-    // Leaflet map
+    // --- Leaflet map & syncing ---
     const map = L.map('map',{zoomControl:true});
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
       maxZoom:19, attribution:'© OpenStreetMap'
     }).addTo(map);
     let marker = L.marker([7.8731,80.7718],{draggable:true}).addTo(map);
-    map.setView([7.8731,80.7718], 7); // Sri Lanka default
+    map.setView([7.8731,80.7718], 7); // default: Sri Lanka
 
     function setMap(lat, lon, zoom){
       marker.setLatLng([lat,lon]);
@@ -165,26 +170,26 @@
       if(c) setMap(c.lat,c.lon,12);
     })();
 
-    // Paste & Extract
+    // --- Paste & Extract actions ---
     document.getElementById('btnPaste').addEventListener('click', async ()=>{
       try{
         const t = await navigator.clipboard.readText();
         document.getElementById('pasteBox').value = t || '';
-      }catch{/* ignore */}
+      }catch{/* clipboard blocked */}
     });
     document.getElementById('btnExtract').addEventListener('click', async ()=>{
       const t = document.getElementById('pasteBox').value.trim();
       const out = document.getElementById('found');
 
-      // 1) direct coords?
+      // 1) Direct coordinates?
       const c = parseCoords(t);
       if(c){
         document.getElementById('latlon').value = `${c.lat}, ${c.lon}`;
         setMap(c.lat, c.lon, 13);
-        out.textContent = `Detected coordinates → ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)} (filled)`;
+        out.textContent = `Detected → ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)} (filled)`;
         return;
       }
-      // 2) geocode place
+      // 2) Geocode place text
       if(!t){ out.textContent = 'Enter a place (e.g., Kandy, Sri Lanka).'; return; }
       out.textContent = 'Searching…';
       try{
@@ -198,13 +203,12 @@
       }
     });
 
-    // Submit → chart
+    // --- Submit → kp-chart.html ---
     document.getElementById('birthForm').addEventListener('submit', e=>{
       e.preventDefault();
       const name=(document.getElementById('name').value||'').trim();
       const dt=document.getElementById('datetime').value;
-      const raw=document.getElementById('latlon').value||'';
-      const cc = parseCoords(raw);
+      const cc = parseCoords(document.getElementById('latlon').value||'');
       if(!name||!dt||!cc){ status('Fill all fields (Name, Date/Time, Lat,Lon).'); return; }
       const {lat,lon} = cc;
       if(lat<-90||lat>90){ status('Latitude must be between -90 and 90.'); return; }

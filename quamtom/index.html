@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>KP Astrology Chart</title>
   <style>
     :root{--bg:#0f172a;--card:rgba(17,24,39,.9);--line:#334155;--text:#e2e8f0;--accent:#38bdf8}
@@ -18,7 +18,7 @@
     th,td{padding:8px;border-bottom:1px solid #0f243a}
     th{color:#93c5fd;text-align:left}
     .mono{font-variant-numeric:tabular-nums}
-    @media (max-width:860px){ .grid{grid-template-columns:1fr} }
+    @media (max-width:860px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -37,13 +37,19 @@
       <h2>KP Chart</h2>
       <canvas id="wheel"></canvas>
     </div>
+
     <div class="card">
       <h2>Details</h2>
       <div id="chartDetails">Loading chart data…</div>
       <div id="calcTableWrap" style="margin-top:12px;overflow:auto">
         <table id="calcTable">
           <thead>
-          <tr><th>Body</th><th>Sign</th><th>Deg (D°M′)</th><th class="mono">° (0–360)</th></tr>
+            <tr>
+              <th>Body</th>
+              <th>Sign</th>
+              <th>Deg (D°M′)</th>
+              <th class="mono">° (0–360)</th>
+            </tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -53,4 +59,88 @@
 
   <!-- Dasha -->
   <div id="dashaWrap" class="card">
-    <h2
+    <h2>Vimshottari Dasha</h2>
+    <div id="dashaTable">Loading Dasha periods…</div>
+  </div>
+
+  <!-- libs -->
+  <script src="./ephemeris-data.js"></script>
+  <script src="./kp-astro.js"></script>
+  <script src="./chart-engine.js"></script>
+  <script src="./chart-ui.js"></script>
+  <script src="./dasha.js"></script>
+
+  <!-- Google Translate -->
+  <script>
+    function googleTranslateElementInit(){
+      new google.translate.TranslateElement({
+        pageLanguage:'en', includedLanguages:'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <!-- Page logic -->
+  <script>
+    const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+    const norm360 = d => ((d%360)+360)%360;
+    const toDMS = deg => { const d=Math.floor(deg), m=Math.floor((deg-d)*60); return `${d}°${String(m).padStart(2,'0')}′`; };
+
+    const name = localStorage.getItem('kp_name') || '';
+    const dt   = localStorage.getItem('kp_dt')   || '';
+    const lat  = +localStorage.getItem('kp_lat');
+    const lon  = +localStorage.getItem('kp_lon');
+
+    function fitCanvas(el){
+      const max = Math.min(520, el.clientWidth || el.parentElement.clientWidth || 520);
+      el.width = max; el.height = max;
+    }
+
+    function render(){
+      const cv = document.getElementById('wheel');
+      fitCanvas(cv);
+
+      const eph = (window.computeEphemeris || window.computeMockEphemeris)?.(dt, lat, lon);
+      if(!eph){ document.getElementById('chartDetails').textContent='Ephemeris not available.'; return; }
+
+      // Wheel
+      if(typeof window.drawWheel==='function'){ window.drawWheel(cv, eph); }
+      else if(typeof window.renderWheelEngine==='function'){ window.renderWheelEngine(cv, eph); }
+
+      // Details header
+      document.getElementById('chartDetails').textContent =
+        `${name ? name+' • ' : ''}${dt} • Lat ${lat.toFixed(4)} Lon ${lon.toFixed(4)}`;
+
+      // Table
+      const tb = document.querySelector('#calcTable tbody'); tb.innerHTML='';
+      (eph.planets||[]).forEach(p=>{
+        const abs = norm360(p.degree), sIx = Math.floor(abs/30), inS = abs - sIx*30;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.name}</td><td>${SIGNS[sIx]}</td><td class="mono">${toDMS(inS)}</td><td class="mono">${abs.toFixed(2)}</td>`;
+        tb.appendChild(tr);
+      });
+
+      // Dasha
+      const moon = (eph.planets||[]).find(x=>x.name==='Moon');
+      if(moon && window.computeVimshottariDasha){
+        const rows = window.computeVimshottariDasha(norm360(moon.degree), dt, 120); // uses dasha.js
+        if(window.renderDashaTable){
+          window.renderDashaTable('dashaTable', rows);
+        }else{
+          // minimal fallback
+          const out = document.getElementById('dashaTable');
+          out.innerHTML = '<table><thead><tr><th>#</th><th>Lord</th><th>Start</th><th>End</th><th class="mono">Years</th></tr></thead><tbody>'+
+            rows.map((r,i)=>`<tr><td>${i+1}</td><td>${r.lord}</td><td>${r.start}</td><td>${r.end}</td><td class="mono">${r.years}</td></tr>`).join('')+
+            '</tbody></table>';
+        }
+      }else{
+        document.getElementById('dashaTable').textContent = 'Moon not found for Dasha.';
+      }
+    }
+
+    window.addEventListener('load', render);
+    window.addEventListener('resize', ()=>requestAnimationFrame(render));
+  </script>
+</body>
+</html>

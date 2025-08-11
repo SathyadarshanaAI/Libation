@@ -1,161 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>KP – Start</title>
+<!-- 🌍 SAT/Maps Copy-Paste Helper -->
+<a href="index.html" class="home-btn">🏠 Home</a>
 
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin="" />
-  <style>
-    :root{--bg:#0f172a;--card:#0b1220;--line:#1e293b;--txt:#e0f2fe;--muted:#93c5fd;--accent:#38bdf8}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial}
-    a{color:#7dd3fc;text-decoration:none}
-    .wrap{max-width:980px;margin:24px auto;padding:16px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-    label{display:block;margin:10px 0 6px;color:var(--muted)}
-    input,button{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#091426;color:#cdeafe}
-    button{cursor:pointer}
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
-    .chip{padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:#0b162a;color:#cdeafe;cursor:pointer}
-    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}
-    #map{height:220px;border:1px solid var(--line);border-radius:12px}
-    .results{background:#0b162a;border:1px solid var(--line);border-radius:8px;margin-top:8px;max-height:180px;overflow:auto}
-    .results button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #0f2339;background:transparent;padding:10px}
-    .results button:last-child{border-bottom:0}
-    @media (max-width:840px){.grid{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="card">
-      <h2 style="margin:0 0 10px">KP – Start</h2>
+<!-- Google Translate Button -->
+<div id="google_translate_element" style="float:right; margin-top:10px;"></div>
 
-      <form id="birthForm" novalidate>
-        <label>Name</label>
-        <input id="name" required placeholder="Your name" />
+<div class="helper" id="satHelper" style="margin-top:50px;">
+  <h3>Enter Birthplace Latitude & Longitude</h3>
+  <small>
+    Step 1 — Open your Maps / SAT app.<br>
+    Step 2 — Search for your birth location / country.<br>
+    Step 3 — Find the <b>Latitude, Longitude</b> values and <b>copy</b> them.<br>
+    Step 4 — Paste them below (e.g., <code>7.2862, 80.6316</code> or a link with @lat,lon).<br>
+    Step 5 — Click <b>Save Coords</b> (Your KP Report will auto-update).
+  </small>
 
-        <label>Birth Date & Time (local)</label>
-        <input id="datetime" type="datetime-local" required />
-
-        <label>Quick Places (tap to fill)</label>
-        <div class="row" id="chips">
-          <button type="button" class="chip" data-lat="6.9271" data-lon="79.8612">Colombo</button>
-          <button type="button" class="chip" data-lat="7.2862" data-lon="80.6316">Kandy General Hospital</button>
-          <button type="button" class="chip" data-lat="6.0535" data-lon="80.2210">Galle</button>
-          <button type="button" class="chip" data-lat="9.6615" data-lon="80.0255">Jaffna</button>
-          <button type="button" class="chip" data-lat="51.5074" data-lon="-0.1278">London</button>
-        </div>
-
-        <div class="grid">
-          <div>
-            <label>Search place</label>
-            <div class="row" style="gap:8px">
-              <input id="searchBox" placeholder="Type a place… e.g., Kandy General Hospital" />
-              <button type="button" id="searchBtn" style="max-width:140px">Search</button>
-            </div>
-            <div id="searchResults" class="results" hidden></div>
-
-            <label>Pick on map</label>
-            <div id="map"></div>
-          </div>
-
-          <div>
-            <label>Latitude, Longitude</label>
-            <input id="latlon" required placeholder="7.2862, 80.6316" />
-            <button type="submit" style="margin-top:12px">Start → Chart</button>
-            <p style="margin-top:10px"><a href="/astrology">← Back</a></p>
-          </div>
-        </div>
-      </form>
-    </div>
+  <textarea id="pasteBox" rows="3" placeholder="Paste lat, lon or a link with @lat,lon"></textarea>
+  <div class="row">
+    <button id="btnPaste">📋 Paste from Clipboard</button>
+    <button id="btnParse">💾 Save Coords</button>
+    <span id="status" class="pill">Waiting…</span>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-          crossorigin=""></script>
-  <script>
-    // Prefill datetime & name
-    (function(){
-      const prev = localStorage.getItem('kp_dt');
-      document.getElementById('datetime').value = (prev || new Date().toISOString()).slice(0,16);
-      document.getElementById('name').value = localStorage.getItem('kp_name') || '';
-    })();
+  <div class="row">
+    <button id="btnClear">❌ Clear Coords</button>
+  </div>
 
-    // Leaflet map (center Sri Lanka)
-    const map = L.map('map',{zoomControl:true}).setView([7.8731,80.7718],7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      maxZoom:19, attribution:'© OpenStreetMap'
-    }).addTo(map);
-    let marker = L.marker([7.8731,80.7718],{draggable:true}).addTo(map);
+  <small id="savedAs"></small>
+</div>
 
-    function setLatLon(lat, lon, zoom=12){
-      const box=document.getElementById('latlon');
-      box.value=`${(+lat).toFixed(6)}, ${(+lon).toFixed(6)}`;
-      marker.setLatLng([+lat,+lon]);
-      map.setView([+lat,+lon], zoom);
+<script>
+  // ---- parsing + saving ----
+  function tryParseCoords(text){
+    if(!text) return null;
+    let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
+    if(m) return { lat: parseFloat(m[1]), lon: parseFloat(m[3]) };
+    m = text.match(/@(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/);
+    if(m) return { lat: parseFloat(m[1]), lon: parseFloat(m[3]) };
+    return null;
+  }
+  function saveCoords(lat, lon){
+    localStorage.setItem('kp_lat', +lat);
+    localStorage.setItem('kp_lon', +lon);
+    const pob = document.getElementById('pob');
+    if(pob){ pob.textContent = `${(+lat).toFixed(6)}, ${(+lon).toFixed(6)}  (saved)`; }
+    window.dispatchEvent(new CustomEvent('kp:coords-updated', { detail: { lat:+lat, lon:+lon } }));
+  }
+  function ok(msg){ const s = document.getElementById('status'); s.className='pill ok'; s.textContent = msg; }
+  function bad(msg){ const s = document.getElementById('status'); s.className='pill bad'; s.textContent = msg; }
+
+  // UI events
+  document.getElementById('btnPaste').addEventListener('click', async ()=>{
+    try{
+      const txt = await navigator.clipboard.readText();
+      document.getElementById('pasteBox').value = txt || '';
+      ok('Pasted. Click “Save Coords”.');
+    }catch(e){ bad('Clipboard blocked. Paste manually.'); }
+  });
+  document.getElementById('btnParse').addEventListener('click', ()=>{
+    const txt = document.getElementById('pasteBox').value.trim();
+    const c = tryParseCoords(txt);
+    if(!c){ bad('Could not detect coords.'); return; }
+    saveCoords(c.lat, c.lon);
+    ok('Saved!');
+    document.getElementById('savedAs').textContent = `Saved as: ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)}`;
+  });
+  document.getElementById('btnClear').addEventListener('click', ()=>{
+    localStorage.removeItem('kp_lat'); localStorage.removeItem('kp_lon');
+    ok('Cleared'); document.getElementById('savedAs').textContent = '';
+  });
+
+  // show existing if any
+  (function(){
+    const la = localStorage.getItem('kp_lat'), lo = localStorage.getItem('kp_lon');
+    if(la && lo){
+      const pob = document.getElementById('pob');
+      if(pob){ pob.textContent = `${(+la).toFixed(6)}, ${(+lo).toFixed(6)}  (saved)`; }
+      ok('Loaded saved coords');
+      document.getElementById('savedAs').textContent = `Saved as: ${(+la).toFixed(6)}, ${(+lo).toFixed(6)}`;
     }
-    // ✅ auto-fill field on first load
-    setLatLon(7.873100, 80.771800, 7);
+  })();
+</script>
 
-    // Quick chips
-    document.getElementById('chips').addEventListener('click', e=>{
-      const b=e.target.closest('.chip'); if(!b) return;
-      setLatLon(b.dataset.lat, b.dataset.lon, 14);
-    });
+<!-- Google Translate Script -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'en,si,ta',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-    // Map click / drag
-    map.on('click', e=> setLatLon(e.latlng.lat, e.latlng.lng, map.getZoom()));
-    marker.on('dragend', ()=>{
-      const p=marker.getLatLng(); setLatLon(p.lat,p.lng,map.getZoom());
-    });
-
-    // Search via Nominatim (LK-first)
-    async function doSearch(){
-      const q=document.getElementById('searchBox').value.trim();
-      const box=document.getElementById('searchResults'); box.innerHTML='';
-      if(!q){ box.hidden=true; return; }
-      const url=`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=6&countrycodes=lk&accept-language=en`;
-      try{
-        const res=await fetch(url,{headers:{'Accept':'application/json'}});
-        const data=await res.json();
-        if(!data.length){ box.hidden=true; return; }
-        data.forEach(item=>{
-          const btn=document.createElement('button');
-          btn.type='button';
-          btn.textContent=item.display_name;
-          btn.addEventListener('click',()=>{
-            setLatLon(item.lat,item.lon,15);
-            box.hidden=true;
-          });
-          box.appendChild(btn);
-        });
-        box.hidden=false;
-      }catch(err){
-        box.hidden=true; alert('Search failed. Please try again.');
-      }
-    }
-    document.getElementById('searchBtn').addEventListener('click', doSearch);
-    document.getElementById('searchBox').addEventListener('keydown', e=>{
-      if(e.key==='Enter'){ e.preventDefault(); doSearch(); }
-    });
-
-    // Submit → chart.html (same folder)
-    document.getElementById('birthForm').addEventListener('submit', e=>{
-      e.preventDefault();
-      const name=(document.getElementById('name').value||'').trim();
-      const dt=document.getElementById('datetime').value;
-      const [lat,lon]=(document.getElementById('latlon').value||'').split(',').map(s=>parseFloat(s.trim()));
-      if(!name||!dt||Number.isNaN(lat)||Number.isNaN(lon)){ alert('Please fill all fields.'); return; }
-      localStorage.setItem('kp_name', name);
-      localStorage.setItem('kp_dt', dt);
-      localStorage.setItem('kp_lat', lat);
-      localStorage.setItem('kp_lon', lon);
-      location.href='./chart.html';
-    });
-  </script>
-</body>
-</html>
+<style>
+.home-btn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: #0f172a;
+  color: #7dd3fc;
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  z-index: 999;
+}
+</style>

@@ -1,3 +1,5 @@
+index...
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,31 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🪐 KP Report - Quantum Version</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    /* minimal additions, original colors untouched */
-    .floating-btn{position:fixed;z-index:999;border-radius:10px;padding:8px 12px;background:#0f172a;color:#7dd3fc;text-decoration:none;font-size:14px;box-shadow:0 2px 10px rgba(0,0,0,.35)}
-    .home-btn{top:12px;left:12px}
-    .translate-btn{top:12px;right:12px}
-    .helper{max-width:860px;margin:18px auto 0;background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:14px}
-    .helper h3{margin:.2rem 0 6px;color:#7dd3fc;font-size:1.05rem}
-    .helper small{color:#93c5fd;line-height:1.5}
-    .helper .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .helper textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #1e293b;background:#091426;color:#cdeafe}
-    .helper button{padding:9px 12px;border-radius:8px;border:1px solid #1e293b;background:#0f172a;color:#cdeafe;cursor:pointer}
-    .pill{padding:6px 10px;border-radius:999px;border:1px solid #1e293b;background:#0b162a;color:#cdeafe}
-    .ok{border-color:#065f46;background:#063a2c}
-    .bad{border-color:#7f1d1d;background:#3b0a0a}
-    #google_translate_container{position:fixed;top:52px;right:12px;background:#0b1220;border:1px solid #1e293b;border-radius:10px;padding:8px;z-index:999}
-  </style>
 </head>
 <body>
-  <!-- floating buttons -->
-  <a href="index.html" class="floating-btn home-btn">🏠 Home</a>
-  <a href="#" id="openTranslate" class="floating-btn translate-btn">🌐 Translate</a>
-  <div id="google_translate_container" style="display:none;">
-    <div id="google_translate_element"></div>
-  </div>
-
   <div class="report-container">
     <h1>🪐 KP Astrology Report</h1>
     <div class="field"><strong>Name:</strong> <span id="name">Loading...</span></div>
@@ -41,101 +20,9 @@
     <div class="field"><strong>🧠 Sub-Lord Prediction:</strong><br><span id="sublord">Loading...</span></div>
   </div>
 
-  <!-- SAT copy-paste helper (no maps, quick & simple) -->
-  <div class="helper" id="satHelper">
-    <h3>Enter Birthplace Latitude & Longitude</h3>
-    <small>
-      1) Open your SAT/Maps app • 2) Search your birthplace/country •
-      3) Copy the <b>Latitude, Longitude</b> • 4) Paste below • 5) Click <b>Save Coords</b>
-    </small>
-
-    <textarea id="pasteBox" rows="3" placeholder="Paste lat, lon or a link containing @lat,lon (e.g. 7.2862, 80.6316)"></textarea>
-    <div class="row">
-      <button id="btnPaste">📋 Paste</button>
-      <button id="btnParse">💾 Save Coords</button>
-      <span id="status" class="pill">Waiting…</span>
-    </div>
-    <div class="row">
-      <button id="btnClear">❌ Clear</button>
-      <small id="savedAs" style="color:#93c5fd"></small>
-    </div>
-  </div>
-
   <script src="ephemeris-data.js"></script>
   <script src="kp-subload.js"></script>
   <script src="kp-astro.js"></script>
   <script src="print-report.js"></script>
-
-  <!-- translate loader -->
-  <script>
-    document.getElementById('openTranslate').addEventListener('click', (e)=>{
-      e.preventDefault();
-      const box = document.getElementById('google_translate_container');
-      box.style.display = (box.style.display==='none') ? 'block' : 'none';
-    });
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,si,ta',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
-    }
-  </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-  <!-- helper logic -->
-  <script>
-    function tryParseCoords(text){
-      if(!text) return null;
-      let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
-      if(m) return { lat: parseFloat(m[1]), lon: parseFloat(m[3]) };
-      m = text.match(/@(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/);
-      if(m) return { lat: parseFloat(m[1]), lon: parseFloat(m[3]) };
-      return null;
-    }
-    function saveCoords(lat, lon){
-      localStorage.setItem('kp_lat', +lat);
-      localStorage.setItem('kp_lon', +lon);
-      const pob = document.getElementById('pob');
-      if(pob){ pob.textContent = `${(+lat).toFixed(6)}, ${(+lon).toFixed(6)}  (saved)`; }
-      window.dispatchEvent(new CustomEvent('kp:coords-updated', { detail: { lat:+lat, lon:+lon } }));
-    }
-    function ok(msg){ const s=document.getElementById('status'); s.className='pill ok'; s.textContent=msg; }
-    function bad(msg){ const s=document.getElementById('status'); s.className='pill bad'; s.textContent=msg; }
-
-    document.getElementById('btnPaste').addEventListener('click', async ()=>{
-      try{
-        const txt = await navigator.clipboard.readText();
-        document.getElementById('pasteBox').value = txt || '';
-        ok('Pasted. Click “Save Coords”.');
-      }catch(e){ bad('Clipboard blocked. Paste manually.'); }
-    });
-
-    document.getElementById('btnParse').addEventListener('click', ()=>{
-      const txt = document.getElementById('pasteBox').value.trim();
-      const c = tryParseCoords(txt);
-      if(!c){ bad('Could not detect coords.'); return; }
-      saveCoords(c.lat, c.lon);
-      ok('Saved!');
-      document.getElementById('savedAs').textContent = `Saved: ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)}`;
-    });
-
-    document.getElementById('btnClear').addEventListener('click', ()=>{
-      localStorage.removeItem('kp_lat'); localStorage.removeItem('kp_lon');
-      ok('Cleared'); document.getElementById('savedAs').textContent = '';
-      const pob=document.getElementById('pob'); if(pob) pob.textContent='—';
-    });
-
-    // show existing if any
-    (function(){
-      const la = localStorage.getItem('kp_lat'), lo = localStorage.getItem('kp_lon');
-      if(la && lo){
-        const pob = document.getElementById('pob');
-        if(pob){ pob.textContent = `${(+la).toFixed(6)}, ${(+lo).toFixed(6)}  (saved)`; }
-        ok('Loaded saved coords');
-        document.getElementById('savedAs').textContent = `Saved: ${(+la).toFixed(6)}, ${(+lo).toFixed(6)}`;
-      }
-    })();
-  </script>
 </body>
 </html>

@@ -1,199 +1,104 @@
-<!-- quamtom/index.html (with map picker) -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>KP – Start</title>
+<script>
+  // --- helpers ---
+  const $ = sel => document.querySelector(sel);
+  const latlonEl = $('#latlon');
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  function parseCoords(text){
+    if(!text) return null;
+    const t = text.trim();
+    // 1) 7.2862, 80.6316
+    let m = t.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);
+    if(m) return {lat:+m[1], lon:+m[2]};
+    // 2) ...@7.2862,80.6316...
+    m = t.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+    if(m) return {lat:+m[1], lon:+m[2]};
+    return null;
+  }
 
-  <style>
-    :root{--bg:#0f172a;--txt:#e0f2fe;--muted:#93c5fd;--card:#0b1220;--line:#1e293b}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Arial}
-    a{color:#7dd3fc;text-decoration:none}
-    .wrap{max-width:1024px;margin:18px auto;padding:12px}
-    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .home{background:#0b1220;border:1px solid var(--line);padding:6px 10px;border-radius:8px}
-    #google_translate_element{background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:4px 8px}
-
-    .grid{display:grid;grid-template-columns:1.35fr .65fr;gap:14px}
-    @media (max-width:860px){ .grid{grid-template-columns:1fr} }
-
-    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-    .card h2{margin:6px 0 12px}
-    label{display:block;margin:10px 0 6px;color:var(--muted)}
-    input,button,textarea{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#091426;color:#cdeafe;font-size:15px}
-    button{cursor:pointer}
-    .btn{margin-top:12px}
-    .pill{display:inline-block;border:1px solid var(--line);background:#091426;border-radius:999px;padding:6px 10px;margin-top:8px}
-    .ok{border-color:#22c55e}
-    #map{height:230px;border:1px solid var(--line);border-radius:10px}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="topbar">
-      <a class="home" href="/">← Home</a>
-      <div id="google_translate_element"></div>
-    </div>
-
-    <div class="grid">
-      <!-- Left: Birth form -->
-      <div class="card">
-        <h2>KP – Start</h2>
-        <form id="birthForm" novalidate>
-          <label>Name</label>
-          <input id="name" required placeholder="Your name"/>
-
-          <label>Birth Date & Time</label>
-          <input id="datetime" type="datetime-local" required/>
-
-          <label>Lat, Lon (deg)</label>
-          <input id="latlon" required placeholder="7.2862, 80.6316"/>
-
-          <button class="btn" type="submit">Start → Chart</button>
-        </form>
-        <div class="pill" id="status">Waiting…</div>
-      </div>
-
-      <!-- Right: Helper + Map -->
-      <div class="card">
-        <h2>SAT Copy-Paste Helper</h2>
-        <div style="color:#93c5fd">
-          1) Open SAT/Map • 2) Find birth place/country • 3) Copy
-          <b>Latitude, Longitude</b> or a link with <code>@lat,lon</code> • 4) Paste & Extract
-          or pick on the map below.
-        </div>
-
-        <label style="margin-top:12px">Paste here</label>
-        <textarea id="pasteBox" rows="3" placeholder="Paste lat, lon or a link with @lat,lon"></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button id="btnPaste" type="button">📋 Paste</button>
-          <button id="btnExtract" type="button">🔍 Extract</button>
-        </div>
-        <div id="found" style="margin-top:8px;color:#93c5fd"></div>
-
-        <label style="margin-top:12px">Pick on Map</label>
-        <div id="map"></div>
-        <div style="margin-top:6px;color:#93c5fd;font-size:14px">
-          Tip: Tap map to set marker. Drag marker to fine-tune. Field will auto-update.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Google Translate -->
-  <script>
-    function googleTranslateElementInit(){
-      new google.translate.TranslateElement({
-        pageLanguage:'en', includedLanguages:'en,si,ta',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
+  function setField(lat, lon, save=false){
+    latlonEl.value = `${(+lat).toFixed(6)}, ${(+lon).toFixed(6)}`;
+    if(save){
+      localStorage.setItem('kp_lat', +lat);
+      localStorage.setItem('kp_lon', +lon);
+      status('Coords updated', true);
     }
-  </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  }
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  // Leaflet setup (same as පෙර)
+  const map = L.map('map',{zoomControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+  let marker = L.marker([7.8731,80.7718],{draggable:true}).addTo(map);
+  map.setView([7.8731,80.7718],7);
 
-  <script>
-    // Prefill
-    window.addEventListener('load', ()=>{
-      const dt  = localStorage.getItem('kp_dt');
-      const nm  = localStorage.getItem('kp_name');
-      const la  = localStorage.getItem('kp_lat');
-      const lo  = localStorage.getItem('kp_lon');
-      document.getElementById('datetime').value = (dt || new Date().toISOString()).slice(0,16);
-      if(nm) document.getElementById('name').value = nm;
-      if(la && lo) document.getElementById('latlon').value = `${la}, ${lo}`;
-    });
+  function setMapAndMarker(lat, lon, zoom){
+    marker.setLatLng([lat,lon]);
+    map.setView([lat,lon], zoom ?? map.getZoom());
+  }
 
-    // Parse helpers
-    function parseCoords(text){
-      if(!text) return null;
-      let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
-      if(m) return {lat:+m[1], lon:+m[3]};
-      m = text.match(/@(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/);
-      if(m) return {lat:+m[1], lon:+m[3]};
-      return null;
-    }
-    const status = (msg, ok=false)=>{
-      const el = document.getElementById('status');
-      el.textContent = msg; el.className = 'pill' + (ok?' ok':'');
-    };
+  // ---- two-way sync ----
+  // 1) Field -> Map (type/paste/autofill)
+  let typingTimer=null;
+  latlonEl.addEventListener('input', ()=>{
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(()=>{
+      const c = parseCoords(latlonEl.value);
+      if(c){ setMapAndMarker(c.lat, c.lon); status('Map centered', true); }
+    }, 180);
+  });
+  latlonEl.addEventListener('change', ()=>{ // for mobile autofill
+    const c = parseCoords(latlonEl.value);
+    if(c){ setMapAndMarker(c.lat,c.lon); status('Map centered', true); }
+  });
 
-    // Paste/Extract
-    document.getElementById('btnPaste').addEventListener('click', async ()=>{
-      try{ const t = await navigator.clipboard.readText();
-           document.getElementById('pasteBox').value = t || ''; }catch{}
-    });
-    document.getElementById('btnExtract').addEventListener('click', ()=>{
-      const t = document.getElementById('pasteBox').value.trim();
-      const c = parseCoords(t);
-      const out = document.getElementById('found');
-      if(!c){ out.textContent='Could not detect coordinates.'; return; }
-      out.textContent = `Detected → ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)} (filled)`;
-      document.getElementById('latlon').value = `${c.lat}, ${c.lon}`;
-      // sync map
-      setMap(c.lat, c.lon, 13);
-    });
+  // 2) Map click -> Field (+save)
+  map.on('click', e=>{
+    setField(e.latlng.lat, e.latlng.lng, true);
+  });
 
-    // Leaflet Map
-    const map = L.map('map',{zoomControl:true});
-    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      maxZoom:19, attribution:'© OpenStreetMap'
-    }).addTo(map);
-    let marker = L.marker([7.8731,80.7718],{draggable:true}).addTo(map);
-    map.setView([7.8731,80.7718], 7); // Sri Lanka default
+  // 3) Marker drag -> Field (+save)
+  marker.on('dragend', ()=>{
+    const p = marker.getLatLng();
+    setField(p.lat, p.lng, true);
+  });
 
-    function setMap(lat, lon, zoom){
-      marker.setLatLng([lat,lon]);
-      map.setView([lat,lon], zoom || map.getZoom());
-    }
-    // Click to set
-    map.on('click', e=>{
-      const {lat,lng} = e.latlng;
-      document.getElementById('latlon').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-      setMap(lat,lng);
-    });
-    // Drag to set
-    marker.on('dragend', ()=>{
-      const p = marker.getLatLng();
-      document.getElementById('latlon').value = `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`;
-    });
-    // If field already has coords, center map there
-    (function syncInitial(){
-      const raw = (document.getElementById('latlon').value||'').trim();
-      const c = parseCoords(raw);
-      if(c) setMap(c.lat,c.lon,12);
-    })();
+  // Paste/Extract buttons (unchanged, but now call setField + setMap)
+  $('#btnExtract')?.addEventListener('click', ()=>{
+    const t = $('#pasteBox').value.trim();
+    const c = parseCoords(t);
+    if(!c){ $('#found').textContent = 'Could not detect coordinates.'; return; }
+    $('#found').textContent = `Detected → ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)} (filled)`;
+    setField(c.lat, c.lon, true);
+    setMapAndMarker(c.lat, c.lon, 13);
+  });
 
-    // Submit → chart
-    document.getElementById('birthForm').addEventListener('submit', e=>{
-      e.preventDefault();
-      const name=(document.getElementById('name').value||'').trim();
-      const dt=document.getElementById('datetime').value;
-      const raw=document.getElementById('latlon').value||'';
-      const cc = parseCoords(raw);
-      if(!name||!dt||!cc){ status('Fill all fields (Name, Date/Time, Lat,Lon).'); return; }
-      const {lat,lon} = cc;
-      if(lat<-90||lat>90){ status('Latitude must be between -90 and 90.'); return; }
-      if(lon<-180||lon>180){ status('Longitude must be between -180 and 180.'); return; }
+  // Initial sync if field already has value
+  (function initSync(){
+    const c = parseCoords(latlonEl.value||'');
+    if(c){ setMapAndMarker(c.lat,c.lon,12); }
+  })();
 
-      localStorage.setItem('kp_name',name);
-      localStorage.setItem('kp_dt',dt);
-      localStorage.setItem('kp_lat',lat);
-      localStorage.setItem('kp_lon',lon);
+  // Submit -> chart (unchanged)
+  document.getElementById('birthForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const name = ($('#name').value||'').trim();
+    const dt   = $('#datetime').value;
+    const c    = parseCoords(latlonEl.value||'');
+    if(!name||!dt||!c){ status('Fill all fields (Name, Date/Time, Lat,Lon).'); return; }
+    if(c.lat<-90||c.lat>90){ status('Latitude must be between -90 and 90.'); return; }
+    if(c.lon<-180||c.lon>180){ status('Longitude must be between -180 and 180.'); return; }
+    localStorage.setItem('kp_name',name);
+    localStorage.setItem('kp_dt',dt);
+    localStorage.setItem('kp_lat',c.lat);
+    localStorage.setItem('kp_lon',c.lon);
+    status('Saved. Opening chart…', true);
+    location.href='./kp-chart.html';
+  });
 
-      status('Saved. Opening chart…', true);
-      location.href='./kp-chart.html';
-    });
-  </script>
-</body>
-</html>
+  // Status helper
+  function status(msg, ok=false){
+    const el = document.getElementById('status');
+    if(!el) return;
+    el.textContent = msg;
+    el.className = 'pill' + (ok?' ok':'');
+  }
+</script>

@@ -1,109 +1,65 @@
-<!-- 🌍 SAT/Maps Copy-Paste Helper -->
-<a href="index.html" class="home-btn">🏠 Home</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🪐 KP Report - Quantum Version</title>
+  <link rel="stylesheet" href="style.css" />
 
-<!-- Google Translate Button -->
-<div id="google_translate_element" style="float:right; margin-top:10px;"></div>
+  <!-- minimal extras (won't clash with your CSS) -->
+  <style>
+    .topbar{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;justify-content:space-between;z-index:999}
+    .home-btn{background:#0b1220;color:#7dd3fc;border:1px solid #1e293b;padding:6px 12px;border-radius:8px;text-decoration:none}
+    .helper{max-width:860px;margin:64px auto 0;background:#0b1220;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;color:#cdeafe}
+    .helper b{color:#93c5fd}
+    .helper code{background:#0a1a2c;border:1px solid #123;border-radius:6px;padding:2px 6px}
+  </style>
+</head>
+<body>
 
-<div class="helper" id="satHelper" style="margin-top:50px;">
-  <h3>Enter Birthplace Latitude & Longitude</h3>
-  <small>
-    Step 1 — Open your Maps / SAT app.<br>
-    Step 2 — Search for your birth location / country.<br>
-    Step 3 — Find the <b>Latitude, Longitude</b> values and <b>copy</b> them.<br>
-    Step 4 — Paste them below (e.g., <code>7.2862, 80.6316</code> or a link with @lat,lon).<br>
-    Step 5 — Click <b>Save Coords</b> (Your KP Report will auto-update).
-  </small>
-
-  <textarea id="pasteBox" rows="3" placeholder="Paste lat, lon or a link with @lat,lon"></textarea>
-  <div class="row">
-    <button id="btnPaste">📋 Paste from Clipboard</button>
-    <button id="btnParse">💾 Save Coords</button>
-    <span id="status" class="pill">Waiting…</span>
+  <!-- Top: Home + Translate -->
+  <div class="topbar">
+    <a class="home-btn" href="../index.html">🏠 Home</a>
+    <div id="google_translate_element"></div>
   </div>
 
-  <div class="row">
-    <button id="btnClear">❌ Clear Coords</button>
+  <!-- 📌 Short instructions only (no map/quick bar) -->
+  <div class="helper">
+    <b>How to copy Latitude & Longitude</b><br/>
+    1) Open your Maps / SAT app. 2) Search your birth place or country. 3) Find the
+    <b>Latitude, Longitude</b> numbers and <b>copy</b> them.
+    4) Paste where needed in the KP tools. Example format:
+    <code>7.2862, 80.6316</code> (or any link that contains <code>@lat,lon</code>).
   </div>
 
-  <small id="savedAs"></small>
-</div>
+  <!-- ⬇️ Your original report layout (unchanged) -->
+  <div class="report-container">
+    <h1>🪐 KP Astrology Report</h1>
+    <div class="field"><strong>Name:</strong> <span id="name">Loading...</span></div>
+    <div class="field"><strong>Date of Birth:</strong> <span id="dob">Loading...</span></div>
+    <div class="field"><strong>Time of Birth:</strong> <span id="tob">Loading...</span></div>
+    <div class="field"><strong>Place of Birth:</strong> <span id="pob">Loading...</span></div>
+    <div class="field"><strong>🌙 Moon Degree:</strong> <span id="moonDeg">Loading...</span></div>
+    <hr style="margin: 2rem 0; border-color: #38bdf8;">
+    <div class="field"><strong>🧠 Sub-Lord Prediction:</strong><br><span id="sublord">Loading...</span></div>
+  </div>
 
-<script>
-  // ---- parsing + saving ----
-  function tryParseCoords(text){
-    if(!text) return null;
-    let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
-    if(m) return { lat: parseFloat(m[1]), lon: parseFloat(m[3]) };
-    m = text.match(/@(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/);
-    if(m) return { lat: parseFloat(m[1]), lon: parseFloat(m[3]) };
-    return null;
-  }
-  function saveCoords(lat, lon){
-    localStorage.setItem('kp_lat', +lat);
-    localStorage.setItem('kp_lon', +lon);
-    const pob = document.getElementById('pob');
-    if(pob){ pob.textContent = `${(+lat).toFixed(6)}, ${(+lon).toFixed(6)}  (saved)`; }
-    window.dispatchEvent(new CustomEvent('kp:coords-updated', { detail: { lat:+lat, lon:+lon } }));
-  }
-  function ok(msg){ const s = document.getElementById('status'); s.className='pill ok'; s.textContent = msg; }
-  function bad(msg){ const s = document.getElementById('status'); s.className='pill bad'; s.textContent = msg; }
+  <!-- Scripts (unchanged) -->
+  <script src="ephemeris-data.js"></script>
+  <script src="kp-subload.js"></script>
+  <script src="kp-astro.js"></script>
+  <script src="print-report.js"></script>
 
-  // UI events
-  document.getElementById('btnPaste').addEventListener('click', async ()=>{
-    try{
-      const txt = await navigator.clipboard.readText();
-      document.getElementById('pasteBox').value = txt || '';
-      ok('Pasted. Click “Save Coords”.');
-    }catch(e){ bad('Clipboard blocked. Paste manually.'); }
-  });
-  document.getElementById('btnParse').addEventListener('click', ()=>{
-    const txt = document.getElementById('pasteBox').value.trim();
-    const c = tryParseCoords(txt);
-    if(!c){ bad('Could not detect coords.'); return; }
-    saveCoords(c.lat, c.lon);
-    ok('Saved!');
-    document.getElementById('savedAs').textContent = `Saved as: ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)}`;
-  });
-  document.getElementById('btnClear').addEventListener('click', ()=>{
-    localStorage.removeItem('kp_lat'); localStorage.removeItem('kp_lon');
-    ok('Cleared'); document.getElementById('savedAs').textContent = '';
-  });
-
-  // show existing if any
-  (function(){
-    const la = localStorage.getItem('kp_lat'), lo = localStorage.getItem('kp_lon');
-    if(la && lo){
-      const pob = document.getElementById('pob');
-      if(pob){ pob.textContent = `${(+la).toFixed(6)}, ${(+lo).toFixed(6)}  (saved)`; }
-      ok('Loaded saved coords');
-      document.getElementById('savedAs').textContent = `Saved as: ${(+la).toFixed(6)}, ${(+lo).toFixed(6)}`;
+  <!-- Google Translate -->
+  <script>
+    function googleTranslateElementInit(){
+      new google.translate.TranslateElement({
+        pageLanguage:'en',
+        includedLanguages:'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
     }
-  })();
-</script>
-
-<!-- Google Translate Script -->
-<script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'en',
-    includedLanguages: 'en,si,ta',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-  }, 'google_translate_element');
-}
-</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-<style>
-.home-btn {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  background: #0f172a;
-  color: #7dd3fc;
-  padding: 6px 12px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 14px;
-  z-index: 999;
-}
-</style>
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

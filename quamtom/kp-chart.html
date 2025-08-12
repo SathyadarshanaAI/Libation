@@ -62,7 +62,7 @@
           <div id="kpGrid"></div>
           <div id="ascNote"></div>
 
-          <!-- Dasha -->
+          <!-- Dasha (below wheel/grid on left for wide space on mobile) -->
           <div id="dashaWrap" class="card" style="margin-top:12px">
             <h3>Vimshottari Maha Dasha</h3>
             <table>
@@ -254,7 +254,7 @@
         const ascDeg = computeAscendantStrict(dt, +lat, +lon);
         drawKPBoxes(eph, ascDeg);
 
-        // Vimshottari Dasha (Moon degree FIRST, then date)
+        // Vimshottari Dasha (moon degree FIRST, then date) ✅ fixed param order
         const moonBody = (eph.planets||[]).find(p=>p.name==='Moon');
         if(moonBody && window.computeVimshottariDasha && window.renderDashaTable){
           const md = window.computeVimshottariDasha(norm360(moonBody.degree), dt, 120);

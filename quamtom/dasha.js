@@ -1,4 +1,4 @@
-<script>
+// quamtom/dasha.js
 (function () {
   // ---------- Vimshottari ----------
   const MD_ORDER = [
@@ -79,7 +79,7 @@
     return out;
   }
 
-  // ---- Sub-dasha (Bhukti) for a given Maha
+  // ---- Sub-dasha (Bhukti)
   function computeBhuktiForMahadasha(mahaLord, mahaStartDate, mahaYears) {
     const startIx = lordIndex(mahaLord);
     if (startIx < 0) return [];
@@ -95,7 +95,6 @@
       const partDays = Y2D(partYears);
       const end = addDays(cursor, partDays);
 
-      // clamp to the maha span
       const safeEnd = accDays + partDays <= spanDays + 0.5
         ? end
         : addDays(cursor, Math.max(0, spanDays - accDays));
@@ -105,7 +104,7 @@
       cursor = safeEnd;
 
       if (accDays >= spanDays - 0.5) break;
-      if (out.length > 20) break; // safety
+      if (out.length > 20) break;
     }
     return out;
   }
@@ -145,7 +144,6 @@
     });
   }
 
-  // Tap on Maha row → render Bhukti below
   function attachBhuktiOnClick(mahaTbodyId, bhuktiTbodyId, mahaList) {
     const tb = document.getElementById(mahaTbodyId);
     if (!tb) return;
@@ -168,4 +166,3 @@
   window.attachBhuktiOnClick       = attachBhuktiOnClick;
   window.formatDashaDate           = fmt;
 })();
-</script>

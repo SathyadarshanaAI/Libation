@@ -41,15 +41,18 @@
       <label>Timezone</label>
       <select id="timezone"></select>
       <label>Latitude</label>
-      <input id="lat" required placeholder="e.g. 7.2862"/>
+      <!-- required REMOVED to allow geocode-first -->
+      <input id="lat" placeholder="e.g. 7.2862"/>
       <label>Longitude</label>
-      <input id="lon" required placeholder="e.g. 80.6316"/>
+      <!-- required REMOVED to allow geocode-first -->
+      <input id="lon" placeholder="e.g. 80.6316"/>
       <label>Place</label>
       <input id="place" required placeholder="e.g. Kandy, Sri Lanka"/>
       <button type="submit">Generate Chart</button>
     </form>
     <div id="err" style="color:#f87171;margin-top:8px;"></div>
   </div>
+
   <div id="chartArea" style="display:none">
     <div class="card" id="summary"></div>
     <div class="card">
@@ -84,6 +87,7 @@
     <button id="shareBtn">🔗 Share Chart</button>
   </div>
 </div>
+
 <script>
   // ------ Timezone select ------
   const timezones = [
@@ -99,6 +103,7 @@
     timezone.appendChild(o);
   });
   timezone.value = "+05:30";
+
   // ------ Vimshottari Dasha Data ------
   const MD_ORDER = [
     { lord: "Ketu",    years: 7  },
@@ -122,6 +127,7 @@
     { name:'Shravana', lord:'Moon' },{ name:'Dhanishtha', lord:'Mars' },{ name:'Shatabhisha', lord:'Rahu' },
     { name:'Purva Bhadrapada', lord:'Jupiter' },{ name:'Uttara Bhadrapada', lord:'Saturn' },{ name:'Revati', lord:'Mercury' },
   ];
+
   // ------ Time/Date helpers ------
   function parseLocalISO(iso){
     if(!iso) return new Date();
@@ -148,42 +154,46 @@
     d.setMinutes(d.getMinutes() - sign*m);
     return d;
   }
-  // ------ Vimshottari Dasha Calculation ------
+
+  // ------ Math helpers ------
   function norm360(d){ return ((d%360)+360)%360; }
   const NAK_LEN = 360/27; // 13°20'
   function nakshatraLordIndex(moonDeg){
     const ix27 = Math.floor(norm360(moonDeg) / NAK_LEN);
     return ix27 % 9;
   }
+
+  // ------ Vimshottari Dasha ------
   function computeVimshottariDasha(moonDeg, birthISO, maxYears = 120){
+    if(!Number.isFinite(moonDeg)) return [];
     const startDate = parseLocalISO(birthISO);
     const orderStart = nakshatraLordIndex(moonDeg);
     const posInNak = norm360(moonDeg) % NAK_LEN;
-    const fracLeft = 1 - (posInNak / NAK_LEN);
+    const fracLeft = Math.min(1, Math.max(1e-6, 1 - (posInNak / NAK_LEN)));
     const startLord = MD_ORDER[orderStart];
 
     const out = [];
     let cursor = new Date(startDate.getTime());
 
-    // first (balance) dasha
     const firstYears = startLord.years * fracLeft;
     let end = addDays(cursor, Y2D(firstYears));
     out.push({ lord: startLord.lord, start: new Date(cursor), end, years: firstYears });
 
     cursor = new Date(end.getTime());
-
-    // subsequent full dashas
     let totalYears = firstYears;
     let i = (orderStart + 1) % 9;
+    let safety = 0;
+
     while (totalYears < maxYears - 1e-6) {
+      if (++safety > 50) break;
       const lord = MD_ORDER[i];
       const durYears = Math.min(lord.years, Math.max(0, maxYears - totalYears));
+      if (durYears <= 1e-6) break;
       const nextEnd = addDays(cursor, Y2D(durYears));
       out.push({ lord: lord.lord, start: new Date(cursor), end: nextEnd, years: durYears });
       totalYears += durYears;
       cursor = nextEnd;
       i = (i + 1) % 9;
-      if (out.length > 60) break;
     }
     return out;
   }
@@ -207,7 +217,8 @@
     }
     return out;
   }
-  // ------ Moon Sub-Lord Calculation ------
+
+  // ------ Sub-Lord helpers ------
   function subSegments(startLord){
     const i = MD_ORDER.findIndex(v=>v.lord===startLord);
     const seq = [...MD_ORDER.slice(i), ...MD_ORDER.slice(0,i)];
@@ -229,7 +240,6 @@
     const seg = subSegments(nak.lord).find(s=>minutes>=s.from && minutes<s.to) || { lord:nak.lord };
     return seg.lord;
   }
-  // ------ KP Cuspal Sub-Lord Calculation (mock version) ------
   function calculateCuspalSubLords(ascDeg){
     let lords = [];
     for(let i=0; i<12; i++){
@@ -239,6 +249,7 @@
     }
     return lords;
   }
+
   // ------ Ruling Planets & Significators (mock) ------
   function getRulingPlanets(planets){
     return "Ruling Planets: " + planets.slice(0,3).map(p=>p.name).join(', ');
@@ -246,10 +257,13 @@
   function getSignificators(planets){
     return "Significators: " + planets.filter((p,i)=>i%2==0).map(p=>p.name).join(', ');
   }
+
   // ------ KP Chart Demo (Mock) ------
   const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
   function getMockPlanets(dt, lat, lon){
-    const t = parseLocalISO(dt).getTime()/86400000;
+    const parsedDate = parseLocalISO(dt);
+    if (!(parsedDate instanceof Date) || isNaN(parsedDate)) return [];
+    const t = parsedDate.getTime()/86400000;
     return [
       { name:'Sun', degree: norm360((t*0.985+120)%360) },
       { name:'Moon', degree: norm360((t*13.176+60)%360) },
@@ -261,6 +275,7 @@
       { name:'Rahu', degree: 45 },{ name:'Ketu', degree: 225 }
     ];
   }
+
   // ------ Simple Place Geocode (OpenStreetMap) ------
   async function geocodePlace(q){
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
@@ -268,7 +283,8 @@
     if(!res.length) return null;
     return { lat:+res[0].lat, lon:+res[0].lon, label:res[0].display_name };
   }
-  // ------ UI Logic ------
+
+  // ------ UI Elements ------
   const birthForm = document.getElementById('birthForm');
   const errBox = document.getElementById('err');
   const chartArea = document.getElementById('chartArea');
@@ -282,53 +298,77 @@
   const significatorsDiv = document.getElementById('significators');
   const pdfBtn = document.getElementById('pdfBtn');
   const shareBtn = document.getElementById('shareBtn');
+
+  // ------ Submit: geocode BEFORE validate ------
   birthForm.onsubmit = async function(e){
     e.preventDefault();
     errBox.textContent = '';
-    let name = document.getElementById('name').value.trim();
-    let dt = document.getElementById('datetime').value;
-    let tz = document.getElementById('timezone').value;
-    let lat = parseFloat(document.getElementById('lat').value);
-    let lon = parseFloat(document.getElementById('lon').value);
-    let place = document.getElementById('place').value.trim();
-    if(!name || !dt || isNaN(lat) || isNaN(lon) || !place){
+
+    let nameVal = document.getElementById('name').value.trim();
+    let dtVal   = document.getElementById('datetime').value;
+    let tzVal   = document.getElementById('timezone').value;
+    let latInput = document.getElementById('lat');
+    let lonInput = document.getElementById('lon');
+    let placeVal = document.getElementById('place').value.trim();
+
+    let latNum = latInput.value.trim() === '' ? NaN : Number(latInput.value.trim());
+    let lonNum = lonInput.value.trim() === '' ? NaN : Number(lonInput.value.trim());
+    let hasCoords = Number.isFinite(latNum) && Number.isFinite(lonNum);
+
+    // If place provided & coords missing => geocode first
+    if (placeVal && !hasCoords) {
+      errBox.textContent = 'Searching place...';
+      const geo = await geocodePlace(placeVal);
+      if(!geo){ errBox.textContent = 'Place not found. Enter coordinates.'; return; }
+      latNum = geo.lat; lonNum = geo.lon; hasCoords = true;
+      latInput.value = String(latNum);
+      lonInput.value = String(lonNum);
+      errBox.textContent = '';
+    }
+
+    // Now validate all
+    if (!nameVal || !dtVal || !placeVal || !Number.isFinite(latNum) || !Number.isFinite(lonNum)) {
       errBox.textContent = 'Please fill all fields correctly.';
       return;
     }
-    if(place && (!lat || !lon)){
-      errBox.textContent = 'Searching place...';
-      const geo = await geocodePlace(place);
-      if(!geo){
-        errBox.textContent = 'Place not found. Enter coordinates.';
-        return;
-      }
-      lat = geo.lat; lon = geo.lon;
-      document.getElementById('lat').value = lat;
-      document.getElementById('lon').value = lon;
-    }
-    showChart(name, dt, tz, lat, lon, place);
+
+    showChart(nameVal, dtVal, tzVal, latNum, lonNum, placeVal);
   };
+
   function showChart(name, dt, tz, lat, lon, place){
     chartArea.style.display = '';
+    const dtUTC = toUTC(dt, tz);
     summary.innerHTML = `<span class="pill">Name: ${name}</span>
-      <span class="pill">Date/Time: ${dt}</span>
+      <span class="pill">Local: ${dt}</span>
+      <span class="pill">UTC: ${fmt(dtUTC)}</span>
       <span class="pill">TZ: ${tz}</span>
       <span class="pill">Lat: ${lat}</span>
       <span class="pill">Lon: ${lon}</span>
       <span class="pill">Place: ${place}</span>`;
-    const dtUTC = toUTC(dt, tz);
+
     const planets = getMockPlanets(dt, lat, lon);
+    if (!planets.length) { errBox.textContent = 'Invalid date/time.'; return; }
+
     const moon = planets.find(p=>p.name==='Moon');
+    if (!moon || !Number.isFinite(moon.degree)) {
+      errBox.textContent = 'Moon calculation failed.'; return;
+    }
+
     const maha = computeVimshottariDasha(moon.degree, dt, 120);
     dashaTable.innerHTML = '';
-    maha.forEach((r,i)=>{
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
-      tr.style.cursor = 'pointer';
-      tr.onclick = ()=>{ showBhukti(r); };
-      dashaTable.appendChild(tr);
-    });
-    showBhukti(maha[0]);
+    if (maha.length){
+      maha.forEach((r,i)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
+        tr.style.cursor = 'pointer';
+        tr.onclick = ()=>{ showBhukti(r); };
+        dashaTable.appendChild(tr);
+      });
+      showBhukti(maha[0]);
+    } else {
+      errBox.textContent = 'Dasha calculation failed.';
+    }
+
     kpBoxes.innerHTML = '';
     planets.forEach((p,i)=>{
       const signIx = Math.floor(norm360(p.degree)/30);
@@ -337,11 +377,13 @@
       box.innerHTML = `<div>${p.name}</div><div>${SIGNS[signIx]} ${norm360(p.degree).toFixed(2)}°</div>`;
       kpBoxes.appendChild(box);
     });
+
     moonSubLordDiv.innerHTML = `🌙 Moon Sub-Lord: <b>${calculateMoonSubLord(moon.degree)}</b>`;
     cuspalSubLordsDiv.innerHTML = "<b>Cuspal Sub-Lords:</b> " + calculateCuspalSubLords(planets[0].degree).join(', ');
     rulingPlanetsDiv.innerHTML = getRulingPlanets(planets);
     significatorsDiv.innerHTML = getSignificators(planets);
   }
+
   function showBhukti(maha){
     if(!maha) return;
     bhuktiTable.innerHTML = '';
@@ -352,6 +394,8 @@
       bhuktiTable.appendChild(tr);
     });
   }
+
+  // ------ PDF & Share ------
   pdfBtn.onclick = ()=>{ window.print(); };
   shareBtn.onclick = ()=>{
     const params = [
@@ -366,16 +410,18 @@
     navigator.clipboard.writeText(url);
     alert('Chart link copied!');
   };
+
+  // ------ Deep-link restore ------
   function fromParams(){
     const u = new URL(location.href);
     const get = (k) => u.searchParams.get(k) || '';
     if(get('name') && get('dt') && get('lat') && get('lon') && get('place')){
-      document.getElementById('name').value = get('name');
-      document.getElementById('datetime').value = get('dt');
+      document.getElementById('name').value = decodeURIComponent(get('name'));
+      document.getElementById('datetime').value = decodeURIComponent(get('dt'));
       document.getElementById('timezone').value = get('tz')||'+05:30';
-      document.getElementById('lat').value = get('lat');
-      document.getElementById('lon').value = get('lon');
-      document.getElementById('place').value = get('place');
+      document.getElementById('lat').value = decodeURIComponent(get('lat'));
+      document.getElementById('lon').value = decodeURIComponent(get('lon'));
+      document.getElementById('place').value = decodeURIComponent(get('place'));
       birthForm.dispatchEvent(new Event('submit'));
     }
   }

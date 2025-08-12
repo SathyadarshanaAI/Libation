@@ -1,4 +1,3 @@
-<!-- quamtom/kp-chart.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,7 +37,9 @@
     /* Dasha tables */
     #dashaWrap{margin-top:18px}
     #dashaWrap table th:nth-child(1){width:36px}
-
+    #dashaBody tr{cursor:pointer}
+    #dashaBody tr:hover{background:#0f2339}
+    #hintTap{color:#93c5fd;font-size:13px;margin:-6px 0 10px}
     @media (max-width:860px){ .grid{grid-template-columns:1fr} }
   </style>
 </head>
@@ -63,9 +64,10 @@
           <div id="kpGrid"></div>
           <div id="ascNote"></div>
 
-          <!-- Dasha (left column) -->
+          <!-- Dasha (below wheel/grid on left for wide space on mobile) -->
           <div id="dashaWrap" class="card" style="margin-top:12px">
             <h3>Vimshottari Maha Dasha</h3>
+            <div id="hintTap">Tap a Maha Dasha row to see its Bhukti breakdown.</div>
             <table>
               <thead>
                 <tr>
@@ -79,7 +81,7 @@
               <tbody id="dashaBody"></tbody>
             </table>
 
-            <h3 style="margin-top:16px">Bhukti (Sub-Dasha)</h3>
+            <h3 style="margin-top:18px">Bhukti (Sub-Dasha)</h3>
             <table>
               <thead>
                 <tr>
@@ -239,7 +241,7 @@
           showErr('No wheel renderer found. Check chart-ui.js / chart-engine.js');
         }
 
-        // Positions table
+        // Table (Calculated Positions)
         const tbody = document.querySelector('#calcTable tbody');
         tbody.innerHTML='';
         (eph.planets || []).forEach(p=>{
@@ -269,14 +271,14 @@
         const ascDeg = computeAscendantStrict(dt, +lat, +lon);
         drawKPBoxes(eph, ascDeg);
 
-        // --- Vimshottari Maha Dasha (+ Bhukti on row click)
+        // ---------- Vimshottari ----------
         const moonBody = (eph.planets||[]).find(p=>p.name==='Moon');
         if(moonBody && window.computeVimshottariDasha && window.renderDashaTable){
-          // NOTE: (moonDeg, birthISO)
-          const md = window.computeVimshottariDasha(norm360(moonBody.degree), dt, 120);
-          window.renderDashaTable('dashaBody', md.slice(0,18));
+          // Note: param order => (moonDeg, birthISO, maxYears)
+          const maha = window.computeVimshottariDasha(norm360(moonBody.degree), dt, 120);
+          window.renderDashaTable('dashaBody', maha.slice(0, 18));
           if (window.attachBhuktiOnClick) {
-            window.attachBhuktiOnClick('dashaBody','bhuktiBody', md);
+            window.attachBhuktiOnClick('dashaBody','bhuktiBody', maha);
           }
         }
 

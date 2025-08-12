@@ -34,6 +34,7 @@
     .pill{display:inline-block;border:1px solid var(--line);background:#091426;border-radius:999px;padding:6px 10px;margin-top:8px}
     .ok{border-color:#22c55e}
     #map{height:230px;border:1px solid var(--line);border-radius:10px}
+
     .hint{color:#93c5fd;font-size:14px}
   </style>
 </head>
@@ -128,10 +129,17 @@
       el.textContent = msg; el.className = 'pill' + (ok?' ok':'');
     };
 
-    // Simple geocoder (Nominatim)
+    // Simple geocoder (Nominatim) — send a UA & no-referrer to avoid some 403s
     async function geocodePlace(q){
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
-      const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'SathyadarshanaKP/1.0 (Netlify static; contact: example@example.com)'
+        },
+        referrerPolicy: 'no-referrer'
+      });
       if(!res.ok) throw new Error('Search failed');
       const data = await res.json();
       if(!data.length) return null;

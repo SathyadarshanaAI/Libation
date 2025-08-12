@@ -29,13 +29,11 @@
     .card h2{margin:6px 0 12px}
     label{display:block;margin:10px 0 6px;color:var(--muted)}
     input,button,textarea{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#091426;color:#cdeafe;font-size:15px}
-    input::placeholder, textarea::placeholder{color:#86a2c4}
     button{cursor:pointer}
     .btn{margin-top:12px}
     .pill{display:inline-block;border:1px solid var(--line);background:#091426;border-radius:999px;padding:6px 10px;margin-top:8px}
     .ok{border-color:#22c55e}
     #map{height:230px;border:1px solid var(--line);border-radius:10px}
-
     .hint{color:#93c5fd;font-size:14px}
   </style>
 </head>
@@ -52,13 +50,13 @@
         <h2>KP – Start</h2>
         <form id="birthForm" novalidate>
           <label>Name</label>
-          <input id="name" required placeholder="Your name" autocomplete="off"/>
+          <input id="name" required placeholder="Your name"/>
 
           <label>Birth Date & Time</label>
           <input id="datetime" type="datetime-local" required/>
 
           <label>Lat, Lon (deg)</label>
-          <input id="latlon" required placeholder="7.2862, 80.6316" inputmode="decimal" autocomplete="off"/>
+          <input id="latlon" required placeholder="7.2862, 80.6316"/>
 
           <button class="btn" type="submit">Start → Chart</button>
         </form>
@@ -97,7 +95,7 @@
       }, 'google_translate_element');
     }
   </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -105,20 +103,13 @@
           crossorigin="anonymous"></script>
 
   <script>
-    // --- local datetime (avoid UTC shift from toISOString)
-    function localDatetimeForInput(d=new Date()){
-      const pad = n=> String(n).padStart(2,'0');
-      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    }
-
     // Prefill
     window.addEventListener('load', ()=>{
       const dt  = localStorage.getItem('kp_dt');
       const nm  = localStorage.getItem('kp_name');
       const la  = localStorage.getItem('kp_lat');
       const lo  = localStorage.getItem('kp_lon');
-
-      document.getElementById('datetime').value = (dt || localDatetimeForInput());
+      document.getElementById('datetime').value = (dt || new Date().toISOString()).slice(0,16);
       if(nm) document.getElementById('name').value = nm;
       if(la && lo) document.getElementById('latlon').value = `${la}, ${lo}`;
     });
@@ -126,10 +117,9 @@
     // Parse helpers
     function parseCoords(text){
       if(!text) return null;
-      const t = String(text).trim();
-      let m = t.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
+      let m = text.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
       if(m) return {lat:+m[1], lon:+m[3]};
-      m = t.match(/@(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/);
+      m = text.match(/@(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/);
       if(m) return {lat:+m[1], lon:+m[3]};
       return null;
     }
@@ -148,39 +138,35 @@
       return { lat: +data[0].lat, lon: +data[0].lon, label: data[0].display_name };
     }
 
-    // Leaflet Map (guard for availability)
-    let map, marker;
-    (function initMap(){
-      if(!window.L){ console.warn('Leaflet not loaded'); return; }
-      map = L.map('map',{zoomControl:true});
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-        maxZoom:19, attribution:'© OpenStreetMap'
-      }).addTo(map);
-      const SL = [7.8731,80.7718]; // Sri Lanka default
-      marker = L.marker(SL,{draggable:true}).addTo(map);
-      map.setView(SL, 7);
+    // Leaflet Map
+    const map = L.map('map',{zoomControl:true});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom:19, attribution:'© OpenStreetMap'
+    }).addTo(map);
+    let marker = L.marker([7.8731,80.7718],{draggable:true}).addTo(map);
+    map.setView([7.8731,80.7718], 7); // Sri Lanka default
 
-      map.on('click', e=>{
-        const {lat,lng} = e.latlng;
-        document.getElementById('latlon').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-        setMap(lat,lng);
-      });
-      marker.on('dragend', ()=>{
-        const p = marker.getLatLng();
-        document.getElementById('latlon').value = `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`;
-      });
-
-      // If field already has coords, center map there
+    function setMap(lat, lon, zoom){
+      marker.setLatLng([lat,lon]);
+      map.setView([lat,lon], zoom || map.getZoom());
+    }
+    // Click to set
+    map.on('click', e=>{
+      const {lat,lng} = e.latlng;
+      document.getElementById('latlon').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+      setMap(lat,lng);
+    });
+    // Drag to set
+    marker.on('dragend', ()=>{
+      const p = marker.getLatLng();
+      document.getElementById('latlon').value = `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`;
+    });
+    // If field already has coords, center map there
+    (function syncInitial(){
       const raw = (document.getElementById('latlon').value||'').trim();
       const c = parseCoords(raw);
       if(c) setMap(c.lat,c.lon,12);
     })();
-
-    function setMap(lat, lon, zoom){
-      if(!marker || !map) return;
-      marker.setLatLng([lat,lon]);
-      map.setView([lat,lon], zoom || map.getZoom());
-    }
 
     // Paste & Extract
     document.getElementById('btnPaste').addEventListener('click', async ()=>{
@@ -189,34 +175,29 @@
         document.getElementById('pasteBox').value = t || '';
       }catch{/* ignore */}
     });
-
-    let extractBusy = false;
     document.getElementById('btnExtract').addEventListener('click', async ()=>{
-      if(extractBusy) return;
-      extractBusy = true;
       const t = document.getElementById('pasteBox').value.trim();
       const out = document.getElementById('found');
 
-      const c = parseCoords(t); // 1) direct coords?
+      // 1) direct coords?
+      const c = parseCoords(t);
       if(c){
         document.getElementById('latlon').value = `${c.lat}, ${c.lon}`;
         setMap(c.lat, c.lon, 13);
         out.textContent = `Detected → ${c.lat.toFixed(6)}, ${c.lon.toFixed(6)} (filled)`;
-        extractBusy = false; return;
+        return;
       }
-      if(!t){ out.textContent = 'Enter a place (e.g., Kandy, Sri Lanka).'; extractBusy = false; return; }
-
+      // 2) geocode place
+      if(!t){ out.textContent = 'Enter a place (e.g., Kandy, Sri Lanka).'; return; }
       out.textContent = 'Searching…';
       try{
         const g = await geocodePlace(t);
-        if(!g){ out.textContent = 'No results. Try a broader place or add the country.'; extractBusy = false; return; }
+        if(!g){ out.textContent = 'No results. Try a broader place or add the country.'; return; }
         document.getElementById('latlon').value = `${g.lat.toFixed(6)}, ${g.lon.toFixed(6)}`;
         setMap(g.lat, g.lon, 13);
         out.textContent = `Found: ${g.label} → ${g.lat.toFixed(6)}, ${g.lon.toFixed(6)} (filled)`;
       }catch(e){
         out.textContent = 'Search failed. Please try again.';
-      }finally{
-        extractBusy = false;
       }
     });
 
@@ -224,15 +205,15 @@
     document.getElementById('birthForm').addEventListener('submit', e=>{
       e.preventDefault();
       const name=(document.getElementById('name').value||'').trim();
-      const dt=(document.getElementById('datetime').value||'').trim();
-      const cc = parseCoords((document.getElementById('latlon').value||'').trim());
+      const dt=document.getElementById('datetime').value;
+      const cc = parseCoords(document.getElementById('latlon').value||'');
       if(!name||!dt||!cc){ status('Fill all fields (Name, Date/Time, Lat,Lon).'); return; }
       const {lat,lon} = cc;
       if(lat<-90||lat>90){ status('Latitude must be between -90 and 90.'); return; }
       if(lon<-180||lon>180){ status('Longitude must be between -180 and 180.'); return; }
 
       localStorage.setItem('kp_name',name);
-      localStorage.setItem('kp_dt',dt);  // already local time "YYYY-MM-DDThh:mm"
+      localStorage.setItem('kp_dt',dt);
       localStorage.setItem('kp_lat',lat);
       localStorage.setItem('kp_lon',lon);
 

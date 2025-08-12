@@ -1,4 +1,4 @@
-// quamtom/dasha.js
+<script>
 (function () {
   // ---------- Vimshottari ----------
   const MD_ORDER = [
@@ -80,8 +80,6 @@
   }
 
   // ---- Sub-dasha (Bhukti) for a given Maha
-  // Rule: each bhukti length = MAHA_length * (bhuktiLordYears / 120),
-  // sequence starts from MAHA lord.
   function computeBhuktiForMahadasha(mahaLord, mahaStartDate, mahaYears) {
     const startIx = lordIndex(mahaLord);
     if (startIx < 0) return [];
@@ -147,8 +145,7 @@
     });
   }
 
-  // Convenience: attach click on Maha rows to render Bhukti
-  // Usage: attachBhuktiOnClick('dashaBody','bhuktiBody', mahaList)
+  // Tap on Maha row → render Bhukti below
   function attachBhuktiOnClick(mahaTbodyId, bhuktiTbodyId, mahaList) {
     const tb = document.getElementById(mahaTbodyId);
     if (!tb) return;
@@ -171,3 +168,4 @@
   window.attachBhuktiOnClick       = attachBhuktiOnClick;
   window.formatDashaDate           = fmt;
 })();
+</script>

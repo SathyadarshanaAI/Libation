@@ -1,4 +1,3 @@
-<!-- index.html (with EN/SI toggle; structure unchanged) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,30 +20,13 @@
     .card ul{ margin:0; padding:0; list-style:none; color:var(--muted); font-size:14.5px }
     .card ul li{ margin:3px 0 }
     footer{ margin:26px 0 32px; padding-top:14px; border-top:1px solid var(--accent); color:#7dd3fc; font-size:14px; }
-    /* language bar */
-    .langbar{
-      position:fixed; right:12px; top:12px; z-index:10; display:flex; gap:6px;
-      background:#0b1220; border:1px solid #1e293b; padding:6px 8px; border-radius:10px;
-      box-shadow:0 2px 10px rgba(0,0,0,.25)
-    }
-    .langbar button{
-      background:transparent; color:#7dd3fc; border:0; cursor:pointer; padding:4px 8px;
-      border-radius:8px; font-weight:600
-    }
-    .langbar button.active{ background:#0f2339; color:#e0f2fe }
   </style>
 </head>
 <body>
 
-  <!-- Language toggle (does not change layout) -->
-  <div class="langbar" aria-label="Language">
-    <button data-lang="en" class="active">EN</button>
-    <button data-lang="si">SI</button>
-  </div>
-
   <header>
-    <h1 data-i18n="title">Sathyadarshana</h1>
-    <p data-i18n="tagline">The Light of Truth – Explore, Learn, and Grow Spiritually</p>
+    <h1>Sathyadarshana</h1>
+    <p>The Light of Truth – Explore, Learn, and Grow Spiritually</p>
   </header>
 
   <section>
@@ -52,7 +34,7 @@
       <!-- Astrology -->
       <a class="card" href="/astrology">
         <div style="font-size:28px">🪐</div>
-        <h2 data-i18n="astrology">Astrology</h2>
+        <h2>Astrology</h2>
         <ul>
           <li>KP Charts</li>
           <li>NASA Data</li>
@@ -121,52 +103,9 @@
   </section>
 
   <footer>
-    <span data-i18n="copyright">© 2025 Sathyadarshana · Creative Concept by Anurudda · Executed by Buddhi AI
-      <br>All Rights Reserved — High Copyright Protection Enabled</span>
+    © 2025 Sathyadarshana · Creative Concept by Anurudda · Executed by Buddhi AI
+    <br>All Rights Reserved — High Copyright Protection Enabled
   </footer>
 
-  <!-- Lightweight i18n -->
-  <script>
-  (function(){
-    const STR = {
-      en:{
-        title:"Sathyadarshana",
-        tagline:"The Light of Truth – Explore, Learn, and Grow Spiritually",
-        astrology:"Astrology",
-        copyright:"© 2025 Sathyadarshana · Creative Concept by Anurudda · Executed by Buddhi AI<br>All Rights Reserved — High Copyright Protection Enabled",
-      },
-      si:{
-        title:"සත්‍යදර්ශන",
-        tagline:"සත්‍යයේ ආලෝකය — සොයන්න, ඉගෙනගන්න, ආධ්‍යාත්මිකව වර්ධනය වන්න",
-        astrology:"ජ්යෝතිෂ්ය",
-        copyright:"© 2025 සත්‍යදර්ශන · නිර්මාණය — අනුරුද්ද · ක්‍රියාකාරී — බුද්ධි AI<br>සියලු හිමිකම් ඇවිරිණි",
-      }
-    };
-
-    const bar = document.querySelector('.langbar');
-    const btns = bar.querySelectorAll('button');
-
-    function setLang(lang){
-      const dict = STR[lang] || STR.en;
-      document.querySelectorAll('[data-i18n]').forEach(el=>{
-        const key = el.getAttribute('data-i18n');
-        if(dict[key] !== undefined){
-          el.innerHTML = dict[key];
-        }
-      });
-      btns.forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
-      localStorage.setItem('lang', lang);
-    }
-
-    bar.addEventListener('click', (e)=>{
-      const b = e.target.closest('button[data-lang]');
-      if(!b) return;
-      setLang(b.dataset.lang);
-    });
-
-    setLang(localStorage.getItem('lang') || 'en');
-  })();
-  </script>
 </body>
 </html>
-```0

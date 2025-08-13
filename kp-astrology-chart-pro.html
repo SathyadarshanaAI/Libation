@@ -6,252 +6,382 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="description" content="KP Astrology chart, Vimshottari Dasha, Bhukti, Sub-Lord, Cuspal Sub-Lord, Ruling Planets, PDF, share, timezone, geocode, map.">
   <link rel="icon" href="../assets/favicon.png">
+
   <style>
-    body { background: #181e29; color: #e0f2fe; font-family: system-ui, Arial; margin: 0;}
-    .wrap { max-width: 900px; margin: 28px auto; padding: 18px; }
-    .card { background: #222c3b; border: 1px solid #2a3652; border-radius: 14px; padding: 20px; margin-bottom: 20px; }
-    label { color: #93c5fd; display: block; margin-top: 14px; margin-bottom: 4px;}
-    input, button, select { width: 100%; padding: 10px; border-radius: 9px; border: 1px solid #2a3652; background: #1a2335; color: #cdeafe; font-size: 15px;}
-    button { cursor: pointer; background: #38bdf8; color: #15202b; font-weight: bold; margin-top: 18px;}
-    .pill {display: inline-block; background: #1a2335; border: 1px solid #2a3652; border-radius: 999px; padding: 7px 16px; margin-right: 8px;}
-    table { width: 100%; border-collapse: collapse; margin-top: 18px;}
-    th, td { padding: 8px; border-bottom: 1px solid #374151; text-align: left;}
-    th { color: #93c5fd; font-weight: 600;}
-    .mono { font-variant-numeric: tabular-nums; }
-    #kpBoxes { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-top: 22px;}
-    .kpBox { background: #29344a; border-radius: 10px; min-height: 65px; text-align: center; padding: 10px;}
-    .kpBox.asc { box-shadow: 0 0 0 2px #38bdf8 inset;}
-    #moonSubLord, #rulingPlanets, #cuspalSubLords, #significators, #planetStrengths { margin-top: 15px; }
-    #moonSubLord b, #cuspalSubLords b { color: #38bdf8; }
-    #pdfBtn, #shareBtn, #saveBtn, #loadBtn, #modeBtn { width: auto; margin-right:11px; }
+    body{background:#181e29;color:#e0f2fe;font-family:system-ui,Arial;margin:0}
+    .wrap{max-width:900px;margin:28px auto;padding:18px}
+    .card{background:#222c3b;border:1px solid #2a3652;border-radius:14px;padding:20px;margin-bottom:20px}
+    label{color:#93c5fd;display:block;margin-top:14px;margin-bottom:4px}
+    input,button,select{width:100%;padding:10px;border-radius:9px;border:1px solid #2a3652;background:#1a2335;color:#cdeafe;font-size:15px}
+    button{cursor:pointer;background:#38bdf8;color:#15202b;font-weight:bold;margin-top:18px}
+    .pill{display:inline-block;background:#1a2335;border:1px solid #2a3652;border-radius:999px;padding:7px 16px;margin-right:8px}
+    table{width:100%;border-collapse:collapse;margin-top:18px}
+    th,td{padding:8px;border-bottom:1px solid #374151;text-align:left}
+    th{color:#93c5fd;font-weight:600}
+    .mono{font-variant-numeric:tabular-nums}
+    #kpBoxes{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+    .kpBox{background:#29344a;border-radius:10px;min-height:65px;text-align:center;padding:10px}
+    .kpBox.asc{box-shadow:0 0 0 2px #38bdf8 inset}
+    #moonSubLord,#rulingPlanets,#cuspalSubLords,#significators,#planetStrengths{margin-top:15px}
+    #moonSubLord b,#cuspalSubLords b{color:#38bdf8}
+    #pdfBtn,#shareBtn,#saveBtn,#loadBtn,#modeBtn{width:auto;margin-right:11px}
     .toplink{position:fixed;left:14px;top:14px;background:#0b1220;color:#7dd3fc;padding:7px 14px;border-radius:9px;text-decoration:none;z-index:5}
-    .footer-info{margin-top:22px;color:#60a5fa;font-size:15px;border-top:1px solid #374151;padding-top:10px;}
-    #predictionBox{margin-top:18px; background:#23282e;border-left:5px solid #38bdf8;}
-    #mapPreview { width: 100%; height: 240px; margin-top: 10px; border: 1px solid #374151; border-radius: 12px; display:none;}
-    #mapPreview iframe { width:100%; height:100%; border:0; border-radius:12px;}
-    @media (max-width:700px){ #kpBoxes { grid-template-columns:repeat(2,1fr);} }
-    @media print {
-      body { background: #fff; color: #111; }
-      .card { background: #fff; border-color: #ccc; color: #111;}
-      .toplink, #shareBtn, #saveBtn, #loadBtn, #modeBtn { display: none !important;}
-      .footer-info { color:#333 !important; }
-      #mapPreview {display:none !important;}
+    .footer-info{margin-top:22px;color:#60a5fa;font-size:15px;border-top:1px solid #374151;padding-top:10px}
+    #predictionBox{margin-top:18px;background:#23282e;border-left:5px solid #38bdf8}
+    #mapPreview{width:100%;height:240px;margin-top:10px;border:1px solid #374151;border-radius:12px;display:none}
+    #mapPreview iframe{width:100%;height:100%;border:0;border-radius:12px}
+    .translate-wrap{position:fixed;right:12px;top:12px;z-index:6}
+    @media (max-width:700px){#kpBoxes{grid-template-columns:repeat(2,1fr)}}
+    @media print{
+      body{background:#fff;color:#111}
+      .card{background:#fff;border-color:#ccc;color:#111}
+      .toplink,#shareBtn,#saveBtn,#loadBtn,#modeBtn,.translate-wrap{display:none!important}
+      .footer-info{color:#333!important}
+      #mapPreview{display:none!important}
     }
-    .dark { background: #181e29 !important; color: #e0f2fe !important;}
-    .light { background: #f9fafb !important; color: #212121 !important;}
-    .light .card { background:#fff !important; border-color:#bbb !important; color:#222;}
-    .light #predictionBox{background:#f1f5f9;}
+    .dark{background:#181e29!important;color:#e0f2fe!important}
+    .light{background:#f9fafb!important;color:#212121!important}
+    .light .card{background:#fff!important;border-color:#bbb!important;color:#222}
+    .light #predictionBox{background:#f1f5f9}
   </style>
-  <div id="google_translate_element" style="float:right;margin:10px 0"></div>
-  <script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement(
-      {pageLanguage: 'en', includedLanguages: 'en,si,ta', layout: google.translate.TranslateElement.InlineLayout.SIMPLE},
-      'google_translate_element'
-    );
-  }
+
+  <script>
+    // Google Translate init
+    function googleTranslateElementInit(){
+      new google.translate.TranslateElement({
+        pageLanguage:'en',
+        includedLanguages:'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
   </script>
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
+
 <body class="dark">
-<a class="toplink" href="../astrology.html">← Dashboard</a>
-<div class="wrap">
-  <div class="card">
-    <h2>KP Astrology Chart Pro</h2>
-    <form id="birthForm" autocomplete="off">
-      <label>Name</label>
-      <input id="name" required placeholder="Your name"/>
-      <label>Birth Date & Time</label>
-      <input id="datetime" type="datetime-local" required autocomplete="off"/>
-      <label>Timezone</label>
-      <select id="timezone"></select>
-      <label>Latitude</label>
-      <input id="lat" required placeholder="e.g. 7.2862" step="any" inputmode="decimal" pattern="^-?\d+(\.\d+)?$"/>
-      <label>Longitude</label>
-      <input id="lon" required placeholder="e.g. 80.6316" step="any" inputmode="decimal" pattern="^-?\d+(\.\d+)?$"/>
-      <label>Place</label>
-      <div style="display:flex;gap:7px;">
-        <input id="place" required placeholder="e.g. Kandy, Sri Lanka" style="flex:1"/>
-        <button type="button" id="geocodeBtn" style="width:auto;background:#0ea5e9;color:#fff;margin:0 0 0 3px;">Find</button>
+  <a class="toplink" href="/astrology">← Dashboard</a>
+  <div class="translate-wrap"><div id="google_translate_element"></div></div>
+
+  <div class="wrap">
+    <div class="card">
+      <h2>KP Astrology Chart Pro</h2>
+
+      <form id="birthForm" autocomplete="off">
+        <label>Name</label>
+        <input id="name" required placeholder="Your name"/>
+
+        <label>Birth Date &amp; Time</label>
+        <input id="datetime" type="datetime-local" required autocomplete="off"/>
+
+        <label>Timezone</label>
+        <select id="timezone"></select>
+
+        <label>Latitude</label>
+        <input id="lat" required placeholder="e.g. 7.2862" step="any" inputmode="decimal" pattern="^-?\\d+(\\.\\d+)?$"/>
+
+        <label>Longitude</label>
+        <input id="lon" required placeholder="e.g. 80.6316" step="any" inputmode="decimal" pattern="^-?\\d+(\\.\\d+)?$"/>
+
+        <label>Place</label>
+        <div style="display:flex;gap:7px;">
+          <input id="place" required placeholder="e.g. Kandy, Sri Lanka" style="flex:1"/>
+          <button type="button" id="geocodeBtn" style="width:auto;background:#0ea5e9;color:#fff;margin:0 0 0 3px;">Find</button>
+        </div>
+
+        <div id="mapPreview"></div>
+        <button type="submit">Generate Chart</button>
+      </form>
+
+      <div id="err" style="color:#f87171;margin-top:8px;"></div>
+    </div>
+
+    <div id="chartArea" style="display:none">
+      <div class="card" id="summary"></div>
+
+      <div class="card">
+        <h3>Maha Dasha Table</h3>
+        <table>
+          <thead><tr><th>#</th><th>Lord</th><th>Start</th><th>End</th><th class="mono">Years</th></tr></thead>
+          <tbody id="dashaTable"></tbody>
+        </table>
+
+        <h3 style="margin-top:22px">Bhukti (Sub-Dasha)</h3>
+        <table>
+          <thead><tr><th>#</th><th>Lord</th><th>Start</th><th>End</th><th class="mono">Years</th></tr></thead>
+          <tbody id="bhuktiTable"></tbody>
+        </table>
+
+        <div id="predictionBox" class="card" style="display:none"></div>
       </div>
-      <div id="mapPreview"></div>
-      <button type="submit">Generate Chart</button>
-    </form>
-    <div id="err" style="color:#f87171;margin-top:8px;"></div>
-  </div>
-  <div id="chartArea" style="display:none">
-    <div class="card" id="summary"></div>
-    <div class="card">
-      <h3>Maha Dasha Table</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th><th>Lord</th><th>Start</th><th>End</th><th class="mono">Years</th>
-          </tr>
-        </thead>
-        <tbody id="dashaTable"></tbody>
-      </table>
-      <h3 style="margin-top:22px">Bhukti (Sub-Dasha)</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th><th>Lord</th><th>Start</th><th>End</th><th class="mono">Years</th>
-          </tr>
-        </thead>
-        <tbody id="bhuktiTable"></tbody>
-      </table>
-      <div id="predictionBox" class="card" style="display:none"></div>
-    </div>
-    <div class="card">
-      <h3>KP 12-Box Chart</h3>
-      <div id="kpBoxes"></div>
-      <div id="cuspalSubLords"></div>
-      <div id="moonSubLord"></div>
-      <div id="rulingPlanets"></div>
-      <div id="significators"></div>
-      <div id="planetStrengths"></div>
-    </div>
-    <button id="pdfBtn">📄 Download as PDF</button>
-    <button id="shareBtn">🔗 Share Chart</button>
-    <button id="saveBtn">💾 Save Chart</button>
-    <button id="loadBtn">📂 Load Chart</button>
-    <button id="modeBtn">🌙/☀️</button>
-    <div class="footer-info">
-      <b>Sathyadarshana KP Astrology Report</b><br>
-      Email: sathyanirvana@gmail.com<br>
-      Tel: +94757500000<br>
-      Sri Lanka
-    </div>
-  </div>
-</div>
-<script>
-  // Timezone select
-  const timezones = [
-    { value:"+05:30", label:"IST (India/Sri Lanka) +05:30" },
-    { value:"+06:00", label:"Bangladesh +06:00" },
-    { value:"+05:45", label:"Nepal +05:45" },
-    { value:"+01:00", label:"CET +01:00" },
-    { value:"-05:00", label:"EST (US East) -05:00" },
-    { value:"+09:00", label:"Japan +09:00" },
-    { value:"+03:00", label:"Arabia +03:00" },
-    { value:"+08:00", label:"China +08:00" },
-    { value:"-08:00", label:"PST (US West) -08:00" },
-    { value:"+00:00", label:"UTC/GMT +00:00" }
-  ];
-  timezones.forEach(tz=>{
-    const o = document.createElement('option');
-    o.value = tz.value; o.textContent = tz.label;
-    timezone.appendChild(o);
-  });
-  timezone.value = "+05:30";
-  // ------ Vimshottari Dasha Data & ... (same as previous, omitted for brevity) ------
-  // ... All your existing script above (no change) ...
-  // ------ Simple Place Geocode (OpenStreetMap) ------
-  async function geocodePlace(q){
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
-    const res = await fetch(url).then(r=>r.json());
-    if(!res.length) return null;
-    return { lat:+res[0].lat, lon:+res[0].lon, label:res[0].display_name };
-  }
-  // --- Map preview ----
-  function showMap(lat, lon){
-    const mapDiv = document.getElementById('mapPreview');
-    if(!lat||!lon){ mapDiv.style.display='none'; return; }
-    mapDiv.style.display = '';
-    mapDiv.innerHTML = `<iframe loading="lazy" allowfullscreen
-      src="https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.02}%2C${lat-0.01}%2C${lon+0.02}%2C${lat+0.01}&layer=mapnik&marker=${lat}%2C${lon}"
-      ></iframe>
-      <div style="text-align:right;font-size:12px;margin-top:2px;">
-        <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}" target="_blank" style="color:#38bdf8">View Full Map</a>
-      </div>`;
-  }
 
-  // --- Geocode Button logic ---
-  const geocodeBtn = document.getElementById('geocodeBtn');
-  geocodeBtn.onclick = async function(){
-    const place = document.getElementById('place').value.trim();
-    if(!place){ errBox.textContent="Enter place name."; return; }
-    errBox.textContent = "Searching...";
-    const geo = await geocodePlace(place);
-    if(!geo){
-      errBox.textContent = "Place not found. Please try a more specific name.";
-      return;
+      <div class="card">
+        <h3>KP 12-Box Chart</h3>
+        <div id="kpBoxes"></div>
+        <div id="cuspalSubLords"></div>
+        <div id="moonSubLord"></div>
+        <div id="rulingPlanets"></div>
+        <div id="significators"></div>
+        <div id="planetStrengths"></div>
+      </div>
+
+      <button id="pdfBtn">📄 Download as PDF</button>
+      <button id="shareBtn">🔗 Share Chart</button>
+      <button id="saveBtn">💾 Save Chart</button>
+      <button id="loadBtn">📂 Load Chart</button>
+      <button id="modeBtn">🌙/☀️</button>
+
+      <div class="footer-info">
+        <b>Sathyadarshana KP Astrology Report</b><br>
+        Email: sathyanirvana@gmail.com<br>
+        Tel: +94 75 750 0000<br>
+        Sri Lanka
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Helpers & DOM ----------
+    const tzSelect   = document.getElementById('timezone');
+    const errBox     = document.getElementById('err');
+    const chartArea  = document.getElementById('chartArea');
+    const summary    = document.getElementById('summary');
+    const dashaBody  = document.getElementById('dashaTable');
+    const bhuktiBody = document.getElementById('bhuktiTable');
+
+    // ---------- Timezones ----------
+    const timezones = [
+      { value:"+05:30", label:"IST (India/Sri Lanka) +05:30"},
+      { value:"+06:00", label:"Bangladesh +06:00"},
+      { value:"+05:45", label:"Nepal +05:45"},
+      { value:"+01:00", label:"CET +01:00"},
+      { value:"-05:00", label:"EST (US East) -05:00"},
+      { value:"+09:00", label:"Japan +09:00"},
+      { value:"+03:00", label:"Arabia +03:00"},
+      { value:"+08:00", label:"China +08:00"},
+      { value:"-08:00", label:"PST (US West) -08:00"},
+      { value:"+00:00", label:"UTC/GMT +00:00"}
+    ];
+    timezones.forEach(tz=>{
+      const o=document.createElement('option');
+      o.value=tz.value;o.textContent=tz.label;tzSelect.appendChild(o);
+    });
+    tzSelect.value="+05:30";
+
+    // ---------- Geocode ----------
+    async function geocodePlace(q){
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1&addressdetails=0`;
+      const res = await fetch(url, {headers:{'Accept':'application/json'}});
+      const data = await res.json();
+      if(!Array.isArray(data) || !data.length) return null;
+      return { lat:+data[0].lat, lon:+data[0].lon, label:data[0].display_name };
     }
-    document.getElementById('lat').value = geo.lat;
-    document.getElementById('lon').value = geo.lon;
-    showMap(geo.lat, geo.lon);
-    errBox.textContent = "";
-  };
-  // --- On Lat/Lon change, show map preview ---
-  document.getElementById('lat').addEventListener('input', ()=>{
-    const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
-    if(lat&&lon){ showMap(lat,lon);}
-  });
-  document.getElementById('lon').addEventListener('input', ()=>{
-    const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
-    if(lat&&lon){ showMap(lat,lon);}
-  });
-  // --- On Place input clear, hide map ---
-  document.getElementById('place').addEventListener('input', ()=>{
-    if(!document.getElementById('place').value.trim()){ document.getElementById('mapPreview').style.display='none'; }
-  });
-  // --- On form submit, check fields ---
-  const birthForm = document.getElementById('birthForm');
-  const errBox = document.getElementById('err');
-  birthForm.onsubmit = async function(e){
-    e.preventDefault();
-    errBox.textContent = '';
-    let name = document.getElementById('name').value.trim();
-    let dt = document.getElementById('datetime').value;
-    let tz = document.getElementById('timezone').value;
-    let lat = parseFloat(document.getElementById('lat').value);
-    let lon = parseFloat(document.getElementById('lon').value);
-    let place = document.getElementById('place').value.trim();
-    if(!name || !dt || !place){
-      errBox.textContent = 'Please fill all fields correctly.';
-      return;
+
+    function showMap(lat, lon){
+      const mapDiv=document.getElementById('mapPreview');
+      if(!(lat||lon)){ mapDiv.style.display='none'; return; }
+      mapDiv.style.display='';
+      mapDiv.innerHTML = `
+        <iframe loading="lazy" allowfullscreen
+          src="https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.02}%2C${lat-0.01}%2C${lon+0.02}%2C${lat+0.01}&layer=mapnik&marker=${lat}%2C${lon}">
+        </iframe>
+        <div style="text-align:right;font-size:12px;margin-top:2px;">
+          <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}" target="_blank" style="color:#38bdf8">View Full Map</a>
+        </div>`;
     }
-    // If lat/lon are missing, try geocoding
-    if((isNaN(lat) || isNaN(lon) || !lat || !lon) && place){
-      errBox.textContent = 'Searching place...';
+
+    document.getElementById('geocodeBtn').onclick = async ()=>{
+      const place = document.getElementById('place').value.trim();
+      if(!place){ errBox.textContent="Enter place name."; return; }
+      errBox.textContent="Searching...";
       const geo = await geocodePlace(place);
-      if(!geo){
-        errBox.textContent = 'Place not found. Enter coordinates.';
-        return;
+      if(!geo){ errBox.textContent="Place not found. Try a more specific name."; return; }
+      document.getElementById('lat').value = geo.lat;
+      document.getElementById('lon').value = geo.lon;
+      showMap(geo.lat, geo.lon);
+      errBox.textContent="";
+    };
+
+    // live map preview on lat/lon input
+    ['lat','lon'].forEach(id=>{
+      document.getElementById(id).addEventListener('input', ()=>{
+        const lat = parseFloat(document.getElementById('lat').value);
+        const lon = parseFloat(document.getElementById('lon').value);
+        if(!isNaN(lat) && !isNaN(lon)) showMap(lat, lon);
+      });
+    });
+    document.getElementById('place').addEventListener('input', ()=>{
+      if(!document.getElementById('place').value.trim()){
+        document.getElementById('mapPreview').style.display='none';
       }
-      lat = geo.lat; lon = geo.lon;
-      document.getElementById('lat').value = lat;
-      document.getElementById('lon').value = lon;
-      showMap(lat, lon);
+    });
+
+    // ---------- Form submit ----------
+    document.getElementById('birthForm').onsubmit = async (e)=>{
+      e.preventDefault();
+      errBox.textContent='';
+      let name = document.getElementById('name').value.trim();
+      let dt   = document.getElementById('datetime').value;
+      let tz   = document.getElementById('timezone').value;
+      let lat  = parseFloat(document.getElementById('lat').value);
+      let lon  = parseFloat(document.getElementById('lon').value);
+      let place= document.getElementById('place').value.trim();
+
+      if(!name || !dt || !place){ errBox.textContent='Please fill all fields correctly.'; return; }
+
+      if((isNaN(lat) || isNaN(lon)) && place){
+        errBox.textContent='Searching place...';
+        const geo = await geocodePlace(place);
+        if(!geo){ errBox.textContent='Place not found. Enter coordinates.'; return; }
+        lat = geo.lat; lon = geo.lon;
+        document.getElementById('lat').value = lat;
+        document.getElementById('lon').value = lon;
+        showMap(lat, lon);
+      }
+      if(isNaN(lat) || isNaN(lon)){ errBox.textContent='Latitude/Longitude required.'; return; }
+
+      // Render (minimal fallback). Replace with your full KP engine.
+      showChart(name, dt, tz, lat, lon, place);
+    };
+
+    // ---------- Minimal working showChart (replace with your full KP logic) ----------
+    function showChart(name, dt, tz, lat, lon, place){
+      chartArea.style.display='';
+      const when = new Date(dt);
+      summary.innerHTML = `
+        <div class="pill">Name: <b>${escapeHtml(name)}</b></div>
+        <div class="pill">Place: <b>${escapeHtml(place)}</b></div>
+        <div class="pill">Lat/Lon: <b>${lat.toFixed(4)}, ${lon.toFixed(4)}</b></div>
+        <div class="pill">Time: <b>${when.toISOString().slice(0,16)} (UTC)</b></div>
+        <div class="pill">TZ: <b>${tz}</b></div>
+        <p style="margin-top:12px;color:#93c5fd">⚠️ KP computation engine not loaded in this minimal build. Plug your previous functions below where indicated.</p>
+      `;
+
+      // clear tables/boxes
+      dashaBody.innerHTML = '';
+      bhuktiBody.innerHTML = '';
+      document.getElementById('kpBoxes').innerHTML =
+        Array.from({length:12}, (_,i)=>`<div class="kpBox${i===0?' asc':''}">House ${i+1}</div>`).join('');
+      document.getElementById('cuspalSubLords').innerHTML = '';
+      document.getElementById('moonSubLord').innerHTML = '';
+      document.getElementById('rulingPlanets').innerHTML = '';
+      document.getElementById('significators').innerHTML = '';
+      document.getElementById('planetStrengths').innerHTML = '';
+
+      // save last run (for Load)
+      localStorage.setItem('kp_last', JSON.stringify({name, dt, tz, lat, lon, place}));
+      history.replaceState(null, '', makeShareURL({name, dt, tz, lat, lon, place}));
     }
-    // Double-check lat/lon are now valid
-    if(isNaN(lat) || isNaN(lon) || !lat || !lon){
-      errBox.textContent = 'Latitude/Longitude required.';
-      return;
+
+    // ---------- Light/Dark ----------
+    document.getElementById('modeBtn').onclick = ()=>{
+      const body = document.body;
+      if(body.classList.contains('dark')){ body.classList.remove('dark'); body.classList.add('light'); }
+      else{ body.classList.remove('light'); body.classList.add('dark'); }
+    };
+
+    // ---------- Save / Load ----------
+    document.getElementById('saveBtn').onclick = ()=>{
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        dt: document.getElementById('datetime').value,
+        tz: document.getElementById('timezone').value,
+        lat: document.getElementById('lat').value,
+        lon: document.getElementById('lon').value,
+        place: document.getElementById('place').value.trim()
+      };
+      localStorage.setItem('kp_saved', JSON.stringify(payload));
+      toast('Saved locally.');
+    };
+    document.getElementById('loadBtn').onclick = ()=>{
+      const saved = localStorage.getItem('kp_saved') || localStorage.getItem('kp_last');
+      if(!saved){ toast('Nothing saved yet.'); return; }
+      const o = JSON.parse(saved);
+      document.getElementById('name').value = o.name || '';
+      document.getElementById('datetime').value = o.dt || '';
+      document.getElementById('timezone').value = o.tz || '+05:30';
+      document.getElementById('lat').value = o.lat || '';
+      document.getElementById('lon').value = o.lon || '';
+      document.getElementById('place').value = o.place || '';
+      if(o.lat && o.lon) showMap(parseFloat(o.lat), parseFloat(o.lon));
+      toast('Loaded.');
+    };
+
+    // ---------- PDF ----------
+    document.getElementById('pdfBtn').onclick = ()=> window.print();
+
+    // ---------- Share ----------
+    document.getElementById('shareBtn').onclick = async ()=>{
+      const url = location.href;
+      const title = 'KP Astrology Chart | Sathyadarshana';
+      try{
+        if(navigator.share){ await navigator.share({title,text:title,url}); }
+        else{
+          await navigator.clipboard.writeText(url);
+          toast('Link copied to clipboard.');
+        }
+      }catch(e){ /* user cancelled */ }
+    };
+
+    // ---------- URL params prefill ----------
+    function fromParams(){
+      const u = new URL(location.href);
+      const g = k=>u.searchParams.get(k)||'';
+      const lat = g('lat'), lon = g('lon');
+      if(g('name')) document.getElementById('name').value = g('name');
+      if(g('dt'))   document.getElementById('datetime').value = g('dt');
+      if(g('tz'))   document.getElementById('timezone').value = g('tz');
+      if(g('place'))document.getElementById('place').value = g('place');
+      if(lat && lon){
+        document.getElementById('lat').value = lat;
+        document.getElementById('lon').value = lon;
+        showMap(parseFloat(lat), parseFloat(lon));
+      }
     }
-    errBox.textContent = '';
-    showChart(name, dt, tz, lat, lon, place);
-  };
+    function makeShareURL({name, dt, tz, lat, lon, place}){
+      const u = new URL(location.href);
+      u.searchParams.set('name', name);
+      u.searchParams.set('dt', dt);
+      u.searchParams.set('tz', tz);
+      u.searchParams.set('lat', lat);
+      u.searchParams.set('lon', lon);
+      u.searchParams.set('place', place);
+      return u.toString();
+    }
 
-  // --- Calendar: make input type="datetime-local" usable/scrollable (mobile/desktop) ---
-  // No JS needed: browser will show calendar/time picker automatically.
-  // For mobile, if not supported, fallback to type="date" and "time" (not implemented here for simplicity).
+    // ---------- Utils ----------
+    function toast(msg){
+      const el = document.createElement('div');
+      el.textContent = msg;
+      el.style.position='fixed'; el.style.bottom='16px'; el.style.left='50%';
+      el.style.transform='translateX(-50%)'; el.style.background='#0ea5e9';
+      el.style.color='#001018'; el.style.padding='8px 12px'; el.style.borderRadius='8px';
+      el.style.zIndex='9999'; el.style.fontWeight='600';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),1500);
+    }
+    function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 
-  // --- Rest: Same as your previous script (showChart, showPrediction, etc) ---
-  // Place your previous script here (from showChart() downward, no change needed).
+    // ---------- Page load ----------
+    window.addEventListener('DOMContentLoaded', ()=>{
+      // default datetime now (local)
+      if(!document.getElementById('datetime').value){
+        const now = new Date();
+        const pad = n=>String(n).padStart(2,'0');
+        const v = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        document.getElementById('datetime').value = v;
+      }
+      const lat = document.getElementById('lat').value;
+      const lon = document.getElementById('lon').value;
+      if(lat && lon) showMap(parseFloat(lat), parseFloat(lon));
+      fromParams();
+    });
 
-  // --- fromParams: for URL param prefill ---
-  // Place your previous fromParams() function here.
-
-  // --- Light/Dark mode, Save/Load, PDF, Share, etc ---
-  // Place your previous button handlers here.
-
-  // --- On page load, show map if lat/lon present ---
-  window.addEventListener('DOMContentLoaded',()=>{
-    const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
-    if(lat&&lon){ showMap(lat,lon);}
-    fromParams();
-  });
-</script>
+    // ======= INSERT YOUR FULL KP ENGINE BELOW (safe hooks) =======
+    // 1) Replace showChart() above with:
+    //    - Vimshottari Dasha calc -> fill #dashaTable and #bhuktiTable
+    //    - KP 12-Box, CSL, Moon Sub-Lord, RP, Significators, Strengths
+    // 2) Keep Save/Load/Share/PDF/Mode handlers as-is.
+    // =============================================================
+  </script>
 </body>
 </html>

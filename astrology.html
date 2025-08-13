@@ -5,71 +5,157 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sathyadarshana | Astrology</title>
   <meta name="description" content="Explore KP Astrology, NASA Planetary Positions, Numerology, Palmistry, and Nadi Jyotisha.">
-  <link rel="icon" href="./assets/favicon.png">
+  <link rel="icon" href="./assets/favicon.png" type="image/png">
   <style>
-    :root{--bg:#0f172a;--txt:#e0f2fe;--muted:#bae6fd;--brand:#7dd3fc;--card:rgba(30,41,59,.95)}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,"Segoe UI",Arial;background:radial-gradient(circle at 20% 20%,var(--bg),#000);color:var(--txt);text-align:center;min-height:100vh}
-    header{padding:2rem 0 1rem}
-    header h1{font-size:2.2rem;color:var(--brand);margin:0 0 .25rem}
-    header p{font-size:1.05rem;color:var(--muted);margin:0}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;max-width:1000px;margin:2rem auto;padding:0 1rem}
-    .card{display:flex;flex-direction:column;align-items:center;min-height:180px;padding:1.4rem;border-radius:1rem;background:var(--card);
-      text-decoration:none;color:var(--txt);box-shadow:0 0 14px #38bdf833;border:2px solid transparent;transition:.25s}
-    .card:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 6px 20px #38bdf888;border-color:#38bdf8;background:rgba(2,6,23,.94)}
-    .card span{font-size:2rem;margin-bottom:.5rem}
-    .card h2{font-size:1.15rem;margin:.2rem 0;color:#38bdf8}
-    .toplink{position:fixed;left:12px;top:12px;background:#0b1220;color:#7dd3fc;padding:6px 12px;border-radius:8px;text-decoration:none;z-index:5}
-    footer{margin:2.5rem 0 1rem;border-top:1px solid #38bdf8;padding-top:1rem;color:#7dd3fc}
+    :root {
+      --bg: #0f172a;
+      --txt: #e0f2fe;
+      --muted: #bae6fd;
+      --brand: #7dd3fc;
+      --card: rgba(30,41,59,.95)
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at 20% 20%, var(--bg), #000);
+      color: var(--txt);
+      text-align: center;
+      min-height: 100vh;
+    }
+    header {
+      padding: 2rem 0 1rem;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      color: var(--brand);
+      margin: 0 0 .25rem;
+      letter-spacing: 0.01em;
+    }
+    header p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 180px;
+      padding: 1.4rem;
+      border-radius: 1rem;
+      background: var(--card);
+      text-decoration: none;
+      color: var(--txt);
+      box-shadow: 0 0 14px #38bdf833;
+      border: 2px solid transparent;
+      transition: .25s;
+      cursor: pointer;
+    }
+    .card:hover, .card:focus {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 6px 20px #38bdf888;
+      border-color: #38bdf8;
+      background: rgba(2,6,23,.94);
+      outline: none;
+    }
+    .card span {
+      font-size: 2rem;
+      margin-bottom: .5rem;
+    }
+    .card h2 {
+      font-size: 1.15rem;
+      margin: .2rem 0;
+      color: #38bdf8;
+      letter-spacing: 0.01em;
+    }
+    .toplink {
+      position: fixed;
+      left: 12px;
+      top: 12px;
+      background: #0b1220;
+      color: #7dd3fc;
+      padding: 6px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      z-index: 5;
+      font-size: 1rem;
+    }
+    .toplink:focus {
+      outline: 2px solid #7dd3fc;
+    }
+    footer {
+      margin: 2.5rem 0 1rem;
+      border-top: 1px solid #38bdf8;
+      padding-top: 1rem;
+      color: #7dd3fc;
+      font-size: 1rem;
+    }
+    @media (max-width: 500px) {
+      header h1 { font-size: 1.3rem; }
+      .card { min-height: 140px; padding: 1rem; }
+      .card span { font-size: 1.5rem; }
+    }
   </style>
 </head>
 <body>
-
-  <a class="toplink" href="./index.html">← Home</a>
+  <!-- Navigation Link to Home -->
+  <a class="toplink" href="./index.html" aria-label="Go to Home page">← Home</a>
 
   <header>
     <h1>Astrology Dashboard</h1>
     <p>Explore the universe within your birth</p>
   </header>
 
-  <div class="grid">
-    <!-- ✅ KP card → link to quamtom/index.html -->
-    <a href="./quamtom/index.html" class="card">
-      <span>📝</span>
-      <h2>KP Astrology Report</h2>
-      <div>Fill birth details → Chart & Report</div>
-    </a>
+  <main>
+    <div class="grid" aria-label="Astrology Tools">
+      <!-- KP Astrology Report card – link updated as requested -->
+      <a href="./kp-astrology-chart-pro.html" class="card" aria-label="KP Astrology Report">
+        <span aria-hidden="true">📝</span>
+        <h2>KP Astrology Report</h2>
+        <div>Fill birth details → Chart &amp; Report</div>
+      </a>
 
-    <a href="./vedic-astrology.html" class="card">
-      <span>📜</span>
-      <h2>Vedic Astrology</h2>
-      <div>Traditional Janma Kundali</div>
-    </a>
+      <a href="./vedic-astrology.html" class="card" aria-label="Vedic Astrology">
+        <span aria-hidden="true">📜</span>
+        <h2>Vedic Astrology</h2>
+        <div>Traditional Janma Kundali</div>
+      </a>
 
-    <a href="./numerology.html" class="card">
-      <span>🔢</span>
-      <h2>Numerology</h2>
-      <div>Life Path & Destiny Numbers</div>
-    </a>
+      <a href="./numerology.html" class="card" aria-label="Numerology">
+        <span aria-hidden="true">🔢</span>
+        <h2>Numerology</h2>
+        <div>Life Path &amp; Destiny Numbers</div>
+      </a>
 
-    <a href="./palmistry.html" class="card">
-      <span>✋</span>
-      <h2>Palmistry</h2>
-      <div>Hand Line Analysis</div>
-    </a>
+      <a href="./palmistry.html" class="card" aria-label="Palmistry">
+        <span aria-hidden="true">✋</span>
+        <h2>Palmistry</h2>
+        <div>Hand Line Analysis</div>
+      </a>
 
-    <a href="./nadi-kp.html" class="card">
-      <span>📚</span>
-      <h2>Nadi + KP</h2>
-      <div>Combined Ancient Techniques</div>
-    </a>
+      <a href="./nadi-kp.html" class="card" aria-label="Nadi + KP">
+        <span aria-hidden="true">📚</span>
+        <h2>Nadi + KP</h2>
+        <div>Combined Ancient Techniques</div>
+      </a>
 
-    <a href="./geo-vision.html" class="card">
-      <span>🌐</span>
-      <h2>Geo Vision</h2>
-      <div>Planetary Motion & Maps</div>
-    </a>
-  </div>
+      <a href="./geo-vision.html" class="card" aria-label="Geo Vision">
+        <span aria-hidden="true">🌐</span>
+        <h2>Geo Vision</h2>
+        <div>Planetary Motion &amp; Maps</div>
+      </a>
+    </div>
+  </main>
 
   <footer>
     &copy; 2025 Sathyadarshana – Light of Truth • All Rights Reserved

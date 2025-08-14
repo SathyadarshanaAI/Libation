@@ -5,6 +5,7 @@
   <title>KP Astrology Chart Pro | Sathyadarshana</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=3"/>
   <meta name="description" content="KP Astrology chart, Vimshottari Dasha, Sub-Lord, Rashi, Place autocomplete, Map preview, Save, Share, PDF, worldwide.">
+  <meta http-equiv="Content-Language" content="en"/>
   <link rel="icon" href="../assets/favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
@@ -56,12 +57,13 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <div id="google_translate_element" style="float:right;margin:10px 0"></div>
   <script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement(
-      {pageLanguage: 'en', includedLanguages: 'en,si,ta', layout: google.translate.TranslateElement.InlineLayout.SIMPLE},
-      'google_translate_element'
-    );
-  }
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,si,ta',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+    }
   </script>
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
@@ -281,11 +283,7 @@ birthForm.onsubmit = async function(e){
 };
 
 // ==== Astrology/Chart Logic (Full, Working, with Rashi and Prediction) ====
-// (Same as your last version; omitted here for brevity. If you want, I can paste the full logic again.)
-
-// ---- (Paste the rest of your JS here, no changes needed for chart) ----
-/* ... [The rest of your astrology/JS code goes here, unchanged] ... */
-// (If you need the full script again, let me know!)
+// (Copy the full logic you had here: showChart, showBhukti, etc. If you need this pasted for you, just ask!)
 </script>
 </body>
 </html>

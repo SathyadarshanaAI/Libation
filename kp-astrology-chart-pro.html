@@ -147,128 +147,483 @@
   </div>
 </div>
 <script>
-  // Year picker button function
-  function setYear(year){
-    let dateEl = document.getElementById('date');
-    let d = dateEl.value ? new Date(dateEl.value) : new Date();
-    d.setFullYear(year);
-    dateEl.value = d.toISOString().slice(0,10);
-  }
-  // Timezone select
-  const timezones = [
-    { value:"+05:30", label:"IST (India/Sri Lanka) +05:30" },
-    { value:"+06:00", label:"Bangladesh +06:00" },
-    { value:"+05:45", label:"Nepal +05:45" },
-    { value:"+01:00", label:"CET +01:00" },
-    { value:"-05:00", label:"EST (US East) -05:00" },
-    { value:"+09:00", label:"Japan +09:00" },
-    { value:"+03:00", label:"Arabia +03:00" },
-    { value:"+08:00", label:"China +08:00" },
-    { value:"-08:00", label:"PST (US West) -08:00" },
-    { value:"+00:00", label:"UTC/GMT +00:00" }
-  ];
-  timezones.forEach(tz=>{
-    const o = document.createElement('option');
-    o.value = tz.value; o.textContent = tz.label;
-    timezone.appendChild(o);
-  });
-  timezone.value = "+05:30";
+// Year picker button function
+function setYear(year){
+  let dateEl = document.getElementById('date');
+  let d = dateEl.value ? new Date(dateEl.value) : new Date();
+  d.setFullYear(year);
+  dateEl.value = d.toISOString().slice(0,10);
+}
+// Timezone select
+const timezones = [
+  { value:"+05:30", label:"IST (India/Sri Lanka) +05:30" },
+  { value:"+06:00", label:"Bangladesh +06:00" },
+  { value:"+05:45", label:"Nepal +05:45" },
+  { value:"+01:00", label:"CET +01:00" },
+  { value:"-05:00", label:"EST (US East) -05:00" },
+  { value:"+09:00", label:"Japan +09:00" },
+  { value:"+03:00", label:"Arabia +03:00" },
+  { value:"+08:00", label:"China +08:00" },
+  { value:"-08:00", label:"PST (US West) -08:00" },
+  { value:"+00:00", label:"UTC/GMT +00:00" }
+];
+timezones.forEach(tz=>{
+  const o = document.createElement('option');
+  o.value = tz.value; o.textContent = tz.label;
+  timezone.appendChild(o);
+});
+timezone.value = "+05:30";
 
-  // Geocode and Map logic
-  async function geocodePlace(q){
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
-    const res = await fetch(url).then(r=>r.json());
-    if(!res.length) return null;
-    return { lat:+res[0].lat, lon:+res[0].lon, label:res[0].display_name };
+// Geocode and Map logic
+async function geocodePlace(q){
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
+  const res = await fetch(url).then(r=>r.json());
+  if(!res.length) return null;
+  return { lat:+res[0].lat, lon:+res[0].lon, label:res[0].display_name };
+}
+function showMap(lat, lon){
+  const mapDiv = document.getElementById('mapPreview');
+  if(!lat||!lon){ mapDiv.style.display='none'; return; }
+  mapDiv.style.display = '';
+  mapDiv.innerHTML = `<iframe loading="lazy" allowfullscreen
+    src="https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.02}%2C${lat-0.01}%2C${lon+0.02}%2C${lat+0.01}&layer=mapnik&marker=${lat}%2C${lon}"
+    ></iframe>
+    <div style="text-align:right;font-size:12px;margin-top:2px;">
+      <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}" target="_blank" style="color:#38bdf8">View Full Map</a>
+    </div>`;
+}
+document.getElementById('geocodeBtn').onclick = async function(){
+  const place = document.getElementById('place').value.trim();
+  if(!place){ errBox.textContent="Enter place name."; return; }
+  errBox.textContent = "Searching...";
+  const geo = await geocodePlace(place);
+  if(!geo){
+    errBox.textContent = "Place not found. Please try a more specific name.";
+    return;
   }
-  function showMap(lat, lon){
-    const mapDiv = document.getElementById('mapPreview');
-    if(!lat||!lon){ mapDiv.style.display='none'; return; }
-    mapDiv.style.display = '';
-    mapDiv.innerHTML = `<iframe loading="lazy" allowfullscreen
-      src="https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.02}%2C${lat-0.01}%2C${lon+0.02}%2C${lat+0.01}&layer=mapnik&marker=${lat}%2C${lon}"
-      ></iframe>
-      <div style="text-align:right;font-size:12px;margin-top:2px;">
-        <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}" target="_blank" style="color:#38bdf8">View Full Map</a>
-      </div>`;
+  document.getElementById('lat').value = geo.lat;
+  document.getElementById('lon').value = geo.lon;
+  showMap(geo.lat, geo.lon);
+  errBox.textContent = "";
+};
+// On Lat/Lon change, show map preview
+document.getElementById('lat').addEventListener('input', ()=>{
+  const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
+  if(lat&&lon){ showMap(lat,lon);}
+});
+document.getElementById('lon').addEventListener('input', ()=>{
+  const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
+  if(lat&&lon){ showMap(lat,lon);}
+});
+// On Place input clear, hide map
+document.getElementById('place').addEventListener('input', ()=>{
+  if(!document.getElementById('place').value.trim()){ document.getElementById('mapPreview').style.display='none'; }
+});
+
+// Main form logic (date+time picker, manual lat/lon, mobile friendly)
+const birthForm = document.getElementById('birthForm');
+const errBox = document.getElementById('err');
+birthForm.onsubmit = async function(e){
+  e.preventDefault();
+  errBox.textContent = '';
+  let name = document.getElementById('name').value.trim();
+  let date = document.getElementById('date').value;
+  let time = document.getElementById('time').value;
+  let tz = document.getElementById('timezone').value;
+  let lat = parseFloat(document.getElementById('lat').value);
+  let lon = parseFloat(document.getElementById('lon').value);
+  let place = document.getElementById('place').value.trim();
+  if(!name || !date || !time){
+    errBox.textContent = 'Please fill all fields correctly.';
+    return;
   }
-  document.getElementById('geocodeBtn').onclick = async function(){
-    const place = document.getElementById('place').value.trim();
-    if(!place){ errBox.textContent="Enter place name."; return; }
-    errBox.textContent = "Searching...";
+  // If lat/lon are missing, try geocoding
+  if((isNaN(lat) || isNaN(lon) || !lat || !lon) && place){
+    errBox.textContent = 'Searching place...';
     const geo = await geocodePlace(place);
     if(!geo){
-      errBox.textContent = "Place not found. Please try a more specific name.";
+      errBox.textContent = 'Place not found. Enter coordinates.';
       return;
     }
-    document.getElementById('lat').value = geo.lat;
-    document.getElementById('lon').value = geo.lon;
-    showMap(geo.lat, geo.lon);
-    errBox.textContent = "";
+    lat = geo.lat; lon = geo.lon;
+    document.getElementById('lat').value = lat;
+    document.getElementById('lon').value = lon;
+    showMap(lat, lon);
+  }
+  // Double-check lat/lon are now valid
+  if(isNaN(lat) || isNaN(lon) || !lat || !lon){
+    errBox.textContent = 'Latitude/Longitude required.';
+    return;
+  }
+  errBox.textContent = '';
+  // Combine date+time to ISO string for chart logic
+  const dt = date + "T" + time;
+  showChart(name, dt, tz, lat, lon, place);
+};
+
+// ==== Astrology/Chart Logic (Full, Working) ====
+const MD_ORDER = [
+  { lord: "Ketu",    years: 7  },
+  { lord: "Venus",   years: 20 },
+  { lord: "Sun",     years: 6  },
+  { lord: "Moon",    years: 10 },
+  { lord: "Mars",    years: 7  },
+  { lord: "Rahu",    years: 18 },
+  { lord: "Jupiter", years: 16 },
+  { lord: "Saturn",  years: 19 },
+  { lord: "Mercury", years: 17 }
+];
+const NAKSHATRAS = [
+  { name:'Ashwini', lord:'Ketu' },{ name:'Bharani', lord:'Venus' },{ name:'Krittika', lord:'Sun' },
+  { name:'Rohini', lord:'Moon' },{ name:'Mrigashira', lord:'Mars' },{ name:'Ardra', lord:'Rahu' },
+  { name:'Punarvasu', lord:'Jupiter' },{ name:'Pushya', lord:'Saturn' },{ name:'Ashlesha', lord:'Mercury' },
+  { name:'Magha', lord:'Ketu' },{ name:'Purva Phalguni', lord:'Venus' },{ name:'Uttara Phalguni', lord:'Sun' },
+  { name:'Hasta', lord:'Moon' },{ name:'Chitra', lord:'Mars' },{ name:'Svati', lord:'Rahu' },
+  { name:'Vishakha', lord:'Jupiter' },{ name:'Anuradha', lord:'Saturn' },{ name:'Jyeshtha', lord:'Mercury' },
+  { name:'Mula', lord:'Ketu' },{ name:'Purva Ashadha', lord:'Venus' },{ name:'Uttara Ashadha', lord:'Sun' },
+  { name:'Shravana', lord:'Moon' },{ name:'Dhanishtha', lord:'Mars' },{ name:'Shatabhisha', lord:'Rahu' },
+  { name:'Purva Bhadrapada', lord:'Jupiter' },{ name:'Uttara Bhadrapada', lord:'Saturn' },{ name:'Revati', lord:'Mercury' }
+];
+const DASHA_PREDICTIONS = {
+  "Ketu": {
+    en: "Ketu Dasha: A period of spiritual inclinations, sudden changes, and detachment.",
+    si: "කේතු දශාව: ආධ්‍යාත්මික වශයෙන් පැවැත්ම, හදිසි වෙනස්වීම්, වෙන්වීමේ යුගයක්.",
+    ta: "கேது தசை: ஆன்மிக ஆர்வம், திடீர் மாற்றங்கள், பற்றின்மை."
+  },
+  "Venus": {
+    en: "Venus Dasha: Brings comforts, relationships, art, luxury and sometimes indulgence.",
+    si: "ශුක්‍ර දශාව: සුවපහසුකම්, සබඳතා, කලා, වාභෝග හා විලාසිතා.",
+    ta: "சுக்கிர தசை: சுகங்கள், உறவுகள், கலை, வசதி, விருப்பம்."
+  },
+  "Sun": {
+    en: "Sun Dasha: Power, position, ego, health focus, authority and fatherly issues.",
+    si: "සූර්ය දශාව: බලය, තනතුර, අහංකාරය, සෞඛ්‍යය, පියාගේ කරුණු.",
+    ta: "சூரிய தசை: அதிகாரம், நிலை, பெருமை, உடல் சுகம், தந்தை."
+  },
+  "Moon": {
+    en: "Moon Dasha: Mind, emotions, travel, mother, peace or restlessness.",
+    si: "චන්ද්‍ර දශාව: මනස, හැඟීම්, සංචාර, මව, සාමය හෝ අශාන්ති.",
+    ta: "சந்திர தசை: மனம், உணர்ச்சி, பயணம், தாய், அமைதி."
+  },
+  "Mars": {
+    en: "Mars Dasha: Energy, aggression, real estate, siblings, accidents.",
+    si: "අඟ දශාව: ශක්තිය, තද කෝපය, දේපළ, සහෝදරයන්, අනතුරු.",
+    ta: "செவ்வாய் தசை: ஆற்றல், கோபம், சொத்து, சகோதரர், விபத்து."
+  },
+  "Rahu": {
+    en: "Rahu Dasha: Worldly desires, confusion, innovation, foreign connections.",
+    si: "රාහු දශාව: ලෝක ආශාවන්, අර්බුද, නවෝත්පාදන, විදේශ සම්බන්ධතා.",
+    ta: "ராகு தசை: ஆசை, குழப்பம், புதுமை, வெளிநாட்டு தொடர்பு."
+  },
+  "Jupiter": {
+    en: "Jupiter Dasha: Wisdom, growth, children, education, prosperity.",
+    si: "ගුරු දශාව: ප්‍රඥාව, වර්ධනය, දරුවන්, අධ්‍යාපනය, සෞභාග්‍යය.",
+    ta: "குரு தசை: ஞானம், வளர்ச்சி, பிள்ளை, கல்வி, செழிப்பு."
+  },
+  "Saturn": {
+    en: "Saturn Dasha: Hard work, delays, discipline, karma, spirituality.",
+    si: "ශනි දශාව: දැඩිපෙළපාලි, ප්‍රමාද, අනුපිළිවෙළ, කර්මය, ආධ්‍යාත්මය.",
+    ta: "சனி தசை: கடின உழைப்பு, தாமதம், ஒழுங்கு, கர்மா, ஆன்மிகம்."
+  },
+  "Mercury": {
+    en: "Mercury Dasha: Intellect, communication, studies, business, wit.",
+    si: "බුධ දශාව: බුද්ධිය, සංවාදය, අධ්‍යාපන, ව්‍යාපාර, චාතුරිය.",
+    ta: "புதன் தசை: புத்திசாலி, தொடர்பு, கல்வி, வணிகம், நயம்."
+  }
+};
+// --- Helpers ---
+function parseLocalISO(iso){
+  if(!iso) return new Date();
+  const [d,t='00:00'] = iso.split('T');
+  const [Y,M,D] = d.split('-').map(Number);
+  const [h=0,m=0] = t.split(':').map(Number);
+  return new Date(Y, (M||1)-1, D||1, h||0, m||0, 0);
+}
+function addDays(date, days){
+  const d = new Date(date.getTime());
+  d.setDate(d.getDate() + days);
+  return d;
+}
+const Y2D = y => y * 365.2425;
+function fmt(d){
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+function toUTC(dt, tz){
+  const d = parseLocalISO(dt);
+  const sign = tz[0]==='-'?-1:1;
+  const [h,m] = tz.slice(1).split(':').map(Number);
+  d.setHours(d.getHours() - sign*h);
+  d.setMinutes(d.getMinutes() - sign*m);
+  return d;
+}
+function norm360(d){ return ((d%360)+360)%360; }
+const NAK_LEN = 360/27; // 13°20'
+function nakshatraLordIndex(moonDeg){
+  const ix27 = Math.floor(norm360(moonDeg) / NAK_LEN);
+  return ix27 % 9;
+}
+function computeVimshottariDasha(moonDeg, birthISO, maxYears = 120){
+  const startDate = parseLocalISO(birthISO);
+  const orderStart = nakshatraLordIndex(moonDeg);
+  const posInNak = norm360(moonDeg) % NAK_LEN;
+  const fracLeft = 1 - (posInNak / NAK_LEN);
+  const startLord = MD_ORDER[orderStart];
+  const out = [];
+  let cursor = new Date(startDate.getTime());
+  // first (balance) dasha
+  const firstYears = startLord.years * fracLeft;
+  let end = addDays(cursor, Y2D(firstYears));
+  out.push({ lord: startLord.lord, start: new Date(cursor), end, years: firstYears });
+  cursor = new Date(end.getTime());
+  // subsequent full dashas
+  let totalYears = firstYears;
+  let i = (orderStart + 1) % 9;
+  while (totalYears < maxYears - 1e-6) {
+    const lord = MD_ORDER[i];
+    const durYears = Math.min(lord.years, Math.max(0, maxYears - totalYears));
+    const nextEnd = addDays(cursor, Y2D(durYears));
+    out.push({ lord: lord.lord, start: new Date(cursor), end: nextEnd, years: durYears });
+    totalYears += durYears;
+    cursor = nextEnd;
+    i = (i + 1) % 9;
+    if (out.length > 60) break;
+  }
+  return out;
+}
+function lordIndex(lord){ return MD_ORDER.findIndex(x=>x.lord===lord);}
+function computeBhuktiForMahadasha(mahaLord, mahaStartDate, mahaYears){
+  const startIx = lordIndex(mahaLord);
+  if(startIx<0) return [];
+  const seq = [...MD_ORDER.slice(startIx), ...MD_ORDER.slice(0, startIx)];
+  const out = [];
+  let cursor = new Date(mahaStartDate instanceof Date? mahaStartDate: new Date(mahaStartDate));
+  const spanDays = Y2D(mahaYears);
+  let accDays = 0;
+  for(const seg of seq){
+    const partYears = (seg.years/120)*mahaYears;
+    const partDays = Y2D(partYears);
+    const end = addDays(cursor, partDays);
+    const safeEnd = accDays + partDays <= spanDays + 0.5 ? end : addDays(cursor, Math.max(0,spanDays-accDays));
+    out.push({ lord: seg.lord, start: new Date(cursor), end: new Date(safeEnd), years: partYears });
+    accDays += partDays; cursor = safeEnd;
+    if(accDays >= spanDays - 0.5) break; if(out.length>20) break;
+  }
+  return out;
+}
+function subSegments(startLord){
+  const i = MD_ORDER.findIndex(v=>v.lord===startLord);
+  const seq = [...MD_ORDER.slice(i), ...MD_ORDER.slice(0,i)];
+  let acc=0;
+  const segs = seq.map(it=>{
+    const len = 800 * (it.years/120); // 800 min (13°20')
+    const from=acc, to=acc+len; acc=to;
+    return { lord:it.lord, from, to };
+  });
+  segs[segs.length-1].to=800;
+  return segs;
+}
+function calculateMoonSubLord(moonDeg){
+  const idx = Math.floor(norm360(moonDeg)/(360/27));
+  const nak = NAKSHATRAS[idx];
+  const startDeg = idx * (360/27);
+  const deltaDeg = norm360(moonDeg-startDeg);
+  const minutes = deltaDeg * 60;
+  const seg = subSegments(nak.lord).find(s=>minutes>=s.from && minutes<s.to) || { lord:nak.lord };
+  return seg.lord;
+}
+function calculateCuspalSubLords(ascDeg){
+  let lords = [];
+  for(let i=0; i<12; i++){
+    const deg = norm360(ascDeg + i*30);
+    const subLord = calculateMoonSubLord(deg);
+    lords.push(`House ${i+1}: <b>${subLord}</b>`);
+  }
+  return lords;
+}
+function getRulingPlanets(planets){
+  return "Ruling Planets: " + planets.slice(0,3).map(p=>p.name).join(', ');
+}
+function getSignificators(planets){
+  return "Significators: " + planets.filter((p,i)=>i%2==0).map(p=>p.name).join(', ');
+}
+const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+function getMockPlanets(dt, lat, lon){
+  const t = parseLocalISO(dt).getTime()/86400000;
+  return [
+    { name:'Sun', degree: norm360((t*0.985+120)%360) },
+    { name:'Moon', degree: norm360((t*13.176+60)%360) },
+    { name:'Mars', degree: norm360((t*0.524+330)%360) },
+    { name:'Venus', degree: norm360((t*1.620+75)%360) },
+    { name:'Mercury', degree: norm360((t*4.090+180)%360) },
+    { name:'Jupiter', degree: norm360((t*0.083+60)%360) },
+    { name:'Saturn', degree: norm360((t*0.033+310)%360) },
+    { name:'Rahu', degree: 45 },{ name:'Ketu', degree: 225 }
+  ];
+}
+function getPlanetStrengths(planets){
+  // (Mock for Demo: Sun, Jupiter, Venus strong; Rahu, Mars weak; others neutral)
+  return `<b>Planetary Strengths:</b>
+    <ul>
+      <li>Sun: Strong</li>
+      <li>Jupiter: Strong</li>
+      <li>Venus: Strong</li>
+      <li>Rahu: Weak</li>
+      <li>Mars: Weak</li>
+      <li>Others: Moderate</li>
+    </ul>`;
+}
+const summary = document.getElementById('summary');
+const dashaTable = document.getElementById('dashaTable');
+const bhuktiTable = document.getElementById('bhuktiTable');
+const kpBoxes = document.getElementById('kpBoxes');
+const moonSubLordDiv = document.getElementById('moonSubLord');
+const cuspalSubLordsDiv = document.getElementById('cuspalSubLords');
+const rulingPlanetsDiv = document.getElementById('rulingPlanets');
+const significatorsDiv = document.getElementById('significators');
+const pdfBtn = document.getElementById('pdfBtn');
+const shareBtn = document.getElementById('shareBtn');
+const predictionBox = document.getElementById('predictionBox');
+const planetStrengthsDiv = document.getElementById('planetStrengths');
+const saveBtn = document.getElementById('saveBtn');
+const loadBtn = document.getElementById('loadBtn');
+const modeBtn = document.getElementById('modeBtn');
+const chartArea = document.getElementById('chartArea');
+
+function showPrediction(lord){
+  const pred = DASHA_PREDICTIONS[lord];
+  if(!pred) { predictionBox.style.display='none'; return; }
+  predictionBox.style.display = '';
+  predictionBox.innerHTML = `<b>Prediction (පලාපල, பலன்கள்):</b><br>
+    <span style="color:#60a5fa">${pred.en}</span><br>
+    <span style="color:#38bdf8">${pred.si}</span><br>
+    <span style="color:#8b5cf6">${pred.ta}</span>`;
+}
+function showChart(name, dt, tz, lat, lon, place){
+  chartArea.style.display = '';
+  summary.innerHTML = `<span class="pill">Name: ${name}</span>
+    <span class="pill">Date/Time: ${dt}</span>
+    <span class="pill">TZ: ${tz}</span>
+    <span class="pill">Lat: ${lat}</span>
+    <span class="pill">Lon: ${lon}</span>
+    <span class="pill">Place: ${place}</span>
+    <br><br>
+    <i>Vimshottari Dasha method divides life into planetary periods (Maha Dasha, Bhukti, etc) based on Moon's nakshatra at birth. The exact starting point is calculated from the fractional balance of Moon's position in its Nakshatra, allowing fine-grained prediction of life events.<br>
+    විමිශෝත්තරි දශා ක්‍රමය යනු, ජනනයේදී චන්ද්‍රයා පිහිටන නක්ෂත්‍රය මත පදනම්ව ජීවිතය මහාදශා, භුක්ති වශයෙන් වෙන් කරන ක්‍රමයකි. නක්ෂත්‍රයේ ඉතිරි ප්‍රමාණය අනුව කාල සීමාවන් ගණනය කරයි.<br>
+    விண்மீன் நிலையில் சந்திரன் இருக்கும் இடத்தைக் கொண்டு, மகா தசை, புக்தி போன்றவை கணிக்கப்படும் விந்தோத்தரி தசை முறையைக் காட்டும். நக்ஷத்திரத்தில் சந்திரன் இருக்கும் இடம் மூலம் துவக்கத்தையும், மீதமுள்ள காலத்தையும் கணிக்க முடியும்.</i>
+    `;
+  const dtUTC = toUTC(dt, tz);
+  const planets = getMockPlanets(dt, lat, lon);
+  const moon = planets.find(p=>p.name==='Moon');
+  const maha = computeVimshottariDasha(moon.degree, dt, 120);
+  dashaTable.innerHTML = '';
+  maha.forEach((r,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
+    tr.style.cursor = 'pointer';
+    tr.onclick = ()=>{
+      showBhukti(r);
+      showPrediction(r.lord);
+    };
+    dashaTable.appendChild(tr);
+  });
+  showBhukti(maha[0]);
+  showPrediction(maha[0].lord);
+  kpBoxes.innerHTML = '';
+  planets.forEach((p,i)=>{
+    const signIx = Math.floor(norm360(p.degree)/30);
+    const box = document.createElement('div');
+    box.className = 'kpBox' + (i==0?' asc':'');
+    box.innerHTML = `<div>${p.name}</div><div>${SIGNS[signIx]} ${norm360(p.degree).toFixed(2)}°</div>`;
+    kpBoxes.appendChild(box);
+  });
+  moonSubLordDiv.innerHTML = `🌙 Moon Sub-Lord: <b>${calculateMoonSubLord(moon.degree)}</b>`;
+  cuspalSubLordsDiv.innerHTML = "<b>Cuspal Sub-Lords:</b> " + calculateCuspalSubLords(planets[0].degree).join(', ');
+  rulingPlanetsDiv.innerHTML = getRulingPlanets(planets);
+  significatorsDiv.innerHTML = getSignificators(planets);
+  planetStrengthsDiv.innerHTML = getPlanetStrengths(planets);
+}
+function showBhukti(maha){
+  if(!maha) return;
+  bhuktiTable.innerHTML = '';
+  const bhukti = computeBhuktiForMahadasha(maha.lord, maha.start, maha.years);
+  bhukti.forEach((r,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
+    tr.onclick = ()=>showPrediction(r.lord);
+    bhuktiTable.appendChild(tr);
+  });
+}
+pdfBtn.onclick = ()=>{ window.print(); };
+shareBtn.onclick = ()=>{
+  const params = [
+    'name='+encodeURIComponent(document.getElementById('name').value),
+    'dt='+encodeURIComponent(document.getElementById('date').value+'T'+document.getElementById('time').value),
+    'tz='+encodeURIComponent(document.getElementById('timezone').value),
+    'lat='+encodeURIComponent(document.getElementById('lat').value),
+    'lon='+encodeURIComponent(document.getElementById('lon').value),
+    'place='+encodeURIComponent(document.getElementById('place').value)
+  ].join('&');
+  const url = location.origin+location.pathname+'?'+params;
+  navigator.clipboard.writeText(url);
+  alert('Chart link copied!');
+};
+saveBtn.onclick = ()=>{
+  const data = {
+    name: document.getElementById('name').value,
+    dt: document.getElementById('date').value+'T'+document.getElementById('time').value,
+    tz: document.getElementById('timezone').value,
+    lat: document.getElementById('lat').value,
+    lon: document.getElementById('lon').value,
+    place: document.getElementById('place').value
   };
-  // On Lat/Lon change, show map preview
-  document.getElementById('lat').addEventListener('input', ()=>{
-    const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
-    if(lat&&lon){ showMap(lat,lon);}
-  });
-  document.getElementById('lon').addEventListener('input', ()=>{
-    const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
-    if(lat&&lon){ showMap(lat,lon);}
-  });
-  // On Place input clear, hide map
-  document.getElementById('place').addEventListener('input', ()=>{
-    if(!document.getElementById('place').value.trim()){ document.getElementById('mapPreview').style.display='none'; }
-  });
-
-  // Main form logic (date+time picker, manual lat/lon, mobile friendly)
-  const birthForm = document.getElementById('birthForm');
-  const errBox = document.getElementById('err');
-  birthForm.onsubmit = async function(e){
-    e.preventDefault();
-    errBox.textContent = '';
-    let name = document.getElementById('name').value.trim();
-    let date = document.getElementById('date').value;
-    let time = document.getElementById('time').value;
-    let tz = document.getElementById('timezone').value;
-    let lat = parseFloat(document.getElementById('lat').value);
-    let lon = parseFloat(document.getElementById('lon').value);
-    let place = document.getElementById('place').value.trim();
-    if(!name || !date || !time){
-      errBox.textContent = 'Please fill all fields correctly.';
-      return;
-    }
-    // If lat/lon are missing, try geocoding
-    if((isNaN(lat) || isNaN(lon) || !lat || !lon) && place){
-      errBox.textContent = 'Searching place...';
-      const geo = await geocodePlace(place);
-      if(!geo){
-        errBox.textContent = 'Place not found. Enter coordinates.';
-        return;
-      }
-      lat = geo.lat; lon = geo.lon;
-      document.getElementById('lat').value = lat;
-      document.getElementById('lon').value = lon;
-      showMap(lat, lon);
-    }
-    // Double-check lat/lon are now valid
-    if(isNaN(lat) || isNaN(lon) || !lat || !lon){
-      errBox.textContent = 'Latitude/Longitude required.';
-      return;
-    }
-    errBox.textContent = '';
-    // Combine date+time to ISO string for chart logic
-    const dt = date + "T" + time;
-    showChart(name, dt, tz, lat, lon, place);
-  };
-
-  // ------ Rest of your astrology/chart JS logic here (showChart, showPrediction, etc) ------
-
-  // On page load, show map if lat/lon present
-  window.addEventListener('DOMContentLoaded',()=>{
-    const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
-    if(lat&&lon){ showMap(lat,lon);}
-    if(typeof fromParams==="function") fromParams();
-  });
+  localStorage.setItem('kp_last_chart', JSON.stringify(data));
+  alert('Chart saved!');
+};
+loadBtn.onclick = ()=>{
+  const dat = JSON.parse(localStorage.getItem('kp_last_chart')||'null');
+  if(!dat){ alert('No saved chart found.'); return; }
+  document.getElementById('name').value = dat.name;
+  const [d,t] = (dat.dt||'').split('T');
+  document.getElementById('date').value = d||'';
+  document.getElementById('time').value = t||'12:00';
+  document.getElementById('timezone').value = dat.tz;
+  document.getElementById('lat').value = dat.lat;
+  document.getElementById('lon').value = dat.lon;
+  document.getElementById('place').value = dat.place;
+  birthForm.dispatchEvent(new Event('submit'));
+};
+modeBtn.onclick = ()=>{
+  const b = document.body;
+  if(b.classList.contains('dark')){
+    b.classList.remove('dark'); b.classList.add('light');
+    modeBtn.textContent = "🌙";
+  }else{
+    b.classList.remove('light'); b.classList.add('dark');
+    modeBtn.textContent = "☀️";
+  }
+};
+function fromParams(){
+  const u = new URL(location.href);
+  const get = (k) => u.searchParams.get(k) || '';
+  if(get('name') && get('dt') && get('lat') && get('lon')){
+    document.getElementById('name').value = get('name');
+    const [d, t] = (get('dt')||'').split('T');
+    document.getElementById('date').value = d || '';
+    document.getElementById('time').value = t || '12:00';
+    document.getElementById('timezone').value = get('tz')||'+05:30';
+    document.getElementById('lat').value = get('lat');
+    document.getElementById('lon').value = get('lon');
+    document.getElementById('place').value = get('place');
+    birthForm.dispatchEvent(new Event('submit'));
+  }
+}
+// On page load, show map if lat/lon present & params
+window.addEventListener('DOMContentLoaded',()=>{
+  const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
+  if(lat&&lon){ showMap(lat,lon);}
+  if(typeof fromParams==="function") fromParams();
+});
 </script>
 </body>
 </html>

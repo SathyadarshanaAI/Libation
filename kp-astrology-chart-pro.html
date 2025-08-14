@@ -4,8 +4,9 @@
   <meta charset="utf-8"/>
   <title>KP Astrology Chart Pro | Sathyadarshana</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=3"/>
-  <meta name="description" content="KP Astrology chart, Vimshottari Dasha, Bhukti, Sub-Lord, Cuspal Sub-Lord, Ruling Planets, PDF, share, timezone, geocode, map.">
+  <meta name="description" content="KP Astrology chart, Vimshottari Dasha, Sub-Lord, Rashi, Place autocomplete, Map preview, Save, Share, PDF, worldwide.">
   <link rel="icon" href="../assets/favicon.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
     body { background: #181e29; color: #e0f2fe; font-family: system-ui, Arial; margin: 0; }
     .wrap { max-width: 900px; margin: 28px auto; padding: 12px; }
@@ -27,31 +28,32 @@
     .toplink{position:fixed;left:10px;top:10px;background:#0b1220;color:#7dd3fc;padding:7px 14px;border-radius:9px;text-decoration:none;z-index:5}
     .footer-info{margin-top:18px;color:#60a5fa;font-size:15px;border-top:1px solid #374151;padding-top:10px;}
     #predictionBox{margin-top:14px; background:#23282e;border-left:5px solid #38bdf8;}
-    #mapPreview { width: 100%; height: 170px; margin-top: 8px; border: 1px solid #374151; border-radius: 10px; display:none;}
-    #mapPreview iframe { width:100%; height:100%; border:0; border-radius:10px;}
     .row2col { display: flex; gap: 8px;}
     .row2col > * { flex: 1 1 0;}
-    .year-quick-btns {display:flex;gap:6px;margin-bottom:9px;}
-    .year-quick-btns button {width:auto;padding:7px 10px;font-size:15px;margin-top:0;}
+    #placeSuggest > div {position:absolute;top:45px;left:0;right:0;z-index:11;background:#1a2335;border-radius:8px;box-shadow:0 3px 10px #0003;max-height:180px;overflow:auto;}
+    #placeSuggest .suggest-item {padding:9px 14px;cursor:pointer;}
+    #placeSuggest .suggest-item:hover {background:#374151;}
+    #osmMap {width:100%;height:260px;max-width:99vw;background:#222;border-radius:12px;margin-bottom:15px;display:none;}
     @media (max-width:700px){
       .wrap{padding:4px;}
       #kpBoxes { grid-template-columns:repeat(2,1fr);}
       .row2col {flex-direction: column;}
       .pill{font-size:14px;}
       th,td{font-size:14px;}
+      #osmMap {height:180px;}
     }
     @media print {
       body { background: #fff; color: #111; }
       .card { background: #fff; border-color: #ccc; color: #111;}
-      .toplink, #shareBtn, #saveBtn, #loadBtn, #modeBtn { display: none !important;}
+      .toplink, #shareBtn, #saveBtn, #loadBtn, #modeBtn, #osmMap, #astroChatBtn { display: none !important;}
       .footer-info { color:#333 !important; }
-      #mapPreview {display:none !important;}
     }
     .dark { background: #181e29 !important; color: #e0f2fe !important;}
     .light { background: #f9fafb !important; color: #212121 !important;}
     .light .card { background:#fff !important; border-color:#bbb !important; color:#222;}
     .light #predictionBox{background:#f1f5f9;}
   </style>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <div id="google_translate_element" style="float:right;margin:10px 0"></div>
   <script type="text/javascript">
   function googleTranslateElementInit() {
@@ -73,16 +75,7 @@
       <input id="name" required placeholder="Your name"/>
       <label>Birth Date & Time</label>
       <div class="row2col">
-        <div style="min-width:0;">
-          <input id="date" type="date" required style="margin-bottom:5px"/>
-          <div class="year-quick-btns">
-            <button type="button" onclick="setYear(1971)">1971</button>
-            <button type="button" onclick="setYear(1980)">1980</button>
-            <button type="button" onclick="setYear(1990)">1990</button>
-            <button type="button" onclick="setYear(2000)">2000</button>
-            <button type="button" onclick="setYear(2010)">2010</button>
-          </div>
-        </div>
+        <input id="date" type="date" required style="margin-bottom:5px"/>
         <input id="time" type="time" required value="12:00"/>
       </div>
       <label>Timezone</label>
@@ -92,11 +85,9 @@
       <label>Longitude</label>
       <input id="lon" required placeholder="e.g. 80.6316" step="any" inputmode="decimal" pattern="^-?\d+(\.\d+)?$"/>
       <label>Place</label>
-      <div style="display:flex;gap:7px;">
-        <input id="place" placeholder="e.g. Kandy, Sri Lanka" style="flex:1"/>
-        <button type="button" id="geocodeBtn" style="width:auto;background:#0ea5e9;color:#fff;margin:0 0 0 3px;">Find</button>
-      </div>
-      <div id="mapPreview"></div>
+      <input id="place" placeholder="Search any city, town, or country" autocomplete="off" style="margin-bottom:8px;" oninput="searchPlace(this.value)">
+      <div id="placeSuggest"></div>
+      <div id="osmMap"></div>
       <button type="submit">Generate Chart</button>
     </form>
     <div id="err" style="color:#f87171;margin-top:8px;"></div>
@@ -129,6 +120,7 @@
       <div id="kpBoxes"></div>
       <div id="cuspalSubLords"></div>
       <div id="moonSubLord"></div>
+      <div id="moonRashi"></div>
       <div id="rulingPlanets"></div>
       <div id="significators"></div>
       <div id="planetStrengths"></div>
@@ -138,6 +130,7 @@
     <button id="saveBtn">💾 Save Chart</button>
     <button id="loadBtn">📂 Load Chart</button>
     <button id="modeBtn">🌙/☀️</button>
+    <button type="button" id="astroChatBtn" style="width:auto;background:#a3e635;color:#181e29;margin-top:16px;">💬 Talk to Astrologer</button>
     <div class="footer-info">
       <b>Sathyadarshana KP Astrology Report</b><br>
       Email: sathyanirvana@gmail.com<br>
@@ -147,13 +140,6 @@
   </div>
 </div>
 <script>
-// Year picker button function
-function setYear(year){
-  let dateEl = document.getElementById('date');
-  let d = dateEl.value ? new Date(dateEl.value) : new Date();
-  d.setFullYear(year);
-  dateEl.value = d.toISOString().slice(0,10);
-}
 // Timezone select
 const timezones = [
   { value:"+05:30", label:"IST (India/Sri Lanka) +05:30" },
@@ -174,50 +160,64 @@ timezones.forEach(tz=>{
 });
 timezone.value = "+05:30";
 
-// Geocode and Map logic
-async function geocodePlace(q){
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
-  const res = await fetch(url).then(r=>r.json());
-  if(!res.length) return null;
-  return { lat:+res[0].lat, lon:+res[0].lon, label:res[0].display_name };
-}
-function showMap(lat, lon){
-  const mapDiv = document.getElementById('mapPreview');
-  if(!lat||!lon){ mapDiv.style.display='none'; return; }
-  mapDiv.style.display = '';
-  mapDiv.innerHTML = `<iframe loading="lazy" allowfullscreen
-    src="https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.02}%2C${lat-0.01}%2C${lon+0.02}%2C${lat+0.01}&layer=mapnik&marker=${lat}%2C${lon}"
-    ></iframe>
-    <div style="text-align:right;font-size:12px;margin-top:2px;">
-      <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}" target="_blank" style="color:#38bdf8">View Full Map</a>
-    </div>`;
-}
-document.getElementById('geocodeBtn').onclick = async function(){
-  const place = document.getElementById('place').value.trim();
-  if(!place){ errBox.textContent="Enter place name."; return; }
-  errBox.textContent = "Searching...";
-  const geo = await geocodePlace(place);
-  if(!geo){
-    errBox.textContent = "Place not found. Please try a more specific name.";
-    return;
+// Leaflet map init
+let map, marker;
+function initMap(lat=7.8731, lon=80.7718, zoom=6) {
+  if (!map) {
+    map = L.map('osmMap').setView([lat, lon], zoom);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    marker = L.marker([lat, lon], {draggable:true}).addTo(map);
+    marker.on('dragend', function(e){
+      const pos = marker.getLatLng();
+      document.getElementById('lat').value = pos.lat.toFixed(6);
+      document.getElementById('lon').value = pos.lng.toFixed(6);
+    });
+    map.on('click', function(e){
+      marker.setLatLng(e.latlng);
+      document.getElementById('lat').value = e.latlng.lat.toFixed(6);
+      document.getElementById('lon').value = e.latlng.lng.toFixed(6);
+    });
+  } else {
+    map.setView([lat, lon], zoom);
+    marker.setLatLng([lat, lon]);
   }
-  document.getElementById('lat').value = geo.lat;
-  document.getElementById('lon').value = geo.lon;
-  showMap(geo.lat, geo.lon);
-  errBox.textContent = "";
-};
-// On Lat/Lon change, show map preview
+  document.getElementById('osmMap').style.display = '';
+}
+async function searchPlace(q) {
+  const suggestDiv = document.getElementById('placeSuggest');
+  if(!q || q.length<2) { suggestDiv.innerHTML=''; return; }
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&addressdetails=1`;
+  const res = await fetch(url).then(r=>r.json());
+  suggestDiv.innerHTML = res.length
+    ? '<div>'+res.map(place=>`
+        <div class="suggest-item" onclick="selectPlace('${place.display_name.replace(/'/g,"\\'")}',${place.lat},${place.lon});">${place.display_name}</div>
+      `).join('')+'</div>'
+    : '';
+}
+window.searchPlace = searchPlace;
+window.selectPlace = function(name, lat, lon){
+  document.getElementById('place').value = name;
+  document.getElementById('lat').value = lat;
+  document.getElementById('lon').value = lon;
+  initMap(lat, lon, 13);
+  document.getElementById('osmMap').style.display = '';
+  document.getElementById('placeSuggest').innerHTML = '';
+}
+// Show map when lat/lon changes
 document.getElementById('lat').addEventListener('input', ()=>{
-  const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
-  if(lat&&lon){ showMap(lat,lon);}
+  const lat=document.getElementById('lat').value, lon=document.getElementById('lon').value;
+  if(lat && lon) initMap(lat, lon, 13);
 });
-document.getElementById('lon').addEventListener('input', ()=>{
-  const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
-  if(lat&&lon){ showMap(lat,lon);}
+document.getElementById('lat').value, lon=document.getElementById('lon').value;
+  if(lat && lon) initMap(lat, lon, 13);
 });
-// On Place input clear, hide map
-document.getElementById('place').addEventListener('input', ()=>{
-  if(!document.getElementById('place').value.trim()){ document.getElementById('mapPreview').style.display='none'; }
+// Show map on page load if lat/lon present
+window.addEventListener('DOMContentLoaded', ()=>{
+  const lat=document.getElementById('lat').value, lon=document.getElementById('lon').value;
+  if(lat && lon) initMap(lat, lon, 13);
+  if(typeof fromParams==="function") fromParams();
 });
 
 // Main form logic (date+time picker, manual lat/lon, mobile friendly)
@@ -240,15 +240,16 @@ birthForm.onsubmit = async function(e){
   // If lat/lon are missing, try geocoding
   if((isNaN(lat) || isNaN(lon) || !lat || !lon) && place){
     errBox.textContent = 'Searching place...';
-    const geo = await geocodePlace(place);
-    if(!geo){
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}&limit=1`;
+    const res = await fetch(url).then(r => r.json());
+    if(!res.length){
       errBox.textContent = 'Place not found. Enter coordinates.';
       return;
     }
-    lat = geo.lat; lon = geo.lon;
+    lat = +res[0].lat; lon = +res[0].lon;
     document.getElementById('lat').value = lat;
     document.getElementById('lon').value = lon;
-    showMap(lat, lon);
+    initMap(lat, lon, 13);
   }
   // Double-check lat/lon are now valid
   if(isNaN(lat) || isNaN(lon) || !lat || !lon){
@@ -261,7 +262,7 @@ birthForm.onsubmit = async function(e){
   showChart(name, dt, tz, lat, lon, place);
 };
 
-// ==== Astrology/Chart Logic (Full, Working) ====
+// ==== Astrology/Chart Logic (Full, Working, with Rashi and Prediction) ====
 const MD_ORDER = [
   { lord: "Ketu",    years: 7  },
   { lord: "Venus",   years: 20 },
@@ -284,53 +285,7 @@ const NAKSHATRAS = [
   { name:'Shravana', lord:'Moon' },{ name:'Dhanishtha', lord:'Mars' },{ name:'Shatabhisha', lord:'Rahu' },
   { name:'Purva Bhadrapada', lord:'Jupiter' },{ name:'Uttara Bhadrapada', lord:'Saturn' },{ name:'Revati', lord:'Mercury' }
 ];
-const DASHA_PREDICTIONS = {
-  "Ketu": {
-    en: "Ketu Dasha: A period of spiritual inclinations, sudden changes, and detachment.",
-    si: "කේතු දශාව: ආධ්‍යාත්මික වශයෙන් පැවැත්ම, හදිසි වෙනස්වීම්, වෙන්වීමේ යුගයක්.",
-    ta: "கேது தசை: ஆன்மிக ஆர்வம், திடீர் மாற்றங்கள், பற்றின்மை."
-  },
-  "Venus": {
-    en: "Venus Dasha: Brings comforts, relationships, art, luxury and sometimes indulgence.",
-    si: "ශුක්‍ර දශාව: සුවපහසුකම්, සබඳතා, කලා, වාභෝග හා විලාසිතා.",
-    ta: "சுக்கிர தசை: சுகங்கள், உறவுகள், கலை, வசதி, விருப்பம்."
-  },
-  "Sun": {
-    en: "Sun Dasha: Power, position, ego, health focus, authority and fatherly issues.",
-    si: "සූර්ය දශාව: බලය, තනතුර, අහංකාරය, සෞඛ්‍යය, පියාගේ කරුණු.",
-    ta: "சூரிய தசை: அதிகாரம், நிலை, பெருமை, உடல் சுகம், தந்தை."
-  },
-  "Moon": {
-    en: "Moon Dasha: Mind, emotions, travel, mother, peace or restlessness.",
-    si: "චන්ද්‍ර දශාව: මනස, හැඟීම්, සංචාර, මව, සාමය හෝ අශාන්ති.",
-    ta: "சந்திர தசை: மனம், உணர்ச்சி, பயணம், தாய், அமைதி."
-  },
-  "Mars": {
-    en: "Mars Dasha: Energy, aggression, real estate, siblings, accidents.",
-    si: "අඟ දශාව: ශක්තිය, තද කෝපය, දේපළ, සහෝදරයන්, අනතුරු.",
-    ta: "செவ்வாய் தசை: ஆற்றல், கோபம், சொத்து, சகோதரர், விபத்து."
-  },
-  "Rahu": {
-    en: "Rahu Dasha: Worldly desires, confusion, innovation, foreign connections.",
-    si: "රාහු දශාව: ලෝක ආශාවන්, අර්බුද, නවෝත්පාදන, විදේශ සම්බන්ධතා.",
-    ta: "ராகு தசை: ஆசை, குழப்பம், புதுமை, வெளிநாட்டு தொடர்பு."
-  },
-  "Jupiter": {
-    en: "Jupiter Dasha: Wisdom, growth, children, education, prosperity.",
-    si: "ගුරු දශාව: ප්‍රඥාව, වර්ධනය, දරුවන්, අධ්‍යාපනය, සෞභාග්‍යය.",
-    ta: "குரு தசை: ஞானம், வளர்ச்சி, பிள்ளை, கல்வி, செழிப்பு."
-  },
-  "Saturn": {
-    en: "Saturn Dasha: Hard work, delays, discipline, karma, spirituality.",
-    si: "ශනි දශාව: දැඩිපෙළපාලි, ප්‍රමාද, අනුපිළිවෙළ, කර්මය, ආධ්‍යාත්මය.",
-    ta: "சனி தசை: கடின உழைப்பு, தாமதம், ஒழுங்கு, கர்மா, ஆன்மிகம்."
-  },
-  "Mercury": {
-    en: "Mercury Dasha: Intellect, communication, studies, business, wit.",
-    si: "බුධ දශාව: බුද්ධිය, සංවාදය, අධ්‍යාපන, ව්‍යාපාර, චාතුරිය.",
-    ta: "புதன் தசை: புத்திசாலி, தொடர்பு, கல்வி, வணிகம், நயம்."
-  }
-};
+const MOON_RASHI = ["Mesha (Aries)","Vrushabha (Taurus)","Mithuna (Gemini)","Kataka (Cancer)","Sinha (Leo)","Kanya (Virgo)","Thula (Libra)","Vrushchika (Scorpio)","Dhanu (Sagittarius)","Makara (Capricorn)","Kumbha (Aquarius)","Meena (Pisces)"];
 // --- Helpers ---
 function parseLocalISO(iso){
   if(!iso) return new Date();
@@ -430,24 +385,8 @@ function calculateMoonSubLord(moonDeg){
   const deltaDeg = norm360(moonDeg-startDeg);
   const minutes = deltaDeg * 60;
   const seg = subSegments(nak.lord).find(s=>minutes>=s.from && minutes<s.to) || { lord:nak.lord };
-  return seg.lord;
+  return seg planets.filter((p,i)=>i%2==0).map(p=>p.name).join(', ');
 }
-function calculateCuspalSubLords(ascDeg){
-  let lords = [];
-  for(let i=0; i<12; i++){
-    const deg = norm360(ascDeg + i*30);
-    const subLord = calculateMoonSubLord(deg);
-    lords.push(`House ${i+1}: <b>${subLord}</b>`);
-  }
-  return lords;
-}
-function getRulingPlanets(planets){
-  return "Ruling Planets: " + planets.slice(0,3).map(p=>p.name).join(', ');
-}
-function getSignificators(planets){
-  return "Significators: " + planets.filter((p,i)=>i%2==0).map(p=>p.name).join(', ');
-}
-const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
 function getMockPlanets(dt, lat, lon){
   const t = parseLocalISO(dt).getTime()/86400000;
   return [
@@ -462,7 +401,6 @@ function getMockPlanets(dt, lat, lon){
   ];
 }
 function getPlanetStrengths(planets){
-  // (Mock for Demo: Sun, Jupiter, Venus strong; Rahu, Mars weak; others neutral)
   return `<b>Planetary Strengths:</b>
     <ul>
       <li>Sun: Strong</li>
@@ -473,6 +411,18 @@ function getPlanetStrengths(planets){
       <li>Others: Moderate</li>
     </ul>`;
 }
+function moonDegreeToRashi(moonDeg){
+  const rashiIx = Math.floor(norm360(moonDeg)/30);
+  return MOON_RASHI[rashiIx];
+}
+function longPredictionSummary(maha, moonRashi, name){
+  let s = `Dear ${name?name:"User"},\n\nYour Janma Rashi (Moon Sign) is <b>${moonRashi}</b>. Your Vimshottari Dasha sequence from birth is: `;
+  s += maha.slice(0,5).map(d=>d.lord).join(" → ");
+  s += ". Each planetary period brings different energies into your life. ";
+  s += `Currently, you are likely under the influence of <b>${maha[0].lord}</b> Maha Dasha, which brings ${maha[0].lord==="Moon"?"emotional changes and intuitive growth":maha[0].lord==="Saturn"?"hard work and discipline":maha[0].lord==="Jupiter"?"wisdom and prosperity":maha[0].lord==="Venus"?"comforts and relationships":"unique experiences"}. `;
+  s += `The effects of Dasha periods depend on your personal chart and birth context. For deeper insights, consult a professional astrologer.`;
+  return s;
+}
 const summary = document.getElementById('summary');
 const dashaTable = document.getElementById('dashaTable');
 const bhuktiTable = document.getElementById('bhuktiTable');
@@ -481,55 +431,49 @@ const moonSubLordDiv = document.getElementById('moonSubLord');
 const cuspalSubLordsDiv = document.getElementById('cuspalSubLords');
 const rulingPlanetsDiv = document.getElementById('rulingPlanets');
 const significatorsDiv = document.getElementById('significators');
+const planetStrengthsDiv = document.getElementById('planetStrengths');
+const moonRashiDiv = document.getElementById('moonRashi');
 const pdfBtn = document.getElementById('pdfBtn');
 const shareBtn = document.getElementById('shareBtn');
 const predictionBox = document.getElementById('predictionBox');
-const planetStrengthsDiv = document.getElementById('planetStrengths');
 const saveBtn = document.getElementById('saveBtn');
 const loadBtn = document.getElementById('loadBtn');
 const modeBtn = document.getElementById('modeBtn');
 const chartArea = document.getElementById('chartArea');
+const astroChatBtn = document.getElementById('astroChatBtn');
 
 function showPrediction(lord){
-  const pred = DASHA_PREDICTIONS[lord];
-  if(!pred) { predictionBox.style.display='none'; return; }
-  predictionBox.style.display = '';
-  predictionBox.innerHTML = `<b>Prediction (පලාපල, பலன்கள்):</b><br>
-    <span style="color:#60a5fa">${pred.en}</span><br>
-    <span style="color:#38bdf8">${pred.si}</span><br>
-    <span style="color:#8b5cf6">${pred.ta}</span>`;
+  predictionBox.style.display = 'none';
 }
 function showChart(name, dt, tz, lat, lon, place){
   chartArea.style.display = '';
+  const dtUTC = toUTC(dt, tz);
+  const planets = getMockPlanets(dt, lat, lon);
+  const moon = planets.find(p=>p.name==='Moon');
+  const maha = computeVimshottariDasha(moon.degree, dt, 120);
+  const janmaRashi = moonDegreeToRashi(moon.degree);
+
   summary.innerHTML = `<span class="pill">Name: ${name}</span>
     <span class="pill">Date/Time: ${dt}</span>
     <span class="pill">TZ: ${tz}</span>
     <span class="pill">Lat: ${lat}</span>
     <span class="pill">Lon: ${lon}</span>
     <span class="pill">Place: ${place}</span>
-    <br><br>
-    <i>Vimshottari Dasha method divides life into planetary periods (Maha Dasha, Bhukti, etc) based on Moon's nakshatra at birth. The exact starting point is calculated from the fractional balance of Moon's position in its Nakshatra, allowing fine-grained prediction of life events.<br>
-    විමිශෝත්තරි දශා ක්‍රමය යනු, ජනනයේදී චන්ද්‍රයා පිහිටන නක්ෂත්‍රය මත පදනම්ව ජීවිතය මහාදශා, භුක්ති වශයෙන් වෙන් කරන ක්‍රමයකි. නක්ෂත්‍රයේ ඉතිරි ප්‍රමාණය අනුව කාල සීමාවන් ගණනය කරයි.<br>
-    விண்மீன் நிலையில் சந்திரன் இருக்கும் இடத்தைக் கொண்டு, மகா தசை, புக்தி போன்றவை கணிக்கப்படும் விந்தோத்தரி தசை முறையைக் காட்டும். நக்ஷத்திரத்தில் சந்திரன் இருக்கும் இடம் மூலம் துவக்கத்தையும், மீதமுள்ள காலத்தையும் கணிக்க முடியும்.</i>
-    `;
-  const dtUTC = toUTC(dt, tz);
-  const planets = getMockPlanets(dt, lat, lon);
-  const moon = planets.find(p=>p.name==='Moon');
-  const maha = computeVimshottariDasha(moon.degree, dt, 120);
+    <span class="pill" style="background:#172e1b;color:#bef264;">Janma Rashi: <b>${janmaRashi}</b></span><br><br>
+    <b>Vimshottari Dasha Overview</b><br>
+    <div style="color:#cbd5e1;margin-bottom:12px;">${longPredictionSummary(maha, janmaRashi, name)}</div>
+    <i>Vimshottari Dasha divides life into planetary periods (Maha Dasha, Bhukti, etc) based on Moon's nakshatra at birth. Exact results depend on your full chart.</i>`;
   dashaTable.innerHTML = '';
   maha.forEach((r,i)=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
     tr.style.cursor = 'pointer';
-    tr.onclick = ()=>{
-      showBhukti(r);
-      showPrediction(r.lord);
-    };
+    tr.onclick = ()=>showBhukti(r);
     dashaTable.appendChild(tr);
   });
   showBhukti(maha[0]);
-  showPrediction(maha[0].lord);
   kpBoxes.innerHTML = '';
+  const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
   planets.forEach((p,i)=>{
     const signIx = Math.floor(norm360(p.degree)/30);
     const box = document.createElement('div');
@@ -539,6 +483,7 @@ function showChart(name, dt, tz, lat, lon, place){
   });
   moonSubLordDiv.innerHTML = `🌙 Moon Sub-Lord: <b>${calculateMoonSubLord(moon.degree)}</b>`;
   cuspalSubLordsDiv.innerHTML = "<b>Cuspal Sub-Lords:</b> " + calculateCuspalSubLords(planets[0].degree).join(', ');
+  moonRashiDiv.innerHTML = `🌙 <b>Janma Rashi:</b> ${janmaRashi}`;
   rulingPlanetsDiv.innerHTML = getRulingPlanets(planets);
   significatorsDiv.innerHTML = getSignificators(planets);
   planetStrengthsDiv.innerHTML = getPlanetStrengths(planets);
@@ -550,7 +495,6 @@ function showBhukti(maha){
   bhukti.forEach((r,i)=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
-    tr.onclick = ()=>showPrediction(r.lord);
     bhuktiTable.appendChild(tr);
   });
 }
@@ -618,12 +562,9 @@ function fromParams(){
     birthForm.dispatchEvent(new Event('submit'));
   }
 }
-// On page load, show map if lat/lon present & params
-window.addEventListener('DOMContentLoaded',()=>{
-  const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
-  if(lat&&lon){ showMap(lat,lon);}
-  if(typeof fromParams==="function") fromParams();
-});
+astroChatBtn.onclick = function(){
+  alert("Live chat with astrologer coming soon! For now, email: sathyanirvana@gmail.com or call +94757500000");
+};
 </script>
 </body>
 </html>

@@ -174,7 +174,7 @@
   });
   timezone.value = "+05:30";
 
-  // Geocode and Map logic (unchanged)
+  // Geocode and Map logic
   async function geocodePlace(q){
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
     const res = await fetch(url).then(r=>r.json());
@@ -261,8 +261,7 @@
     showChart(name, dt, tz, lat, lon, place);
   };
 
-  // ------ Rest of your astrology/chart JS logic here (unchanged) ------
-  //   - showChart, showPrediction, etc.
+  // ------ Rest of your astrology/chart JS logic here (showChart, showPrediction, etc) ------
 
   // On page load, show map if lat/lon present
   window.addEventListener('DOMContentLoaded',()=>{

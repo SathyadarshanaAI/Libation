@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <title>KP Astrology Chart Pro <span style="font-size:15px;color:#60a5fa;">v1.0</span> | Sathyadarshana</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=3"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale:3"/>
   <meta name="description" content="KP Astrology chart, Vimshottari Dasha, Sub-Lord, Rashi, Place autocomplete, Map preview, Save, Share, PDF, worldwide.">
   <meta http-equiv="Content-Language" content="en"/>
   <link rel="icon" href="favicon.png">
@@ -46,7 +46,7 @@
     @media print {
       body { background: #fff; color: #111; }
       .card { background: #fff; border-color: #ccc; color: #111;}
-      .toplink, #shareBtn, #saveBtn, #loadBtn, #modeBtn, #osmMap, #astroChatBtn { display: none !important;}
+      .toplink, #shareBtn, #saveBtn, #loadBtn, #modeBtn, #osmMap, #astroChatBtn, #langBar, #google_translate_element { display: none !important;}
       .footer-info { color:#333 !important; }
     }
     .dark { background: #181e29 !important; color: #e0f2fe !important;}
@@ -54,22 +54,34 @@
     .light .card { background:#fff !important; border-color:#bbb !important; color:#222;}
     .light #predictionBox{background:#f1f5f9;}
   </style>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Google Translate (kept as-is) -->
   <div id="google_translate_element" style="float:right;margin:10px 0"></div>
   <script type="text/javascript">
     function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'en', // ENGLISH default!
-            includedLanguages: 'en,si,ta',
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'google_translate_element');
+      new google.translate.TranslateElement({
+        pageLanguage: 'en', // ENGLISH default
+        includedLanguages: 'en,si,ta',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
     }
   </script>
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body class="dark">
 <a class="toplink" href="#">← Dashboard</a>
+
 <div class="wrap">
+
+  <!-- ✅ English-only labels Language Bar -->
+  <div id="langBar" style="display:flex;gap:8px;justify-content:flex-end;margin:8px 0;">
+    <button type="button" onclick="setLang('en')" class="pill" style="cursor:pointer">English</button>
+    <button type="button" onclick="setLang('si')" class="pill" style="cursor:pointer">Sinhala</button>
+    <button type="button" onclick="setLang('ta')" class="pill" style="cursor:pointer">Tamil</button>
+  </div>
+
   <div class="card">
     <h2>KP Astrology Chart Pro <span style="font-size:15px;color:#60a5fa;">v1.0</span></h2>
     <form id="birthForm" autocomplete="off">
@@ -77,15 +89,16 @@
       <input id="name" required placeholder="Your name"/>
       <label>Birth Date & Time</label>
       <div class="row2col">
-        <input id="date" type="date" required style="margin-bottom:5px"/>
-        <input id="time" type="time" required value="12:00"/>
+        <!-- 📅 Keep calendar in English -->
+        <input id="date" type="date" required style="margin-bottom:5px" translate="no" class="notranslate"/>
+        <input id="time" type="time" required value="12:00" translate="no" class="notranslate"/>
       </div>
       <label>Timezone</label>
       <select id="timezone" required></select>
       <label>Latitude</label>
-      <input id="lat" required placeholder="e.g. 7.2862" step="any" inputmode="decimal" pattern="^-?\d+(\.\d+)?$"/>
+      <input id="lat" required placeholder="e.g. 7.2862" step="any" inputmode="decimal" pattern="^-?\\d+(\\.\\d+)?$"/>
       <label>Longitude</label>
-      <input id="lon" required placeholder="e.g. 80.6316" step="any" inputmode="decimal" pattern="^-?\d+(\.\d+)?$"/>
+      <input id="lon" required placeholder="e.g. 80.6316" step="any" inputmode="decimal" pattern="^-?\\d+(\\.\\d+)?$"/>
       <label>Place</label>
       <div style="display:flex;gap:8px;">
         <input id="place" placeholder="Search any city, town, or country" autocomplete="off" style="margin-bottom:8px;flex:1" />
@@ -97,6 +110,7 @@
     </form>
     <div id="err" style="color:#f87171;margin-top:8px;"></div>
   </div>
+
   <div id="chartArea" style="display:none">
     <div class="card" id="summary"></div>
     <div class="card">
@@ -130,12 +144,14 @@
       <div id="significators"></div>
       <div id="planetStrengths"></div>
     </div>
+
     <button id="pdfBtn">📄 Download as PDF</button>
     <button id="shareBtn">🔗 Share Chart</button>
     <button id="saveBtn">💾 Save Chart</button>
     <button id="loadBtn">📂 Load Chart</button>
     <button id="modeBtn">🌙/☀️</button>
     <button type="button" id="astroChatBtn" style="width:auto;background:#a3e635;color:#181e29;margin-top:16px;">💬 Talk to Astrologer</button>
+
     <div class="footer-info">
       <b>Sathyadarshana KP Astrology Report</b><br>
       Version: <b>1.0</b><br>
@@ -145,7 +161,39 @@
     </div>
   </div>
 </div>
+
+<!-- 🔊 Astrologer Voice Panel -->
+<div id="astroPanel" style="display:none; position:fixed; inset:0; background:#0008; z-index:9999;">
+  <div style="max-width:560px; margin:10vh auto; background:#1a2335; color:#e0f2fe; border:1px solid #2a3652; border-radius:14px; padding:16px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+      <h3 style="margin:0;">Ask the Astrologer</h3>
+      <button type="button" onclick="closeAstroPanel()" style="width:auto; padding:6px 10px; background:#ef4444; color:#fff; border-radius:8px; border:0; cursor:pointer;">Close</button>
+    </div>
+    <p style="margin:10px 0 6px;">Your question</p>
+    <textarea id="astroQ" rows="4" placeholder="Speak or type your question…" style="width:100%; background:#0f172a; color:#e0f2fe; border:1px solid #2a3652; border-radius:8px; padding:10px;"></textarea>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+      <button type="button" onclick="startMic()" style="background:#22c55e; color:#0b1220; font-weight:700; padding:10px 14px; border-radius:10px; border:0; cursor:pointer;">🎙️ Speak</button>
+      <button type="button" onclick="speakAnswer()" style="background:#a3e635; color:#0b1220; font-weight:700; padding:10px 14px; border-radius:10px; border:0; cursor:pointer;">🔊 Voice Answer</button>
+      <button type="button" onclick="openAstroLink()" style="background:#38bdf8; color:#0b1220; font-weight:700; padding:10px 14px; border-radius:10px; border:0; cursor:pointer;">🔗 Open Chat Link</button>
+    </div>
+    <div id="astroHint" style="margin-top:10px; font-size:14px; color:#93c5fd;">
+      Tip: Voice works best in Chrome/Edge. Language follows the Google Translate selector.
+    </div>
+  </div>
+</div>
+
 <script>
+// ===== Astrologer Config =====
+const ASTRO_LINK = "https://wa.me/94757500000"; // ← Change if needed
+
+// English-only labels → switch Google Translate via our buttons
+function setLang(code) {
+  var combo = document.querySelector('.goog-te-combo');
+  if (!combo) return;
+  combo.value = code;
+  combo.dispatchEvent(new Event('change'));
+}
+
 // Timezone select
 const timezones = [
   { value:"+05:30", label:"IST (India/Sri Lanka) +05:30" },
@@ -173,8 +221,8 @@ function initMap(lat=7.8731, lon=80.7718, zoom=6) {
   if (!map) {
     map = L.map('osmMap').setView([lat, lon], zoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+      attribution: '&copy; OpenStreetMap contributors
+    '}).addTo(map);
     marker = L.marker([lat, lon], {draggable:true}).addTo(map);
     marker.on('dragend', function(e){
       const pos = marker.getLatLng();
@@ -518,8 +566,8 @@ function showChart(name, dt, tz, lat, lon, place){
 }
 function showBhukti(maha){
   if(!maha) return;
-  bhuktiTable.innerHTML = '';
   const bhukti = computeBhuktiForMahadasha(maha.lord, maha.start, maha.years);
+  bhuktiTable.innerHTML = '';
   bhukti.forEach((r,i)=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
@@ -590,9 +638,73 @@ function fromParams(){
     birthForm.dispatchEvent(new Event('submit'));
   }
 }
-astroChatBtn.onclick = function(){
-  alert("Live chat with astrologer coming soon! For now, email: sathyanirvana@gmail.com or call +94757500000");
-};
+
+// ====== Astrologer Voice & Panel ======
+function getCurrentLang() {
+  const combo = document.querySelector('.goog-te-combo');
+  const code = combo && combo.value ? combo.value : 'en';
+  return (code === 'si' || code === 'ta' || code === 'en') ? code : 'en';
+}
+function pickVoice(langCode) {
+  const tag = langCode === 'si' ? 'si' : (langCode === 'ta' ? 'ta' : 'en');
+  const voices = window.speechSynthesis.getVoices();
+  let v = voices.find(v => (v.lang || '').toLowerCase().startsWith(tag));
+  if (!v && tag === 'si') v = voices.find(v => (v.lang || '').toLowerCase().startsWith('en'));
+  if (!v && tag === 'ta') v = voices.find(v => (v.lang || '').toLowerCase().startsWith('hi')) || voices.find(v => (v.lang || '').toLowerCase().startsWith('en'));
+  if (!v) v = voices[0];
+  return v;
+}
+function makeAnswer(lang, name, janmaRashi) {
+  const rashi = janmaRashi || (document.getElementById('moonRashi')?.textContent?.replace('🌙 Janma Rashi:','').trim() || '');
+  if (lang === 'si') {
+    return `ඔයාගේ ප්‍රශ්නය ලැබුණා. ${name? name + 'ට': 'ඔබට'} දැනට බලපාන ප්‍රධාන බලය, ඔබේ ජනම රාශිය ${rashi} අනුව, ශාන්ත සිතක් ගෙන එයි. දැන් දිනපතා තීරණ සන්සිඳිමින් ගන්න.`;
+  }
+  if (lang === 'ta') {
+    return `உங்கள் கேள்வி பெறப்பட்டது. ${name? name + ' அவர்களுக்கு' : 'உங்களுக்கு'} தற்போது, பிறப்பு ராசி ${rashi} அடிப்படையில் அமைதியான கவனம் நன்மை தரும். இன்று முக்கிய முடிவுகளை அமைதியாக எடுக்கவும்.`;
+  }
+  return `Your question is noted. For ${name || 'you'}, considering the Janma Rashi ${rashi}, a calm, steady focus benefits decisions today. Choose clarity over haste.`;
+}
+function speakText(text, langCode) {
+  if (!('speechSynthesis' in window)) { alert('Voice not supported on this browser.'); return; }
+  const utter = new SpeechSynthesisUtterance(text);
+  const v = pickVoice(langCode);
+  if (v) utter.voice = v;
+  utter.lang = v?.lang || (langCode === 'si' ? 'si' : (langCode === 'ta' ? 'ta' : 'en-US'));
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
+}
+let recog;
+function startMic() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) { alert('Speech recognition not supported here.'); return; }
+  const lang = getCurrentLang();
+  recog = new SpeechRecognition();
+  recog.lang = lang === 'si' ? 'si-LK' : (lang === 'ta' ? 'ta-IN' : 'en-US');
+  recog.interimResults = false; recog.maxAlternatives = 1;
+  recog.onresult = (e) => {
+    const t = e.results[0][0].transcript;
+    document.getElementById('astroQ').value = t;
+  };
+  recog.onerror = () => {};
+  recog.start();
+}
+function openAstroPanel(){ document.getElementById('astroPanel').style.display = 'block'; }
+function closeAstroPanel(){ document.getElementById('astroPanel').style.display = 'none'; }
+function openAstroLink(){ window.open(ASTRO_LINK, '_blank', 'noopener'); }
+function speakAnswer() {
+  const name = document.getElementById('name')?.value?.trim() || '';
+  const janmaText = document.getElementById('moonRashi')?.textContent || '';
+  const janmaMatch = janmaText.replace(/.*Janma Rashi:\\s*/i,'').trim();
+  const lang = getCurrentLang();
+  const ans = makeAnswer(lang, name, janmaMatch);
+  speakText(ans, lang);
+}
+// hook green button
+astroChatBtn.onclick = function(){ openAstroPanel(); };
+// ensure voices list ready
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => {};
+}
 </script>
 </body>
 </html>

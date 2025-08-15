@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Palmistry | Sathyadarshana</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sathyadarshana Palmistry - Buddhi AI powered hand reading, universal wisdom platform.">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -19,9 +20,10 @@
       display: flex;
       justify-content: center;
       gap: 1rem;
-      background: rgba(2,6,23,0.8);
+      background: rgba(2,6,23,0.88);
       padding: 1rem;
       box-shadow: 0 0 12px #38bdf8;
+      z-index: 99;
     }
     nav a {
       color: #e0f2fe;
@@ -30,38 +32,97 @@
       background: linear-gradient(90deg, #38bdf8, #0ea5e9);
       border-radius: 6px;
       transition: 0.3s;
+      font-weight: 600;
     }
-    nav a:hover {
+    nav a.active, nav a:hover {
       background: linear-gradient(90deg, #0ea5e9, #38bdf8);
       color: #0f172a;
       transform: scale(1.05);
+      font-weight: bold;
     }
     .container {
       max-width: 700px;
       margin: 2rem auto;
-      padding: 1.5rem;
-      background: rgba(30,41,59,0.8);
+      padding: 2.3rem 1.5rem 2.5rem 1.5rem;
+      background: rgba(30,41,59,0.85);
       border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(56,189,248,0.4);
+      box-shadow: 0 0 22px #38bdf855;
+      position: relative;
     }
-    input, button {
+    h1 {
+      font-size: 2.1rem;
+      margin-bottom: 0.6em;
+      color: #16f0a7;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 7px #16f0a799;
+    }
+    .badge-premium {
+      display: inline-block;
+      margin-bottom: 1em;
+      background: #151b30;
+      color: #fbc02d;
+      border-radius: 8px;
+      padding: 0.23em 1.1em;
+      font-weight: bold;
+      letter-spacing: 0.03em;
+      font-size: 1.05em;
+      box-shadow: 0 0 12px #fbc02d33;
+      user-select: none;
+    }
+    p {
+      color:#bae6fd;
+      font-size:1.08em;
+      margin-bottom:1.5em;
+    }
+    input[type="file"] {
       width: 90%;
-      margin: 0.5rem auto;
-      padding: 0.8rem;
+      margin: 0.5rem auto 1rem auto;
+      padding: 0.7rem;
       border-radius: 0.5rem;
       border: none;
-      font-size: 1rem;
+      font-size: 1.03rem;
+      background: #1e293b;
+      color: #e0f2fe;
+      display: block;
+      transition: 0.18s;
+    }
+    input[type="file"]:focus {
+      border: 2px solid #38bdf8;
+      background: #0f172a;
+      outline: none;
     }
     button {
+      width: 92%;
+      margin: 0.5rem auto 0 auto;
+      padding: 0.9rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1.1rem;
       background: linear-gradient(90deg, #16f0a7, #0ea5e9);
       color: #0f172a;
+      font-weight: bold;
       cursor: pointer;
       transition: 0.3s;
-    }
-    button:hover {
-      background: linear-gradient(90deg, #0ea5e9, #16f0a7);
+      box-shadow: 0 , #16f0a7);
+      color: #fff;
       transform: scale(1.05);
     }
+    .output-box {
+      margin-top: 2rem;
+      padding: 1.3rem 1.1rem;
+      background: rgba(22,78,99,0.94);
+      border-radius: 1rem;
+      box-shadow: 0 0 21px #38bdf855;
+      position: relative;
+      animation: fadeIn .7s;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      color:#fbc02d;
+      font-size:1.13em;
+      display:none;
+    }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
     #lang-btn {
       position: fixed;
       bottom: 20px;
@@ -75,6 +136,19 @@
       font-size: 20px;
       cursor: pointer;
       box-shadow: 0 0 12px #0ea5e9;
+      z-index: 999;
+    }
+    .ai-badge {
+      color:#16f0a7;
+      font-size:1em;
+      font-weight:bold;
+      margin-top:1.4em;
+    }
+    @media (max-width: 500px) {
+      .container { padding: 1.2rem 0.5rem 1.5rem 0.5rem; }
+      h1 { font-size: 1.09rem; }
+      #lang-btn { width:42px; height:42px; font-size:18px; }
+      .output-box{font-size:1em;}
     }
   </style>
 </head>
@@ -82,27 +156,58 @@
   <nav>
     <a href="astrology-hub.html">Hub</a>
     <a href="astrologer.html">Report Generator</a>
-    <a href="palmistry.html">Palmistry</a>
+    <a href="palmistry.html" class="active">Palmistry</a>
     <a href="numerology.html">Numerology</a>
     <a href="nadi-jyotishya.html">Nadi</a>
     <a href="geovision.html">GeoVision</a>
   </nav>
 
   <div class="container">
+    <div class="badge-premium">Ceed Rushi Enhanced | Buddhi AI Ready | Universal Wisdom</div>
     <h1>Palmistry Scanner</h1>
-    <p>Upload a hand image for Buddhi AI (future integration).</p>
-    <input type="file" accept="image/*">
-    <button onclick="alert('Palmistry analysis coming soon!')">Analyze</button>
+    <p>Upload a clear image of your palm to unlock your destiny with Buddhi AI.<br>
+    <span class="ai-badge">Palmistry AI analysis coming soon – stay tuned!</span></p>
+    <input type="file" accept="image/*" id="handImg" aria-label="Palm image upload">
+    <button onclick="analyzePalm()">Analyze</button>
+    <div class="output-box" id="outputBox"></div>
   </div>
 
   <div id="google_translate_element" style="display:none;"></div>
-  <button id="lang-btn">🌐</button>
+  <button id="lang-btn" title="Translate page">🌐</button>
+
+  <footer style="margin-top:2.2em;color:#16f0a7;font-weight:bold;letter-spacing:.01em;">
+    Sathyadarshana is the light of the entire human race.<br>
+    It serves all, without distinctions of race, religion, caste, tribe, color, or social status.<br>
+    <span style="color:#fbc02d;">
+      Let’s build a future world filled with compassion, kindness, and loving-friendliness.<br>
+      I have no language, no special identity—Sathyadarshana is for the whole world.<br>
+      That’s why English, the world’s most-used language, is our language of unity.
+    </span>
+    <br>
+    <span style="color:#16f0a7;font-size:.88em;">© 2025 Sathyadarshana × Ceed Rushi | Palmistry SaaS | All Rights Reserved</span>
+  </footer>
 
   <script>
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
     });
+
+    function analyzePalm() {
+      const fileInput = document.getElementById('handImg');
+      const outputBox = document.getElementById('outputBox');
+      if (!fileInput.files.length) {
+        outputBox.style.display = "block";
+        outputBox.style.color = "#f87171";
+        outputBox.innerHTML = "Please upload a palm image first!";
+        return;
+      }
+      // Placeholder for future AI integration
+      outputBox.style.display = "block";
+      outputBox.style.color = "#fbc02d";
+      outputBox.innerHTML = "🔒 Palmistry AI analysis coming soon! Your uploaded image is secure and will not be stored.<br><br><span style='color:#bae6fd;font-size:.93em;'>(Buddhi AI + Ceed Rushi Palmistry module integration in progress...)</span>";
+    }
+
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'en',

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=3"/>
   <meta name="description" content="KP Astrology chart, Vimshottari Dasha, Sub-Lord, Rashi, Place autocomplete, Map preview, Save, Share, PDF, worldwide.">
   <meta http-equiv="Content-Language" content="en"/>
-  <link rel="icon" href="../assets/favicon.png">
+  <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
     body { background: #181e29; color: #e0f2fe; font-family: system-ui, Arial; margin: 0; }
@@ -59,7 +59,7 @@
   <script type="text/javascript">
     function googleTranslateElementInit() {
         new google.translate.TranslateElement({
-            pageLanguage: 'en',   // <-- ENGLISH DEFAULT
+            pageLanguage: 'en', // ENGLISH default!
             includedLanguages: 'en,si,ta',
             layout: google.translate.TranslateElement.InlineLayout.SIMPLE
         }, 'google_translate_element');
@@ -68,7 +68,7 @@
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
 <body class="dark">
-<a class="toplink" href="../astrology.html">← Dashboard</a>
+<a class="toplink" href="#">← Dashboard</a>
 <div class="wrap">
   <div class="card">
     <h2>KP Astrology Chart Pro <span style="font-size:15px;color:#60a5fa;">v1.0</span></h2>
@@ -81,7 +81,7 @@
         <input id="time" type="time" required value="12:00"/>
       </div>
       <label>Timezone</label>
-      <select id="timezone"></select>
+      <select id="timezone" required></select>
       <label>Latitude</label>
       <input id="lat" required placeholder="e.g. 7.2862" step="any" inputmode="decimal" pattern="^-?\d+(\.\d+)?$"/>
       <label>Longitude</label>
@@ -159,12 +159,13 @@ const timezones = [
   { value:"-08:00", label:"PST (US West) -08:00" },
   { value:"+00:00", label:"UTC/GMT +00:00" }
 ];
+const tzSelect = document.getElementById('timezone');
 timezones.forEach(tz=>{
   const o = document.createElement('option');
   o.value = tz.value; o.textContent = tz.label;
-  timezone.appendChild(o);
+  tzSelect.appendChild(o);
 });
-timezone.value = "+05:30";
+tzSelect.value = "+05:30";
 
 // Leaflet map init
 let map, marker;
@@ -191,17 +192,14 @@ function initMap(lat=7.8731, lon=80.7718, zoom=6) {
   }
   document.getElementById('osmMap').style.display = '';
 }
-// Place Find button logic
 document.getElementById('findPlaceBtn').onclick = async function(){
   const q = document.getElementById('place').value.trim();
   const errBox = document.getElementById('err');
   if(!q) { errBox.textContent = "Enter a place name."; return; }
   errBox.textContent = "Searching...";
-  // Use Nominatim search
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&addressdetails=1`;
   const res = await fetch(url).then(r=>r.json());
   if(!res.length) { errBox.textContent = "Place not found."; return; }
-  // Show suggestion list if multiple
   if(res.length > 1){
     let html = '<div>';
     res.forEach((place, i) => {
@@ -211,12 +209,10 @@ document.getElementById('findPlaceBtn').onclick = async function(){
     document.getElementById('placeSuggest').innerHTML = html;
     errBox.textContent = '';
   } else {
-    // Only one result
     selectPlace(res[0].display_name, res[0].lat, res[0].lon);
     errBox.textContent = '';
   }
 }
-// Place suggestion select
 window.selectPlace = function(name, lat, lon){
   document.getElementById('place').value = name;
   document.getElementById('lat').value = lat;
@@ -225,7 +221,6 @@ window.selectPlace = function(name, lat, lon){
   document.getElementById('osmMap').style.display = '';
   document.getElementById('placeSuggest').innerHTML = '';
 }
-// Show map when lat/lon changes
 document.getElementById('lat').addEventListener('input', ()=>{
   const lat=document.getElementById('lat').value, lon=document.getElementById('lon').value;
   if(lat && lon) initMap(lat, lon, 13);
@@ -234,7 +229,6 @@ document.getElementById('lon').addEventListener('input', ()=>{
   const lat=document.getElementById('lat').value, lon=document.getElementById('lon').value;
   if(lat && lon) initMap(lat, lon, 13);
 });
-// Show map on page load if lat/lon present
 window.addEventListener('DOMContentLoaded', ()=>{
   const lat=document.getElementById('lat').value, lon=document.getElementById('lon').value;
   if(lat && lon) initMap(lat, lon, 13);
@@ -281,4 +275,324 @@ birthForm.onsubmit = async function(e){
 };
 
 // ==== Astrology/Chart Logic (KP Demo) ====
-// ... (rest of chart logic remains unchanged, as in previous version)
+const MD_ORDER = [
+  { lord: "Ketu",    years: 7  },
+  { lord: "Venus",   years: 20 },
+  { lord: "Sun",     years: 6  },
+  { lord: "Moon",    years: 10 },
+  { lord: "Mars",    years: 7  },
+  { lord: "Rahu",    years: 18 },
+  { lord: "Jupiter", years: 16 },
+  { lord: "Saturn",  years: 19 },
+  { lord: "Mercury", years: 17 }
+];
+const NAKSHATRAS = [
+  { name:'Ashwini', lord:'Ketu' },{ name:'Bharani', lord:'Venus' },{ name:'Krittika', lord:'Sun' },
+  { name:'Rohini', lord:'Moon' },{ name:'Mrigashira', lord:'Mars' },{ name:'Ardra', lord:'Rahu' },
+  { name:'Punarvasu', lord:'Jupiter' },{ name:'Pushya', lord:'Saturn' },{ name:'Ashlesha', lord:'Mercury' },
+  { name:'Magha', lord:'Ketu' },{ name:'Purva Phalguni', lord:'Venus' },{ name:'Uttara Phalguni', lord:'Sun' },
+  { name:'Hasta', lord:'Moon' },{ name:'Chitra', lord:'Mars' },{ name:'Svati', lord:'Rahu' },
+  { name:'Vishakha', lord:'Jupiter' },{ name:'Anuradha', lord:'Saturn' },{ name:'Jyeshtha', lord:'Mercury' },
+  { name:'Mula', lord:'Ketu' },{ name:'Purva Ashadha', lord:'Venus' },{ name:'Uttara Ashadha', lord:'Sun' },
+  { name:'Shravana', lord:'Moon' },{ name:'Dhanishtha', lord:'Mars' },{ name:'Shatabhisha', lord:'Rahu' },
+  { name:'Purva Bhadrapada', lord:'Jupiter' },{ name:'Uttara Bhadrapada', lord:'Saturn' },{ name:'Revati', lord:'Mercury' }
+];
+const MOON_RASHI = ["Mesha (Aries)","Vrushabha (Taurus)","Mithuna (Gemini)","Kataka (Cancer)","Sinha (Leo)","Kanya (Virgo)","Thula (Libra)","Vrushchika (Scorpio)","Dhanu (Sagittarius)","Makara (Capricorn)","Kumbha (Aquarius)","Meena (Pisces)"];
+function parseLocalISO(iso){
+  if(!iso) return new Date();
+  const [d,t='00:00'] = iso.split('T');
+  const [Y,M,D] = d.split('-').map(Number);
+  const [h=0,m=0] = t.split(':').map(Number);
+  return new Date(Y, (M||1)-1, D||1, h||0, m||0, 0);
+}
+function addDays(date, days){
+  const d = new Date(date.getTime());
+  d.setDate(d.getDate() + days);
+  return d;
+}
+const Y2D = y => y * 365.2425;
+function fmt(d){
+  if(!d) return '';
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+function toUTC(dt, tz){
+  const d = parseLocalISO(dt);
+  const sign = tz[0]==='-'?-1:1;
+  const [h,m] = tz.slice(1).split(':').map(Number);
+  d.setHours(d.getHours() - sign*h);
+  d.setMinutes(d.getMinutes() - sign*m);
+  return d;
+}
+function norm360(d){ return ((d%360)+360)%360; }
+const NAK_LEN = 360/27; // 13°20'
+function nakshatraLordIndex(moonDeg){
+  const ix27 = Math.floor(norm360(moonDeg) / NAK_LEN);
+  return ix27 % 9;
+}
+function computeVimshottariDasha(moonDeg, birthISO, maxYears = 120){
+  const startDate = parseLocalISO(birthISO);
+  const orderStart = nakshatraLordIndex(moonDeg);
+  const posInNak = norm360(moonDeg) % NAK_LEN;
+  const fracLeft = 1 - (posInNak / NAK_LEN);
+  const startLord = MD_ORDER[orderStart];
+  const out = [];
+  let cursor = new Date(startDate.getTime());
+  // first (balance) dasha
+  const firstYears = startLord.years * fracLeft;
+  let end = addDays(cursor, Y2D(firstYears));
+  out.push({ lord: startLord.lord, start: new Date(cursor), end, years: firstYears });
+  cursor = new Date(end.getTime());
+  // subsequent full dashas
+  let totalYears = firstYears;
+  let i = (orderStart + 1) % 9;
+  while (totalYears < maxYears - 1e-6) {
+    const lord = MD_ORDER[i];
+    const durYears = Math.min(lord.years, Math.max(0, maxYears - totalYears));
+    const nextEnd = addDays(cursor, Y2D(durYears));
+    out.push({ lord: lord.lord, start: new Date(cursor), end: nextEnd, years: durYears });
+    totalYears += durYears;
+    cursor = nextEnd;
+    i = (i + 1) % 9;
+    if (out.length > 60) break;
+  }
+  return out;
+}
+function lordIndex(lord){ return MD_ORDER.findIndex(x=>x.lord===lord);}
+function computeBhuktiForMahadasha(mahaLord, mahaStartDate, mahaYears){
+  const startIx = lordIndex(mahaLord);
+  if(startIx<0) return [];
+  const seq = [...MD_ORDER.slice(startIx), ...MD_ORDER.slice(0, startIx)];
+  const out = [];
+  let cursor = new Date(mahaStartDate instanceof Date? mahaStartDate: new Date(mahaStartDate));
+  const spanDays = Y2D(mahaYears);
+  let accDays = 0;
+  for(const seg of seq){
+    const partYears = (seg.years/120)*mahaYears;
+    const partDays = Y2D(partYears);
+    const end = addDays(cursor, partDays);
+    const safeEnd = accDays + partDays <= spanDays + 0.5 ? end : addDays(cursor, Math.max(0,spanDays-accDays));
+    out.push({ lord: seg.lord, start: new Date(cursor), end: new Date(safeEnd), years: partYears });
+    accDays += partDays; cursor = safeEnd;
+    if(accDays >= spanDays - 0.5) break; if(out.length>20) break;
+  }
+  return out;
+}
+function subSegments(startLord){
+  const i = MD_ORDER.findIndex(v=>v.lord===startLord);
+  const seq = [...MD_ORDER.slice(i), ...MD_ORDER.slice(0,i)];
+  let acc=0;
+  const segs = seq.map(it=>{
+    const len = 800 * (it.years/120); // 800 min (13°20')
+    const from=acc, to=acc+len; acc=to;
+    return { lord:it.lord, from, to };
+  });
+  segs[segs.length-1].to=800;
+  return segs;
+}
+function calculateMoonSubLord(moonDeg){
+  const idx = Math.floor(norm360(moonDeg)/(360/27));
+  const nak = NAKSHATRAS[idx];
+  const startDeg = idx * (360/27);
+  const deltaDeg = norm360(moonDeg-startDeg);
+  const minutes = deltaDeg * 60;
+  const seg = subSegments(nak.lord).find(s=>minutes>=s.from && minutes<s.to) || { lord:nak.lord };
+  return seg.lord;
+}
+function calculateCuspalSubLords(ascDeg){
+  let lords = [];
+  for(let i=0; i<12; i++){
+    const deg = norm360(ascDeg + i*30);
+    const subLord = calculateMoonSubLord(deg);
+    lords.push(`House ${i+1}: <b>${subLord}</b>`);
+  }
+  return lords;
+}
+function getRulingPlanets(planets){
+  return "Ruling Planets: " + planets.slice(0,3).map(p=>p.name).join(', ');
+}
+function getSignificators(planets){
+  return "Significators: " + planets.filter((p,i)=>i%2==0).map(p=>p.name).join(', ');
+}
+function getMockPlanets(dt, lat, lon){
+  const t = parseLocalISO(dt).getTime()/86400000;
+  return [
+    { name:'Sun', degree: norm360((t*0.985+120)%360) },
+    { name:'Moon', degree: norm360((t*13.176+60)%360) },
+    { name:'Mars', degree: norm360((t*0.524+330)%360) },
+    { name:'Venus', degree: norm360((t*1.620+75)%360) },
+    { name:'Mercury', degree: norm360((t*4.090+180)%360) },
+    { name:'Jupiter', degree: norm360((t*0.083+60)%360) },
+    { name:'Saturn', degree: norm360((t*0.033+310)%360) },
+    { name:'Rahu', degree: 45 },{ name:'Ketu', degree: 225 }
+  ];
+}
+function getPlanetStrengths(planets){
+  return `<b>Planetary Strengths:</b>
+    <ul>
+      <li>Sun: Strong</li>
+      <li>Jupiter: Strong</li>
+      <li>Venus: Strong</li>
+      <li>Rahu: Weak</li>
+      <li>Mars: Weak</li>
+      <li>Others: Moderate</li>
+    </ul>`;
+}
+function moonDegreeToRashi(moonDeg){
+  const rashiIx = Math.floor(norm360(moonDeg)/30);
+  return MOON_RASHI[rashiIx];
+}
+function longPredictionSummary(maha, moonRashi, name){
+  let s = `Dear ${name?name:"User"},\n\nYour Janma Rashi (Moon Sign) is <b>${moonRashi}</b>. Your Vimshottari Dasha sequence from birth is: `;
+  s += maha.slice(0,5).map(d=>d.lord).join(" → ");
+  s += ". Each planetary period brings different energies into your life. ";
+  s += `Currently, you are likely under the influence of <b>${maha[0].lord}</b> Maha Dasha, which brings ${maha[0].lord==="Moon"?"emotional changes and intuitive growth":maha[0].lord==="Saturn"?"hard work and discipline":maha[0].lord==="Jupiter"?"wisdom and prosperity":maha[0].lord==="Venus"?"comforts and relationships":"unique experiences"}. `;
+  s += `The effects of Dasha periods depend on your personal chart and birth context. For deeper insights, consult a professional astrologer.`;
+  return s;
+}
+const summary = document.getElementById('summary');
+const dashaTable = document.getElementById('dashaTable');
+const bhuktiTable = document.getElementById('bhuktiTable');
+const kpBoxes = document.getElementById('kpBoxes');
+const moonSubLordDiv = document.getElementById('moonSubLord');
+const cuspalSubLordsDiv = document.getElementById('cuspalSubLords');
+const rulingPlanetsDiv = document.getElementById('rulingPlanets');
+const significatorsDiv = document.getElementById('significators');
+const planetStrengthsDiv = document.getElementById('planetStrengths');
+const moonRashiDiv = document.getElementById('moonRashi');
+const pdfBtn = document.getElementById('pdfBtn');
+const shareBtn = document.getElementById('shareBtn');
+const predictionBox = document.getElementById('predictionBox');
+const saveBtn = document.getElementById('saveBtn');
+const loadBtn = document.getElementById('loadBtn');
+const modeBtn = document.getElementById('modeBtn');
+const chartArea = document.getElementById('chartArea');
+const astroChatBtn = document.getElementById('astroChatBtn');
+
+function showPrediction(lord){
+  predictionBox.style.display = 'none';
+}
+function showChart(name, dt, tz, lat, lon, place){
+  chartArea.style.display = '';
+  const dtUTC = toUTC(dt, tz);
+  const planets = getMockPlanets(dt, lat, lon);
+  const moon = planets.find(p=>p.name==='Moon');
+  const maha = computeVimshottariDasha(moon.degree, dt, 120);
+  const janmaRashi = moonDegreeToRashi(moon.degree);
+
+  summary.innerHTML = `<span class="pill">Name: ${name}</span>
+    <span class="pill">Date/Time: ${dt}</span>
+    <span class="pill">TZ: ${tz}</span>
+    <span class="pill">Lat: ${lat}</span>
+    <span class="pill">Lon: ${lon}</span>
+    <span class="pill">Place: ${place}</span>
+    <span class="pill" style="background:#172e1b;color:#bef264;">Janma Rashi: <b>${janmaRashi}</b></span><br><br>
+    <b>Vimshottari Dasha Overview</b><br>
+    <div style="color:#cbd5e1;margin-bottom:12px;">${longPredictionSummary(maha, janmaRashi, name)}</div>
+    <i>Vimshottari Dasha divides life into planetary periods (Maha Dasha, Bhukti, etc) based on Moon's nakshatra at birth. Exact results depend on your full chart.</i>`;
+
+  dashaTable.innerHTML = '';
+  maha.forEach((r,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
+    tr.style.cursor = 'pointer';
+    tr.onclick = ()=>showBhukti(r);
+    dashaTable.appendChild(tr);
+  });
+  showBhukti(maha[0]);
+  kpBoxes.innerHTML = '';
+  const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+  planets.forEach((p,i)=>{
+    const signIx = Math.floor(norm360(p.degree)/30);
+    const box = document.createElement('div');
+    box.className = 'kpBox' + (i==0?' asc':'');
+    box.innerHTML = `<div>${p.name}</div><div>${SIGNS[signIx]} ${norm360(p.degree).toFixed(2)}°</div>`;
+    kpBoxes.appendChild(box);
+  });
+  moonSubLordDiv.innerHTML = `🌙 Moon Sub-Lord: <b>${calculateMoonSubLord(moon.degree)}</b>`;
+  cuspalSubLordsDiv.innerHTML = "<b>Cuspal Sub-Lords:</b> " + calculateCuspalSubLords(planets[0].degree).join(', ');
+  moonRashiDiv.innerHTML = `🌙 <b>Janma Rashi:</b> ${janmaRashi}`;
+  rulingPlanetsDiv.innerHTML = getRulingPlanets(planets);
+  significatorsDiv.innerHTML = getSignificators(planets);
+  planetStrengthsDiv.innerHTML = getPlanetStrengths(planets);
+}
+function showBhukti(maha){
+  if(!maha) return;
+  bhuktiTable.innerHTML = '';
+  const bhukti = computeBhuktiForMahadasha(maha.lord, maha.start, maha.years);
+  bhukti.forEach((r,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
+    bhuktiTable.appendChild(tr);
+  });
+}
+pdfBtn.onclick = ()=>{ window.print(); };
+shareBtn.onclick = ()=>{
+  const params = [
+    'name='+encodeURIComponent(document.getElementById('name').value),
+    'dt='+encodeURIComponent(document.getElementById('date').value+'T'+document.getElementById('time').value),
+    'tz='+encodeURIComponent(document.getElementById('timezone').value),
+    'lat='+encodeURIComponent(document.getElementById('lat').value),
+    'lon='+encodeURIComponent(document.getElementById('lon').value),
+    'place='+encodeURIComponent(document.getElementById('place').value)
+  ].join('&');
+  const url = location.origin+location.pathname+'?'+params;
+  navigator.clipboard.writeText(url);
+  alert('Chart link copied!');
+};
+saveBtn.onclick = ()=>{
+  const data = {
+    name: document.getElementById('name').value,
+    dt: document.getElementById('date').value+'T'+document.getElementById('time').value,
+    tz: document.getElementById('timezone').value,
+    lat: document.getElementById('lat').value,
+    lon: document.getElementById('lon').value,
+    place: document.getElementById('place').value
+  };
+  localStorage.setItem('kp_last_chart', JSON.stringify(data));
+  alert('Chart saved!');
+};
+loadBtn.onclick = ()=>{
+  const dat = JSON.parse(localStorage.getItem('kp_last_chart')||'null');
+  if(!dat){ alert('No saved chart found.'); return; }
+  document.getElementById('name').value = dat.name;
+  const [d,t] = (dat.dt||'').split('T');
+  document.getElementById('date').value = d||'';
+  document.getElementById('time').value = t||'12:00';
+  document.getElementById('timezone').value = dat.tz;
+  document.getElementById('lat').value = dat.lat;
+  document.getElementById('lon').value = dat.lon;
+  document.getElementById('place').value = dat.place;
+  birthForm.dispatchEvent(new Event('submit'));
+};
+modeBtn.onclick = ()=>{
+  const b = document.body;
+  if(b.classList.contains('dark')){
+    b.classList.remove('dark'); b.classList.add('light');
+    modeBtn.textContent = "🌙";
+  }else{
+    b.classList.remove('light'); b.classList.add('dark');
+    modeBtn.textContent = "☀️";
+  }
+};
+function fromParams(){
+  const u = new URL(location.href);
+  const get = (k) => u.searchParams.get(k) || '';
+  if(get('name') && get('dt') && get('lat') && get('lon')){
+    document.getElementById('name').value = get('name');
+    const [d, t] = (get('dt')||'').split('T');
+    document.getElementById('date').value = d || '';
+    document.getElementById('time').value = t || '12:00';
+    document.getElementById('timezone').value = get('tz')||'+05:30';
+    document.getElementById('lat').value = get('lat');
+    document.getElementById('lon').value = get('lon');
+    document.getElementById('place').value = get('place');
+    birthForm.dispatchEvent(new Event('submit'));
+  }
+}
+astroChatBtn.onclick = function(){
+  alert("Live chat with astrologer coming soon! For now, email: sathyanirvana@gmail.com or call +94757500000");
+};
+</script>
+</body>
+</html>

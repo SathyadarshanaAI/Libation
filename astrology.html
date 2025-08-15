@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sathyadarshana | Astrology</title>
-  <meta name="description" content="Explore KP Astrology, NASA Planetary Positions, Numerology, Palmistry, and Nadi Jyotisha.">
+  <title>Sathyadarshana | Astrology Hub</title>
+  <meta name="description" content="Astrology Hub: KP, Vedic, Numerology, Palmistry, GeoVision & more. Explore all tools from a single dashboard.">
   <link rel="icon" href="./assets/favicon.png" type="image/png">
   <style>
     :root {
@@ -28,40 +28,48 @@
     }
     .toplink {
       position: fixed;
-      left: 12px;
-      top: 12px;
+      left: 14px;
+      top: 14px;
       background: #0b1220;
       color: var(--brand);
-      padding: 6px 12px;
+      padding: 7px 16px;
       border-radius: 8px;
       text-decoration: none;
       z-index: 5;
-      font-size: 1rem;
+      font-size: 1.08rem;
+      box-shadow: 0 0 8px #38bdf822;
+      font-weight: 500;
+      opacity: 0.93;
+      transition: background .18s;
     }
-    .toplink:focus {
-      outline: 2px solid var(--brand);
+    .toplink:focus, .toplink:hover {
+      background: #101b2e;
+      color: #fff;
+      outline: 2px solid #7dd3fc;
     }
     header {
-      padding: 2rem 0 1rem;
+      padding: 2.1rem 0 1rem;
     }
     header h1 {
-      font-size: 2.2rem;
+      font-size: 2.18rem;
       color: var(--brand);
-      margin: 0 0 .25rem;
+      margin: 0 0 .28rem;
       letter-spacing: 0.01em;
+      font-weight: 700;
     }
     header p {
-      font-size: 1.05rem;
+      font-size: 1.08rem;
       color: var(--muted);
-      margin: 0;
+      margin: 0 0 .2rem 0;
       letter-spacing: 0.02em;
+      opacity: 0.98;
     }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.5rem;
       max-width: 1000px;
-      margin: 2rem auto;
+      margin: 2.3rem auto;
       padding: 0 1rem;
     }
     .card {
@@ -69,48 +77,56 @@
       flex-direction: column;
       align-items: center;
       min-height: 180px;
-      padding: 1.4rem;
-      border-radius: 1rem;
-      background: rgba(30,41,59,.95);
+      padding: 1.45rem;
+      border-radius: 1.1rem;
+      background: rgba(30,41,59,.96);
       text-decoration: none;
       color: var(--text);
-      box-shadow: 0 0 14px var(--cardGlow)33;
+      box-shadow: 0 0 16px var(--cardGlow)33;
       border: 2px solid transparent;
-      transition: .25s;
+      transition: .22s;
       cursor: pointer;
+      user-select: none;
     }
     .card:hover, .card:focus {
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 6px 20px var(--cardGlow)88;
+      transform: translateY(-7px) scale(1.03);
+      box-shadow: 0 10px 26px var(--cardGlow)99;
       border-color: var(--cardGlow);
       background: rgba(2,6,23,.94);
       outline: none;
     }
     .card span {
-      font-size: 2rem;
+      font-size: 2.18rem;
       margin-bottom: .5rem;
+      display: block;
+      filter: drop-shadow(0 0 12px #38bdf855);
+      margin-top: .12em;
     }
     .card h2 {
-      font-size: 1.15rem;
-      margin: .2rem 0;
+      font-size: 1.18rem;
+      margin: .13rem 0 .30rem 0;
       color: var(--accent);
       letter-spacing: 0.01em;
+      font-weight: 600;
     }
     .card div {
       color: var(--muted);
-      font-size: 1em;
+      font-size: 1.02em;
     }
     footer {
-      margin: 2.5rem 0 1rem;
-      border-top: 1px solid var(--accent);
+      margin: 2.6rem 0 1.1rem;
+      border-top: 1.4px solid var(--accent);
       padding-top: 1rem;
       color: var(--brand);
       font-size: 1rem;
+      letter-spacing: .02em;
+      opacity: 0.93;
     }
     @media (max-width: 500px) {
-      header h1 { font-size: 1.3rem; }
-      .card { min-height: 140px; padding: 1rem; }
-      .card span { font-size: 1.5rem; }
+      header h1 { font-size: 1.32rem; }
+      .card { min-height: 134px; padding: .85rem; }
+      .card span { font-size: 1.3rem; }
+      .grid { gap: 1.05rem; }
     }
   </style>
 </head>
@@ -119,8 +135,8 @@
   <a class="toplink" href="./index.html" aria-label="Go to Home page">← Home</a>
 
   <header>
-    <h1>Astrology Dashboard</h1>
-    <p>Explore the universe within your birth</p>
+    <h1>Astrology Hub</h1>
+    <p>All astrological tools at your fingertips</p>
   </header>
 
   <main>
@@ -155,6 +171,7 @@
         <h2>Geo Vision</h2>
         <div>Planetary Motion &amp; Maps</div>
       </a>
+      <!-- Add more cards for future astrology tools if needed -->
     </div>
   </main>
 

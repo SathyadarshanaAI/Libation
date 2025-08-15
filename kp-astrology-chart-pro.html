@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>KP Astrology Chart Pro <span style="font-size:15px;color:#60a5fa;">v1.0</span> | Sathyadarshana</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale:3"/>
+  <title>KP Astrology Chart Pro | Sathyadarshana</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=3"/>
   <meta name="description" content="KP Astrology chart, Vimshottari Dasha, Sub-Lord, Rashi, Place autocomplete, Map preview, Save, Share, PDF, worldwide.">
   <meta http-equiv="Content-Language" content="en"/>
   <link rel="icon" href="favicon.png">
@@ -35,6 +35,9 @@
     #placeSuggest .suggest-item {padding:9px 14px;cursor:pointer;}
     #placeSuggest .suggest-item:hover {background:#374151;}
     #osmMap {width:100%;height:260px;max-width:99vw;background:#222;border-radius:12px;margin-bottom:15px;display:none;}
+    /* Hide Google default widget; keep engine working */
+    #google_translate_element, .goog-te-banner-frame, .goog-logo-link, .goog-te-gadget { display:none !important; }
+    body { top: 0px !important; }
     @media (max-width:700px){
       .wrap{padding:4px;}
       #kpBoxes { grid-template-columns:repeat(2,1fr);}
@@ -55,12 +58,11 @@
     .light #predictionBox{background:#f1f5f9;}
   </style>
 
-  <!-- Google Translate (kept as-is) -->
-  <div id="google_translate_element" style="float:right;margin:10px 0"></div>
+  <!-- Google Translate engine (kept) -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
-        pageLanguage: 'en', // ENGLISH default
+        pageLanguage: 'en',
         includedLanguages: 'en,si,ta',
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE
       }, 'google_translate_element');
@@ -71,6 +73,9 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body class="dark">
+<!-- Hidden container for Google translate -->
+<div id="google_translate_element" style="display:none"></div>
+
 <a class="toplink" href="#">← Dashboard</a>
 
 <div class="wrap">
@@ -89,7 +94,7 @@
       <input id="name" required placeholder="Your name"/>
       <label>Birth Date & Time</label>
       <div class="row2col">
-        <!-- 📅 Keep calendar in English -->
+        <!-- 📅 Keep calendar UI in English -->
         <input id="date" type="date" required style="margin-bottom:5px" translate="no" class="notranslate"/>
         <input id="time" type="time" required value="12:00" translate="no" class="notranslate"/>
       </div>
@@ -177,16 +182,16 @@
       <button type="button" onclick="openAstroLink()" style="background:#38bdf8; color:#0b1220; font-weight:700; padding:10px 14px; border-radius:10px; border:0; cursor:pointer;">🔗 Open Chat Link</button>
     </div>
     <div id="astroHint" style="margin-top:10px; font-size:14px; color:#93c5fd;">
-      Tip: Voice works best in Chrome/Edge. Language follows the Google Translate selector.
+      Tip: Voice works best in Chrome/Edge. Language follows the Language Bar.
     </div>
   </div>
 </div>
 
 <script>
-// ===== Astrologer Config =====
-const ASTRO_LINK = "https://wa.me/94757500000"; // ← Change if needed
+// ===== Config =====
+const ASTRO_LINK = "https://wa.me/94757500000"; // change if needed
 
-// English-only labels → switch Google Translate via our buttons
+// Language switch (controls hidden Google combo)
 function setLang(code) {
   var combo = document.querySelector('.goog-te-combo');
   if (!combo) return;
@@ -194,7 +199,7 @@ function setLang(code) {
   combo.dispatchEvent(new Event('change'));
 }
 
-// Timezone select
+// Timezones (populate after DOM ready)
 const timezones = [
   { value:"+05:30", label:"IST (India/Sri Lanka) +05:30" },
   { value:"+06:00", label:"Bangladesh +06:00" },
@@ -207,24 +212,26 @@ const timezones = [
   { value:"-08:00", label:"PST (US West) -08:00" },
   { value:"+00:00", label:"UTC/GMT +00:00" }
 ];
-const tzSelect = document.getElementById('timezone');
-timezones.forEach(tz=>{
-  const o = document.createElement('option');
-  o.value = tz.value; o.textContent = tz.label;
-  tzSelect.appendChild(o);
+window.addEventListener('DOMContentLoaded', () => {
+  const tzSelect = document.getElementById('timezone');
+  timezones.forEach(tz=>{
+    const o = document.createElement('option');
+    o.value = tz.value; o.textContent = tz.label;
+    tzSelect.appendChild(o);
+  });
+  tzSelect.value = "+05:30";
 });
-tzSelect.value = "+05:30";
 
-// Leaflet map init
+// Leaflet map
 let map, marker;
 function initMap(lat=7.8731, lon=80.7718, zoom=6) {
   if (!map) {
     map = L.map('osmMap').setView([lat, lon], zoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors
-    '}).addTo(map);
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map); // ← fixed broken string (was causing JS crash)
     marker = L.marker([lat, lon], {draggable:true}).addTo(map);
-    marker.on('dragend', function(e){
+    marker.on('dragend', function(){
       const pos = marker.getLatLng();
       document.getElementById('lat').value = pos.lat.toFixed(6);
       document.getElementById('lon').value = pos.lng.toFixed(6);
@@ -246,11 +253,11 @@ document.getElementById('findPlaceBtn').onclick = async function(){
   if(!q) { errBox.textContent = "Enter a place name."; return; }
   errBox.textContent = "Searching...";
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&addressdetails=1`;
-  const res = await fetch(url).then(r=>r.json());
+  const res = await fetch(url).then(r=>r.json()).catch(()=>[]);
   if(!res.length) { errBox.textContent = "Place not found."; return; }
   if(res.length > 1){
     let html = '<div>';
-    res.forEach((place, i) => {
+    res.forEach(place => {
       html += `<div class="suggest-item" onclick="selectPlace('${place.display_name.replace(/'/g,"\\'")}',${place.lat},${place.lon});">${place.display_name}</div>`;
     });
     html += '</div>';
@@ -283,56 +290,11 @@ window.addEventListener('DOMContentLoaded', ()=>{
   if(typeof fromParams==="function") fromParams();
 });
 
-// Main form logic
-const birthForm = document.getElementById('birthForm');
-const errBox = document.getElementById('err');
-birthForm.onsubmit = async function(e){
-  e.preventDefault();
-  errBox.textContent = '';
-  let name = document.getElementById('name').value.trim();
-  let date = document.getElementById('date').value;
-  let time = document.getElementById('time').value;
-  let tz = document.getElementById('timezone').value;
-  let lat = parseFloat(document.getElementById('lat').value);
-  let lon = parseFloat(document.getElementById('lon').value);
-  let place = document.getElementById('place').value.trim();
-  if(!name || !date || !time){
-    errBox.textContent = 'Please fill all fields correctly.';
-    return;
-  }
-  if((isNaN(lat) || isNaN(lon) || !lat || !lon) && place){
-    errBox.textContent = 'Searching place...';
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}&limit=1`;
-    const res = await fetch(url).then(r => r.json());
-    if(!res.length){
-      errBox.textContent = 'Place not found. Enter coordinates.';
-      return;
-    }
-    lat = +res[0].lat; lon = +res[0].lon;
-    document.getElementById('lat').value = lat;
-    document.getElementById('lon').value = lon;
-    initMap(lat, lon, 13);
-  }
-  if(isNaN(lat) || isNaN(lon) || !lat || !lon){
-    errBox.textContent = 'Latitude/Longitude required.';
-    return;
-  }
-  errBox.textContent = '';
-  const dt = date + "T" + time;
-  showChart(name, dt, tz, lat, lon, place);
-};
-
-// ==== Astrology/Chart Logic (KP Demo) ====
+// ==== Astrology/Chart Logic (same as before) ====
 const MD_ORDER = [
-  { lord: "Ketu",    years: 7  },
-  { lord: "Venus",   years: 20 },
-  { lord: "Sun",     years: 6  },
-  { lord: "Moon",    years: 10 },
-  { lord: "Mars",    years: 7  },
-  { lord: "Rahu",    years: 18 },
-  { lord: "Jupiter", years: 16 },
-  { lord: "Saturn",  years: 19 },
-  { lord: "Mercury", years: 17 }
+  { lord: "Ketu", years: 7 }, { lord: "Venus", years: 20 }, { lord: "Sun", years: 6 },
+  { lord: "Moon", years: 10 }, { lord: "Mars", years: 7 }, { lord: "Rahu", years: 18 },
+  { lord: "Jupiter", years: 16 }, { lord: "Saturn", years: 19 }, { lord: "Mercury", years: 17 }
 ];
 const NAKSHATRAS = [
   { name:'Ashwini', lord:'Ketu' },{ name:'Bharani', lord:'Venus' },{ name:'Krittika', lord:'Sun' },
@@ -346,124 +308,48 @@ const NAKSHATRAS = [
   { name:'Purva Bhadrapada', lord:'Jupiter' },{ name:'Uttara Bhadrapada', lord:'Saturn' },{ name:'Revati', lord:'Mercury' }
 ];
 const MOON_RASHI = ["Mesha (Aries)","Vrushabha (Taurus)","Mithuna (Gemini)","Kataka (Cancer)","Sinha (Leo)","Kanya (Virgo)","Thula (Libra)","Vrushchika (Scorpio)","Dhanu (Sagittarius)","Makara (Capricorn)","Kumbha (Aquarius)","Meena (Pisces)"];
-function parseLocalISO(iso){
-  if(!iso) return new Date();
-  const [d,t='00:00'] = iso.split('T');
-  const [Y,M,D] = d.split('-').map(Number);
-  const [h=0,m=0] = t.split(':').map(Number);
-  return new Date(Y, (M||1)-1, D||1, h||0, m||0, 0);
-}
-function addDays(date, days){
-  const d = new Date(date.getTime());
-  d.setDate(d.getDate() + days);
-  return d;
-}
-const Y2D = y => y * 365.2425;
-function fmt(d){
-  if(!d) return '';
-  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${dd}`;
-}
-function toUTC(dt, tz){
-  const d = parseLocalISO(dt);
-  const sign = tz[0]==='-'?-1:1;
-  const [h,m] = tz.slice(1).split(':').map(Number);
-  d.setHours(d.getHours() - sign*h);
-  d.setMinutes(d.getMinutes() - sign*m);
-  return d;
-}
+function parseLocalISO(iso){ if(!iso) return new Date(); const [d,t='00:00'] = iso.split('T'); const [Y,M,D]=d.split('-').map(Number); const [h=0,m=0]=t.split(':').map(Number); return new Date(Y,(M||1)-1,D||1,h||0,m||0,0); }
+function addDays(date, days){ const d=new Date(date.getTime()); d.setDate(d.getDate()+days); return d; }
+const Y2D = y => y*365.2425;
+function fmt(d){ if(!d) return ''; const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; }
+function toUTC(dt, tz){ const d=parseLocalISO(dt); const sign=tz[0]==='-'?-1:1; const [h,m]=tz.slice(1).split(':').map(Number); d.setHours(d.getHours()-sign*h); d.setMinutes(d.getMinutes()-sign*m); return d; }
 function norm360(d){ return ((d%360)+360)%360; }
-const NAK_LEN = 360/27; // 13°20'
-function nakshatraLordIndex(moonDeg){
-  const ix27 = Math.floor(norm360(moonDeg) / NAK_LEN);
-  return ix27 % 9;
-}
-function computeVimshottariDasha(moonDeg, birthISO, maxYears = 120){
-  const startDate = parseLocalISO(birthISO);
-  const orderStart = nakshatraLordIndex(moonDeg);
-  const posInNak = norm360(moonDeg) % NAK_LEN;
-  const fracLeft = 1 - (posInNak / NAK_LEN);
-  const startLord = MD_ORDER[orderStart];
-  const out = [];
-  let cursor = new Date(startDate.getTime());
-  // first (balance) dasha
-  const firstYears = startLord.years * fracLeft;
-  let end = addDays(cursor, Y2D(firstYears));
-  out.push({ lord: startLord.lord, start: new Date(cursor), end, years: firstYears });
-  cursor = new Date(end.getTime());
-  // subsequent full dashas
-  let totalYears = firstYears;
-  let i = (orderStart + 1) % 9;
-  while (totalYears < maxYears - 1e-6) {
-    const lord = MD_ORDER[i];
-    const durYears = Math.min(lord.years, Math.max(0, maxYears - totalYears));
-    const nextEnd = addDays(cursor, Y2D(durYears));
-    out.push({ lord: lord.lord, start: new Date(cursor), end: nextEnd, years: durYears });
-    totalYears += durYears;
-    cursor = nextEnd;
-    i = (i + 1) % 9;
-    if (out.length > 60) break;
-  }
+const NAK_LEN = 360/27;
+function nakshatraLordIndex(moonDeg){ const ix27=Math.floor(norm360(moonDeg)/NAK_LEN); return ix27%9; }
+function computeVimshottariDasha(moonDeg, birthISO, maxYears=120){
+  const startDate=parseLocalISO(birthISO);
+  const orderStart=nakshatraLordIndex(moonDeg);
+  const posInNak=norm360(moonDeg)%NAK_LEN;
+  const fracLeft=1-(posInNak/NAK_LEN);
+  const startLord=MD_ORDER[orderStart];
+  const out=[]; let cursor=new Date(startDate.getTime());
+  const firstYears=startLord.years*fracLeft; let end=addDays(cursor,Y2D(firstYears));
+  out.push({lord:startLord.lord,start:new Date(cursor),end,years:firstYears}); cursor=new Date(end.getTime());
+  let totalYears=firstYears; let i=(orderStart+1)%9;
+  while(totalYears<maxYears-1e-6){ const lord=MD_ORDER[i]; const durYears=Math.min(lord.years, Math.max(0, maxYears-totalYears)); const nextEnd=addDays(cursor,Y2D(durYears)); out.push({lord:lord.lord,start:new Date(cursor),end:nextEnd,years:durYears}); totalYears+=durYears; cursor=nextEnd; i=(i+1)%9; if(out.length>60) break; }
   return out;
 }
 function lordIndex(lord){ return MD_ORDER.findIndex(x=>x.lord===lord);}
 function computeBhuktiForMahadasha(mahaLord, mahaStartDate, mahaYears){
-  const startIx = lordIndex(mahaLord);
-  if(startIx<0) return [];
-  const seq = [...MD_ORDER.slice(startIx), ...MD_ORDER.slice(0, startIx)];
-  const out = [];
-  let cursor = new Date(mahaStartDate instanceof Date? mahaStartDate: new Date(mahaStartDate));
-  const spanDays = Y2D(mahaYears);
-  let accDays = 0;
+  const startIx=lordIndex(mahaLord); if(startIx<0) return [];
+  const seq=[...MD_ORDER.slice(startIx), ...MD_ORDER.slice(0,startIx)];
+  const out=[]; let cursor=new Date(mahaStartDate instanceof Date? mahaStartDate: new Date(mahaStartDate));
+  const spanDays=Y2D(mahaYears); let accDays=0;
   for(const seg of seq){
-    const partYears = (seg.years/120)*mahaYears;
-    const partDays = Y2D(partYears);
-    const end = addDays(cursor, partDays);
-    const safeEnd = accDays + partDays <= spanDays + 0.5 ? end : addDays(cursor, Math.max(0,spanDays-accDays));
-    out.push({ lord: seg.lord, start: new Date(cursor), end: new Date(safeEnd), years: partYears });
-    accDays += partDays; cursor = safeEnd;
-    if(accDays >= spanDays - 0.5) break; if(out.length>20) break;
+    const partYears=(seg.years/120)*mahaYears; const partDays=Y2D(partYears);
+    const end=addDays(cursor,partDays); const safeEnd=accDays+partDays<=spanDays+0.5? end: addDays(cursor, Math.max(0,spanDays-accDays));
+    out.push({lord:seg.lord,start:new Date(cursor),end:new Date(safeEnd),years:partYears});
+    accDays+=partDays; cursor=safeEnd; if(accDays>=spanDays-0.5) break; if(out.length>20) break;
   }
   return out;
 }
-function subSegments(startLord){
-  const i = MD_ORDER.findIndex(v=>v.lord===startLord);
-  const seq = [...MD_ORDER.slice(i), ...MD_ORDER.slice(0,i)];
-  let acc=0;
-  const segs = seq.map(it=>{
-    const len = 800 * (it.years/120); // 800 min (13°20')
-    const from=acc, to=acc+len; acc=to;
-    return { lord:it.lord, from, to };
-  });
-  segs[segs.length-1].to=800;
-  return segs;
-}
-function calculateMoonSubLord(moonDeg){
-  const idx = Math.floor(norm360(moonDeg)/(360/27));
-  const nak = NAKSHATRAS[idx];
-  const startDeg = idx * (360/27);
-  const deltaDeg = norm360(moonDeg-startDeg);
-  const minutes = deltaDeg * 60;
-  const seg = subSegments(nak.lord).find(s=>minutes>=s.from && minutes<s.to) || { lord:nak.lord };
-  return seg.lord;
-}
-function calculateCuspalSubLords(ascDeg){
-  let lords = [];
-  for(let i=0; i<12; i++){
-    const deg = norm360(ascDeg + i*30);
-    const subLord = calculateMoonSubLord(deg);
-    lords.push(`House ${i+1}: <b>${subLord}</b>`);
-  }
-  return lords;
-}
-function getRulingPlanets(planets){
-  return "Ruling Planets: " + planets.slice(0,3).map(p=>p.name).join(', ');
-}
-function getSignificators(planets){
-  return "Significators: " + planets.filter((p,i)=>i%2==0).map(p=>p.name).join(', ');
-}
+function subSegments(startLord){ const i=MD_ORDER.findIndex(v=>v.lord===startLord); const seq=[...MD_ORDER.slice(i), ...MD_ORDER.slice(0,i)]; let acc=0; const segs=seq.map(it=>{ const len=800*(it.years/120); const from=acc, to=acc+len; acc=to; return { lord:it.lord, from, to };}); segs[segs.length-1].to=800; return segs; }
+function calculateMoonSubLord(moonDeg){ const idx=Math.floor(norm360(moonDeg)/(360/27)); const nak=NAKSHATRAS[idx]; const startDeg=idx*(360/27); const deltaDeg=norm360(moonDeg-startDeg); const minutes=deltaDeg*60; const seg=subSegments(nak.lord).find(s=>minutes>=s.from && minutes<s.to) || { lord:nak.lord }; return seg.lord; }
+function calculateCuspalSubLords(ascDeg){ let lords=[]; for(let i=0;i<12;i++){ const deg=norm360(ascDeg+i*30); const subLord=calculateMoonSubLord(deg); lords.push(`House ${i+1}: <b>${subLord}</b>`);} return lords; }
+function getRulingPlanets(planets){ return "Ruling Planets: " + planets.slice(0,3).map(p=>p.name).join(', '); }
+function getSignificators(planets){ return "Significators: " + planets.filter((p,i)=>i%2==0).map(p=>p.name).join(', '); }
 function getMockPlanets(dt, lat, lon){
-  const t = parseLocalISO(dt).getTime()/86400000;
+  const t=parseLocalISO(dt).getTime()/86400000;
   return [
     { name:'Sun', degree: norm360((t*0.985+120)%360) },
     { name:'Moon', degree: norm360((t*13.176+60)%360) },
@@ -475,58 +361,41 @@ function getMockPlanets(dt, lat, lon){
     { name:'Rahu', degree: 45 },{ name:'Ketu', degree: 225 }
   ];
 }
-function getPlanetStrengths(planets){
-  return `<b>Planetary Strengths:</b>
-    <ul>
-      <li>Sun: Strong</li>
-      <li>Jupiter: Strong</li>
-      <li>Venus: Strong</li>
-      <li>Rahu: Weak</li>
-      <li>Mars: Weak</li>
-      <li>Others: Moderate</li>
-    </ul>`;
-}
-function moonDegreeToRashi(moonDeg){
-  const rashiIx = Math.floor(norm360(moonDeg)/30);
-  return MOON_RASHI[rashiIx];
-}
+function getPlanetStrengths(){ return `<b>Planetary Strengths:</b>
+  <ul><li>Sun: Strong</li><li>Jupiter: Strong</li><li>Venus: Strong</li><li>Rahu: Weak</li><li>Mars: Weak</li><li>Others: Moderate</li></ul>`; }
+function moonDegreeToRashi(moonDeg){ const rashiIx=Math.floor(norm360(moonDeg)/30); return MOON_RASHI[rashiIx]; }
 function longPredictionSummary(maha, moonRashi, name){
-  let s = `Dear ${name?name:"User"},\n\nYour Janma Rashi (Moon Sign) is <b>${moonRashi}</b>. Your Vimshottari Dasha sequence from birth is: `;
-  s += maha.slice(0,5).map(d=>d.lord).join(" → ");
-  s += ". Each planetary period brings different energies into your life. ";
-  s += `Currently, you are likely under the influence of <b>${maha[0].lord}</b> Maha Dasha, which brings ${maha[0].lord==="Moon"?"emotional changes and intuitive growth":maha[0].lord==="Saturn"?"hard work and discipline":maha[0].lord==="Jupiter"?"wisdom and prosperity":maha[0].lord==="Venus"?"comforts and relationships":"unique experiences"}. `;
-  s += `The effects of Dasha periods depend on your personal chart and birth context. For deeper insights, consult a professional astrologer.`;
-  return s;
+  let s=`Dear ${name?name:"User"},\n\nYour Janma Rashi (Moon Sign) is <b>${moonRashi}</b>. Your Vimshottari Dasha sequence from birth is: `;
+  s+=maha.slice(0,5).map(d=>d.lord).join(" → ")+". ";
+  s+=`Currently, you are likely under the influence of <b>${maha[0].lord}</b> Maha Dasha. `;
+  return s+`Results depend on your full chart.`;
 }
-const summary = document.getElementById('summary');
-const dashaTable = document.getElementById('dashaTable');
-const bhuktiTable = document.getElementById('bhuktiTable');
-const kpBoxes = document.getElementById('kpBoxes');
-const moonSubLordDiv = document.getElementById('moonSubLord');
-const cuspalSubLordsDiv = document.getElementById('cuspalSubLords');
-const rulingPlanetsDiv = document.getElementById('rulingPlanets');
-const significatorsDiv = document.getElementById('significators');
-const planetStrengthsDiv = document.getElementById('planetStrengths');
-const moonRashiDiv = document.getElementById('moonRashi');
-const pdfBtn = document.getElementById('pdfBtn');
-const shareBtn = document.getElementById('shareBtn');
-const predictionBox = document.getElementById('predictionBox');
-const saveBtn = document.getElementById('saveBtn');
-const loadBtn = document.getElementById('loadBtn');
-const modeBtn = document.getElementById('modeBtn');
-const chartArea = document.getElementById('chartArea');
-const astroChatBtn = document.getElementById('astroChatBtn');
+const summary=document.getElementById('summary');
+const dashaTable=document.getElementById('dashaTable');
+const bhuktiTable=document.getElementById('bhuktiTable');
+const kpBoxes=document.getElementById('kpBoxes');
+const moonSubLordDiv=document.getElementById('moonSubLord');
+const cuspalSubLordsDiv=document.getElementById('cuspalSubLords');
+const rulingPlanetsDiv=document.getElementById('rulingPlanets');
+const significatorsDiv=document.getElementById('significators');
+const planetStrengthsDiv=document.getElementById('planetStrengths');
+const moonRashiDiv=document.getElementById('moonRashi');
+const pdfBtn=document.getElementById('pdfBtn');
+const shareBtn=document.getElementById('shareBtn');
+const predictionBox=document.getElementById('predictionBox');
+const saveBtn=document.getElementById('saveBtn');
+const loadBtn=document.getElementById('loadBtn');
+const modeBtn=document.getElementById('modeBtn');
+const chartArea=document.getElementById('chartArea');
+const astroChatBtn=document.getElementById('astroChatBtn');
 
-function showPrediction(lord){
-  predictionBox.style.display = 'none';
-}
+function showPrediction(){ predictionBox.style.display='none'; }
 function showChart(name, dt, tz, lat, lon, place){
-  chartArea.style.display = '';
-  const dtUTC = toUTC(dt, tz);
-  const planets = getMockPlanets(dt, lat, lon);
-  const moon = planets.find(p=>p.name==='Moon');
-  const maha = computeVimshottariDasha(moon.degree, dt, 120);
-  const janmaRashi = moonDegreeToRashi(moon.degree);
+  chartArea.style.display='';
+  const planets=getMockPlanets(dt, lat, lon);
+  const moon=planets.find(p=>p.name==='Moon');
+  const maha=computeVimshottariDasha(moon.degree, dt, 120);
+  const janmaRashi=moonDegreeToRashi(moon.degree);
 
   summary.innerHTML = `<span class="pill">Name: ${name}</span>
     <span class="pill">Date/Time: ${dt}</span>
@@ -536,47 +405,46 @@ function showChart(name, dt, tz, lat, lon, place){
     <span class="pill">Place: ${place}</span>
     <span class="pill" style="background:#172e1b;color:#bef264;">Janma Rashi: <b>${janmaRashi}</b></span><br><br>
     <b>Vimshottari Dasha Overview</b><br>
-    <div style="color:#cbd5e1;margin-bottom:12px;">${longPredictionSummary(maha, janmaRashi, name)}</div>
-    <i>Vimshottari Dasha divides life into planetary periods (Maha Dasha, Bhukti, etc) based on Moon's nakshatra at birth. Exact results depend on your full chart.</i>`;
+    <div style="color:#cbd5e1;margin-bottom:12px;">${longPredictionSummary(maha, janmaRashi, name)}</div>`;
 
-  dashaTable.innerHTML = '';
+  dashaTable.innerHTML='';
   maha.forEach((r,i)=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
-    tr.style.cursor = 'pointer';
-    tr.onclick = ()=>showBhukti(r);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
+    tr.style.cursor='pointer';
+    tr.onclick=()=>showBhukti(r);
     dashaTable.appendChild(tr);
   });
   showBhukti(maha[0]);
-  kpBoxes.innerHTML = '';
-  const SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+  kpBoxes.innerHTML='';
+  const SIGNS=["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
   planets.forEach((p,i)=>{
-    const signIx = Math.floor(norm360(p.degree)/30);
-    const box = document.createElement('div');
-    box.className = 'kpBox' + (i==0?' asc':'');
-    box.innerHTML = `<div>${p.name}</div><div>${SIGNS[signIx]} ${norm360(p.degree).toFixed(2)}°</div>`;
+    const signIx=Math.floor(norm360(p.degree)/30);
+    const box=document.createElement('div');
+    box.className='kpBox'+(i==0?' asc':'');
+    box.innerHTML=`<div>${p.name}</div><div>${SIGNS[signIx]} ${norm360(p.degree).toFixed(2)}°</div>`;
     kpBoxes.appendChild(box);
   });
-  moonSubLordDiv.innerHTML = `🌙 Moon Sub-Lord: <b>${calculateMoonSubLord(moon.degree)}</b>`;
-  cuspalSubLordsDiv.innerHTML = "<b>Cuspal Sub-Lords:</b> " + calculateCuspalSubLords(planets[0].degree).join(', ');
-  moonRashiDiv.innerHTML = `🌙 <b>Janma Rashi:</b> ${janmaRashi}`;
-  rulingPlanetsDiv.innerHTML = getRulingPlanets(planets);
-  significatorsDiv.innerHTML = getSignificators(planets);
-  planetStrengthsDiv.innerHTML = getPlanetStrengths(planets);
+  moonSubLordDiv.innerHTML=`🌙 Moon Sub-Lord: <b>${calculateMoonSubLord(moon.degree)}</b>`;
+  cuspalSubLordsDiv.innerHTML="<b>Cuspal Sub-Lords:</b> "+calculateCuspalSubLords(planets[0].degree).join(', ');
+  moonRashiDiv.innerHTML=`🌙 <b>Janma Rashi:</b> ${janmaRashi}`;
+  rulingPlanetsDiv.innerHTML=getRulingPlanets(planets);
+  significatorsDiv.innerHTML=getSignificators(planets);
+  planetStrengthsDiv.innerHTML=getPlanetStrengths(planets);
 }
 function showBhukti(maha){
   if(!maha) return;
-  const bhukti = computeBhuktiForMahadasha(maha.lord, maha.start, maha.years);
-  bhuktiTable.innerHTML = '';
+  const bhukti=computeBhuktiForMahadasha(maha.lord, maha.start, maha.years);
+  bhuktiTable.innerHTML='';
   bhukti.forEach((r,i)=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td class="mono">${r.years.toFixed(2)}</td>`;
     bhuktiTable.appendChild(tr);
   });
 }
-pdfBtn.onclick = ()=>{ window.print(); };
-shareBtn.onclick = ()=>{
-  const params = [
+pdfBtn.onclick=()=>window.print();
+shareBtn.onclick=()=>{
+  const params=[
     'name='+encodeURIComponent(document.getElementById('name').value),
     'dt='+encodeURIComponent(document.getElementById('date').value+'T'+document.getElementById('time').value),
     'tz='+encodeURIComponent(document.getElementById('timezone').value),
@@ -584,127 +452,100 @@ shareBtn.onclick = ()=>{
     'lon='+encodeURIComponent(document.getElementById('lon').value),
     'place='+encodeURIComponent(document.getElementById('place').value)
   ].join('&');
-  const url = location.origin+location.pathname+'?'+params;
+  const url=location.origin+location.pathname+'?'+params;
   navigator.clipboard.writeText(url);
   alert('Chart link copied!');
 };
-saveBtn.onclick = ()=>{
-  const data = {
-    name: document.getElementById('name').value,
-    dt: document.getElementById('date').value+'T'+document.getElementById('time').value,
-    tz: document.getElementById('timezone').value,
-    lat: document.getElementById('lat').value,
-    lon: document.getElementById('lon').value,
-    place: document.getElementById('place').value
-  };
+saveBtn.onclick=()=>{
+  const data={ name: name.value, dt: date.value+'T'+time.value, tz: timezone.value, lat: lat.value, lon: lon.value, place: place.value };
   localStorage.setItem('kp_last_chart', JSON.stringify(data));
   alert('Chart saved!');
 };
-loadBtn.onclick = ()=>{
-  const dat = JSON.parse(localStorage.getItem('kp_last_chart')||'null');
+loadBtn.onclick=()=>{
+  const dat=JSON.parse(localStorage.getItem('kp_last_chart')||'null');
   if(!dat){ alert('No saved chart found.'); return; }
-  document.getElementById('name').value = dat.name;
-  const [d,t] = (dat.dt||'').split('T');
-  document.getElementById('date').value = d||'';
-  document.getElementById('time').value = t||'12:00';
-  document.getElementById('timezone').value = dat.tz;
-  document.getElementById('lat').value = dat.lat;
-  document.getElementById('lon').value = dat.lon;
-  document.getElementById('place').value = dat.place;
+  name.value=dat.name; const [d,t]=(dat.dt||'').split('T'); date.value=d||''; time.value=t||'12:00';
+  timezone.value=dat.tz; lat.value=dat.lat; lon.value=dat.lon; place.value=dat.place;
   birthForm.dispatchEvent(new Event('submit'));
 };
-modeBtn.onclick = ()=>{
-  const b = document.body;
-  if(b.classList.contains('dark')){
-    b.classList.remove('dark'); b.classList.add('light');
-    modeBtn.textContent = "🌙";
-  }else{
-    b.classList.remove('light'); b.classList.add('dark');
-    modeBtn.textContent = "☀️";
-  }
+modeBtn.onclick=()=>{
+  const b=document.body;
+  if(b.classList.contains('dark')){ b.classList.remove('dark'); b.classList.add('light'); modeBtn.textContent="🌙"; }
+  else { b.classList.remove('light'); b.classList.add('dark'); modeBtn.textContent="☀️"; }
 };
 function fromParams(){
-  const u = new URL(location.href);
-  const get = (k) => u.searchParams.get(k) || '';
+  const u=new URL(location.href); const get=k=>u.searchParams.get(k)||'';
   if(get('name') && get('dt') && get('lat') && get('lon')){
-    document.getElementById('name').value = get('name');
-    const [d, t] = (get('dt')||'').split('T');
-    document.getElementById('date').value = d || '';
-    document.getElementById('time').value = t || '12:00';
-    document.getElementById('timezone').value = get('tz')||'+05:30';
-    document.getElementById('lat').value = get('lat');
-    document.getElementById('lon').value = get('lon');
-    document.getElementById('place').value = get('place');
+    name.value=get('name'); const [d,t]=(get('dt')||'').split('T');
+    date.value=d||''; time.value=t||'12:00'; timezone.value=get('tz')||'+05:30';
+    lat.value=get('lat'); lon.value=get('lon'); place.value=get('place');
     birthForm.dispatchEvent(new Event('submit'));
   }
 }
 
 // ====== Astrologer Voice & Panel ======
-function getCurrentLang() {
-  const combo = document.querySelector('.goog-te-combo');
-  const code = combo && combo.value ? combo.value : 'en';
-  return (code === 'si' || code === 'ta' || code === 'en') ? code : 'en';
+function getCurrentLang(){ const combo=document.querySelector('.goog-te-combo'); const code=combo&&combo.value?combo.value:'en'; return (code==='si'||code==='ta'||code==='en')?code:'en'; }
+function pickVoice(langCode){
+  const tag=langCode==='si'?'si':(langCode==='ta'?'ta':'en');
+  const voices=window.speechSynthesis.getVoices();
+  let v=voices.find(v=> (v.lang||'').toLowerCase().startsWith(tag));
+  if(!v && tag==='si') v=voices.find(v=> (v.lang||'').toLowerCase().startsWith('en'));
+  if(!v && tag==='ta') v=voices.find(v=> (v.lang||'').toLowerCase().startsWith('hi')) || voices.find(v=> (v.lang||'').toLowerCase().startsWith('en'));
+  return v || voices[0];
 }
-function pickVoice(langCode) {
-  const tag = langCode === 'si' ? 'si' : (langCode === 'ta' ? 'ta' : 'en');
-  const voices = window.speechSynthesis.getVoices();
-  let v = voices.find(v => (v.lang || '').toLowerCase().startsWith(tag));
-  if (!v && tag === 'si') v = voices.find(v => (v.lang || '').toLowerCase().startsWith('en'));
-  if (!v && tag === 'ta') v = voices.find(v => (v.lang || '').toLowerCase().startsWith('hi')) || voices.find(v => (v.lang || '').toLowerCase().startsWith('en'));
-  if (!v) v = voices[0];
-  return v;
-}
-function makeAnswer(lang, name, janmaRashi) {
+function makeAnswer(lang, name, janmaRashi){
   const rashi = janmaRashi || (document.getElementById('moonRashi')?.textContent?.replace('🌙 Janma Rashi:','').trim() || '');
-  if (lang === 'si') {
-    return `ඔයාගේ ප්‍රශ්නය ලැබුණා. ${name? name + 'ට': 'ඔබට'} දැනට බලපාන ප්‍රධාන බලය, ඔබේ ජනම රාශිය ${rashi} අනුව, ශාන්ත සිතක් ගෙන එයි. දැන් දිනපතා තීරණ සන්සිඳිමින් ගන්න.`;
-  }
-  if (lang === 'ta') {
-    return `உங்கள் கேள்வி பெறப்பட்டது. ${name? name + ' அவர்களுக்கு' : 'உங்களுக்கு'} தற்போது, பிறப்பு ராசி ${rashi} அடிப்படையில் அமைதியான கவனம் நன்மை தரும். இன்று முக்கிய முடிவுகளை அமைதியாக எடுக்கவும்.`;
-  }
-  return `Your question is noted. For ${name || 'you'}, considering the Janma Rashi ${rashi}, a calm, steady focus benefits decisions today. Choose clarity over haste.`;
+  if(lang==='si') return `ඔයාගේ ප්‍රශ්නය ලැබුණා. ${name? name + 'ට': 'ඔබට'} දැනට, ජනම රාශි ${rashi} අනුව, ශාන්ත සිතෙන් තීරණ ගන්න.`;
+  if(lang==='ta') return `உங்கள் கேள்வி பெறப்பட்டது. ${name? name + ' அவர்களுக்கு' : 'உங்களுக்கு'}, பிறப்பு ராசி ${rashi} அடிப்படையில், அமைதியாக முடிவு செய்யுங்கள்.`;
+  return `Your question is noted. For ${name || 'you'}, considering Janma Rashi ${rashi}, take calm, clear decisions.`;
 }
-function speakText(text, langCode) {
-  if (!('speechSynthesis' in window)) { alert('Voice not supported on this browser.'); return; }
-  const utter = new SpeechSynthesisUtterance(text);
-  const v = pickVoice(langCode);
-  if (v) utter.voice = v;
-  utter.lang = v?.lang || (langCode === 'si' ? 'si' : (langCode === 'ta' ? 'ta' : 'en-US'));
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utter);
+function speakText(text, langCode){
+  if(!('speechSynthesis' in window)){ alert('Voice not supported on this browser.'); return; }
+  const utter=new SpeechSynthesisUtterance(text);
+  const v=pickVoice(langCode); if(v) utter.voice=v;
+  utter.lang=v?.lang || (langCode==='si'?'si':(langCode==='ta'?'ta':'en-US'));
+  window.speechSynthesis.cancel(); window.speechSynthesis.speak(utter);
 }
 let recog;
-function startMic() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) { alert('Speech recognition not supported here.'); return; }
-  const lang = getCurrentLang();
-  recog = new SpeechRecognition();
-  recog.lang = lang === 'si' ? 'si-LK' : (lang === 'ta' ? 'ta-IN' : 'en-US');
-  recog.interimResults = false; recog.maxAlternatives = 1;
-  recog.onresult = (e) => {
-    const t = e.results[0][0].transcript;
-    document.getElementById('astroQ').value = t;
-  };
-  recog.onerror = () => {};
+function startMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ alert('Speech recognition not supported here.'); return; }
+  const lang=getCurrentLang(); recog=new SR();
+  recog.lang=lang==='si'?'si-LK':(lang==='ta'?'ta-IN':'en-US');
+  recog.interimResults=false; recog.maxAlternatives=1;
+  recog.onresult=e=>{ document.getElementById('astroQ').value = e.results[0][0].transcript; };
   recog.start();
 }
-function openAstroPanel(){ document.getElementById('astroPanel').style.display = 'block'; }
-function closeAstroPanel(){ document.getElementById('astroPanel').style.display = 'none'; }
+function openAstroPanel(){ document.getElementById('astroPanel').style.display='block'; }
+function closeAstroPanel(){ document.getElementById('astroPanel').style.display='none'; }
 function openAstroLink(){ window.open(ASTRO_LINK, '_blank', 'noopener'); }
-function speakAnswer() {
-  const name = document.getElementById('name')?.value?.trim() || '';
-  const janmaText = document.getElementById('moonRashi')?.textContent || '';
-  const janmaMatch = janmaText.replace(/.*Janma Rashi:\\s*/i,'').trim();
-  const lang = getCurrentLang();
-  const ans = makeAnswer(lang, name, janmaMatch);
-  speakText(ans, lang);
+function speakAnswer(){
+  const nm=document.getElementById('name')?.value?.trim()||'';
+  const janma=(document.getElementById('moonRashi')?.textContent||'').replace(/.*Janma Rashi:\s*/i,'').trim();
+  const lang=getCurrentLang();
+  speakText(makeAnswer(lang, nm, janma), lang);
 }
-// hook green button
-astroChatBtn.onclick = function(){ openAstroPanel(); };
-// ensure voices list ready
-if ('speechSynthesis' in window) {
-  window.speechSynthesis.onvoiceschanged = () => {};
-}
+astroChatBtn.onclick=()=>openAstroPanel();
+if('speechSynthesis' in window){ window.speechSynthesis.onvoiceschanged = ()=>{}; }
+
+// Form submit
+const birthForm = document.getElementById('birthForm');
+const errBox = document.getElementById('err');
+birthForm.onsubmit = async function(e){
+  e.preventDefault();
+  errBox.textContent='';
+  let nameVal=name.value.trim(), d=date.value, t=time.value, tz=timezone.value;
+  let latVal=parseFloat(lat.value), lonVal=parseFloat(lon.value), plc=place.value.trim();
+  if(!nameVal || !d || !t){ errBox.textContent='Please fill all fields correctly.'; return; }
+  if((isNaN(latVal)||isNaN(lonVal)||!latVal||!lonVal) && plc){
+    errBox.textContent='Searching place...';
+    const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(plc)}&limit=1`).then(r=>r.json()).catch(()=>[]);
+    if(!res.length){ errBox.textContent='Place not found. Enter coordinates.'; return; }
+    latVal=+res[0].lat; lonVal=+res[0].lon; lat.value=latVal; lon.value=lonVal; initMap(latVal, lonVal, 13);
+  }
+  if(isNaN(latVal)||isNaN(lonVal)||!latVal||!lonVal){ errBox.textContent='Latitude/Longitude required.'; return; }
+  showChart(nameVal, d+"T"+t, tz, latVal, lonVal, plc);
+};
 </script>
 </body>
 </html>

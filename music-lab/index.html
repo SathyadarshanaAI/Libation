@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sathyadarshana Music Lab | Dashboard</title>
+  <style>
+    :root{
+      --bg:#050812; --card:#101827; --ink:#f0faff; --muted:#93c5fd; --accent:#38bdf8; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at 20% 20%, #0a1224, #000),var(--bg);color:var(--ink);font-family:"Segoe UI",sans-serif}
+    header{padding:18px;text-align:center;background:#0f172a;border-bottom:1px solid #1e293b}
+    h1{margin:0;font-size:24px;letter-spacing:.5px;color:#7dd3fc}
+    .dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;max-width:1400px;margin:20px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid #1e293b;border-radius:16px;padding:16px;box-shadow:0 0 12px rgba(56,189,248,0.1)}
+    .card h2{font-size:16px;margin:0 0 12px;color:var(--muted);letter-spacing:.3px}
+    label{font-size:13px;color:var(--muted)}
+    input,select,button{margin:6px 0;padding:8px 10px;border-radius:8px;font-size:13px;border:1px solid #1e293b;background:#0d1627;color:var(--ink)}
+    button{cursor:pointer;font-weight:600}
+    button.primary{background:var(--accent);color:#001018;border:none}
+    button.good{background:var(--ok);color:#00140c;border:none}
+    button.warn{background:var(--warn);color:#1b1000;border:none}
+    .visual{height:200px;background:#0d1627;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--muted);margin-bottom:12px}
+    .meters{display:flex;gap:12px;flex-wrap:wrap}
+    .meter{flex:1;min-width:120px;background:#0d1627;padding:8px;border-radius:10px;text-align:center}
+    .meter span{display:block;font-size:18px;font-weight:bold;margin-top:4px}
+    .export{display:flex;flex-wrap:wrap;gap:10px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎶 Sathyadarshana Music Lab Dashboard</h1>
+    <p>Spiritual Music • Smule • AI Studio</p>
+  </header>
+  <div class="dashboard">
+    <div class="card">
+      <h2>🎼 Voice Removal & Enhance</h2>
+      <label>Music File</label><input type="file" accept="audio/*"><br>
+      <label>Strength</label><input type="range" min="0" max="1" step="0.05" value="0.9"><br>
+      <label>Bass Preserve</label><input type="range" min="80" max="400" step="10" value="180"><br>
+      <button class="primary">Apply</button>
+    </div>
+    <div class="card">
+      <h2>🎙️ Vocal Controls</h2>
+      <label>Vocal File</label><input type="file" accept="audio/*"><br>
+      <label>Echo</label><input type="range" min="0" max="900" value="120"><br>
+      <label>Balance</label><input type="range" min="0" max="1" step="0.01" value="0.5"><br>
+      <button class="good">Blend Vocals</button>
+    </div>
+    <div class="card">
+      <h2>📊 Real-time Meters</h2>
+      <div class="visual">[ Waveform / Visualizer ]</div>
+      <div class="meters">
+        <div class="meter">RMS<span>-14 dB</span></div>
+        <div class="meter">Peak<span>-6 dB</span></div>
+        <div class="meter">LUFS<span>-16</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📝 Subtitles & Video</h2>
+      <label>Subtitle File</label><input type="file" accept=".srt,.lrc"><br>
+      <label>Background</label><input type="file" accept="image/*,video/*"><br>
+      <button class="primary">Apply Visuals</button>
+    </div>
+    <div class="card">
+      <h2>🤖 AI Assistant</h2>
+      <p>Auto-analyzes track & suggests best EQ, Compression, Vocal Balance.</p>
+      <button class="primary">Run AI Assist</button>
+    </div>
+    <div class="card">
+      <h2>📤 Export & Share</h2>
+      <div class="export">
+        <button class="good">Record Audio</button>
+        <button class="warn">Stop & Download</button>
+        <button class="primary">Export MP3</button>
+        <button class="primary">Export MP4</button>
+        <button class="primary">Share</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

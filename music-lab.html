@@ -1,140 +1,101 @@
-<!DOCTYPE html>
-<html lang="si">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Sathyadarshana Music Lab – Digital Wall</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sathyadarshana | Light of Truth</title>
+  <meta name="description" content="Sathyadarshana - The Light of Truth. AI-powered spirituality, astrology tools, digital library, and more.">
+  <link rel="icon" href="./assets/favicon.png">
   <style>
-    body {
-      background: linear-gradient(135deg, #0f172a, #1e293b 90%);
-      color: #e0f2fe;
-      font-family: system-ui, Arial, sans-serif;
-      margin: 0; min-height: 100vh;
-    }
-    header {
-      text-align: center; padding: 2.5rem 1rem 1.2rem;
-    }
-    header h1 { font-size: 2.2rem; margin-bottom:.2rem;}
-    header p { color: #94a3b8; margin: 0 0 .8rem; }
-    .smule-link {
-      display: inline-block; background: #38bdf8; color: #1e293b; padding: .6rem 1.4rem;
-      border-radius: 1.2rem; font-weight: 600; margin: .6rem 0 1.2rem; text-decoration: none;
-      transition:.2s;
-    }
-    .smule-link:hover { background: #0369a1; color: #e0f2fe;}
-    .dashboard {
-      max-width: 960px; margin: 0 auto; padding: 1.2rem;
-      display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
-    }
-    .panel {
-      background: #1e293b;
-      border-radius: 1.2rem;
-      padding: 1.3rem 1.1rem 1rem;
-      box-shadow: 0 0 22px #38bdf877;
-      display: flex; flex-direction: column;
-      align-items: center;
-      min-height: 180px;
-      transition:.14s;
-    }
-    .panel h2 { color: #7dd3fc; margin: 0 0 .5rem; font-size: 1.13rem; }
-    .btn {
-      background: #38bdf8; color: #1e293b; border: none; border-radius: .7rem;
-      padding: .6rem 1.1rem; margin: .5rem 0; font-size: 1.05rem; font-weight:600; cursor: pointer;
-      box-shadow: 0 2px 8px #38bdf833; transition: background .18s;
-    }
-    .btn.alt { background: #16a34a; color: #fff;}
-    .btn:active { background: #1e293b; color: #fff;}
-    .wall {
-      width:100%;max-width:740px;margin:1.7rem auto;
-      background:#0f172a; border-radius:1.3rem;box-shadow:0 0 28px #7dd3fc33;
-      padding:1.1rem 1.2rem 1.4rem;
-    }
-    .wall h3 { color:#7dd3fc; margin:.1rem 0 .8rem;}
-    #wallMessages {min-height:60px;}
-    .msg {padding:.6rem .2rem; border-bottom:1px solid #233a54;}
-    .msg:last-child{border-bottom:0;}
-    .form-row {display:flex;gap:.7rem;}
-    #wallMsgInput {flex:1; padding:.5rem .8rem; border-radius:.7rem; border:none; font-size:1rem;}
-    @media (max-width: 700px) {
-      .dashboard { grid-template-columns: 1fr; }
-      .wall {padding:.6rem .5rem 1.1rem;}
-    }
+    :root { --bg1:#0f172a; --bg2:#000; --card:#1e293b; --cardGlow:#38bdf8; --text:#e0f2fe; --muted:#bae6fd; --accent:#38bdf8; }
+    *{ box-sizing:border-box }
+    body{ margin:0; font-family:'Segoe UI',system-ui,Arial; background:radial-gradient(circle at 20% 20%, var(--bg1), var(--bg2)); color:var(--text); min-height:100vh; text-align:center; }
+    header{ padding:28px 16px 8px }
+    header h1{ margin:0 0 6px; font-size:38px; color:#7dd3fc; letter-spacing:.5px }
+    header p{ margin:0; color:var(--muted) }
+    .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; max-width:1000px; margin:28px auto; padding:0 14px; }
+    .card{ background:rgba(30,41,59,.95); border-radius:16px; padding:18px 14px; min-height:180px; box-shadow:0 0 14px rgba(56,189,248,.2); border:2px solid transparent; text-decoration:none; color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; transition:.2s ease; }
+    .card:hover{ transform:translateY(-6px); background:rgba(2,6,23,.94); border-color:var(--accent); box-shadow:0 8px 22px rgba(56,189,248,.45); }
+    .card h2{ margin:6px 0 10px; font-size:20px; color:var(--accent) }
+    .card ul{ margin:0; padding:0; list-style:none; color:var(--muted); font-size:14.5px }
+    .card ul li{ margin:3px 0 }
+    footer{ margin:26px 0 32px; padding-top:14px; border-top:1px solid var(--accent); color:#7dd3fc; font-size:14px; }
   </style>
 </head>
-<body>
-  <header>
-    <h1>🎛️ Sathyadarshana Music Lab</h1>
-    <p>Digital Wall | ආත්මික ගීත – Community, AI, & Singing Together</p>
-    <a class="smule-link" href="https://www.smule.com/AnuruddaDilip" target="_blank">
-      මගේ Smule ගීත ගායන පිටුවට යන්න 🎤
-    </a>
-  </header>
-  <div class="dashboard">
-    <div class="panel">
-      <h2>🎹 Melody & Instrument Studio</h2>
-      <button class="btn" onclick="window.open('https://magenta.tensorflow.org/studio','_blank')">AI Melody Maker</button>
-      <button class="btn" onclick="window.open('https://vocalremover.org/','_blank')">Vocal Remover</button>
-      <small>Melody, karaoke, instrumental – සියල්ල නොමිලේ.</small>
-    </div>
-    <div class="panel">
-      <h2>🎬 Video & Subtitles</h2>
-      <button class="btn" onclick="window.open('https://www.canva.com/','_blank')">Create Video/Canvas</button>
-      <button class="btn" onclick="window.open('https://huggingface.co/spaces/aadnk/whisper-webui','_blank')">Auto Subtitles</button>
-      <small>Lyric video, SRT, animations – free tools.</small>
-    </div>
-    <div class="panel">
-      <h2>🌐 Community Wall</h2>
-      <button class="btn alt" onclick="document.getElementById('wallMsgInput').focus()">Post Message</button>
-      <button class="btn" onclick="alert('Zoom සජීවී වැඩසටහන් – See wall below!')">Zoom Live Info</button>
-      <small>Spiritual messages, Zoom sessions, blessings.</small>
-    </div>
-    <div class="panel">
-      <h2>🌟 Approved Spiritual Songs</h2>
-      <button class="btn" onclick="alert('View Published Songs – Coming soon!')">View Songs</button>
-      <button class="btn" onclick="alert('Submit Song – Coming soon!')">Submit Song</button>
-      <small>Moderated, spiritual songs only.</small>
-    </div>
-    <div class="panel">
-      <h2>📞 Zoom / WhatsApp</h2>
-      <button class="btn" onclick="window.open('https://zoom.us/','_blank')">Join Zoom</button>
-      <button class="btn" onclick="window.open('https://wa.me/94757500000','_blank')">Contact Buddhi AI</button>
-      <small>Live classes, support, and singing together.</small>
-    </div>
-  </div>
-  <section class="wall">
-    <h3>🖥️ Digital Wall – ආත්මික පණිවිඩ</h3>
-    <div id="wallMessages"></div>
-    <form id="wallForm" onsubmit="submitWallMsg(event)" style="margin-top:1.3rem;">
-      <div class="form-row">
-        <input type="text" id="wallMsgInput" maxlength="120" placeholder="ඔයාගේ ආත්මික පණිවිඩය..." required>
-        <button class="btn alt" type="submit">Send</button>
-      </div>
-    </form>
-    <small>All posts are approved by Buddhi AI before public display.</small>
-  </section>
-  <script>
-    let wallData = [
-      {msg:"🙏 ආදරයෙන්, සෙනෙහසින්, සංගීතය හරහා විශ්වය එකට.", user:"Buddhi"},
-      {msg:"🌼 Zoom Dharma Sabha අද රාත්‍රී 8ට!", user:"Admin"}
-    ];
-    function renderWall(){
-      let html = wallData.map(
-        w=>`<div class="msg"><b>${w.user}:</b> ${w.msg}</div>`
-      ).join('');
-      document.getElementById('wallMessages').innerHTML = html || "<i>No messages yet.</i>";
-    }
-    function submitWallMsg(e){
-      e.preventDefault();
-      let msg = document.getElementById('wallMsgInput').value.trim();
-      if(!msg) return alert("Message empty!");
-      setTimeout(()=>{
-        wallData.unshift({msg, user:"You"});
-        renderWall();
-        document.getElementById('wallMsgInput').value="";
-        alert("Buddhi AI will review and approve your message soon!");
-      },700);
-    }
-    renderWall();
-  </script>
-</body>
+<body>  <header>
+    <h1>Sathyadarshana</h1>
+    <p>The Light of Truth – Explore, Learn, and Grow Spiritually</p>
+  </header>  <section>
+    <div class="grid">
+      <!-- Astrology -->
+      <a class="card" href="/astrology">
+        <div style="font-size:28px">🪐</div>
+        <h2>Astrology</h2>
+        <ul>
+          <li>KP Charts</li>
+          <li>NASA Data</li>
+          <li>Numerology</li>
+          <li>Palmistry</li>
+          <li>GeoVision</li>
+        </ul>
+      </a><!-- Digital Library -->
+  <a class="card" href="/library">
+    <div style="font-size:28px">📚</div>
+    <h2>Digital Library</h2>
+    <div>Sacred texts & multilingual archives</div>
+  </a>
+
+  <!-- Dharma Sabha Mandapaya -->
+  <a class="card" href="/dharma-sabha-mandapaya">
+    <div style="font-size:28px">🏛️</div>
+    <h2>Dharma Sabha Mandapaya</h2>
+    <div>Live Zoom & Discussions</div>
+  </a>
+
+  <!-- Doctor Buddhi -->
+  <a class="card" href="/doctor-buddhi">
+    <div style="font-size:28px">🧑‍⚕️</div>
+    <h2>Doctor Buddhi</h2>
+    <div>Physical & Mental Health</div>
+  </a>
+
+  <!-- Music Lab -->
+  <a class="card" href="/music-lab/index.html">
+    <div style="font-size:28px">🎶</div>
+    <h2>Sathyadarshana Music Lab</h2>
+    <div>Spiritual music & Smule · AI Dashboard</div>
+  </a>
+
+  <!-- News Line -->
+  <a class="card" href="/news">
+    <div style="font-size:28px">📰</div>
+    <h2>News Line</h2>
+    <div>Spiritual & Global news</div>
+  </a>
+
+  <!-- Anurudda's Articles -->
+  <a class="card" href="/anuruddas-articles">
+    <div style="font-size:28px">✍️</div>
+    <h2>Anurudda’s Articles</h2>
+    <div>Personal spiritual insights</div>
+  </a>
+
+  <!-- AI Buddhi & Morna -->
+  <a class="card" href="/ai-buddhi-morna">
+    <div style="font-size:28px">🤖</div>
+    <h2>AI Buddhi & Morna</h2>
+    <div>Dual AI wisdom & coding</div>
+  </a>
+
+  <!-- Community Writers -->
+  <a class="card" href="/community-writers">
+    <div style="font-size:28px">🧑‍🤝‍🧑</div>
+    <h2>Community Writers</h2>
+    <div>Articles from spiritual writers</div>
+  </a>
+</div>
+
+  </section>  <footer>
+    © 2025 Sathyadarshana · Creative Concept by Anurudda · Executed by Buddhi AI
+    <br>All Rights Reserved — High Copyright Protection Enabled
+  </footer></body>
 </html>

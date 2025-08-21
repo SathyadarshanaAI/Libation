@@ -19,7 +19,11 @@
         <label>Place of Birth<br><input type="text" id="pob" required placeholder="e.g. Colombo"></label>
       </div>
       <div class="form-row">
-        <label>Time Zone<br><input type="text" id="timezone" required placeholder="+5:30"></label>
+        <label>
+          Time Zone<br>
+          <input type="text" id="timezone" required placeholder="+05:30">
+          <button type="button" id="detectTzBtn" style="margin-top:6px;">Auto Detect</button>
+        </label>
         <label>Question<br><input type="text" id="question"></label>
       </div>
       <button type="submit">Generate Chart</button>

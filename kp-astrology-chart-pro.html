@@ -2,230 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sathyadarshana KP Chart</title>
-  <link href="https://fonts.googleapis.com/css?family=Nunito:400,700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: linear-gradient(145deg, #f8faf8 0%, #eaeef3 100%);
-      color: #253040;
-      margin: 0;
-      min-height: 100vh;
-    }
-    .container {
-      max-width: 520px;
-      margin: 32px auto;
-      background: rgba(255,255,255,0.92);
-      border-radius: 26px;
-      box-shadow: 0 4px 44px #e0e7ef33;
-      padding: 30px 32px 34px 32px;
-    }
-    h2 {
-      color: #6a7c8a;
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-      letter-spacing: 2px;
-      text-align: center;
-    }
-    label {
-      font-weight: 700;
-      color: #6b7b85;
-      font-size: 1rem;
-    }
-    input, select {
-      padding: 10px 12px;
-      margin: 5px 0 18px 0;
-      border-radius: 8px;
-      border: 1px solid #e4e9ee;
-      width: 100%;
-      font-size: 1.04rem;
-      background: #f9fbfc;
-      transition: border 0.22s;
-      outline: none;
-    }
-    input:focus, select:focus {
-      border-color: #b3c8db;
-    }
-    button {
-      background: linear-gradient(90deg, #b3c8db 40%, #d7e7f5 100%);
-      color: #496077;
-      border: none;
-      border-radius: 9px;
-      padding: 13px 24px;
-      font-size: 1.18rem;
-      font-weight: 700;
-      box-shadow: 0 2px 16px #e4e9ee55;
-      cursor: pointer;
-      transition: background 0.20s;
-      display: block;
-      margin: 0 auto;
-      letter-spacing: 1px;
-    }
-    button:hover {
-      background: linear-gradient(90deg, #d7e7f5 40%, #b3c8db 100%);
-    }
-    .card {
-      background: rgba(250,252,255,0.97);
-      border-radius: 19px;
-      padding: 18px 22px 16px 22px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 18px #e3eaf533;
-      color: #4a5b6e;
-      font-size: 1.09rem;
-    }
-    .prediction {
-      background: #f6f9f7;
-      border-radius: 13px;
-      padding: 18px 22px;
-      margin-top: 12px;
-      color: #3c4a56;
-      font-size: 1.08rem;
-      line-height: 1.68;
-    }
-    /* Serene modern wheel */
-    svg#sereneKpWheel {
-      background: #f8fbfa;
-      border-radius: 50%;
-      margin: 0 auto 2px auto;
-      display: block;
-      max-width: 330px;
-      width: 100%;
-      height: auto;
-      filter: drop-shadow(0 1px 8px #e4e9ee44);
-    }
-    .house-label {
-      font-size: 1.02rem;
-      font-weight: 700;
-      fill: #8fa2b2;
-      opacity: 0.86;
-    }
-    .planet-dot {
-      stroke-width: 2.2;
-      filter: drop-shadow(0 2px 3px #b3c8db33);
-    }
-    .lagna-mark {
-      fill: #e3f7b6;
-      stroke: #bcd93e;
-      stroke-width: 1.7;
-      filter: drop-shadow(0 1px 4px #f6fdf099);
-    }
-  </style>
+  <title>KP Chart Generator | Lebetion</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Sathyadarshana KP Chart</h2>
-    <form id="astroForm">
-      <label>ID Number</label>
-      <input type="text" id="userid" required>
-      <label>Name</label>
-      <input type="text" id="name" required>
-      <label>Birth Date</label>
-      <input type="date" id="date" required>
-      <label>Birth Time</label>
-      <input type="time" id="time" required>
-      <label>Latitude</label>
-      <input type="number" id="lat" step="0.0001" required>
-      <label>Longitude</label>
-      <input type="number" id="lon" step="0.0001" required>
-      <button type="submit">නිවන් KP චාට් එක බලන්න</button>
+  <main>
+    <h1>KP Chart Generator</h1>
+    <form id="kpForm">
+      <div class="form-row">
+        <label>Name<br><input type="text" id="name" required></label>
+        <label>Date of Birth<br><input type="date" id="dob" required></label>
+      </div>
+      <div class="form-row">
+        <label>Time of Birth<br><input type="time" id="tob" required></label>
+        <label>Place of Birth<br><input type="text" id="pob" required placeholder="e.g. Colombo"></label>
+      </div>
+      <div class="form-row">
+        <label>Time Zone<br><input type="text" id="timezone" required placeholder="+5:30"></label>
+        <label>Question<br><input type="text" id="question"></label>
+      </div>
+      <button type="submit">Generate Chart</button>
     </form>
-    <div id="result"></div>
-  </div>
-  <script>
-    const SIGNS = ["Mesha", "Vrushabha", "Mithuna", "Kataka", "Sinha", "Kanya", "Thula", "Vrushchika", "Dhanu", "Makara", "Kumbha", "Meena"];
-    const PLANETS = [
-      { name:"Sun", abbr:"Su", color:"#ffe188" },
-      { name:"Moon", abbr:"Mo", color:"#c9e6fa" },
-      { name:"Mars", abbr:"Ma", color:"#ffc1b3" },
-      { name:"Mercury", abbr:"Me", color:"#c1f2c7" },
-      { name:"Jupiter", abbr:"Ju", color:"#f8eebf" },
-      { name:"Venus", abbr:"Ve", color:"#fde2f4" },
-      { name:"Saturn", abbr:"Sa", color:"#e2d7fd" },
-      { name:"Rahu", abbr:"Ra", color:"#e6e6e6" },
-      { name:"Ketu", abbr:"Ke", color:"#fee8d7" }
-    ];
-    document.getElementById('astroForm').onsubmit = function(e) {
-      e.preventDefault();
-      const userid = document.getElementById('userid').value;
-      const name = document.getElementById('name').value;
-      const date = document.getElementById('date').value;
-      const time = document.getElementById('time').value;
-      const lat = parseFloat(document.getElementById('lat').value);
-      const lon = parseFloat(document.getElementById('lon').value);
-      const dt = new Date(date + 'T' + time);
-      const chart = kpCompute(dt, lat, lon);
-      document.getElementById('result').innerHTML = `
-        <div class="card">
-          <b>ID:</b> ${userid}<br>
-          <b>Name:</b> ${name}<br>
-          <b>Date:</b> ${dt.toISOString().slice(0,10)} <b>Time:</b> ${dt.toTimeString().slice(0,5)}<br>
-        </div>
-        <div class="chart-area">${renderSereneKpWheel(chart)}</div>
-        <div class="prediction">${renderSerenePrediction(chart, name)}</div>
-      `;
-    };
-    // Minimal demo KP logic
-    function kpCompute(dt, lat, lon) {
-      const base = dt.getUTCHours() + dt.getUTCMinutes()/60 + dt.getUTCSeconds()/3600;
-      const ascDeg = ((base + lon/15) * 15 + 90) % 360;
-      const ascSign = Math.floor(ascDeg / 30);
-      let houses = [];
-      for(let i=0;i<12;i++) {
-        const sign = (ascSign + i)%12;
-        houses.push({ house: i+1, sign: SIGNS[sign], deg: ((ascDeg + i*30)%360).toFixed(2) });
-      }
-      let planets = PLANETS.map((p,i)=>({
-        ...p,
-        deg: ((ascDeg + 22*i)%360).toFixed(2),
-        house: ((Math.floor(((ascDeg + 22*i)%360)/30) - ascSign + 12)%12)+1
-      }));
-      return { ascSign, houses, planets };
-    }
-    function renderSereneKpWheel(chart) {
-      const cx = 165, cy = 165, r = 135;
-      let svg = `<svg id="sereneKpWheel" viewBox="0 0 330 330">`;
-      svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fafdff" stroke="#e1e8f0" stroke-width="1.5"/>`;
-      for(let i=0;i<12;i++){
-        const a = ((i)/12)*2*Math.PI;
-        const x1 = cx + r*Math.cos(a-Math.PI/2);
-        const y1 = cy + r*Math.sin(a-Math.PI/2);
-        svg += `<line x1="${cx}" y1="${cy}" x2="${x1}" y2="${y1}" stroke="#e1e8f0" stroke-width="1"/>`;
-      }
-      for(let i=0;i<12;i++){
-        const house = chart.houses[i];
-        const a = (((i+0.5)/12)*2*Math.PI)-Math.PI/2;
-        const tx = cx + (r-20)*Math.cos(a);
-        const ty = cy + (r-20)*Math.sin(a);
-        svg += `<text x="${tx}" y="${ty}" class="house-label" text-anchor="middle" alignment-baseline="middle">${house.house}<tspan font-size="11" fill="#b6c3d2"> (${house.sign})</tspan></text>`;
-      }
-      // Lagna
-      const lagnaA = ((0.5)/12)*2*Math.PI-Math.PI/2;
-      const lx = cx + (r-46)*Math.cos(lagnaA), ly = cy + (r-46)*Math.sin(lagnaA);
-      svg += `<circle cx="${lx}" cy="${ly}" r="17" class="lagna-mark"/><text x="${lx}" y="${ly+5}" font-size="13" font-weight="bold" text-anchor="middle" fill="#7a9a13">Lagna</text>`;
-      // Planets
-      chart.planets.forEach(p=>{
-        const a = (((p.house-1)+0.6)/12)*2*Math.PI-Math.PI/2;
-        const px = cx + (r-70)*Math.cos(a), py = cy + (r-70)*Math.sin(a);
-        svg += `<circle cx="${px}" cy="${py}" r="10" fill="${p.color}" stroke="#fff" class="planet-dot"/><text x="${px}" y="${py+4}" font-size="11" font-weight="bold" text-anchor="middle" fill="#3c4a56">${p.abbr}</text>`;
-      });
-      svg += `</svg>`;
-      return svg;
-    }
-    // Serene, selfless, “Nirvana” style prediction (sample, ~300 words)
-    function renderSerenePrediction(chart, name) {
-      const sign = chart.houses[0].sign;
-      return `
-      <b>සංසුන් පලාපලය:</b><br>
-      <p>Dear <b>${name}</b>,<br>
-      Your birth ascendant is <b>${sign}</b>. This signifies an inner journey towards calmness and wisdom, where the boundaries of ego gradually dissolve and your true self shines with equanimity.<br><br>
-      Your chart is a gentle balance of energies. The placement of planets in various houses reveals both opportunities and lessons, all part of your serene path to understanding. When challenges arise, remember: they are simply ripples in the stillness of your inner lake, passing with time.<br><br>
-      In relationships, you bring empathy and quiet strength. Professionally, your authenticity and mindful approach help you create meaningful impact without noise. You are drawn to simplicity, truth, and clarity — qualities that guide you gently away from attachment and towards lasting peace.<br><br>
-      Life for you is not a race, but a slow unfolding. Each moment gifts you a chance to observe, reflect, and grow. Even when Rahu or Ketu bring confusion, your natural intuition serves as a compass. Jupiter’s wisdom and Moon’s serenity blend within you, always returning you to center.<br><br>
-      <b>Guidance:</b> Nurture compassion, practice letting go, and seek silence amid chaos. The less you seek, the more you find. In the language of KP and the spirit of Sathyadarshana, your life is a mirror: clear, deep, and peaceful.</p>
-      <i style="color:#b8c3d2;">May you walk the path of wisdom, free from self, at peace with the world.</i>
-      `;
-    }
-  </script>
+    <div id="loading" style="display:none;">Calculating…</div>
+    <div id="resultMsg"></div>
+    <div class="chart-section">
+      <canvas id="astroChart" width="360" height="360"></canvas>
+      <div id="planetTable"></div>
+    </div>
+    <footer>
+      <small>Powered by NASA Horizons • Lebetion KP Chart • 2025</small>
+    </footer>
+  </main>
+  <script src="kp-chart.js"></script>
 </body>
 </html>

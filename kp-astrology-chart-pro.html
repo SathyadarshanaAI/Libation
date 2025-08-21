@@ -1,217 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <title>KP Astrology Chart Pro</title>
-  <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+  <meta charset="UTF-8">
+  <title>KP Generator (Demo)</title>
   <style>
-    body { background: #181e29; color: #e0f2fe; font-family: system-ui, Arial; }
-    .card { margin: 24px auto; padding: 16px; max-width: 600px; background: #222c3b; border-radius: 12px; }
-    #kpBoxes { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin: 18px 0;}
-    .kpBox { background: #29344a; border-radius: 8px; text-align: center; padding: 10px;}
-    .kpBox.asc { box-shadow: 0 0 0 2px #38bdf8 inset;}
-    .pill { display: inline-block; background: #1a2335; border: 1px solid #2a3652; border-radius: 999px; padding: 7px 16px; margin-right: 8px; margin-bottom: 5px;}
-    table { width:100%; border-collapse:collapse;}
-    td,th { border-bottom:1px solid #374151; padding:6px;}
-    th { color:#93c5fd;}
+    body { font-family: sans-serif; }
+    .box { border:1px solid #ccc;padding:8px;margin:8px 0; }
+    table,th,td{border:1px solid #aaa;border-collapse:collapse;} th,td{padding:4px;}
+    .pro { color: #008080; font-weight:bold;}
+    .free { color: #0a0; }
   </style>
 </head>
 <body>
-<div class="card">
-  <form id="birthForm">
-    <input id="name" required placeholder="Name"/><br>
-    <input id="date" type="date" required/><br>
-    <input id="time" type="time" required value="12:00"/><br>
-    <input id="lat" required placeholder="Latitude"/><br>
-    <input id="lon" required placeholder="Longitude"/><br>
-    <button type="submit">Generate Chart</button>
+  <h2>KP ජනකය (KP Generator Demo)</h2>
+  <form id="astroForm">
+    ID Number: <input type="text" id="userid" required> <br>
+    නම: <input type="text" id="name" required> <br>
+    උපන් දිනය: <input type="date" id="date" required> <br>
+    වෙලාව: <input type="time" id="time" required> <br>
+    අක්ෂාංශය (lat): <input type="number" id="lat" step="0.0001" required> <br>
+    දේශාංශය (lon): <input type="number" id="lon" step="0.0001" required> <br>
+    Plan: 
+      <select id="plan">
+        <option value="free">Free (KP Chart + Short Prediction)</option>
+        <option value="pro">Pro (All + Full AI Reading)</option>
+      </select>
+    <br>
+    <button type="submit">KP Chart ගන්න</button>
   </form>
-  <div id="err" style="color:#f87171;"></div>
-</div>
-<div class="card" id="chartArea" style="display:none">
-  <div id="summary"></div>
-  <h3>Maha Dasha</h3>
-  <table><tbody id="dashaTable"></tbody></table>
-  <h3>Bhukti</h3>
-  <table><tbody id="bhuktiTable"></tbody></table>
-  <h3>KP 12-Box</h3>
-  <div id="kpBoxes"></div>
-</div>
-<script>
-// --- Basic KP core ---
-const KP = (() => {
-  function lahiriAyanamshaDegrees(date) {
-    const base = 23.8568611;
-    const y = date.getUTCFullYear();
-    const m = (date.getUTCMonth() + 1) / 12;
-    const yearsFrom2000 = (y - 2000) + m;
-    const rate = 50.290966;
-    return base + yearsFrom2000 * (rate/3600);
-  }
-  function norm360(x) { return (x%360+360)%360; }
-  function siderealLon(tropicalLonDeg, date) {
-    return norm360(tropicalLonDeg - lahiriAyanamshaDegrees(date));
-  }
-  function getPlanets(date) {
-    const bodies = ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn"];
-    const planets = [];
-    for (const body of bodies) {
-      const ecl = Astronomy.EclipticLongitude(body, date);
-      planets.push({ name: body, degree: siderealLon(ecl, date) });
+  <div id="result"></div>
+  <script>
+    // Demo KP Chart Engine
+    const SIGNS = ["Mesha", "Vrushabha", "Mithuna", "Kataka", "Sinha", "Kanya", "Thula", "Vrushchika", "Dhanu", "Makara", "Kumbha", "Meena"];
+    const PLANETS = [
+      { name:"Sun", abbr:"Su", years:6   },
+      { name:"Moon", abbr:"Mo", years:10 },
+      { name:"Mars", abbr:"Ma", years:7  },
+      { name:"Rahu", abbr:"Ra", years:18 },
+      { name:"Jupiter", abbr:"Ju", years:16 },
+      { name:"Saturn", abbr:"Sa", years:19 },
+      { name:"Mercury", abbr:"Me", years:17 },
+      { name:"Ketu", abbr:"Ke", years:7 },
+      { name:"Venus", abbr:"Ve", years:20 }
+    ];
+
+    document.getElementById('astroForm').onsubmit = function(e) {
+      e.preventDefault();
+      const userid = document.getElementById('userid').value;
+      const name = document.getElementById('name').value;
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const lat = parseFloat(document.getElementById('lat').value);
+      const lon = parseFloat(document.getElementById('lon').value);
+      const plan = document.getElementById('plan').value;
+      const dt = new Date(date + 'T' + time);
+
+      // Calculate KP Core Chart
+      const chart = kpCompute(dt, lat, lon);
+
+      // Render
+      document.getElementById('result').innerHTML = `
+        <div class="box">
+          <b>පරිශීලක ID:</b> ${userid} <br>
+          <b>නම:</b> ${name} <br>
+          <b>දිනය:</b> ${dt.toISOString().slice(0,10)} <b>වෙලාව:</b> ${dt.toTimeString().slice(0,5)}
+          <span class="${plan}">[${plan === 'pro'?'Pro':'Free'} Plan]</span>
+        </div>
+        ${renderKPChart(chart)}
+        ${renderShortPrediction(chart, name)}
+        ${plan==='pro' ? renderAIReading(chart, name) : ''}
+      `;
+    };
+
+    // Minimal KP Algorithm (demo only)
+    function kpCompute(dt, lat, lon) {
+      const base = dt.getUTCHours() + dt.getUTCMinutes()/60 + dt.getUTCSeconds()/3600;
+      const ascDeg = ((base + lon/15) * 15 + 90) % 360;
+      const ascSign = Math.floor(ascDeg / 30);
+      let houses = [];
+      for(let i=0;i<12;i++) {
+        const sign = (ascSign + i)%12;
+        const sublord = PLANETS[(sign + i) % PLANETS.length].abbr;
+        houses.push({
+            house: i+1,
+            sign: SIGNS[sign],
+            deg: ((ascDeg + i*30)%360).toFixed(2),
+            sublord: sublord
+        });
+      }
+      let planets = PLANETS.map((p,i)=>({
+        ...p,
+        deg: ((ascDeg + 22*i)%360).toFixed(2),
+        sign: SIGNS[Math.floor(((ascDeg + 22*i)%360)/30)],
+        house: ((Math.floor(((ascDeg + 22*i)%360)/30) - ascSign + 12)%12)+1
+      }));
+      return { ascDeg, ascSign, houses, planets };
     }
-    const moonEcl = Astronomy.EclipticLongitude("Moon", date);
-    const sunEcl = Astronomy.EclipticLongitude("Sun", date);
-    let rahuTrop = norm360(sunEcl - moonEcl + 180);
-    let ketuTrop = norm360(rahuTrop + 180);
-    planets.push({ name: "Rahu", degree: siderealLon(rahuTrop, date) });
-    planets.push({ name: "Ketu", degree: siderealLon(ketuTrop, date) });
-    return planets;
-  }
-  function getAscendant(date, lat, lon) {
-    const observer = new Astronomy.Observer(lat, lon, 0);
-    const hor = Astronomy.Horizon(observer, date, 90, 0);
-    const ascTropical = hor.ra * 15;
-    return siderealLon(ascTropical, date);
-  }
-  function compute(date, lat, lon) {
-    const planets = getPlanets(date);
-    const ascendant = getAscendant(date, lat, lon);
-    return { planets, ascendant };
-  }
-  return { compute, norm360 };
-})();
-// --- Helpers ---
-const MOON_RASHI = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
-const MD_ORDER = [
-  { lord:'Ketu', years: 7 }, { lord:'Venus', years: 20 }, { lord:'Sun', years: 6 },
-  { lord:'Moon', years: 10 }, { lord:'Mars', years: 7 }, { lord:'Rahu', years: 18 },
-  { lord:'Jupiter', years: 16 }, { lord:'Saturn', years: 19 }, { lord:'Mercury', years: 17 }
-];
-function parseLocalISO(iso){
-  const [d,t='00:00'] = iso.split('T');
-  const [Y,M,D] = d.split('-').map(Number);
-  const [h=0,m=0] = t.split(':').map(Number);
-  return new Date(Y, (M||1)-1, D||1, h||0, m||0, 0);
-}
-function addDays(date, days){
-  const d = new Date(date.getTime());
-  d.setDate(d.getDate() + days);
-  return d;
-}
-const Y2D = y => y * 365.2425;
-function fmt(d){if(!d)return'';const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return`${y}-${m}-${dd}`;}
-function toUTC(dt){ return new Date(dt); }
-function norm360(d){ return ((d%360)+360)%360; }
-function nakshatraLordIndex(moonDeg){
-  const ix27 = Math.floor(norm360(moonDeg) / (360/27));
-  return ix27 % 9;
-}
-function computeVimshottariDasha(moonDeg, birthISO, maxYears = 120){
-  const startDate = parseLocalISO(birthISO);
-  const orderStart = nakshatraLordIndex(moonDeg);
-  const posInNak = norm360(moonDeg) % (360/27);
-  const fracLeft = 1 - (posInNak / (360/27));
-  const startLord = MD_ORDER[orderStart];
-  const out = [];
-  let cursor = new Date(startDate.getTime());
-  const firstYears = startLord.years * fracLeft;
-  let end = addDays(cursor, Y2D(firstYears));
-  out.push({ lord: startLord.lord, start: new Date(cursor), end, years: firstYears });
-  cursor = new Date(end.getTime());
-  let totalYears = firstYears, i = (orderStart + 1) % 9;
-  while (totalYears < maxYears - 1e-6) {
-    const lord = MD_ORDER[i], durYears = Math.min(lord.years, Math.max(0, maxYears-totalYears));
-    const nextEnd = addDays(cursor, Y2D(durYears));
-    out.push({ lord: lord.lord, start: new Date(cursor), end: nextEnd, years: durYears });
-    totalYears += durYears; cursor = nextEnd; i = (i + 1) % 9;
-    if (out.length > 60) break;
-  }
-  return out;
-}
-function moonDegreeToRashi(moonDeg){
-  const rashiIx = Math.floor(norm360(moonDeg)/30);
-  return MOON_RASHI[rashiIx];
-}
-function showChart(name, dt, lat, lon){
-  chartArea.style.display = '';
-  const dateObj = toUTC(dt);
-  const chart = KP.compute(dateObj, parseFloat(lat), parseFloat(lon));
-  const planets = chart.planets;
-  const ascendant = chart.ascendant;
-  const moon = planets.find(p=>p.name==='Moon');
-  const maha = computeVimshottariDasha(moon.degree, dt, 120);
-  const janmaRashi = moonDegreeToRashi(moon.degree);
-  summary.innerHTML = `<span class="pill">Name: ${name}</span>
-    <span class="pill">Date/Time: ${dt}</span>
-    <span class="pill">Lat: ${lat}</span>
-    <span class="pill">Lon: ${lon}</span>
-    <span class="pill" style="background:#172e1b;color:#bef264;">Janma Rashi: <b>${janmaRashi}</b></span>
-    <span class="pill" style="background:#0ea5e9;color:#fff;">Ascendant: <b>${ascendant.toFixed(2)}°</b></span>`;
-  dashaTable.innerHTML = '';
-  maha.forEach((r,i)=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td>${r.years.toFixed(2)}</td>`;
-    tr.onclick = ()=>showBhukti(r, maha);
-    dashaTable.appendChild(tr);
-  });
-  showBhukti(maha[0], maha);
-  kpBoxes.innerHTML = '';
-  const SIGNS = MOON_RASHI;
-  planets.forEach((p,i)=>{
-    const signIx = Math.floor(norm360(p.degree)/30);
-    const box = document.createElement('div');
-    box.className = 'kpBox' + (i==0?' asc':'');
-    box.innerHTML = `<div>${p.name}</div><div>${SIGNS[signIx]} ${norm360(p.degree).toFixed(2)}°</div>`;
-    kpBoxes.appendChild(box);
-  });
-}
-function showBhukti(maha){
-  if(!maha) return;
-  const bhuktis = computeBhuktiForMahadasha(maha.lord, maha.start, maha.years);
-  bhuktiTable.innerHTML = '';
-  bhuktis.forEach((r,i)=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${i+1}</td><td>${r.lord}</td><td>${fmt(r.start)}</td><td>${fmt(r.end)}</td><td>${r.years.toFixed(3)}</td>`;
-    bhuktiTable.appendChild(tr);
-  });
-}
-function computeBhuktiForMahadasha(mahaLord, mahaStartDate, mahaYears){
-  const startIx = MD_ORDER.findIndex(x=>x.lord===mahaLord);
-  if(startIx<0) return [];
-  const seq = [...MD_ORDER.slice(startIx), ...MD_ORDER.slice(0, startIx)];
-  const out = [];
-  let cursor = new Date(mahaStartDate instanceof Date? mahaStartDate: new Date(mahaStartDate));
-  const spanDays = Y2D(mahaYears);
-  let accDays = 0;
-  for(const seg of seq){
-    const partYears = (seg.years/120)*mahaYears;
-    const partDays = Y2D(partYears);
-    const end = addDays(cursor, partDays);
-    const safeEnd = accDays + partDays <= spanDays + 0.5 ? end : addDays(cursor, Math.max(0,spanDays-accDays));
-    out.push({ lord: seg.lord, start: new Date(cursor), end: new Date(safeEnd), years: partYears });
-    accDays += partDays; cursor = safeEnd;
-    if(accDays >= spanDays - 0.5) break; if(out.length>20) break;
-  }
-  return out;
-}
-const birthForm = document.getElementById('birthForm');
-const summary = document.getElementById('summary');
-const dashaTable = document.getElementById('dashaTable');
-const bhuktiTable = document.getElementById('bhuktiTable');
-const kpBoxes = document.getElementById('kpBoxes');
-const chartArea = document.getElementById('chartArea');
-const err = document.getElementById('err');
-birthForm.onsubmit = function(e){
-  e.preventDefault();
-  err.textContent = '';
-  const name = document.getElementById('name').value.trim();
-  const date = document.getElementById('date').value;
-  const time = document.getElementById('time').value;
-  const lat = document.getElementById('lat').value;
-  const lon = document.getElementById('lon').value;
-  if(!name||!date||!time||!lat||!lon){ err.textContent="Fill all fields."; return;}
-  showChart(name, date+'T'+time, lat, lon);
-}
-</script>
+
+    function renderKPChart(chart) {
+      let html = `<h4>KP 12-Box Chart</h4><table><tr>`;
+      for(let i=0;i<12;i++) {
+        const h = chart.houses[i];
+        html += `<td valign="top">
+          <b>${h.house}</b><br>
+          ${h.sign}<br>
+          Deg: ${h.deg}<br>
+          SubLord: <b>${h.sublord}</b><br>
+          <small>Planets: ${
+            chart.planets.filter(p=>p.house===h.house).map(p=>p.abbr).join(", ") || "-"
+          }</small>
+        </td>`;
+        if((i+1)%4===0) html+="</tr><tr>";
+      }
+      html += `</tr></table>
+        <h5>Planets</h5>
+        <table><tr><th>Planet</th><th>Deg</th><th>Sign</th><th>House</th></tr>`;
+      for(const p of chart.planets) {
+        html += `<tr><td>${p.abbr}</td><td>${p.deg}</td><td>${p.sign}</td><td>${p.house}</td></tr>`;
+      }
+      html += `</table>`;
+      return html;
+    }
+
+    // Short qualitative prediction (free)
+    function renderShortPrediction(chart, name) {
+      // Demo: Use the ascendant sign for a simple message
+      const lagna = chart.houses[0].sign;
+      const msg = {
+        "Mesha":"උත්සාහවත්, නව ආරම්භයට සුදුසු.",
+        "Vrushabha":"ස්ථායී, වාණිජයට හොඳ.",
+        "Mithuna":"ඉගෙනීමේ ලැබීම, ද්විත්ව ලක්ෂණ.",
+        "Kataka":"ගෘහස්ත, සංවේදී.",
+        "Sinha":"නායකත්වය, ක්‍රීඩා.",
+        "Kanya":"විග්‍රහ, සේවා.",
+        "Thula":"සමතුලිත, නීති.",
+        "Vrushchika":"රහස්, ක්‍රියාශීලි.",
+        "Dhanu":"ඉදිරියට යාම, ව්‍යාපාර.",
+        "Makara":"අවංක, ව්‍යාපාරික.",
+        "Kumbha":"නවෝත්පාදන, මිතුරන්.",
+        "Meena":"කවිය, ආදරය."
+      };
+      return `<div class="box free">
+        <b>කෙටි පලාපලය (Short prediction for ${name}):</b><br>
+        උදා: ${lagna} ලග්නය — ${msg[lagna] || "සාර්ථකත්වය, සාමය."}
+      </div>`;
+    }
+
+    // Full AI reading (Pro plan only)
+    function renderAIReading(chart, name) {
+      // Demo: Simulated deep reading (extend with AI backend as needed)
+      return `<div class="box pro">
+        <b>AI පූර්ණ විශ්ලේෂණය (Full AI Reading for ${name}):</b><br>
+        - ලග්නය: <b>${chart.houses[0].sign}</b><br>
+        - ප්‍රධාන ග්‍රහ බලපෑම්: ${chart.planets.slice(0,3).map(p=>p.name).join(", ")}<br>
+        - Sub-lord analysis, dasha prediction, remedies, and life events ...<br>
+        <i>(මෙය Pro plan එකට පමණි. AI backend/DB/logic එකට සම්බන්ධ කල හැක.)</i>
+      </div>`;
+    }
+  </script>
 </body>
 </html>

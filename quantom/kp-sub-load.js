@@ -1,8 +1,0 @@
-// 📂 quamtom/kp-subload.js — KP Sub Lord Calculator with NASA fetch integration
-
-function calculateSubLord(degree) { const dashaSequence = [ { lord: 'Ketu', span: 7 }, { lord: 'Venus', span: 20 }, { lord: 'Sun', span: 6 }, { lord: 'Moon', span: 10 }, { lord: 'Mars', span: 7 }, { lord: 'Rahu', span: 18 }, { lord: 'Jupiter', span: 16 }, { lord: 'Saturn', span: 19 }, { lord: 'Mercury', span: 17 }, ]; const nakshatraLength = 13.3333; const nakNum = Math.floor(degree / nakshatraLength); const nakStartDeg = nakNum * nakshatraLength; const withinNakDeg = degree - nakStartDeg; const percent = (withinNakDeg / nakshatraLength) * 100; let sum = 0; for (let i = 0; i < dashaSequence.length; i++) { sum += dashaSequence[i].span; if (percent <= sum) { return dashaSequence[i].lord; } } return 'Unknown'; }
-
-// 🌍 NASA API integration async function fetchMoonDegreeFromNASA(date, time, location) { const endpoint = https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27Moon%27&OBJ_DATA=NO&MAKE_EPHEM=YES&EPHEM_TYPE=OBSERVER&START_TIME=${date}%20${time}&STOP_TIME=${date}%20${time}&STEP_SIZE=1%20m&QUANTITIES=1&OBSERVER_LOCATION='${location}'; const response = await fetch(endpoint); const data = await response.text(); const match = data.match(/Moon.*?\s+(\d+.\d+)/); if (match) { return parseFloat(match[1]); } throw new Error('Moon position not found'); }
-
-// 🧪 Example call (async () => { const moonZodiacDegree = 53.2; // Replace this with API value below const subLord = calculateSubLord(moonZodiacDegree); console.log(🧠 Sub-Lord: ${subLord}); if (typeof document !== 'undefined') { window.onload = () => { const field = document.querySelector('.field:last-child'); if (field) { field.innerHTML = <strong>🧠 Sub-Lord Prediction:</strong><br>${subLord}; } }; } })();
-

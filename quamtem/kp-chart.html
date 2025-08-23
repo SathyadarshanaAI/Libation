@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KP Chart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      background: radial-gradient(ellipse at top left, #3333ff 0%, #000026 80%);
+      color: #e3e8ff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-top: 30px;
+      font-size: 2.6rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 14px #6d7cff, 0 0 24px #00ffe7;
+    }
+    .kp-chart-container {
+      margin: 40px auto;
+      background: rgba(30, 32, 60, 0.55);
+      border-radius: 32px;
+      box-shadow: 0 10px 60px #00ffe799, 0 4px 12px #6d7cff66;
+      padding: 30px 32px 36px 32px;
+      max-width: 830px;
+      border: 2.5px solid #6d7cff99;
+      backdrop-filter: blur(5px);
+      overflow-x: auto;
+    }
+    table {
+      margin: auto;
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      background: rgba(40, 42, 80, 0.58);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px #00ffe7bb, 0 2px 8px #6d7cff40 inset;
+      font-size: 1.15rem;
+      letter-spacing: 1px;
+      transition: 0.2s;
+    }
+    th, td {
+      padding: 18px 16px;
+      text-align: center;
+    }
+    th {
+      background: linear-gradient(90deg, #6d7cff 0%, #00ffe7 100%);
+      color: #181824;
+      font-weight: bold;
+      font-size: 1.09em;
+      border-bottom: 3px solid #00ffe7;
+      text-shadow: 0 0 8px #fff8, 0 0 18px #00ffe7a0;
+    }
+    td {
+      background: rgba(30, 32, 60, 0.75);
+      border-bottom: 2px solid #00ffe799;
+      box-shadow: 0 2px 8px #6d7cff40 inset;
+      color: #e0e0e0;
+      transition: background 0.2s, color 0.2s;
+      vertical-align: middle;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: rgba(0,255,231,0.20);
+      color: #00ffe7;
+    }
+    .zodiac-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+      font-size: 1.09em;
+      color: #fff;
+      text-shadow: 0 0 6px #00ffe7, 0 0 12px #6d7cff;
+      letter-spacing: 1.5px;
+      justify-content: center;
+    }
+    .zodiac-icon {
+      width: 38px;
+      height: 38px;
+      margin-right: 2px;
+      filter: drop-shadow(0 0 6px #00ffe7a0) drop-shadow(0 0 3px #6d7cff70);
+      transition: filter 0.2s;
+    }
+    tr:hover .zodiac-icon {
+      filter: drop-shadow(0 0 14px #00ffe7e0) drop-shadow(0 0 8px #fff);
+    }
+    .planet-cell {
+      font-weight: 700;
+      font-size: 1.05em;
+      letter-spacing: 1px;
+      color: #6d7cff;
+      text-shadow: 0 0 8px #00ffe7a0;
+    }
+    .degree-cell {
+      font-family: 'Fira Mono', 'Consolas', monospace;
+      color: #00ffe7;
+      font-size: 1.01em;
+      text-shadow: 0 0 6px #6d7cff;
+    }
+    .info-bar {
+      text-align: center;
+      color: #71ffe7;
+      font-size: 1.05em;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px #00ffe7a0;
+    }
+    @media (max-width: 700px) {
+      .kp-chart-container { padding: 5vw 1vw; }
+      table { font-size: 0.95em; }
+      .zodiac-icon { width: 28px; height: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>KP Chart Data</h1>
+  <div class="kp-chart-container">
+    <div class="info-bar">
+      Neon Jelly KP Chart &mdash; <span id="date-info"></span>
+    </div>
+    <table id="kp-table">
+      <tr>
+        <th>Raashi<br/><span style="font-size:0.7em;color:#333;">(Zodiac Sign)</span></th>
+        <th>Planet</th>
+        <th>Degree</th>
+      </tr>
+    </table>
+  </div>
+  <script src="index.js"></script>
+</body>
+</html>

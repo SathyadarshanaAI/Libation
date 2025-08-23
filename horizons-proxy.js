@@ -1,80 +1,37 @@
-const express = require('express');
-const fetch = require('node-fetch');
-
-const app = express();
-const port = 3000;
-
-// Helper: Horizons planet IDs
-const PLANET_IDS = {
-  Sun: '10',
-  Moon: '301',
-  Mercury: '199',
-  Venus: '299',
-  Mars: '499',
-  Jupiter: '599',
-  Saturn: '699',
-  Uranus: '799',
-  Neptune: '899',
-  Pluto: '999'
-};
-
 // Main API endpoint
-// Example: /api/planets?date=2025-08-22&time=12:00:00&lat=6.9271&lon=79.8612
+// Example: /api/planets?date=2025-08-23&time=12:00:00&lat=6.9271&lon=79.8612
 app.get('/api/planets', async (req, res) => {
   const { date, time, lat, lon } = req.query;
   if (!date || !time || !lat || !lon) {
-    return res.status(400).json({ error: 'Missing required parameters.' });
+    return res.status(400).json({ error: "Missing required query parameters." });
   }
 
   try {
     const planetResults = [];
-    for (const [name, id] of Object.entries(PLANET_IDS)) {
-      // NASA Horizons observer mode, geodetic coordinates
-      const params = new URLSearchParams({
-        format: 'text',
-        COMMAND: `'${id}'`,
-        EPHEM_TYPE: 'OBSERVER',
-        CENTER: `'coord@399'`, // Earth, user-defined coordinates
-        SITE_COORD: `${lon},${lat},0`, // lon,lat,alt (deg,deg,km)
-        START_TIME: `'${date} ${time}'`,
-        STOP_TIME: `'${date} ${time}'`,
-        STEP_SIZE: `'1 m'`,
-        QUANTITIES: '1,20', // 1=Astrometric RA/DEC, 20=Apparent longitude/latitude
-        CSV_FORMAT: 'YES'
+    // Example planet list (name and Horizons ID)
+    const planets = [
+      { name: "Sun", id: 10 },
+      { name: "Moon", id: 301 },
+      { name: "Mercury", id: 199 },
+      { name: "Venus", id: 299 },
+      { name: "Mars", id: 499 },
+      { name: "Jupiter", id: 599 },
+      { name: "Saturn", id: 699 },
+      { name: "Uranus", id: 799 },
+      { name: "Neptune", id: 899 }
+    ];
+
+    for (const {name, id} of planets) {
+      // NASA Horizons or your own data-fetching logic here
+      // Example: using a dummy data response
+      planetResults.push({
+        name,
+        degree: Math.random() * 360 // replace this with real data fetching logic
       });
-
-      const response = await fetch('https://ssd.jpl.nasa.gov/api/horizons.api', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params.toString()
-      });
-
-      const text = await response.text();
-
-      // Parse CSV section for "Date__(UT)__HR:MN", "APmag", "AppLon" columns
-      // Find the line starting with "$$SOE" and ending with "$$EOE"
-      const lines = text.split('\n');
-      const start = lines.findIndex(line => line.includes('$$SOE'));
-      const end = lines.findIndex(line => line.includes('$$EOE'));
-      if (start === -1 || end === -1) continue;
-      const csvLine = lines[start + 1];
-      if (!csvLine) continue;
-      // Columns: Date__(UT)__HR:MN, ... , APPARENT LONGITUDE (deg) is last column
-      const cols = csvLine.trim().split(',');
-
-      // Last column is apparent longitude (deg)
-      const degree = parseFloat(cols[cols.length - 2]);
-      if (!isNaN(degree)) {
-        planetResults.push({ name, degree });
-      }
     }
 
     res.json(planetResults);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Internal server error.' });
   }
-});
-
-app.listen(port, () => {
-  console.log(`NASA Horizons proxy running at http://localhost:${port}`);
 });

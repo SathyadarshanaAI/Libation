@@ -1,12 +1,34 @@
-// Nakshatra Data (for sidereal zodiac, Lahiri ayanamsa commonly used in KP)
+// 27 Nakshatra Data (Lahiri ayanamsa, KP style)
 const nakshatras = [
-  { name: "Ashwini",         start: 0,        end: 13.3333, lord: "Ketu" },
-  { name: "Bharani",         start: 13.3333,  end: 26.6666, lord: "Venus" },
-  { name: "Krittika",        start: 26.6666,  end: 40,      lord: "Sun" },
-  // ... add all 27 Nakshatras (13°20' each) ...
+  { name: "Ashwini",    start: 0,        end: 13.3333,  lord: "Ketu" },
+  { name: "Bharani",    start: 13.3333,  end: 26.6666,  lord: "Venus" },
+  { name: "Krittika",   start: 26.6666,  end: 40,       lord: "Sun" },
+  { name: "Rohini",     start: 40,       end: 53.3333,  lord: "Moon" },
+  { name: "Mrigashira", start: 53.3333,  end: 66.6666,  lord: "Mars" },
+  { name: "Ardra",      start: 66.6666,  end: 80,       lord: "Rahu" },
+  { name: "Punarvasu",  start: 80,       end: 93.3333,  lord: "Jupiter" },
+  { name: "Pushya",     start: 93.3333,  end: 106.6666, lord: "Saturn" },
+  { name: "Ashlesha",   start: 106.6666, end: 120,      lord: "Mercury" },
+  { name: "Magha",      start: 120,      end: 133.3333, lord: "Ketu" },
+  { name: "Purva Phalguni", start: 133.3333, end: 146.6666, lord: "Venus" },
+  { name: "Uttara Phalguni", start: 146.6666, end: 160, lord: "Sun" },
+  { name: "Hasta",      start: 160,      end: 173.3333, lord: "Moon" },
+  { name: "Chitra",     start: 173.3333, end: 186.6666, lord: "Mars" },
+  { name: "Swati",      start: 186.6666, end: 200,      lord: "Rahu" },
+  { name: "Vishakha",   start: 200,      end: 213.3333, lord: "Jupiter" },
+  { name: "Anuradha",   start: 213.3333, end: 226.6666, lord: "Saturn" },
+  { name: "Jyeshta",    start: 226.6666, end: 240,      lord: "Mercury" },
+  { name: "Mula",       start: 240,      end: 253.3333, lord: "Ketu" },
+  { name: "Purva Ashadha", start: 253.3333, end: 266.6666, lord: "Venus" },
+  { name: "Uttara Ashadha", start: 266.6666, end: 280,   lord: "Sun" },
+  { name: "Shravana",   start: 280,      end: 293.3333, lord: "Moon" },
+  { name: "Dhanishta",  start: 293.3333, end: 306.6666, lord: "Mars" },
+  { name: "Shatabhisha", start: 306.6666, end: 320,     lord: "Rahu" },
+  { name: "Purva Bhadrapada", start: 320, end: 333.3333, lord: "Jupiter" },
+  { name: "Uttara Bhadrapada", start: 333.3333, end: 346.6666, lord: "Saturn" },
+  { name: "Revati",     start: 346.6666, end: 360,      lord: "Mercury" }
 ];
 
-// Sub lords for each Nakshatra (KP uses Vimshottari Dasha order, 9 divisions per Nakshatra)
 const subLords = [
   "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"
 ];
@@ -24,9 +46,10 @@ function getNakshatra(degree) {
 
 // Find sub lord for given degree
 function getSubLord(degree) {
-  const nakIndex = Math.floor((degree % 360) / 13.3333); // 13°20′ per Nakshatra
+  const posIn360 = degree % 360;
+  const nakIndex = Math.floor(posIn360 / 13.3333);
   const startOfNak = nakIndex * 13.3333;
-  const posInNak = (degree % 360) - startOfNak;
+  const posInNak = posIn360 - startOfNak;
   const subLength = 13.3333 / 9;
   const subIndex = Math.floor(posInNak / subLength);
   return subLords[subIndex];
@@ -45,7 +68,7 @@ const kpTable = planetData.map(planet => {
   const subLord = getSubLord(planet.degree);
   return {
     ...planet,
-    sign: Math.floor(planet.degree / 30) + 1, // 1: Aries ... 12: Pisces
+    sign: Math.floor(planet.degree / 30), // 0-based: 0=Aries
     nakshatra: nak.name,
     nakshatraLord: nak.lord,
     subLord,

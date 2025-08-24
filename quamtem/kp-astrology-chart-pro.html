@@ -1,78 +1,151 @@
-.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KP Chart Demo - 100% Guaranteed</title>
+  <title>KP Chart Pro – Real-Time Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { background:#121a29;color:#e0f2fe;font-family:sans-serif;text-align:center; }
-    h2 { color:#38bdf8;margin-top:2rem; }
-    button { background:#38bdf8;color:#181824;border:none;border-radius:6px;padding:9px 19px;font-weight:700;font-size:1.09rem; margin:1.4rem 0 0.6rem 0; cursor:pointer;}
-    button:hover { background:#0ea5e9;color:#fff; }
-    table { margin:1rem auto 0;background:#1e293b;border-radius:8px;box-shadow:0 2px 16px #38bdf822; }
-    th,td { padding:8px 14px; }
-    th { background:#0ea5e9;color:#fff; }
-    td { border-bottom:1px solid #334155; }
-    tr:last-child td { border-bottom:none; }
-    .no-data { color:#bae6fd;font-size:1.07em;margin-top:1.2rem; }
+    body { background:#0f172a; color:#e2f0ff; font-family:sans-serif; margin:0; padding:0; }
+    .wrap { max-width:900px; margin:32px auto; padding:16px; }
+    h2 { color:#38bdf8; margin: 1.2rem 0 0.7rem 0; text-align:center;}
+    .card { background:#161e31; padding:18px 20px; border-radius:13px; margin-bottom:20px; }
+    .toplink { text-decoration:none; color:#7dd3fc; background:#0b1220; padding:7px 16px; border-radius:8px; font-weight:500; font-size:1.08rem; box-shadow:0 0 8px #38bdf822; position:absolute; left:20px; top:18px; }
+    .toplink:hover { background:#101b2e; color:#fff; }
+    label { font-size:1.02rem; color:#bfe1ff; margin-bottom:5px; display:block;}
+    textarea, input { width:100%; background:#12223a; color:#e2f0ff; border-radius:8px; border:1px solid #1f2a44; padding:8px; font-size:1rem; }
+    button { background:#38bdf8; color:#03122a; border:0; border-radius:8px; padding:8px 18px; margin:4px 3px; font-weight:600; font-size:1rem;}
+    button:hover { background:#0ea5e9; color:#fff;}
+    table { width:100%; border-collapse:collapse; margin-top:16px;}
+    th, td { border-bottom:1px solid #24304a; padding:8px 10px;}
+    th { color:#bfe1ff; text-align:left; background:#101b2e;}
+    tr:last-child td { border-bottom:none;}
+    .status { font-size:13px; color:#7dd3fc; margin-left:7px;}
+    .kp-wheel { margin:22px 0; text-align:center;}
+    @media (max-width:700px) {
+      .wrap { padding:2vw;}
+      .card { padding:10px 4vw;}
+    }
+    @media (max-width:500px) {
+      h2 { font-size:1.3rem;}
+      .card { padding:7px 2vw;}
+      th,td { font-size:0.96em;}
+    }
   </style>
 </head>
 <body>
-  <h2>KP Chart Demo (Browser Only)</h2>
-  <button onclick="loadKPChart()">Load KP Chart Data</button>
-  <div id="result"></div>
-  <table id="kpTable" style="display:none;">
-    <thead>
-      <tr>
-        <th>Planet</th>
-        <th>Degree</th>
-        <th>Sign</th>
-        <th>Star Lord</th>
-        <th>Sub Lord</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <script>
-      { name:"Sun", degree:92.436 },
-      { name:"Moon", degree:221.274 },
-      { name:"Mercury", degree:74.938 },
-      { name:"Venus", degree:147.102 },
-      { name:"Mars", degree:302.517 },
-      { name:"urn", degree:306.991 },
-      { name:"Rahu", degree:13.442 },
-      { name:"Ketu", degree:193.442 }
-    ];
-    const signs = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-    const stars = [
-      'Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha',
-      'Magha','Purva Phalguni','Uttara Phyeshtha',
-      'Moola','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'
-    ];
-    const lords = ['Ketu','Venus','Sunahu','Jupiter','Saturn','Mercury'];
-
-    function getSign(degree) {
-      return signs[Math.floor(degree/30)%12];
-    }
-    function getStarLord(degree) {
-      return stars[Math.floor(degree/(360/27))%27];
-    }
-    function getSubLord(degree function loadKPChart() {
-      const tbody = document.getElementById('kpTable').querySelector('tbody');
-      document.getElementById('kpTable').style.display = 'table';
-      document.getElementById('result').innerHTML = '';
-      tbody.innerHTML = '';
-      for (const p of planets          <tr>
-            <td>${p.name}</td>
-            <td>${p.degree.toFixed(3)}</td>
-            <td>${getSign(p.degree)}</td>
-            <td>${getStarLord(p.degree)}</td>
-            <td>${getSubLord(p.degree)}</td>
+  <a class="toplink" href="./astrology.html" aria-label="Go to Astrology Hub">← Astrology Hub</a>
+  <div class="wrap">
+    <h2>🌟 KP Chart Pro – Instant KP Table & Wheel</h2>
+    <div class="card">
+      <label for="json"><b>Paste KP Planets JSON (or use Demo)</b></label>
+      <textarea id="json" rows="8">{
+  "planets": [
+    { "name": "Sun", "degree": 92.436 },
+    { "name": "Moon", "degree": 221.274 },
+    { "name": "Mercury", "degree": 74.938 },
+    { "name": "Venus", "degree": 147.102 },
+    { "name": "Mars", "degree": 302.517 },
+    { "name": "Jupiter", "degree": 120.003 },
+    { "name": "Saturn", "degree": 306.991 },
+    { "name": "Rahu", "degree": 13.442 },
+    { "name": "Ketu", "degree": 193.442 }
+  ]
+}</textarea>
+      <div style="margin:9px 0 2px 0;">
+        <button onclick="process()">Process</button>
+        <span class="status" id="status"></span>
+      </div>
+    </div>
+    <div class="card">
+      <b>KP Wheel (Zodiac)</b>
+      <div class="kp-wheel" id="wheel"></div>
+    </div>
+    <div class="card">
+      <b>KP Table</b>
+      <table>
+        <thead>
+          <tr>
+            <th>Planet</th>
+            <th>Degree</th>
+            <th>Sign</th>
+            <th>Nakshatra</th>
+            <th>Pada</th>
+            <th>Star Lord</th>
+            <th>Sub-Lord</th>
           </tr>
-        `;
- Open කරන්න.  
-🟢 "Load KP Chart Data" button එක click කරන්න.  
-🟢 100% ක් Guaranteed - Table එකට KP Chart data ලැබෙනවා!**
-
-ඔයාට ඕනේ නම්, මෙහෙම live edit කරලා data/logic upgrade කරන්නත් පුළුවන්.  
-ඉතින් doubt එකක් නැතිව වැඩේ Start කරගන්න! 🚀
+        </thead>
+        <tbody id="tbl"></tbody>
+      </table>
+    </div>
+    <div style="color:#bae6fd;font-size:0.99em;margin:18px 0 7px 0;opacity:0.78;">
+      <b>Note:</b> This demo uses static sample data. For real KP calculations, integrate with an API or astrology engine.
+    </div>
+  </div>
+  <script>
+    // --- KP Logic ---
+    const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+    const NAKS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Moola','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+    const DASHAS = [
+      {lord:'Ketu', years:7}, {lord:'Venus', years:20}, {lord:'Sun', years:6}, {lord:'Moon', years:10},
+      {lord:'Mars', years:7}, {lord:'Rahu', years:18}, {lord:'Jupiter', years:16}, {lord:'Saturn', years:19}, {lord:'Mercury', years:17}
+    ];
+    const NAK_LORD = (()=>{const list=[];let idx=0;for(let i=0;i<27;i++){list.push(DASHAS[idx%9].lord);idx++;}return list;})();
+    const mod = (a,b)=>((a%b)+b)%b;
+    const DEG_PER_NAK = 360/27, DEG_PER_PADA = DEG_PER_NAK/4;
+    function dms(deg){
+      deg=mod(deg,360);const d=Math.floor(deg);const mFloat=(deg-d)*60;const m=Math.floor(mFloat);const s=Math.round((mFloat-m)*60);
+      return `${d}°${String(m).padStart(2,'0')}′${String(s).padStart(2,'0')}″`;
+    }
+    function signOf(deg){return SIGNS[Math.floor(mod(deg,360)/30)]}
+    function nakIndex(deg){return Math.floor(mod(deg,360)/DEG_PER_NAK)}
+    function padaOf(deg){const within=mod(deg,DEG_PER_NAK);return Math.floor(within/DEG_PER_PADA)+1;}
+    function starLordOf(deg){return NAK_LORD[nakIndex(deg)]}
+    function subLordOf(deg){
+      const nIdx=nakIndex(deg);const startLord=NAK_LORD[nIdx];
+      const startIdx=DASHAS.findIndex(d=>d.lord===startLord);
+      const rotated=[...DASHAS.slice(startIdx),...DASHAS.slice(0,startIdx)];
+      const arc=DEG_PER_NAK;const subArcs=rotated.map(d=>arc*(d.years/120));
+      const within=mod(deg,DEG_PER_NAK);let acc=0;
+      for(let i=0;i<subArcs.length;i++){acc+=subArcs[i];if(within<=acc+1e-9){return rotated[i].lord}}
+      return rotated[rotated.length-1].lord;
+    }
+    function processJSON(text){
+      let obj;
+      try{obj=JSON.parse(text)}catch(e){throw new Error('Invalid JSON')}
+      if(!obj||!Array.isArray(obj.planets))throw new Error('Missing planets[]');
+      const cleaned=obj.planets.map(p=>({name:String(p.name||'').trim(),degree:Number(p.degree)}))
+        .filter(p=>p.name&&isFinite(p.degree)).map(p=>({...p,degree:mod(p.degree,360)}));
+      if(!cleaned.length)throw new Error('No valid planet entries');
+      return{planets:cleaned};
+    }
+    function renderTable(data){
+      const tbody=document.getElementById('tbl');tbody.innerHTML='';
+      data.planets.forEach(p=>{
+        const zi=signOf(p.degree),nIdx=nakIndex(p.degree),nak=NAKS[nIdx],pada=padaOf(p.degree),sLord=starLordOf(p.degree),sub=subLordOf(p.degree);
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${p.name}</td><td>${dms(p.degree)}</td><td>${zi}</td><td>${nak}</td><td>${pada}</td><td>${sLord}</td><td><b>${sub}</b></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    function renderWheel(data){
+      const W=420,H=420,Cx=W/2,Cy=H/2,R=160,gLines=[],labels=[],planetsSvg=[];
+      for(let i=0;i<12;i++){const a=(i*30-90)*Math.PI/180,x=Cx+R*Math.cos(a),y=Cy+R*Math.sin(a);gLines.push(`<line x1="${Cx}" y1="${Cy}" x2="${x}" y2="${y}" stroke="#24304a" stroke-width="1"/>`);}
+      for(let i=0;i<12;i++){const a=((i*30+15)-90)*Math.PI/180,x=Cx+(R-18)*Math.cos(a),y=Cy+(R-18)*Math.sin(a);labels.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="#9cc3ff" font-size="11" text-anchor="middle" dominant-baseline="middle">${SIGNS[i].slice(0,3)}</text>`);}
+      data.planets.forEach(p=>{const a=(p.degree-90)*Math.PI/180,r=R-35,x=Cx+r*Math.cos(a),y=Cy+r*Math.sin(a);planetsSvg.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#38bdf8"/><text x="${x.toFixed(1)}" y="${(y-10).toFixed(1)}" fill="#e2f0ff" font-size="11" text-anchor="middle">${p.name[0]}</text>`);});
+      const svg=`<svg viewBox="0 0 ${W} ${H}"><circle cx="${Cx}" cy="${Cy}" r="${R+14}" fillcircle cx="${Cx}" cy="${Cy}" r="${R}" fill="none" stroke="#24304a"/><g>${gLines.join('')}</g><g>${labels.join('')}</g><g>${planetsSvg.join('')}</g></svg>`;
+      document.getElementById('wheel').innerHTML=svg;
+    }
+    function process(){
+      try{
+        const obj=processJSON(document.getElementById('json').value);
+        renderTable(obj);renderWheel(obj);
+        document.getElementById('status').textContent='✓ OK';
+      }catch(e){
+        document.getElementById('status').textContent='⚠ '+e.message;
+      }
+    }
+    // Auto-run on page load
+    process();
+  </script>
+</body>
+</html>

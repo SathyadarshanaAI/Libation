@@ -1,4 +1,4 @@
-// 27 Nakshatra Data (Lahiri ayanamsa, KP style)
+// --- Nakshatra & Sub Lord Logic (KP style) ---
 const nakshatras = [
   { name: "Ashwini",    start: 0,        end: 13.3333,  lord: "Ketu" },
   { name: "Bharani",    start: 13.3333,  end: 26.6666,  lord: "Venus" },
@@ -28,23 +28,14 @@ const nakshatras = [
   { name: "Uttara Bhadrapada", start: 333.3333, end: 346.6666, lord: "Saturn" },
   { name: "Revati",     start: 346.6666, end: 360,      lord: "Mercury" }
 ];
-
-const subLords = [
-  "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"
-];
-
-// Find nakshatra for given degree (0-360)
+const subLords = [ "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury" ];
 function getNakshatra(degree) {
   let normalized = degree % 360;
   for (let nak of nakshatras) {
-    if (normalized >= nak.start && normalized < nak.end) {
-      return nak;
-    }
+    if (normalized >= nak.start && normalized < nak.end) return nak;
   }
-  return nakshatras[0]; // fallback
+  return nakshatras[0];
 }
-
-// Find sub lord for given degree
 function getSubLord(degree) {
   const posIn360 = degree % 360;
   const nakIndex = Math.floor(posIn360 / 13.3333);
@@ -55,24 +46,110 @@ function getSubLord(degree) {
   return subLords[subIndex];
 }
 
-// Example planet data
-const planetData = [
-  { name: "Sun", degree: 123.4567 },
-  { name: "Moon", degree: 200.1234 },
-  // ...etc
-];
+// --- Demo API call to get planetary positions (Replace with your API key for production) ---
+async function getPlanets({ dob, tob, pob, timezone }) {
+  // Use a free astrology API for demonstration (planet positions only)
+  // Example: Vedicrishi API (needs api_key/user_id for production)
+  // For demo: use sample static data
+  // If you have your own API, replace here!
+  // Return: [{ name: "Sun", degree: ... }, ...]
+  // ---- DEMO DATA ----
+  return [
+    { name: "Sun", degree: 123.4567 },
+    { name: "Moon", degree: 200.1234 },
+    { name: "Mercury", degree: 110.2546 },
+    { name: "Venus", degree: 88.6543 },
+    { name: "Mars", degree: 45.5678 },
+    { name: "Jupiter", degree: 240.5678 },
+    { name: "Saturn", degree: 300.1234 }
+  ];
+}
 
-// Generate KP Table
-const kpTable = planetData.map(planet => {
-  const nak = getNakshatra(planet.degree);
-  const subLord = getSubLord(planet.degree);
-  return {
-    ...planet,
-    sign: Math.floor(planet.degree / 30), // 0-based: 0=Aries
-    nakshatra: nak.name,
-    nakshatraLord: nak.lord,
-    subLord,
-  };
+// --- Draw the KP Wheel Chart on Canvas ---
+function drawKPChart(planets) {
+  const canvas = document.getElementById('astroChart');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // Draw main circle
+  ctx.strokeStyle = "#00ffe7";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(180,180,170,0,2*Math.PI);
+  ctx.stroke();
+
+  // Draw 12 zodiac divisions
+  for(let i=0;i<12;i++){
+    let angle = (i*30-90)*Math.PI/180;
+    ctx.beginPath();
+    ctx.moveTo(180,180);
+    ctx.lineTo(180+170*Math.cos(angle),180+170*Math.sin(angle));
+    ctx.strokeStyle = "#6d7cff";
+    ctx.lineWidth = 1.7;
+    ctx.stroke();
+  }
+
+  // Draw planet points
+  planets.forEach(pl => {
+    let angle = (pl.degree-90)*Math.PI/180;
+    let x = 180 + 140*Math.cos(angle);
+    let y = 180 + 140*Math.sin(angle);
+    ctx.beginPath();
+    ctx.arc(x,y,10,0,2*Math.PI);
+    ctx.fillStyle = "#fffb00";
+    ctx.fill();
+    ctx.strokeStyle = "#181824";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = "#181824";
+    ctx.font = "bold 13px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(pl.name[0], x, y+4);
+  });
+}
+
+// --- Draw KP Table ---
+function drawKPTable(planets) {
+  const tableDiv = document.getElementById('planetTable');
+  let html = `<table style="width:100%;margin-top:1em;text-align:center"><tr>
+    <th>Planet</th><th>Degree</th><th>Sign</th><th>Nakshatra</th><th>Nakshatra Lord</th><th>Sub Lord</th>
+    </tr>`;
+  planets.forEach(pl => {
+    const nak = getNakshatra(pl.degree);
+    const subLord = getSubLord(pl.degree);
+    const sign = Math.floor(pl.degree/30);
+    const signNames = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+    html += `<tr>
+      <td>${pl.name}</td>
+      <td>${pl.degree.toFixed(4)}</td>
+      <td>${signNames[sign]}</td>
+      <td>${nak.name}</td>
+      <td>${nak.lord}</td>
+      <td>${subLord}</td>
+    </tr>`;
+  });
+  html += "</table>";
+  tableDiv.innerHTML = html;
+}
+
+// --- Form Handling ---
+document.getElementById('kpForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  document.getElementById('loading').style.display = '';
+  document.getElementById('resultMsg').textContent = '';
+  document.getElementById('planetTable').innerHTML = '';
+  let dob = document.getElementById('dob').value;
+  let tob = document.getElementById('tob').value;
+  let pob = document.getElementById('pob').value;
+  let timezone = document.getElementById('timezone').value;
+
+  try{
+    const planets = await getPlanets({ dob, tob, pob, timezone });
+    drawKPChart(planets);
+    drawKPTable(planets);
+    document.getElementById('resultMsg').textContent = "KP Chart generated successfully!";
+  }catch(err){
+    document.getElementById('resultMsg').textContent = "Unable to retrieve planetary positions. Please check your inputs or try again later";
+  }
+  document.getElementById('loading').style.display = 'none';
 });
-
-console.table(kpTable);

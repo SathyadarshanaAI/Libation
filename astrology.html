@@ -7,11 +7,14 @@
   <meta name="description" content="Astrology Hub: KP, Vedic, Numerology, Palmistry, GeoVision & more. Explore all tools from a single dashboard.">
   <link rel="icon" href="./assets/favicon.png" type="image/png">
   <style>
-    :root --cardGlow: #38bdf8;
+    :root {
+      --cardGlow: #38bdf8;
       --text: #e0f2fe;
       --muted: #bae6fd;
       --brand: #7dd3fc;
       --accent: #38bdf8;
+      --bg1: #1e293b;
+      --bg2: #0f172a;
     }
     * { box-sizing: border-box; }
     body {
@@ -44,7 +47,7 @@
       outline: 2px solid #7dd3fc;
     }
     header {
-      padding: 2.1rem 0 1rem;
+      padding: 2rem 0 1rem;
     }
     header h1 {
       font-size: 2.18rem;
@@ -65,22 +68,35 @@
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.5rem;
       max-width: 1000px;
-      margin: 2.3-direction: column;
+      margin: 2.3rem auto;
       align-items: center;
       min-height: 180px;
       padding: 1.45rem;
       border-radius: 1.1rem;
       background: rgba(30,41,59,.96);
-      text-decoration: none;
-      color: var(--text);
       box-shadow: 0 0 16px var(--cardGlow)33;
       border: 2px solid transparent;
       transition: .22s;
       cursor: pointer;
-      user-select: none      transform: translateY(-7px) scale(1.03);
-      box-shadow: 0 10px 26px var(--cardGlow)99;
-      border-color: var(--cardGlow);
+      user-select: none;
+    }
+    .card {
+      text-decoration: none;
+      color: var(--text);
       background: rgba(2,6,23,.94);
+      border-radius: 1rem;
+      box-shadow: 0 10px 26px var(--cardGlow)99;
+      border: 2px solid transparent;
+      padding: 2rem 1.2rem 1.2rem 1.2rem;
+      min-height: 155px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: border .18s, transform .18s;
+    }
+    .card:hover, .card:focus {
+      border-color: var(--cardGlow);
+      transform: translateY(-7px) scale(1.03);
       outline: none;
     }
     .card span {
@@ -91,87 +107,16 @@
       margin-top: .12em;
     }
     .card h2 {
-      font-size:  .13rem 0 .30rem 0;
+      font-size: 1.22rem;
       color: var(--accent);
       letter-spacing: 0.01em;
       font-weight: 600;
+      margin: 0 0 .3rem 0;
     }
     .card div {
       color: var(--muted);
-      font-size: 1.02em;
-    }
-    .kp-section {
-      background: rgba(16, 24, 40, 0.97);
-      border-radius: 1.25rem;
-      margin: 2rem auto 1.5rem;
-      max-width: 670px;
-      padding: 1.2rem 0 2.1: 0 0 18px #38bdf822;
-      border: 1.6px solid #38bdf8;
-    }
-    .kp-section h3 {
-      color: var(--accent);
-      font-size: 1.4rem;
-      margin-bottom: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
-    .kp-section button {
-      background: var(--brand);
-      color: #06203b;
-      font-size: 1.05rem;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 18px;
-      margin-bottom: 1.1rem;
-      cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 2px 12px #38bdf866;
-      transition: background .16s;
-    }
-    .kp-section button:hover,
-    .kp-section button:focus {
-      background: var(--accent);
-      color: #fff;
-      outline: 2px solid var(--brand);
-    }
-    .kp-table-wrap {
-      overflow-x: auto;
-      margin-top: .7rem;
-    }
-    .kp-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: none;
-      margin: 0 auto;
-    }
-    .kp-table th, .kp-table td {
-      padding: 7px 12px;
-      border: 1px solid #38bdf82d;
-      font-size: .98em;
+      font-size: 1.01em;
       text-align: center;
-    }
-    .kp-table th {
-      background: #0ea5e9;
-      color: #fff;
-      font-weight: 600;
-      letter-spacing: .01em;
-    }
-    .kp-table td {
-      background: #1e293b;
-      color: var(--text);
-    }
-    .kp-table tr:nth-child(even) td {
-      background: #172033;
-    }
-    .kp-table tr:hover td {
-      background: #19314b;
-    }
-    .no-data {
-      color: #bae6fd;
-      font-size: 1.05em;
-      margin-top: 1.2rem;
-      font-style: italic;
-      opacity: 0.8;
     }
     footer {
       margin: 2.6rem 0 1.1rem;
@@ -183,20 +128,20 @@
       opacity: 0.93;
     }
     @media (max-width: 700px) {
-      .kp-section { max-width: 99vw; padding: .95rem 0 1.1rem; }
+      .grid { gap: 1.05rem; padding: 1rem; }
+      .card { min-height: 120px; padding: 1.1rem; }
     }
     @media (max-width: 500px) {
       header h1 { font-size: 1.32rem; }
-      .card { min-height: 134px; padding: .85rem; }
+      .card { min-height: 100px; padding: .85rem; }
       .card span { font-size: 1.3rem; }
-      .grid { gap: 1.05rem; }
-      .kp-section h3 { font-size: 1.06rem; }
-      .kp-table th, .kp-table td { padding: 6px 6px; font-size: .93em; }
+      .grid { gap: .8rem; }
+      .card h2 { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
-  <!-- Navigation Link to Home -->
+  <!-- Home Link -->
   <a class="toplink" href="./index.html" aria-label="Go to Home page">← Home</a>
 
   <header>
@@ -204,32 +149,16 @@
     <p>All astrological tools at your fingertips</p>
   </header>
 
-  <!-- KP Chart Demo Section -->
-  <section class="kp-section" aria-label="KP Chart Demo">
-    <h3>KP Chart Demo</h3>
-    <button onclick="loadKPChart()">Load KP Chart Data</button>
-    <div class="kp-table-wrap">
-      <table class="kp-table" id="kpTable">
-        <thead>
-          <tr>
-            <th>Planet</th>
-            <th>Degree</th>
-            <th>Sign</th>
-            <th>Star Lord</th>
-            <th>Sub Lord</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="5" class="no-data">Click "Load KP Chart Data" to view planetary positions</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
+  <!-- Dashboard Cards -->
   <main>
     <div class="grid" aria-label="Astrology Tools">
+      <!-- KP Chart Pro Card -->
+      <a href="./quamtem/kp-astrology-chart-pro.html" class="card" aria-label="KP Chart Pro">
+        <span aria-hidden="true">🌟</span>
+        <h2>KP Chart Pro</h2>
+        <div>KP Chart Table &amp; Wheel</div>
+      </a>
+      <!-- Other demo cards (edit/remove as needed) -->
       <a href="./quamtem/kp-astrology-chart-pro.html" class="card" aria-label="KP Astrology Report">
         <span aria-hidden="true">📝</span>
         <h2>KP Astrology Report</h2>
@@ -266,52 +195,5 @@
   <footer>
     &copy; 2025 Sathyadarshana – Light of Truth • All Rights Reserved
   </footer>
-  
-  <!-- KP Chart Demo JavaScript -->
-  <script>
-    async function loadKPChart() {
-      const kpTable = document.getElementById('kpTable').querySelector('tbody');
-      kpTable.innerHTML = '<tr><td colspan="5" class="></tr>';
-          return;
-        }
-
-        kpTable.innerHTML = '';
-        for (const p of data.planets) {
-          kpTable.innerHTML += `
-            <tr>
-              <td>${p.name}</td>
-              <td>${p.degree.toFixed(3)}</td>
-              <td>${getSign(p.degree)}</td>
-              <td>${getStarLord(p.degree)}</td>
-              <td>${getSubLord(p.degree)}</td>
-            </tr>
-          `;
-        }
-      } catch (err) {
-        kpTable.innerHTML = '<tr><td colspan="5" class="no-data">Failed to load data!</td></tr>';
-      }
-    }
-
-    // Basic demo functions for KP logic (replace with real algorithms as needed)
-    function getSign(degree) {
-      const signsStarLord(degree) {
-      // Placeholder: Real KP Nakshatra mapping needed
-      // Divide 360° by 27 nakshatras = 13.333...° each
-      const stars = [
-        'Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha',
-        'Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha',
-        'Moola','Purva Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'
-      ];
-      return stars[Math.floor(degree / (360/27)) % 27];
-    }
-    function getSubLord(degree) {
-      // Placeholder: Real KP Sub-lord mapping needed
-      // For demo, just cycle through lords
-      const lords = [
-        'Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'
-      ];
-      return lords[Math.floor((degree * 9 / 360)) % 9];
-    }
-  </script>
 </body>
 </html>

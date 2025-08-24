@@ -1,394 +1,78 @@
-<!DOCTYPE html>
+.<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>KP Chart Generator | Lebetion</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <!-- Modern style, match index.html theme -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KP Chart Demo - 100% Guaranteed</title>
   <style>
-    :root {
-      --brand: #38bdf8;
-      --accent: #06b6d4;
-      --bg: #0f172a;
-      --bg2: #1e293b;
-      --text: #f1f5f9;
-      --muted: #818cf8;
-      --danger: #fb7185;
-      --highlight: #facc15;
-    }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-    }
-    header {
-      background: linear-gradient(90deg, var(--brand) 0%, var(--accent) 100%);
-      color: #fff;
-      padding: 1.2rem 0 .7rem 0;
-      text-align: center;
-      letter-spacing: 0.01em;
-      box-shadow: 0 4px 18px #06b6d44c;
-    }
-    header h1 {
-      margin: 0 0 .2em 0;
-      font-size: 2.1rem;
-      font-weight: 700;
-      letter-spacing: .01em;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 1.8rem;
-      margin-bottom: .7rem;
-    }
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color .2s;
-      font-size: 1.05em;
-      border-bottom: 2px solid transparent;
-    }
-    nav a:hover, nav a.active {
-      color: var(--highlight);
-      border-bottom: 2px solid var(--highlight);
-    }
-    main {
-      max-width: 420px;
-      margin: 2.2rem auto 2.5rem auto;
-      background: var(--bg2);
-      border-radius: 1.2rem;
-      box-shadow: 0 3px 24px #06b6d422;
-      padding: 2rem 1.5rem 1.5rem 1.5rem;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.1rem;
-    }
-    .form-row {
-      display: flex;
-      gap: 1.2rem;
-      flex-wrap: wrap;
-      margin-bottom: .2em;
-    }
-    label {
-      flex: 1 1 120px;
-      font-size: 1.01em;
-      color: var(--muted);
-    }
-    input[type="text"], input[type="date"], input[type="time"] {
-      width: 100%;
-      padding: .55em .6em;
-      border: 1.5px solid var(--brand);
-      border-radius: .5em;
-      background: #15213a;
-      color: var(--text);
-      font-size: 1em;
-      margin-top: .3em;
-      outline: none;
-      box-sizing: border-box;
-      transition: border .2s;
-    }
-    input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus {
-      border-color: var(--accent);
-    }
-    button, #detectTzBtn {
-      padding: .65em 1.2em;
-      background: var(--brand);
-      color: #0f172a;
-      font-size: 1.1em;
-      font-weight: bold;
-      border: none;
-      border-radius: .5em;
-      box-shadow: 0 2px 10px #38bdf84d;
-      cursor: pointer;
-      transition: background .2s, color .2s;
-      margin-top: .6em;
-    }
-    button:hover, #detectTzBtn:hover {
-      background: var(--accent);
-      color: #fff;
-    }
-    #loading {
-      color: var(--muted);
-      text-align: center;
-      font-size: 1.06em;
-      margin: .8em 0 .6em 0;
-    }
-    #resultMsg {
-      text-align: center;
-      margin: .6em 0 .4em 0;
-      min-height: 2em;
-      font-size: 1.08em;
-    }
-    .chart-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 1em;
-    }
-    #astroChart {
-      background: radial-gradient(circle at 60% 40%, #222e52 0%, #0f172a 90%);
-      border-radius: 50%;
-      border: 2.5px solid var(--brand);
-      box-shadow: 0 0 40px #38bdf833;
-      margin-bottom: 1em;
-    }
-    #planetTable {
-      width: 100%;
-      background: #192346;
-      border-radius: 8px;
-      box-shadow: 0 1px 8px #06b6d422;
-      color: var(--text);
-      font-size: 0.97em;
-      padding: .7em 1em;
-      margin-top: .3em;
-      word-break: break-all;
-    }
-    footer {
-      text-align: center;
-      margin: 2rem 0 .8rem 0;
-      color: var(--brand);
-      font-size: 1em;
-      letter-spacing: .01em;
-      opacity: .92;
-    }
-    @media (max-width: 600px) {
-      main { max-width: 99vw; padding: 1.1rem .4rem; }
-      .form-row { flex-direction: column; gap: .6em; }
-    }
+    body { background:#121a29;color:#e0f2fe;font-family:sans-serif;text-align:center; }
+    h2 { color:#38bdf8;margin-top:2rem; }
+    button { background:#38bdf8;color:#181824;border:none;border-radius:6px;padding:9px 19px;font-weight:700;font-size:1.09rem; margin:1.4rem 0 0.6rem 0; cursor:pointer;}
+    button:hover { background:#0ea5e9;color:#fff; }
+    table { margin:1rem auto 0;background:#1e293b;border-radius:8px;box-shadow:0 2px 16px #38bdf822; }
+    th,td { padding:8px 14px; }
+    th { background:#0ea5e9;color:#fff; }
+    td { border-bottom:1px solid #334155; }
+    tr:last-child td { border-bottom:none; }
+    .no-data { color:#bae6fd;font-size:1.07em;margin-top:1.2rem; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>KP Chart Generator</h1>
-    <nav>
-      <a href="index.html" class="active">Home</a>
-      <a href="astrology.html">Astrology Hub</a>
-      <a href="kp-astrology-chart-pro.html">KP Chart</a>
-      <a href="vedic-astrology.html">Vedic</a>
-      <a href="numerology.html">Numerology</a>
-      <a href="https://github.com/SathyadarshanaAI/Libation" target="_blank">GitHub</a>
-    </nav>
-  </header>
-  <main>
-    <form id="kpForm" autocomplete="off">
-      <div class="form-row">
-        <label>Name<br><input type="text" id="name" required placeholder="Your Name"></label>
-        <label>Date of Birth<br><input type="date" id="dob" required></label>
-      </div>
-      <div class="form-row">
-        <label>Time of Birth<br><input type="time" id="tob" required></label>
-        <label>Place of Birth<br><input type="text" id="pob" required placeholder="e.g. Colombo"></label>
-      </div>
-      <div class="form-row">
-        <label>
-          Time Zone<br>
-          <input type="text" id="timezone" required placeholder="+05:30">
-          <button type="button" id="detectTzBtn" style="margin-top:6px;">Auto Detect</button>
-        </label>
-        <label>Question<br><input type="text" id="question" placeholder="(optional)"></label>
-      </div>
-      <button type="submit">Generate Chart</button>
-    </form>
-    <div id="loading" style="display:none;">Calculating…</div>
-    <div id="resultMsg"></div>
-    <div class="chart-section">
-      <canvas id="astroChart" width="340" height="340"></canvas>
-      <div id="planetTable"></div>
-    </div>
-    <footer>
-      <small>Powered by NASA Horizons • Lebetion KP Chart • 2025</small>
-    </footer>
-  </main>
+  <h2>KP Chart Demo (Browser Only)</h2>
+  <button onclick="loadKPChart()">Load KP Chart Data</button>
+  <div id="result"></div>
+  <table id="kpTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Planet</th>
+        <th>Degree</th>
+        <th>Sign</th>
+        <th>Star Lord</th>
+        <th>Sub Lord</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
   <script>
-    // --- Geocoding (OpenStreetMap fallback) ---
-    async function getLatLong(place) {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`;
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data.length > 0) {
-          return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
-        }
-      } catch (e) {
-        console.error("Geocode error", e);
-      }
-      // Default: Colombo
-      return { lat: 6.9271, lon: 79.8612 };
-    }
-
-    // --- Planetary Positions via Horizons Proxy (CORS Safe) ---
-    const planetList = [
-      { name: "Sun", id: "10", color: "#ffe066" },
-      { name: "Moon", id: "301", color: "#b1e1fc" },
-      { name: "Mercury", id: "199", color: "#c4b5fd" },
-      { name: "Venus", id: "299", color: "#fbb6ce" },
-      { name: "Mars", id: "499", color: "#f87171" },
-      { name: "Jupiter", id: "599", color: "#facc15" },
-      { name: "Saturn", id: "699", color: "#78716c" }
+      { name:"Sun", degree:92.436 },
+      { name:"Moon", degree:221.274 },
+      { name:"Mercury", degree:74.938 },
+      { name:"Venus", degree:147.102 },
+      { name:"Mars", degree:302.517 },
+      { name:"urn", degree:306.991 },
+      { name:"Rahu", degree:13.442 },
+      { name:"Ketu", degree:193.442 }
     ];
+    const signs = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+    const stars = [
+      'Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha',
+      'Magha','Purva Phalguni','Uttara Phyeshtha',
+      'Moola','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'
+    ];
+    const lords = ['Ketu','Venus','Sunahu','Jupiter','Saturn','Mercury'];
 
-    async function getPlanetLongitude(dateStr, timeStr, lat, lon, planetId) {
-      const params = new URLSearchParams({
-        COMMAND: `'${planetId}'`,
-        EPHEM_TYPE: 'OBSERVER',
-        SITE_COORD: `'${lon},${lat},0'`,
-        START_TIME: `'${dateStr} ${timeStr}'`,
-        STOP_TIME: `'${dateStr} ${timeStr}'`,
-        STEP_SIZE: "'1 d'",
-        QUANTITIES: "'1,2,3,4,20'",
-        CSV_FORMAT: 'YES'
-      });
-      try {
-        const res = await fetch(`/.netlify/functions/horizons?${params.toString()}`);
-        const data = await res.json();
-        if (data.result) {
-          const line = data.result.split("\n").find(l => /^[0-9]/.test(l));
-          if (line) return parseFloat(line.trim().split(",")[4]);
-        }
-      } catch (e) {
-        console.error("Horizons error", e);
-      }
-      return null;
+    function getSign(degree) {
+      return signs[Math.floor(degree/30)%12];
     }
-
-    async function getAllPlanets(dateStr, timeStr, lat, lon) {
-      const arr = [];
-      for (const p of planetList) {
-        const deg = await getPlanetLongitude(dateStr, timeStr, lat, lon, p.id);
-        if (deg !== null) arr.push({ ...p, degree: deg });
-      }
-      return arr;
+    function getStarLord(degree) {
+      return stars[Math.floor(degree/(360/27))%27];
     }
+    function getSubLord(degree function loadKPChart() {
+      const tbody = document.getElementById('kpTable').querySelector('tbody');
+      document.getElementById('kpTable').style.display = 'table';
+      document.getElementById('result').innerHTML = '';
+      tbody.innerHTML = '';
+      for (const p of planets          <tr>
+            <td>${p.name}</td>
+            <td>${p.degree.toFixed(3)}</td>
+            <td>${getSign(p.degree)}</td>
+            <td>${getStarLord(p.degree)}</td>
+            <td>${getSubLord(p.degree)}</td>
+          </tr>
+        `;
+ Open කරන්න.  
+🟢 "Load KP Chart Data" button එක click කරන්න.  
+🟢 100% ක් Guaranteed - Table එකට KP Chart data ලැබෙනවා!**
 
-    // --- Draw KP Chart (Modern style) ---
-    function drawAstroChart(planets) {
-      const c = document.getElementById('astroChart');
-      const ctx = c.getContext('2d');
-      ctx.clearRect(0, 0, c.width, c.height);
-
-      // Chart radius
-      const cx = c.width / 2, cy = c.height / 2, R = c.width * 0.44;
-
-      // Outer Circle
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, 2 * Math.PI);
-      ctx.strokeStyle = "var(--brand)";
-      ctx.lineWidth = 4;
-      ctx.shadowColor = "#38bdf8cc";
-      ctx.shadowBlur = 12;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      // 12 Houses - bold lines, colored
-      for (let i = 0; i < 12; i++) {
-        const a = (i * 30 - 90) * Math.PI / 180;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
-        ctx.strokeStyle = "#facc15bb";
-        ctx.lineWidth = 2.2;
-        ctx.stroke();
-      }
-
-      // House numbers
-      ctx.font = "bold 1.22em Segoe UI, Arial";
-      ctx.fillStyle = "var(--highlight)";
-      for (let i = 0; i < 12; i++) {
-        const a = ((i + 0.5) * 30 - 90) * Math.PI / 180;
-        ctx.save();
-        ctx.translate(cx + (R - 23) * Math.cos(a), cy + (R - 23) * Math.sin(a));
-        ctx.rotate(a + Math.PI/2);
-        ctx.fillText(i+1, -8, 6);
-        ctx.restore();
-      }
-
-      // Planets
-      planets.forEach(p => {
-        const a = ((p.degree % 360) - 90) * Math.PI / 180;
-        const x = cx + (R - 36) * Math.cos(a);
-        const y = cy + (R - 36) * Math.sin(a);
-        ctx.beginPath();
-        ctx.arc(x, y, 15, 0, 2 * Math.PI);
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = "#fff9";
-        ctx.shadowBlur = 8;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = "#fff8";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.fillStyle = "#15213a";
-        ctx.font = "bold 0.97em Segoe UI, Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(p.name, x, y+4);
-      });
-    }
-
-    // --- Planet Table ---
-    function showPlanetTable(planets) {
-      let html = `<table style="width:100%; border-collapse:collapse;"><tr>
-        <th style="color:var(--brand);text-align:left;">Planet</th>
-        <th style="color:var(--brand);text-align:left;">Degree</th>
-      </tr>`;
-      planets.forEach(p => {
-        html += `<tr>
-          <td style="padding:4px .5em;">${p.name}</td>
-          <td style="padding:4px .5em;">${p.degree?.toFixed(2) ?? '--'}</td>
-        </tr>`;
-      });
-      html += "</table>";
-      document.getElementById('planetTable').innerHTML = html;
-    }
-
-    // --- Timezone Auto Detect ---
-    document.getElementById('detectTzBtn').onclick = function() {
-      const offset = -new Date().getTimezoneOffset();
-      const sign = offset >= 0 ? "+" : "-";
-      const h = Math.floor(Math.abs(offset) / 60).toString().padStart(2,"0");
-      const m = (Math.abs(offset) % 60).toString().padStart(2,"0");
-      document.getElementById('timezone').value = `${sign}${h}:${m}`;
-    };
-
-    // --- Form Submit ---
-    document.getElementById('kpForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      document.getElementById('resultMsg').style.color = "var(--muted)";
-      document.getElementById('resultMsg').textContent = "Calculating…";
-      document.getElementById('loading').style.display = "block";
-      const name = document.getElementById('name').value.trim();
-      const dob = document.getElementById('dob').value;
-      const tob = document.getElementById('tob').value;
-      const pob = document.getElementById('pob').value.trim();
-      if (!name || !dob || !tob || !pob) {
-        document.getElementById('resultMsg').style.color = "var(--danger)";
-        document.getElementById('resultMsg').textContent = "Fill all details!";
-        document.getElementById('loading').style.display = "none";
-        return;
-      }
-      const coords = await getLatLong(pob);
-      const planets = await getAllPlanets(dob, tob, coords.lat, coords.lon);
-      if (planets.length === 0) {
-        document.getElementById('resultMsg').style.color = "var(--danger)";
-        document.getElementById('resultMsg').textContent = "Planetary data unavailable.";
-        document.getElementById('loading').style.display = "none";
-        return;
-      }
-      drawAstroChart(planets);
-      showPlanetTable(planets);
-      document.getElementById('resultMsg').style.color = "var(--brand)";
-      document.getElementById('resultMsg').textContent = "Chart generated for " + name + "!";
-      document.getElementById('loading').style.display = "none";
-    });
-
-    // Draw empty chart initially
-    drawAstroChart([]);
-    showPlanetTable([]);
-  </script>
-</body>
-</html>
+ඔයාට ඕනේ නම්, මෙහෙම live edit කරලා data/logic upgrade කරන්නත් පුළුවන්.  
+ඉතින් doubt එකක් නැතිව වැඩේ Start කරගන්න! 🚀

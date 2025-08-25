@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <title>Full KP Table – Sathyadarshana</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  < #161926; color: #e2e8ff; font-family: sans-serif; margin: 0; }
+  <style>
+    body { background: #161926; color: #e2e8ff; font-family: sans-serif; margin: 0; }
     .main { max-width: 500px; margin: auto; padding: 2em; }
     form { display: flex; flex-direction: column; gap: 1em; }
     label { display: flex; flex-direction: column; font-size: 1em; }
@@ -12,6 +13,7 @@
     table { width: 100%; border-collapse: collapse; color: #e2e8ff; }
     th, td { border: 1px solid #283048; padding: 0.5em; color: #161926; }
     .error { color: #ff5b5b; font-weight: 700; }
+    .chart-wrap { text-align: center; margin-top: 2em; }
   </style>
 </head>
 <body>
@@ -25,6 +27,9 @@
       <button type="submit">Get KP Table</button>
     </form>
     <div class="result" id="result"></div>
+    <div class="chart-wrap">
+      <canvas id="astroChart" width="360" height="360" style="background:#232547;border-radius:50%;"></canvas>
+    </div>
   </main>
   <script>
     // Nakshatra data (KP style)
@@ -42,11 +47,13 @@
       { name: "Purva Phalguni",   start: 133.3333, end: 146.6667, lord: "Venus" },
       { name: "Uttara Phalguni",  start: 146.6667, end: 160,      lord: "Sun" },
       { name: "Hasta",      start: 160,      end: 173.3333, lord: "Moon" },
-      { name: "Chitra",     start: 173.3333, end: 186 "Swati",      start: 186.6667, end: 200,      lord: "Rahu" },
+      { name: "Chitra",     start: 173.3333, end: 186.6667, lord: "Mars" },
+      { name: "Swati",      start: 186.6667, end: 200,      lord: "Rahu" },
       { name: "Vishakha",   start: 200,      end: 213.3333, lord: "Jupiter" },
       { name: "Anuradha",   start: 213.3333, end: 226.6667, lord: "Saturn" },
       { name: "Jyeshtha",   start: 226.6667, end: 240,      lord: "Mercury" },
-      { name: "Mula 253.3333, end: 266.6667, lord: "Venus" },
+      { name: "Mula",       start: 240,      end: 253.3333, lord: "Ketu" },
+      { name: "Purva Ashadha",    start: 253.3333, end: 266.6667, lord: "Venus" },
       { name: "Uttara Ashadha",   start: 266.6667, end: 280,      lord: "Sun" },
       { name: "Shravana",   start: 280,      end: 293.3333, lord: "Moon" },
       { name: "Dhanishta",  start: 293.3333, end: 306.6667, lord: "Mars" },
@@ -55,7 +62,7 @@
       { name: "Uttara Bhadrapada",start: 333.3333, end: 346.6667, lord: "Saturn" },
       { name: "Revati",     start: 346.6667, end: 360,      lord: "Mercury" }
     ];
-    const subLords = [ "Ketu "Rahu", "Jupiter", "Saturn", "Mercury" ];
+    const subLords = [ "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury" ];
 
     function getNakshatra(degree) {
       let normalized = degree % 360;
@@ -64,14 +71,56 @@
       }
       return nakshatras[0];
     }
-
     function getSubLord(degree) {
       const posIn360 = degree % 360;
       const nakIndex = Math.floor(posIn360 / 13.3333);
       const startOfNak = nakIndex * 13.3333;
-     9;
+      const posInNak = posIn360 - startOfNak;
+      const subLength = 13.3333 / 9;
       const subIndex = Math.floor(posInNak / subLength);
       return subLords[subIndex];
+    }
+
+    function drawAstroWheel(planets) {
+      const canvas = document.getElementById('astroChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw outer circle
+      ctx.beginPath();
+      ctx.arc(180, 180, 170, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#e2e8ff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw 12 house lines
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * 2 * Math.PI - Math.PI/2;
+        ctx.beginPath();
+        ctx.moveTo(180, 180);
+        ctx.lineTo(180 + 170 * Math.cos(angle), 180 + 170 * Math.sin(angle));
+        ctx.strokeStyle = '#e2e8ff88';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Draw planets
+      for (let p of planets) {
+        const deg = (p.deg - 90) * Math.PI / 180; // 0 deg = top
+        const r = 140;
+        ctx.beginPath();
+        ctx.arc(180 + r*Math.cos(deg), 180 + r*Math.sin(deg), 12, 0, 2*Math.PI);
+        ctx.fillStyle = '#1cfafa';
+        ctx.fill();
+        ctx.strokeStyle = '#232547';
+        ctx.stroke();
+        ctx.fillStyle = '#161926';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.name[0], 180 + r*Math.cos(deg), 180 + r*Math.sin(deg));
+      }
     }
 
     document.getElementById('kpForm').onsubmit = function(e) {
@@ -98,6 +147,7 @@
         { name: "Rahu", deg: 88.9 },
         { name: "Ketu", deg: 268.9 }
       ];
+      // KP table
       let html = `<table>
         <thead>
           <tr>
@@ -121,6 +171,11 @@
         </tr>`;
       }
       html += "</tbody></table>";
-      resultDiv.innerHTML = html </script>
+      resultDiv.innerHTML = html;
+
+      // Draw wheel
+      drawAstroWheel(demoPlanets);
+    };
+  </script>
 </body>
 </html>

@@ -61,12 +61,10 @@ function getSubLord(degree) {
 }
 
 function KPChart() {
-  // User input states
   const [date, setDate] = useState("2025-08-23");
   const [time, setTime] = useState("12:00:00");
   const [lat, setLat] = useState("6.9271");
   const [lon, setLon] = useState("79.8612");
-  // Data states
   const [planets, setPlanets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -75,13 +73,20 @@ function KPChart() {
     setLoading(true);
     setError("");
     try {
+      // --- CHANGE THIS URL to match your API server if needed
       const url = `http://localhost:3000/api/planets?date=${date}&time=${time}&lat=${lat}&lon=${lon}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error("API Error");
+      // If API returns {planets: [...]}, use setPlanets(data.planets)
+      // If API returns [...] directly, use setPlanets(data)
       const data = await response.json();
-      setPlanets(data);
+      // Try to be compatible with both API result formats:
+      if (Array.isArray(data)) setPlanets(data);
+      else if (Array.isArray(data.planets)) setPlanets(data.planets);
+      else throw new Error("Bad API response");
     } catch (e) {
       setError("Unable to load planet data. Check your input or API.");
+      setPlanets([]);
     } finally {
       setLoading(false);
     }
@@ -94,7 +99,6 @@ function KPChart() {
     fetchPlanets();
   };
 
-  // Copy as CSV
   const handleCopy = () => {
     if (!planets.length) return;
     const header = "Planet,Degree,Zodiac,Nakshatra,Nakshatra Lord,Sub Lord";
@@ -120,8 +124,7 @@ function KPChart() {
         <label>Date: <input type="date" value={date} onChange={e=>setDate(e.target.value)} required /></label>
         <label>Time: <input type="time" value={time} onChange={e=>setTime(e.target.value)} required /></label>
         <label>Lat: <input type="number" step="0.0001" value={lat} onChange={e=>setLat(e.target.value)} required /></label>
-        <label>Lon: <input type="number" step="0.0001" value={lon} onChange={e=>setLon(e.target.value)} required /></label>
-        <button type="submit" style={{background:"#00ffe7",color:"#181824",borderRadius:5,padding:"0 12px",fontWeight:700}}>Get Chart</button>
+        <label>Lon: <input type="number" step="0.0001" value={lon} onChange={e:"#00ffe7",color:"#181824",borderRadius:5,padding:"0 12px",fontWeight:700}}>Get Chart</button>
         <button type="button" onClick={handleCopy} style={{background:"#6d7cff",color:"#fff",borderRadius:5,padding:"0 12px",fontWeight:700}}>Copy as CSV</button>
       </form>
       {loading && <div style={{textAlign:"center",color:"#6d7cff"}}>Loading planet data...</div>}

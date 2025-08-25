@@ -3,37 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Full KP Table – Sathyadarshana</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    body { background: #1a2233; color: #f1f9ff; font-family: 'Segoe UI',sans-serif; margin: 0; }
-    .main { max-width: 900px; margin: 1.5rem auto; background: #232e43; border-radius: 1em; padding: 2em 1em; box-shadow: 0 0 23px #2ec4f433; }
-    h1 { color: #2ec4f4; text-align: center; font-weight: 700; }
-    form { display: flex; flex-wrap: wrap; gap: 1em; justify-content: center; }
-    label { color: #b8e3fb; font-size: 1em; flex: 1 1 150px; min-width: 140px; }
-    input { width: 100%; padding: 0.7em; border-radius: 0.4em; border: 1px solid #2ec4f499; background: #14213d; color: #fff; }
-    button { background: #2ec4f4; color: #111; border: none; padding: 0.9em 1.5em; margin-top: 1.2em; border-radius: 0.5em; font-weight: 700; font-size: 1.06em; cursor: pointer; }
-    .result { margin-top: 2em; background: #172238; padding: 1.6em; border-radius: 0.8em; overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 1em; min-width: 640px; }
-    th, td { padding: 0.47em 0.7em; text-align: center; }
-    th { background: #2ec4f466; color: #1a1a1a; }
-    tr:nth-child(even) { background: #1b2737dd; }
-    tr:nth-child(odd) { background: #173040cc; }
-    @media (max-width: 650px) {
-      .main { padding: 0.7em; }
-      table, thead, tbody, th, td, tr { display: block; }
-      th { position: absolute; left: -9999px; }
-      tr { margin-bottom: 1.4em; border-bottom: 1px solid #2ec4f4; }
-      td { border-bottom: 1px solid #28374e; position: relative; padding-left: 50%; min-height: 2.2em; }
-      td:before { position: absolute; left: 0.8em; width: 47%; white-space: nowrap; font-weight: bold; color: #2ec4f4; }
-      td:nth-of-type(1):before { content: "Name"; }
-      td:nth-of-type(2):before { content: "Type"; }
-      td:nth-of-type(3):before { content: "Sign"; }
-      td:nth-of-type(4):before { content: "Deg"; }
-      td:nth-of-type(5):before { content: "Nakshatra"; }
-      td:nth-of-type(6):before { content: "Star Lord"; }
-      td:nth-of-type(7):before { content: "Sub Lord"; }
-    }
-    .error { color: #ff5b5b; font-weight: 700; }
+  <meta name before) ... */
   </style>
 </head>
 <body>
@@ -41,52 +11,31 @@
     <h1>Full KP Table</h1>
     <form id="kpForm">
       <label>Birth Date <input type="date" name="date" required></label>
-      <label>Birth Time <input type="time" name="time" required></label>
-      <label>Latitude <input type="number" step="0.0001" name="lat" required placeholder="Ex: 7.1"></label>
+      <label>Birth Time>
       <label>Longitude <input type="number" step="0.0001" name="lon" required placeholder="Ex: 79.9"></label>
       <button type="submit">Get KP Table</button>
     </form>
-    <div class="result" id="result"></ // KP Nakshatra Table – (Start degree, End degree, Name, Star Lord)
-    const nakshatras = [
+    <div class="result" id="result"></div>
+ atras = [
       { start: 0, end: 13.3333, name: "Ashwini", lord: "Ketu" },
       { start: 13.3333, end: 26.6667, name: "Bharani", lord: "Venus" },
-      { start: 26.6667, end: 40, name: "Krittika", lord: "Sun" },
-      { start: 40, end: 53.3333, name: "Rohini", lord: "Moon" },
-      { start: 53.3333, end: 66.6667, name: "Mrigashira", lord: "Mars" },
+      { start:  66.6667, name: "Mrigashira", lord: "Mars" },
       { start: 66.6667, end: 80, name: "Ardra", lord: "Rahu" },
-      { start: 80, end: 93.3333, name: "Punarvasu", lord: "Jupiter" },
-      { start: 93.3333, end: 106.6667, name: "Pushya", lord: "Saturn" },
-      { start: 106.6667, end: 120, name: "Ashlesha", lord: "Mercury" },
+      { start: 80, end: 93.3333, name: "P lord: "Mercury" },
       { start: 120, end: 133.3333, name: "Magha", lord: "Ketu" },
       { start: 133.3333, end: 146.6667, name: "Purva Phalguni", lord: "Venus" },
-      { start: 146.6667, end: 160, name: "Uttara Phalguni", lord: "Sun" },
-      { start: 160, end: 173.3333, name: "Hasta", lord: "Moon" },
+      { start:  160, end: 173.3333, name: "Hasta", lord: "Moon" },
       { start: 173.3333, end: 186.6667, name: "Chitra", lord: "Mars" },
-      { start: 186.6667, end: 200, name: "Swati", lord: "Rahu" },
-      { start: 200, end: 213.3333, name: "Vishakha", lord: "Jupiter" },
-      { start: 213.3333, end: 226.6667, name: "Anuradha", lord: "Saturn" },
+      { start: 186.6667, end: 200, name: "Swati      { start: 213.3333, end: 226.6667, name: "Anuradha", lord: "Saturn" },
       { start: 226.6667, end: 240, name: "Jyeshtha", lord: "Mercury" },
-      { start: 240, end: 253.3333, name: "Mula", lord: "Ketu" },
-      { start: 253.3333, end: 266.6667, name: "Purva Ashadha", lord: "Venus" },
-      { start: 266.6667, end: 280, name: "Uttara Ashadha", lord: "Sun" },
+      { start: 240, end: 253.3333, name: 266.6667, end: 280, name: "Uttara Ashadha", lord: "Sun" },
       { start: 280, end: 293.3333, name: "Shravana", lord: "Moon" },
-      { start: 293.3333, end: 306.6667, name: "Dhanishta", lord: "Mars" },
-      { start: 306.6667, end: 320, name: "Shatabhisha", lord: "Rahu" },
-      { start: 320, end: 333.3333, name: "Purva Bhadrapada", lord: "Jupiter" },
+      { start: 293.3333, end: 306.6667, name: "D, name: "Purva Bhadrapada", lord: "Jupiter" },
       { start: 333.3333, end: 346.6667, name: "Uttara Bhadrapada", lord: "Saturn" },
-      { start: 346.6667, end: 360, name: "Revati", lord: "Mercury" },
-    ];
-
-    // KP Sub-lord order (Vimshottari Dasha sequence)
-    const subLordsSeq = [
-      "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"
+      { start: 346.6667, end: 360, name: "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"
     ];
     const dashaYears = {
-      "Ketu": 7, "Venus": 20, "Sun": 6, "Moon": 10, "Mars": 7, "Rahu": 18, "Jupiter": 16, "Saturn": 19, "Mercury": 17
-    };
-
-    // Find Nakshatra & Star Lord
-    function getNakshatra(deg) {
+      "Ketu": 7, "Venus": 20, "Sun": 6, "Moon": 10, "Mars": 7, "Rahu": 18, "Jupiter":     function getNakshatra(deg) {
       deg = deg % 360;
       for (let n of nakshatras) {
         if (deg >= n.start && deg < n.end) return n;
@@ -95,21 +44,11 @@
     }
 
     // Find Sub-Lord
-    function getSubLord(deg) {
-      deg = deg % 360;
-      let n = getNakshatra(deg);
-      let nIdx = nakshatras.indexOf(n);
-      let nStart = n.start;
-      let nLen = n.end - n.start;
-      let pd = (deg - nStart) / nLen; // Portion in Nakshatra
+    function getSubLord(deg)      let pd = (deg - nStart) / nLen; // Portion in Nakshatra
       // Sub-lords are in Vimshottari order, starting from lord of Nakshatra
       let lordSeq = [];
       let sidx = subLordsSeq.indexOf(n.lord);
-      for(let i=0;i<9;i++) lordSeq.push(subLordsSeq[(sidx+i)%9]);
-      let total = 0, subLen = [];
-      let sumYears = 0;
-      lordSeq.forEach(nm=>sumYears+=dashaYears[nm]);
-      lordSeq.forEach(nm=>subLen.push(dashaYears[nm]/sumYears));
+      for(let i(dashaYears[nm]/sumYears));
       let cum = 0;
       for(let j=0;j<9;j++) {
         let from = cum, to = cum+subLen[j];
@@ -119,8 +58,7 @@
       return lordSeq[8];
     }
 
-    const apiBase = "http://localhost:5000/planets";
-    document.getElementById('kpForm').onsubmit = async function(e) {
+    const apiBase = " {
       e.preventDefault();
       const fd = new FormData(this);
       const date = fd.get('date');

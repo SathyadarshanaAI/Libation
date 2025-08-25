@@ -26,7 +26,7 @@
 <body>
   <div class="wrap">
     <h2>KP Chart Generator – All-in-One</h2>
-    <form id="kpForm">
+    <form id="kpForm" autocomplete="off">
       <label>Name</label>
       <input type="text" id="name" required>
       <div class="row">
@@ -74,7 +74,7 @@
   </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    // 1. Street Map
+    // 1. Street Map (Leaflet)
     const map = L.map('map').setView([7.1, 79.9], 8);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
@@ -90,13 +90,15 @@
     // 2. Time Zone auto-detect
     document.getElementById('detectTzBtn').onclick = function() {
       const offset = -new Date().getTimezoneOffset();
-      const hr = Math.floor(offset/60);
-      const min = Math.abs(offset%60);
-      const tz = `${hr>=0?'+':'-'}${String(Math.abs(hr)).padStart(2,'0')}:${String(min).padStart(2,'0')}`;
+      const sign = offset >= 0 ? '+' : '-';
+      const absOffset = Math.abs(offset);
+      const hr = Math.floor(absOffset / 60);
+      const min = absOffset % 60;
+      const tz = `${sign}${String(hr).padStart(2,'0')}:${String(min).padStart(2,'0')}`;
       document.getElementById('timezone').value = tz;
-    }
+    };
 
-    // 3. KP Logic (Minimal, for demo: planets = sample data)
+    // 3. KP Logic (Demo/sample)
     const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
     const NAKS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
     const DASHAS = [
@@ -106,4 +108,79 @@
     const NAK_LORD = (()=>{const list=[];let idx=0;for(let i=0;i<27;i++){list.push(DASHAS[idx%9].lord);idx++;}return list;})();
     const mod = (a,b)=>((a%b)+b)%b;
     const DEG_PER_NAK = 360/27, DEG_PER_PADA = DEG_PER_NAK/4;
-    function dms(deg){deg=mod(deg,360);const d=Math.floor(deg);const mFloat=(deg-d)*60;const m=Math.floor(mFloat);const s=Math.round((mFloat-m)*60);return `${d}°${String(m).padStart(
+    function dms(deg){
+      deg=mod(deg,360);
+      const d=Math.floor(deg);
+      const mFloat=(deg-d)*60;
+      const m=Math.floor(mFloat);
+      const s=Math.round((mFloat-m)*60);
+      return `${d}°${String(m).padStart(2,'0')}′${String(s).padStart(2,'0')}″`;
+    }
+    function signOf(deg){return SIGNS[Math.floor(mod(deg,360)/30)]}
+    function nakIndex(deg){return Math.floor(mod(deg,360)/DEG_PER_NAK)}
+    function padaOf(deg){const within=mod(deg,DEG_PER_NAK);return Math.floor(within/DEG_PER_PADA)+1;}
+    function starLordOf(deg){return NAK_LORD[nakIndex(deg)]}
+    function subLordOf(deg){
+      const nIdx=nakIndex(deg);const startLord=NAK_LORD[nIdx];
+      const startIdx=DASHAS.findIndex(d=>d.lord===startLord);
+      const rotated=[...DASHAS.slice(startIdx),...DASHAS.slice(0,startIdx)];
+      const arc=DEG_PER_NAK;const subArcs=rotated.map(d=>arc*(d.years/120));
+      const within=mod(deg,DEG_PER_NAK);let acc=0;
+      for(let i=0;i<subArcs.length;i++){acc+=subArcs[i];if(within<=acc+1e-9){return rotated[i].lord}}
+      return rotated[rotated.length-1].lord;
+    }
+
+    // 4. Chart Table & Wheel
+    function renderTable(planets){
+      const tbody=document.getElementById('tbl'); tbody.innerHTML='';
+      planets.forEach(p=>{
+        const zi=signOf(p.degree),nIdx=nakIndex(p.degree),nak=NAKS[nIdx],pada=padaOf(p.degree),sLord=starLordOf(p.degree),sub=subLordOf(p.degree);
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${p.name}</td><td>${dms(p.degree)}</td><td>${zi}</td><td>${nak}</td><td>${pada}</td><td>${sLord}</td><td><b>${sub}</b></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    function renderWheel(planets){
+      const W=400,H=400,Cx=W/2,Cy=H/2,R=150,gLines=[],labels=[],planetsSvg=[];
+      for(let i=0;i<12;i++){
+        const a=(i*30-90)*Math.PI/180,x=Cx+R*Math.cos(a),y=Cy+R*Math.sin(a);
+        gLines.push(`<line x1="${Cx}" y1="${Cy}" x2="${x}" y2="${y}" stroke="#24304a" stroke-width="1"/>`);
+      }
+      for(let i=0;i<12;i++){
+        const a=((i*30+15)-90)*Math.PI/180,x=Cx+(R-18)*Math.cos(a),y=Cy+(R-18)*Math.sin(a);
+        labels.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="#9cc3ff" font-size="11" text-anchor="middle" dominant-baseline="middle">${SIGNS[i].slice(0,3)}</text>`);
+      }
+      planets.forEach(p=>{
+        const a=(p.degree-90)*Math.PI/180,r=R-35,x=Cx+r*Math.cos(a),y=Cy+r*Math.sin(a);
+        planetsSvg.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7" fill="#60a5fa"/><text x="${x.toFixed(1)}" y="${(y-12).toFixed(1)}" fill="#e2f0ff" font-size="11" text-anchor="middle">${p.name[0]}</text>`);
+      });
+      const svg=`<svg viewBox="0 0 ${W} ${H}"><circle cx="${Cx}" cy="${Cy}" r="${R+14}" fill="#101f31"/><circle cx="${Cx}" cy="${Cy}" r="${R}" fill="none" stroke="#24304a"/><g>${gLines.join('')}</g><g>${labels.join('')}</g><g>${planetsSvg.join('')}</g></svg>`;
+      document.getElementById('wheel').innerHTML=svg;
+    }
+
+    // 5. Form Handler (Sample - uses static demo planets)
+    document.getElementById('kpForm').onsubmit = function(e){
+      e.preventDefault();
+      // For demo: use static sample planets (API integration possible)
+      const planets = [
+        { "name": "Sun", "degree": 123.456 },
+        { "name": "Moon", "degree": 200.123 },
+        { "name": "Mercury", "degree": 85.234 },
+        { "name": "Venus", "degree": 154.567 },
+        { "name": "Mars", "degree": 210.987 },
+        { "name": "Jupiter", "degree": 275.654 },
+        { "name": "Saturn", "degree": 305.432 },
+        { "name": "Rahu", "degree": 45.876 },
+        { "name": "Ketu", "degree": 225.876 }
+      ];
+      renderTable(planets);
+      renderWheel(planets);
+      document.getElementById('jsonPreview').value = JSON.stringify({planets}, null, 2);
+      document.getElementById('status').textContent = '✓ Chart generated (demo data)';
+    };
+
+    // Initial preview (on page load)
+    document.getElementById('kpForm').onsubmit(new Event('submit'));
+  </script>
+</body>
+</html>

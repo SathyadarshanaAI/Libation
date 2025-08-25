@@ -5,15 +5,17 @@
   <title>KP Chart – API Connected</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body{background:#0f172a;color:#e2f0ff;font-family:sans-serif;margin:0;padding:0;}
-    .wrap{max-width:900px;margin:30px auto;padding:16px;}
-    textarea,input{width:100%;background:#12223a;color:#e2f0ff;border-radius:8px;border:1px solid #1f2a44;padding:8px;}
-    button{background:#60a5fa;color:#03122a;border:0;border-radius:8px;padding:8px 16px;margin:3px;}
-    .card{background:#161e31;padding:16px;border-radius:12px;margin-bottom:14px;}
-    table{width:100%;border-collapse:collapse;}
-    th,td{border-bottom:1px solid #24304a;padding:7px;}
-    th{color:#bfe1ff;text-align:left;}
-    .status{font-size:13px;color>
+    body { background:#0f172a; color:#e2f0ff; font-family:sans-serif; margin:0; padding:0; }
+    .wrap { max-width:900px; margin:30px auto; padding:16px; }
+    textarea, input { width:100%; background:#12223a; color:#e2f0ff; border-radius:8px; border:1px solid #1f2a44; padding:8px; }
+    button { background:#60a5fa; color:#03122a; border:0; border-radius:8px; padding:8px 16px; margin:3px; cursor:pointer; }
+    .card { background:#161e31; padding:16px; border-radius:12px; margin-bottom:14px; }
+    table { width:100%; border-collapse:collapse; }
+    th,td { border-bottom:1px solid #24304a; padding:7px; }
+    th { color:#bfe1ff; text-align:left; }
+    .status { font-size:13px; color:#84d1ff; margin-left:12px; }
+  </style>
+</head>
 <body>
   <div class="wrap">
     <h2>🪐 KP Chart – API Connected</h2>
@@ -52,7 +54,13 @@
         </thead>
         <tbody id="tbl"></tbody>
       </table>
-    </ KP Logic ----
+    </div>
+    <div class="card" style="text-align:center;font-size:12px;color:#99c7ff;">
+      Powered by Lebetion KP Chart &bull; 2025
+    </div>
+  </div>
+  <script>
+    // ---- KP Logic ----
     const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
     const NAKS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
     const DASHAS = [
@@ -95,9 +103,18 @@
     }
     function renderWheel(data){
       const W=420,H=420,Cx=W/2,Cy=H/2,R=160,gLines=[],labels=[],planetsSvg=[];
-      for(let i=0;i<12;i++){const a=(i*30-90)*Math.PI/180,x=Cx+R*Math.cos(a),y=Cy+R*Math.sin(a);gLines.push(`<line x1="${Cx}" y1="${Cy}" x2="${x}" y2="${y}" stroke="#24304a" stroke-width="1"/>`);}
-      for(let i=0;i<12;i++){const a=((i*30+15)-90)*Math.PI/180,x=Cx+(R-18)*Math.cos(a),y=Cy+(R-18)*Math.sin(a);labels.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="#9cc3ff" font-size="11" text-anchor="middle" dominant-baseline="middle">${SIGNS[i].slice(0,3)}</text>`);}
-      data.planets.forEach(p=>{const a=(p.degree-90)*Math.PI/180,r=R-35,x=Cx+r*Math.cos(a),y=Cy+r*Math.sin(a);planetsSvg.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#60a5fa"/><text x="${x.toFixed(1)}" y="${(y-10).toFixed(1)}" fill="#e2f0ff" font-size="11" text-anchor="middle">${p.name[0]}</text>`);});
+      for(let i=0;i<12;i++){
+        const a=(i*30-90)*Math.PI/180,x=Cx+R*Math.cos(a),y=Cy+R*Math.sin(a);
+        gLines.push(`<line x1="${Cx}" y1="${Cy}" x2="${x}" y2="${y}" stroke="#24304a" stroke-width="1"/>`);
+      }
+      for(let i=0;i<12;i++){
+        const a=((i*30+15)-90)*Math.PI/180,x=Cx+(R-18)*Math.cos(a),y=Cy+(R-18)*Math.sin(a);
+        labels.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="#9cc3ff" font-size="11" text-anchor="middle" dominant-baseline="middle">${SIGNS[i].slice(0,3)}</text>`);
+      }
+      data.planets.forEach(p=>{
+        const a=(p.degree-90)*Math.PI/180,r=R-35,x=Cx+r*Math.cos(a),y=Cy+r*Math.sin(a);
+        planetsSvg.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#60a5fa"/><text x="${x.toFixed(1)}" y="${(y-10).toFixed(1)}" fill="#e2f0ff" font-size="11" text-anchor="middle">${p.name[0]}</text>`);
+      });
       const svg=`<svg viewBox="0 0 ${W} ${H}"><circle cx="${Cx}" cy="${Cy}" r="${R+14}" fill="#101f31"/><circle cx="${Cx}" cy="${Cy}" r="${R}" fill="none" stroke="#24304a"/><g>${gLines.join('')}</g><g>${labels.join('')}</g><g>${planetsSvg.join('')}</g></svg>`;
       document.getElementById('wheel').innerHTML=svg;
     }

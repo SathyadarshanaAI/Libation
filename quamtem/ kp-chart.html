@@ -1,40 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Birth Details Entry – Sathyadarshana</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8" />
+  <title>KP Chart Generator – All-in-One</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
-    body { background: #161926; color: #e2e8ff; font-family: sans-serif; margin: 0; }
-    .main { max-width: 500px; margin: auto; padding: 2em; }
-    form { display: flex; flex-direction: column; gap: 1em; }
-    label { display: flex; flex-direction: column; font-size: 1em; }
-    .error { color: #ff5b5b; font-weight: 700; }
-    #map { height: 250px; border-radius: 0.7em; margin-top: 1em; }
+    body { background:#101d2e; color:#e2f0ff; font-family:sans-serif; margin:0; }
+    .wrap { max-width:860px; margin:32px auto; padding:24px; background:#15213b; border-radius:14px; }
+    label { display:block; margin:12px 0 4px; }
+    input, select { width:100%; padding:8px; border-radius:7px; border:1px solid #284168; margin-bottom:8px; background:#162447; color:#e2f0ff;}
+    button { background:#60a5fa; color:#03122a; border:0; border-radius:8px; padding:10px 24px; margin:10px 0; cursor:pointer; }
+    #map { height: 220px; border-radius:10px; margin:12px 0 18px; }
+    .row { display:flex; gap:12px; }
+    .row > div { flex:1; }
+    .status { font-size:14px; color:#73e4ff; margin-top:8px; }
+    textarea { width:100%; background:#1a2847; color:#e2f0ff; border-radius:8px; border:1px solid #24304a; padding:8px; margin-top:12px;}
+    table { width:100%; border-collapse:collapse; margin-top:16px;}
+    th,td { border-bottom:1px solid #24304a; padding:7px; }
+    th { color:#bfe1ff; text-align:left; }
+    .chart-section { margin:30px 0; }
+    #wheel { display:flex; justify-content:center; }
   </style>
 </head>
 <body>
-  <main class="main">
-    <h1>Birth Details</h1>
-    <form id="birthForm">
-      <label>Birth Date <input type="date" name="date" required></label>
-      <label>Birth Time <input type="time" name="time" required></label>
-      <label>Latitude <input type="number" step="0.0001" name="lat" id="lat" required placeholder="Ex: 7.1"></label>
-      <label>Longitude <input type="number" step="0.0001" name="lon" id="lon" required placeholder="Ex: 79.9"></label>
-      <button type="submit">Submit</button>
+  <div class="wrap">
+    <h2>KP Chart Generator – All-in-One</h2>
+    <form id="kpForm">
+      <label>Name</label>
+      <input type="text" id="name" required>
+      <div class="row">
+        <div>
+          <label>Date of Birth</label>
+          <input type="date" id="dob" required>
+        </div>
+        <div>
+          <label>Time of Birth</label>
+          <input type="time" id="tob" required>
+        </div>
+      </div>
+      <label>Place of Birth (search or use map)</label>
+      <input type="text" id="pob" placeholder="e.g. Colombo">
+      <div class="row">
+        <div>
+          <label>Latitude</label>
+          <input type="number" id="lat" step="0.0001" required placeholder="Click on map or enter">
+        </div>
+        <div>
+          <label>Longitude</label>
+          <input type="number" id="lon" step="0.0001" required placeholder="Click on map or enter">
+        </div>
+      </div>
+      <label>Time Zone 
+        <button type="button" id="detectTzBtn" style="float:right;margin-top:-2px;">Auto Detect</button>
+      </label>
+      <input type="text" id="timezone" required placeholder="+05:30">
+      <button type="submit">Generate Chart</button>
+      <div class="status" id="status"></div>
     </form>
     <div id="map"></div>
-    <div id="status"></div>
-  </main>
+    <div class="chart-section">
+      <div id="wheel"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>Planet</th><th>Degree</th><th>Sign</th><th>Nakshatra</th><th>Pada</th><th>Star Lord</th><th>Sub-Lord</th>
+          </tr>
+        </thead>
+        <tbody id="tbl"></tbody>
+      </table>
+      <textarea id="jsonPreview" rows="7" readonly placeholder="Preview will appear here"></textarea>
+    </div>
+  </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    // Simple map picker for latitude/longitude
-    const map = L.map('map').setView([7.1, 79.9], 7);
+    // 1. Street Map
+    const map = L.map('map').setView([7.1, 79.9], 8);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-
     let marker = null;
     map.on('click', function(e) {
       if (marker) map.removeLayer(marker);
@@ -43,21 +87,23 @@
       document.getElementById('lon').value = e.latlng.lng.toFixed(4);
     });
 
-    document.getElementById('birthForm').onsubmit = function(e) {
-      e.preventDefault();
-      const fd = new FormData(this);
-      const date = fd.get('date');
-      const time = fd.get('time');
-      const lat = fd.get('lat');
-      const lon = fd.get('lon');
-      const status = document.getElementById('status');
-      if (!date || !time || !lat || !lon) {
-        status.innerHTML = "<div class='error'>All fields are required!</div>";
-        return;
-      }
-      status.innerHTML = "<div>Birth data submitted!</div>";
-      // Here you can call your API or process the data as needed
-    };
-  </script>
-</body>
-</html>
+    // 2. Time Zone auto-detect
+    document.getElementById('detectTzBtn').onclick = function() {
+      const offset = -new Date().getTimezoneOffset();
+      const hr = Math.floor(offset/60);
+      const min = Math.abs(offset%60);
+      const tz = `${hr>=0?'+':'-'}${String(Math.abs(hr)).padStart(2,'0')}:${String(min).padStart(2,'0')}`;
+      document.getElementById('timezone').value = tz;
+    }
+
+    // 3. KP Logic (Minimal, for demo: planets = sample data)
+    const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+    const NAKS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+    const DASHAS = [
+      {lord:'Ketu', years:7}, {lord:'Venus', years:20}, {lord:'Sun', years:6}, {lord:'Moon', years:10},
+      {lord:'Mars', years:7}, {lord:'Rahu', years:18}, {lord:'Jupiter', years:16}, {lord:'Saturn', years:19}, {lord:'Mercury', years:17}
+    ];
+    const NAK_LORD = (()=>{const list=[];let idx=0;for(let i=0;i<27;i++){list.push(DASHAS[idx%9].lord);idx++;}return list;})();
+    const mod = (a,b)=>((a%b)+b)%b;
+    const DEG_PER_NAK = 360/27, DEG_PER_PADA = DEG_PER_NAK/4;
+    function dms(deg){deg=mod(deg,360);const d=Math.floor(deg);const mFloat=(deg-d)*60;const m=Math.floor(mFloat);const s=Math.round((mFloat-m)*60);return `${d}°${String(m).padStart(

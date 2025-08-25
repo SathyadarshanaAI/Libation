@@ -3,62 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <title>Full KP Table – Sathyadarshana</title>
-  <meta name before) ... */
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { background: #161926; color: #e2e8ff; font-family: sans-serif; margin: 0; }
+    .main { max-width: 500px; margin: auto; padding: 2em; }
+    form { display: flex; flex-direction: column; gap: 1em; }
+    label { display: flex; flex-direction: column; font-size: 1em; }
+    .result { margin-top: 2em; background: #232547; border-radius: 0.5em; padding: 1em; }
+    table { width: 100%; border-collapse: collapse; color: #e2e8ff; }
+    th, td { border: 1px solid #283048; padding: 0.5em; text-align: center; }
+    th { background: #1cfafa; color: #161926; }
+    .error { color: #ff5b5b; font-weight: 700; }
   </style>
 </head>
 <body>
-  <div class="main">
+  <main class="main">
     <h1>Full KP Table</h1>
     <form id="kpForm">
       <label>Birth Date <input type="date" name="date" required></label>
-      <label>Birth Time>
+      <label>Birth Time <input type="time" name="time" required></label>
+      <label>Latitude <input type="number" step="0.0001" name="lat" required placeholder="Ex: 7.1"></label>
       <label>Longitude <input type="number" step="0.0001" name="lon" required placeholder="Ex: 79.9"></label>
       <button type="submit">Get KP Table</button>
     </form>
     <div class="result" id="result"></div>
- atras = [
-      { start: 0, end: 13.3333, name: "Ashwini", lord: "Ketu" },
-      { start: 13.3333, end: 26.6667, name: "Bharani", lord: "Venus" },
-      { start:  66.6667, name: "Mrigashira", lord: "Mars" },
-      { start: 66.6667, end: 80, name: "Ardra", lord: "Rahu" },
-      { start: 80, end: 93.3333, name: "P lord: "Mercury" },
-      { start: 120, end: 133.3333, name: "Magha", lord: "Ketu" },
-      { start: 133.3333, end: 146.6667, name: "Purva Phalguni", lord: "Venus" },
-      { start:  160, end: 173.3333, name: "Hasta", lord: "Moon" },
-      { start: 173.3333, end: 186.6667, name: "Chitra", lord: "Mars" },
-      { start: 186.6667, end: 200, name: "Swati      { start: 213.3333, end: 226.6667, name: "Anuradha", lord: "Saturn" },
-      { start: 226.6667, end: 240, name: "Jyeshtha", lord: "Mercury" },
-      { start: 240, end: 253.3333, name: 266.6667, end: 280, name: "Uttara Ashadha", lord: "Sun" },
-      { start: 280, end: 293.3333, name: "Shravana", lord: "Moon" },
-      { start: 293.3333, end: 306.6667, name: "D, name: "Purva Bhadrapada", lord: "Jupiter" },
-      { start: 333.3333, end: 346.6667, name: "Uttara Bhadrapada", lord: "Saturn" },
-      { start: 346.6667, end: 360, name: "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"
+  </main>
+  <script>
+    // Nakshatra data (KP style)
+    const nakshatras = [
+      { name: "Ashwini",    start: 0,        end: 13.3333,  lord: "Ketu" },
+      { name: "Bharani",    start: 13.3333,  end: 26.6667,  lord: "Venus" },
+      { name: "Krittika",   start: 26.6667,  end: 40,       lord: "Sun" },
+      { name: "Rohini",     start: 40,       end: 53.3333,  lord: "Moon" },
+      { name: "Mrigashira", start: 53.3333,  end: 66.6667,  lord: "Mars" },
+      { name: "Ardra",      start: 66.6667,  end: 80,       lord: "Rahu" },
+      { name: "Punarvasu",  start: 80,       end: 93.3333,  lord: "Jupiter" },
+      { name: "Pushya",     start: 93.3333,  end: 106.6667, lord: "Saturn" },
+      { name: "Ashlesha",   start: 106.6667, end: 120,      lord: "Mercury" },
+      { name: "Magha",      start: 120,      end: 133.3333, lord: "Ketu" },
+      { name: "Purva Phalguni", start: 133.3333, end: 146.6667, lord: "Venus" },
+      { name: "Uttara Phalguni", start: 146.6667, end: 160, lord: "Sun" },
+      { name: "Hasta",      start: 160,      end: 173.3333, lord: "Moon" },
+      { name: "Chitra",     start: 173.3333, end: 186.6667, lord: "Mars" },
+      { name: "Swati",      start: 186.6667, end: 200,      lord: "Rahu" },
+      { name: "Vishakha",   start: 200,      end: 213.3333, lord: "Jupiter" },
+      { name: "Anuradha",   start: 213.3333, end: 226.6667, lord: "Saturn" },
+      { name: "Jyeshtha",   start: 226.6667, end: 240,      lord: "Mercury" },
+      { name: "Mula",       start: 240,      end: 253.3333, lord: "Ketu" },
+      { name: "Purva Ashadha", start: 253.3333, end: 266.6667, lord: "Venus" },
+      { name: "Uttara Ashadha", start: 266.6667, end: 280, lord: "Sun" },
+      { name: "Shravana",   start: 280,      end: 293.3333, lord: "Moon" },
+      { name: "Dhanishta",  start: 293.3333, end: 306.6667, lord: "Mars" },
+      { name: "Shatabhisha", start: 306.6667, end: 320,     lord: "Rahu" },
+      { name: "Purva Bhadrapada", start: 320, end: 333.3333, lord: "Jupiter" },
+      { name: "Uttara Bhadrapada", start: 333.3333, end: 346.6667, lord: "Saturn" },
+      { name: "Revati",     start: 346.6667, end: 360,      lord: "Mercury" },
     ];
-    const dashaYears = {
-      "Ketu": 7, "Venus": 20, "Sun": 6, "Moon": 10, "Mars": 7, "Rahu": 18, "Jupiter":     function getNakshatra(deg) {
-      deg = deg % 360;
-      for (let n of nakshatras) {
-        if (deg >= n.start && deg < n.end) return n;
+    const subLords = [ "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury" ];
+
+    function getNakshatra(degree) {
+      let normalized = degree % 360;
+      for (let nak of nakshatras) {
+        if (normalized >= nak.start && normalized < nak.end) return nak;
       }
       return nakshatras[0];
     }
 
-    // Find Sub-Lord
-    function getSubLord(deg)      let pd = (deg - nStart) / nLen; // Portion in Nakshatra
-      // Sub-lords are in Vimshottari order, starting from lord of Nakshatra
-      let lordSeq = [];
-      let sidx = subLordsSeq.indexOf(n.lord);
-      for(let i(dashaYears[nm]/sumYears));
-      let cum = 0;
-      for(let j=0;j<9;j++) {
-        let from = cum, to = cum+subLen[j];
-        if (pd>=from && pd<to) return lordSeq[j];
-        cum+=subLen[j];
-      }
-      return lordSeq[8];
+    function getSubLord(degree) {
+      const posIn360 = degree % 360;
+      const nakIndex = Math.floor(posIn360 / 13.3333);
+      const startOfNak = nakIndex * 13.3333;
+      const posInNak = posIn360 - startOfNak;
+      const subLength = 13.3333 / 9;
+      const subIndex = Math.floor(posInNak / subLength);
+      return subLords[subIndex];
     }
 
-    const apiBase = " {
+    // --- KP Table Demo (You must replace this with actual API call for real planetary positions) ---
+    document.getElementById('kpForm').onsubmit = function(e) {
       e.preventDefault();
       const fd = new FormData(this);
       const date = fd.get('date');
@@ -66,66 +88,47 @@
       const lat = fd.get('lat');
       const lon = fd.get('lon');
       const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = "Loading...";
-      try {
-        // API call
-        const url = `${apiBase}?date=${date}&time=${time}&lat=${lat}&lon=${lon}`;
-        const resp = await fetch(url);
-        if (!resp.ok) throw new Error("API Error");
-        const data = await resp.json();
-        if (!data.planets || !data.cusps) throw new Error("Invalid data from API");
-
-        // Compose rows: planets + cusps
-        let rows = [];
-        for (const p of data.planets) {
-          let absdeg = (p.sign_num-1)*30 + p.deg;
-          let nak = getNakshatra(absdeg);
-          let sub = getSubLord(absdeg);
-          rows.push({ name: p.name, type: "Planet", sign: p.sign, deg: p.deg.toFixed(3), nak: nak.name, star: nak.lord, sub: sub });
-        }
-        for (let i=0;i<data.cusps.length;i++) {
-          let c = data.cusps[i];
-          let absdeg = c.deg;
-          let sign = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"][Math.floor(absdeg/30)];
-          let nak = getNakshatra(absdeg);
-          let sub = getSubLord(absdeg);
-          rows.push({ name: `Cusp ${i+1}`, type: "Cusp", sign: sign, deg: (absdeg%30).toFixed(3), nak: nak.name, star: nak.lord, sub: sub });
-        }
-
-        // Render table
-        let html = `
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Sign</th>
-              <th>Deg</th>
-              <th>Nakshatra</th>
-              <th>Star Lord</th>
-              <th>Sub Lord</th>
-            </tr>
-          </thead>
-          <tbody>
-        `;
-        for (let r of rows) {
-          html += `<tr>
-            <td>${r.name}</td>
-            <td>${r.type}</td>
-            <td>${r.sign}</td>
-            <td>${r.deg}</td>
-            <td>${r.nak}</td>
-            <td>${r.star}</td>
-            <td>${r.sub}</td>
-          </tr>`;
-        }
-        html += "</tbody></table>";
-        resultDiv.innerHTML = html;
-
-      } catch (err) {
-        resultDiv.innerHTML = `<div class='error'>Unable to retrieve KP table. Please check your inputs or try again later.</div>`;
+      if (!date || !time || !lat || !lon) {
+        resultDiv.innerHTML = "<div class='error'>All fields required!</div>";
+        return;
       }
-    }
+      // --- Dummy demo data for planets (replace with API data for real chart) ---
+      const demoPlanets = [
+        { name: "Sun", deg: 123.4 },
+        { name: "Moon", deg: 45.3 },
+        { name: "Mars", deg: 201.8 },
+        { name: "Mercury", deg: 67.2 },
+        { name: "Jupiter", deg: 156.7 },
+        { name: "Venus", deg: 312.4 },
+        { name: "Saturn", deg: 289.6 },
+        { name: "Rahu", deg: 88.9 },
+        { name: "Ketu", deg: 268.9 }
+      ];
+      let html = `<table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Deg</th>
+            <th>Nakshatra</th>
+            <th>Star Lord</th>
+            <th>Sub Lord</th>
+          </tr>
+        </thead>
+        <tbody>`;
+      for (let p of demoPlanets) {
+        const nak = getNakshatra(p.deg);
+        const sub = getSubLord(p.deg);
+        html += `<tr>
+          <td>${p.name}</td>
+          <td>${p.deg.toFixed(2)}</td>
+          <td>${nak.name}</td>
+          <td>${nak.lord}</td>
+          <td>${sub}</td>
+        </tr>`;
+      }
+      html += "</tbody></table>";
+      resultDiv.innerHTML = html;
+    };
   </script>
 </body>
 </html>

@@ -4,14 +4,13 @@
   <meta charset="UTF-8">
   <title>Full KP Table – Sathyadarshana</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    body { background: #161926; color: #e2e8ff; font-family: sans-serif; margin: 0; }
+  < #161926; color: #e2e8ff; font-family: sans-serif; margin: 0; }
     .main { max-width: 500px; margin: auto; padding: 2em; }
     form { display: flex; flex-direction: column; gap: 1em; }
     label { display: flex; flex-direction: column; font-size: 1em; }
     .result { margin-top: 2em; background: #232547; border-radius: 0.5em; padding: 1em; }
     table { width: 100%; border-collapse: collapse; color: #e2e8ff; }
-    th, td { border: 1px solid #283048; padding: 0.5em; text: #1cfafa; color: #161926; }
+    th, td { border: 1px solid #283048; padding: 0.5em; color: #161926; }
     .error { color: #ff5b5b; font-weight: 700; }
   </style>
 </head>
@@ -20,7 +19,7 @@
     <h1>Full KP Table</h1>
     <form id="kpForm">
       <label>Birth Date <input type="date" name="date" required></label>
-label>Birth Time <input type="time" name="time" required></label>
+      <label>Birth Time <input type="time" name="time" required></label>
       <label>Latitude <input type="number" step="0.0001" name="lat" required placeholder="Ex: 7.1"></label>
       <label>Longitude <input type="number" step="0.0001" name="lon" required placeholder="Ex: 79.9"></label>
       <button type="submit">Get KP Table</button>
@@ -40,25 +39,23 @@ label>Birth Time <input type="time" name="time" required></label>
       { name: "Pushya",     start: 93.3333,  end: 106.6667, lord: "Saturn" },
       { name: "Ashlesha",   start: 106.6667, end: 120,      lord: "Mercury" },
       { name: "Magha",      start: 120,      end: 133.3333, lord: "Ketu" },
-      { name: "Purva Phalguni", start: 133.3333, end: 146.6667, lord: "Venus" },
-      { name: "Uttara Phalguni", start: 146.6667, end: 160, lord: "Sun" },
+      { name: "Purva Phalguni",   start: 133.3333, end: 146.6667, lord: "Venus" },
+      { name: "Uttara Phalguni",  start: 146.6667, end: 160,      lord: "Sun" },
       { name: "Hasta",      start: 160,      end: 173.3333, lord: "Moon" },
-      { name: "Chitra",     start: 173.3333, end: 186.6667, lord: "Mars" },
-      { name: "Swati",      start: 186.6667, end: 200,      lord: "Rahu" },
+      { name: "Chitra",     start: 173.3333, end: 186 "Swati",      start: 186.6667, end: 200,      lord: "Rahu" },
       { name: "Vishakha",   start: 200,      end: 213.3333, lord: "Jupiter" },
       { name: "Anuradha",   start: 213.3333, end: 226.6667, lord: "Saturn" },
       { name: "Jyeshtha",   start: 226.6667, end: 240,      lord: "Mercury" },
-      { name: "Mula",       start: 240,      end: 253.3333, lord: "Ketu" },
-      { name: "Purva Ashadha", start: 253.3333, end: 266.6667, lord: "Venus" },
-      { name: "Uttara Ashadha", start: 266.6667, end: 280, lord: "Sun" },
+      { name: "Mula 253.3333, end: 266.6667, lord: "Venus" },
+      { name: "Uttara Ashadha",   start: 266.6667, end: 280,      lord: "Sun" },
       { name: "Shravana",   start: 280,      end: 293.3333, lord: "Moon" },
       { name: "Dhanishta",  start: 293.3333, end: 306.6667, lord: "Mars" },
-      { name: "Shatabhisha", start: 306.6667, end: 320,     lord: "Rahu" },
+      { name: "Shatabhisha",     start: 306.6667, end: 320,      lord: "Rahu" },
       { name: "Purva Bhadrapada", start: 320, end: 333.3333, lord: "Jupiter" },
-      { name: "Uttara Bhadrapada", start: 333.3333, end: 346.6667, lord: "Saturn" },
-      { name: "Revati",     start: 346.6667, end: 360,      lord: "Mercury" },
+      { name: "Uttara Bhadrapada",start: 333.3333, end: 346.6667, lord: "Saturn" },
+      { name: "Revati",     start: 346.6667, end: 360,      lord: "Mercury" }
     ];
-    const subLords = [ "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury" ];
+    const subLords = [ "Ketu "Rahu", "Jupiter", "Saturn", "Mercury" ];
 
     function getNakshatra(degree) {
       let normalized = degree % 360;
@@ -72,13 +69,11 @@ label>Birth Time <input type="time" name="time" required></label>
       const posIn360 = degree % 360;
       const nakIndex = Math.floor(posIn360 / 13.3333);
       const startOfNak = nakIndex * 13.3333;
-      const posInNak = posIn360 - startOfNak;
-      const subLength = 13.3333 / 9;
+     9;
       const subIndex = Math.floor(posInNak / subLength);
       return subLords[subIndex];
     }
 
-    // --- KP Table Demo (You must replace this with actual API call for real planetary positions) ---
     document.getElementById('kpForm').onsubmit = function(e) {
       e.preventDefault();
       const fd = new FormData(this);
@@ -91,7 +86,7 @@ label>Birth Time <input type="time" name="time" required></label>
         resultDiv.innerHTML = "<div class='error'>All fields required!</div>";
         return;
       }
-      // --- Dummy demo data for planets (replace with API data for real chart) ---
+      // Dummy planet data (replace with API in production)
       const demoPlanets = [
         { name: "Sun", deg: 123.4 },
         { name: "Moon", deg: 45.3 },
@@ -126,8 +121,6 @@ label>Birth Time <input type="time" name="time" required></label>
         </tr>`;
       }
       html += "</tbody></table>";
-      resultDiv.innerHTML = html;
-    };
-  </script>
+      resultDiv.innerHTML = html </script>
 </body>
 </html>

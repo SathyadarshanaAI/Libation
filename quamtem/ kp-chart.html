@@ -295,6 +295,93 @@
     onReady(bindTzBtn);
     onReady(bindPlaceGeocode);
     onReady(bindForm);
-  </script>
+  </script><script>
+function onReady(fn){if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',fn,{once:true});}else{fn();}}
+
+onReady(function(){
+  // --- Auto-Detect Timezone ---
+  document.getElementById('detectTzBtn').onclick = function() {
+    try {
+      let offset = -new Date().getTimezoneOffset(),
+        sign = offset/60)).padStart(2,'0'),
+        mm = String(abs%60).padStart(2,'0');
+      document.getElementById('timezone').value = `${sign}${hh}:${mm}`;
+    }catch{ document.getElementById('timezone').value = '+05:30'; }
+  };
+
+  // --- Place Geocode to Lat/Lon (optional, if fields exist) ---
+  const pob = document enable this:
+  /*
+  if(pob){
+    let timer; let lastQuery='';
+    pob.addEventListener('input', function(){
+      const val = this.value.trim();
+      if(val.length < 2 || val===lastQuery) return;
+      lastQuery=val; clearTimeout(timer);
+      timer = setTimeout document.getElementById('lat').value = parseFloat(data[0].lat).toFixed(4);
+            document.getElementById('lon').value = parseFloat(data[0].lon).toFixed(4);
+          }
+        }catch{}
+      }, 700);
+    });
+  }
+  */
+
+  // --- DEMO PLANETS (fallback) ---
+  const DEMO_PLANETS = [
+    { name:'Sun',    degree:123.456 },
+    { name:'Moon',   degree:200.123 },
+    { name:'Mercury',degree:85.234  },
+    { name:'Venus',  degree:154.567 },
+    { name:'Mars',   degree:210.987 },
+    { name:'Saturn', degree:305.432 },
+    { name:'Rahu',   degree:45.876  },
+    { name:'Ketu',   degree:225.876 }
+  ];
+
+  // --- Render Table ---
+  function renderTable(planets){
+    let html = '<table><tr><th>Planet</th><th>Degree</th></tr>';
+    for(const p of planets){ html += `<tr><td>${p.name}</td><td>${p.degree.toFixed(3)}</td></tr>`; }
+    html+='</table>';
+    document.getElementById('planetTable').innerHTML = html;
+  }
+
+  // --- Render Chart (simple wheel) ---
+  function drawChart(planets){
+    const c = document.getElementById('astroChart');
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0,0,360,360);
+    ctx.beginPath(); ctx.arc(180,180,150,0,2*Math.PI);
+    ctx.strokeStyle='#ffd700'; ctx.lineWidth=4; ctx.stroke();
+    // 12 house lines
+    for(let i=0;i<12;i++){
+      const a = (i*30-90)*Math.PI/180;
+      ctx.beginPath(); ctx.moveTo(180,180);
+      ctx.lineTo(180+150*Math.cos(a),180+150*Math.sin(a));
+      ctx.strokeStyle='#aaa'; ctx.lineWidth=1; ctx.stroke();
+    }
+    planets.forEach(p=>{
+      const a = ((p.degree % ) * Math.PI / 180;
+      const x = 180 + 120 * Math.cos(a);
+      const y = 180 + 120 * Math.sin(a);
+      ctx.beginPath(); ctx.arc(x,y,10,0,2*Math.PI);
+      ctx.fillStyle = '#ffd700'; ctx.fill();
+      ctx.fillStyle = "#000"; ctx.font = "bold 12px Arial";
+      ctx.fillText(p.name[0], x-5, y+5);
+    });
+  }
+
+  // --- Form Handler ---
+  document.getElementById('kpForm').onsubmit = function(e){
+    e.prevent.display='block';
+    document.getElementById('resultMsg').textContent = '';
+    renderTable(DEMO_PLANETS);
+    drawChart(DEMO_PLANETS);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('resultMsg').textContent = '✓ Chart generated (demo data)';
+  };
+});
+</script>
 </body>
 </html>

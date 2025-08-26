@@ -2,31 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>KP Chart Generator – Modern Gold Edition</title>
+  <title>KP Chart Generator – Gold Edition</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
     :root {
       --main-bg: #13151f;
       --panel-bg: #191b2b;
-      --panel-glow: #393d5a;
-      --accent: #ffd700; /* gold */
+      --accent: #ffd700;
       --accent2: #1cfafa;
-      --accent3: #e6b2ff;
       --serenity: #e2f0ff;
-      --white: #fff;
-      --gray: #a7a7c2;
-      --font-main: 'Segoe UI', 'Arial', sans-serif;
       --chakra: linear-gradient(90deg,#ffd700,#f3e8c7,#fffce0,#fae3a8);
     }
-    html,body { background:var(--main-bg); color:var(--serenity); font-family:var(--font-main); margin:0; min-height:100vh; }
-    .wrap {
-      max-width:540px; margin:32px auto; padding:24px 16px 16px 16px;
-      background:var(--panel-bg); border-radius:20px;
-      box-shadow:0 0 44px 0 #1e222f;
-      animation: neonBox 1.2s cubic-bezier(.9,.2,.5,1.7);
-    }
-    @keyframes neonBox { 0% { box-shadow:0 0 0 0 #393d5a;} 100%{ box-shadow:0 0 44px 0 #1e222f;} }
+    html,body { background:var(--main-bg); color:var(--serenity); font-family:'Segoe UI',Arial,sans-serif; margin:0; min-height:100vh; }
+    .wrap { max-width:540px; margin:32px auto; padding:24px 16px 16px 16px; background:var(--panel-bg); border-radius:20px; box-shadow:0 0 44px 0 #1e222f; }
     h2 { font-weight:700; letter-spacing:0.03em; font-size:1.34rem; margin-top:0; color:var(--accent); text-shadow:0 0 10px #ffd70080;}
     label { display:block; margin:8px 0 4px; font-size:1rem; color:var(--accent2);}
     input, select, textarea {
@@ -40,23 +29,14 @@
       box-shadow:0 0 8px 1px var(--accent);
     }
     button {
-      background: var(--chakra);
-      color:#1d202e; border:0; border-radius:11px;
+      background: var(--chakra); color:#1d202e; border:0; border-radius:11px;
       padding:10px 22px; margin:10px 0; cursor:pointer;
       font-weight:700; letter-spacing:0.04em; font-size:1.08rem;
       box-shadow:0 0 14px 1px #ffd70090,0 2px 8px #181818;
-      text-shadow:0 0 2px #fff5;
-      transition:filter .18s;
+      text-shadow:0 0 2px #fff5; transition:filter .18s;
     }
     button:hover { filter:brightness(1.2) drop-shadow(0 0 6px var(--accent)); }
-    #map {
-      height: 150px; width:97%; border-radius:11px; margin:13px auto 14px auto;
-      box-shadow:0 0 14px 2px #463c23;
-      min-width:170px;
-      max-width:420px;
-      background:#232547;
-      display:block;
-    }
+    #map { height: 150px; width:97%; border-radius:11px; margin:13px auto 14px auto; box-shadow:0 0 14px 2px #463c23; min-width:170px; max-width:420px; background:#232547; display:block; }
     .row { display:flex; gap:10px; }
     .row > div { flex:1; }
     .status { font-size:14px; color:var(--accent2); margin-top:7px; min-height:20px;}
@@ -69,12 +49,7 @@
     textarea { width:100%; background:#22223b; color:#ffd700; border-radius:8px; border:1.5px solid #1b2b4a; padding:7px; margin-top:13px; font-size:0.98rem;}
     .gold-glow { filter:drop-shadow(0 0 7px #ffd70077); }
     .rasi-label { font-weight:700; letter-spacing:.05em; font-size:1.01rem; fill:var(--accent); text-shadow:0 0 5px #fff2;}
-    .form-glow { 
-      background:rgba(20,18,27,0.96); 
-      box-shadow:0 0 18px 4px #ffd70060,0 0 4px 1px #262b34; 
-      border-radius:13px; padding:16px 10px 7px 10px; margin-bottom:18px;
-      transition:box-shadow .24s;
-    }
+    .form-glow { background:rgba(20,18,27,0.96); box-shadow:0 0 18px 4px #ffd70060,0 0 4px 1px #262b34; border-radius:13px; padding:16px 10px 7px 10px; margin-bottom:18px; transition:box-shadow .24s;}
     .form-glow:focus-within { box-shadow:0 0 25px 5px var(--accent2); }
     @media (max-width:600px) {
       .wrap {padding:2px;}
@@ -136,29 +111,62 @@
     </div>
   </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="street-map.js"></script>
   <script>
-    // Time Zone auto-detect
-    document.getElementById('detectTzBtn').onclick = function() {
-      try {
-        let offset = -new Date().getTimezoneOffset();
-        let sign = offset >= 0 ? '+' : '-';
-        let absOffset = Math.abs(offset);
-        let hr = Math.floor(absOffset / 60);
-        let min = absOffset % 60;
-        let tz = `${sign}${String(hr).padStart(2,'0')}:${String(min).padStart(2,'0')}`;
-        document.getElementById('timezone').value = tz;
-      } catch {
-        document.getElementById('timezone').value = '+05:30';
-      }
-    };
+    // --- STREET MAP ---
+    let marker = null;
+    function initMap(){
+      const map = L.map('map', {
+        zoomControl: false,
+        attributionControl: false,
+        dragging: true,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        tap: false
+      }).setView([20, 0], 2);
 
-    // KP Logic (DEMO DATA – replace with API for real charts)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18
+      }).addTo(map);
+
+      setTimeout(() => {
+        map.flyTo([7.1, 79.9], 7, { animate: true, duration: 2.2 });
+      }, 600);
+
+      map.on('click', function(e) {
+        if (marker) map.removeLayer(marker);
+        marker = L.marker(e.latlng).addTo(map);
+        map.flyTo(e.latlng, 15, { animate: true, duration: 1.5 });
+        document.getElementById('lat').value = e.latlng.lat.toFixed(4);
+        document.getElementById('lon').value = e.latlng.lng.toFixed(4);
+      });
+    }
+    window.addEventListener('DOMContentLoaded',initMap);
+
+    // --- TIMEZONE AUTO-DETECT ---
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('detectTzBtn').onclick = function() {
+        try {
+          let offset = -new Date().getTimezoneOffset();
+          let sign = offset >= 0 ? '+' : '-';
+          let absOffset = Math.abs(offset);
+          let hr = Math.floor(absOffset / 60);
+          let min = absOffset % 60;
+          let tz = `${sign}${String(hr).padStart(2,'0')}:${String(min).padStart(2,'0')}`;
+          document.getElementById('timezone').value = tz;
+        } catch {
+          document.getElementById('timezone').value = '+05:30';
+        }
+      };
+    });
+
+    // --- KP CHART LOGIC (demo only, replace with API or calculations for real chart) ---
     const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
     const NAKS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
     const DASHAS = [
       {lord:'Ketu', years:7}, {lord:'Venus', years:20}, {lord:'Sun', years:6}, {lord:'Moon', years:10},
-      {lord:'Mars', years:7}, {lord:'Rahu', years:18}, {lord:'Jupiter', years:16}, {lord:'Saturn', years:19}, {lord:'Mercury', years:17}
+      {lord:'Mars', years:7}, {Rahu', years:18}, {lord:'Jupiter', years:16}, {lord:'Saturn', years:19}, {lord:'Mercury', years:17}
     ];
     const NAK_LORD = (()=>{const list=[];let idx=0;for(let i=0;i<27;i++){list.push(DASHAS[idx%9].lord);idx++;}return list;})();
     const mod = (a,b)=>((a%b)+b)%b;
@@ -184,39 +192,25 @@
       for(let i=0;i<subArcs.length;i++){acc+=subArcs[i];if(within<=acc+1e-9){return rotated[i].lord}}
       return rotated[rotated.length-1].lord;
     }
+    function kpRashiSymbol(i){ const ras = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"]; return ras[i]; }
 
-    // GOLD KP Rectangular Wheel with "chalk" gold rashi icons
     function renderWheel(planets){
       const W=330,H=330,cell=82,off=27;
       let svg = `<svg viewBox="0 0 ${W} ${H}" width="260" height="260" style="background:transparent;">`;
-
-      // Draw outer rect
       svg += `<rect x="4" y="4" width="${W-8}" height="${H-8}" rx="28" ry="28" fill="none" stroke="#ffd700" stroke-width="3.2" filter="url(#goldglow)"/>`;
-
-      // Rashi rectangles + gold icons
-      const rashiRect = [
-        [0,0], [cell,0], [cell*2,0],
-        [cell*2,cell], [cell*2,cell*2],
-        [cell,cell*2], [0,cell*2],
-        [0,cell], [cell,cell]
-      ];
-      // Rectangular grid + gold rashi icons
       for(let i=0;i<12;i++){
         const x = [0,1,2,2,2,1,0,0,1,1,1,1][i]*cell+off;
         const y = [0,0,0,1,2,2,2,1,1,1,1,1][i]*cell+off;
         svg += `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="14" ry="14" fill="none" stroke="#ffd70077" stroke-width="2"/>`;
-        svg += `<text x="${x+cell/2}" y="${y+cell/2-8}" font-size="2.1em" font-family="serif" fill="#ffd700" text-anchor="middle" dominant-baseline="middle" style="font-weight:900;filter:drop-shadow(0 0 4px #ffd70050);">`+kpRashiSymbol(i)+`</text>`;
+        svg += `<text x="${x+cell/2}" y="${y+cell/2-8}" font-size="2.1em" font-family="serif" fill="#ffd700" text-anchor="middle" dominant-baseline="middle" style="font-weight:900;filter:drop-shadow(0 0 4px #ffd70050);">${kpRashiSymbol(i)}</text>`;
         svg += `<text x="${x+cell/2}" y="${y+cell-18}" font-size="0.95em" fill="#ffd700bb" text-anchor="middle" class="rasi-label">${SIGNS[i]}</text>`;
       }
-      // Planets (place demo: center of each sign box)
       planets.forEach(p=>{
         let sign = Math.floor(mod(p.degree,360)/30);
         const x = [0,1,2,2,2,1,0,0,1,1,1,1][sign]*cell+off+cell/2;
         const y = [0,0,0,1,2,2,2,1,1,1,1,1][sign]*cell+off+cell/2;
         svg += `<circle cx="${x}" cy="${y}" r="17" fill="#191b2b" stroke="#ffd700" stroke-width="3" class="gold-glow"/><text x="${x}" y="${y+5}" font-size="1.08em" fill="#fff" font-weight="700" text-anchor="middle">${p.name[0]}</text>`;
       });
-
-      // Gold glow filter
       svg += `<defs>
         <filter id="goldglow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       </defs>`;
@@ -224,14 +218,6 @@
       document.getElementById('wheel').innerHTML=svg;
     }
 
-    // Chalk/Gold KP rashi symbols (Unicode or SVG art)
-    function kpRashiSymbol(i){
-      // Pencil/chalk style via Unicode (as best as possible)
-      const ras = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
-      return ras[i];
-    }
-
-    // Table
     function renderTable(planets){
       const tbody=document.getElementById('tbl'); tbody.innerHTML='';
       planets.forEach(p=>{

@@ -25,7 +25,7 @@
       text-align: center;
       min-height: 100vh;
     }
-    .toplink {
+    a.toplink {
       position: fixed;
       left: 14px;
       top: 14px;
@@ -35,135 +35,106 @@
       border-radius: 8px;
       text-decoration: none;
       z-index: 5;
-      font-size: 1.08rem;
-      box-shadow: 0 0 8px #38bdf822;
-      font-weight: 500;
       opacity: 0.93;
       transition: background .18s;
     }
-    .toplink:focus, .toplink:hover {
+    a.toplink:hover, a.toplink:focus {
       background: #101b2e;
       color: #fff;
       outline: 2px solid #7dd3fc;
     }
     header {
-      padding: 2rem 0 1rem;
+      padding: 3.2rem 1rem 1.2rem;
     }
     header h1 {
-      font-size: 2.18rem;
-      color: var(--brand);
       margin: 0 0 .28rem;
-      letter-spacing: 0.01em;
+      letter-spacing: .01em;
       font-weight: 700;
     }
     header p {
       font-size: 1.08rem;
       color: var(--muted);
-      margin: 0 0 .2rem 0;
-      letter-spacing: 0.02em;
-      opacity: 0.98;
+      margin: 0;
     }
+    main { padding: 1rem; }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.5rem;
       max-width: 1000px;
       margin: 2.3rem auto;
-      align-items: center;
-      min-height: 180px;
+      align-items: stretch;
       padding: 1.45rem;
-      border-radius: 1.1rem;
-      background: rgba(30,41,59,.96);
-      box-shadow: 0 0 16px var(--cardGlow)33;
-      border: 2px solid transparent;
-      transition: .22s;
-      cursor: pointer;
-      user-select: none;
     }
     .card {
       text-decoration: none;
       color: var(--text);
       background: rgba(2,6,23,.94);
-      border-radius: 1rem;
-      box-shadow: 0 10px 26px var(--cardGlow)99;
       border: 2px solid transparent;
-      padding: 2rem 1.2rem 1.2rem 1.2rem;
+      border-radius: 14px;
+      padding: 2rem 1.2rem 1.2rem;
       min-height: 155px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: border .18s, transform .18s;
+      justify-content: center;
+      transition: border .18s, transform .18s, box-shadow .18s;
+      outline: none;
     }
     .card:hover, .card:focus {
-      border-color: var(--cardGlow);
+      border-color: var(--accent);
+      box-shadow: 0 0 22px 0 #38bdf833;
       transform: translateY(-7px) scale(1.03);
-      outline: none;
     }
     .card span {
       font-size: 2.18rem;
-      margin-bottom: .5rem;
+      margin: .12em 0 .5rem;
       display: block;
       filter: drop-shadow(0 0 12px #38bdf855);
-      margin-top: .12em;
     }
     .card h2 {
       font-size: 1.22rem;
       color: var(--accent);
-      letter-spacing: 0.01em;
+      letter-spacing: .01em;
       font-weight: 600;
-      margin: 0 0 .3rem 0;
+      margin: .1rem 0 .3rem;
     }
     .card div {
       color: var(--muted);
-      font-size: 1.01em;
-      text-align: center;
+      font-size: 1.01rem;
     }
     footer {
-      margin: 2.6rem 0 1.1rem;
-      border-top: 1.4px solid var(--accent);
-      padding-top: 1rem;
-      color: var(--brand);
-      font-size: 1rem;
-      letter-spacing: .02em;
-      opacity: 0.93;
+      padding: 2rem 0 3rem;
+      color: var(--muted);
+      font-size: .95rem;
     }
-    @media (max-width: 700px) {
-      .grid { gap: 1.05rem; padding: 1rem; }
-      .card { min-height: 120px; padding: 1.1rem; }
-    }
-    @media (max-width: 500px) {
+    @media (max-width:700px) {
       header h1 { font-size: 1.32rem; }
-      .card { min-height: 100px; padding: .85rem; }
-      .card span { font-size: 1.3rem; }
-      .grid { gap: .8rem; }
-      .card h2 { font-size: 1rem; }
+      .grid { gap: .95rem; padding: 1rem; }
+      .card { min-height: 120px; padding: 1rem; }
+      .card span { font-size: 1.6rem; }
+      .card h2 { font-size: 1.05rem; }
     }
   </style>
 </head>
 <body>
-  <!-- Home Link -->
-  <a class="toplink" href="./index.html" aria-label="Go to Home page">← Home</a>
+  <a href="./index.html" class="toplink" aria-label="Go Home">← Home</a>
 
   <header>
     <h1>Astrology Hub</h1>
     <p>All astrological tools at your fingertips</p>
   </header>
 
-  <!-- Dashboard Cards -->
   <main>
     <div class="grid" aria-label="Astrology Tools">
-      <!-- KP Chart Pro Card -->
-      <a href="./quamtem/kp-astrology-chart-pro.html" class="card" aria-label="KP Chart Pro">
+      <!-- ✅ Clean KP card only -->
+      <a href="./quamtem/kp-chart.html" class="card" aria-label="KP Chart Pro">
         <span aria-hidden="true">🌟</span>
         <h2>KP Chart Pro</h2>
-        <div>KP Chart Table &amp; Wheel</div>
+        <div>Open KP Chart (Table &amp; Wheel)</div>
       </a>
-      <!-- KP Astrology Report Card (now only links to kp-astrology-chart-pro.html) -->
-      <a href="./quamtem/kp-astrology-chart-pro.html" class="card" aria-label="KP Astrology Report">
-        <span aria-hidden="true">📝</span>
-        <h2>KP Astrology Report</h2>
-        <div>Fill birth details → Chart &amp; Report</div>
-      </a>
+
+      <!-- Other tools remain same -->
       <a href="./vedic-astrology.html" class="card" aria-label="Vedic Astrology">
         <span aria-hidden="true">📜</span>
         <h2>Vedic Astrology</h2>
@@ -177,12 +148,7 @@
       <a href="./palmistry.html" class="card" aria-label="Palmistry">
         <span aria-hidden="true">✋</span>
         <h2>Palmistry</h2>
-        <div>Hand Line Analysis</div>
-      </a>
-      <a href="./nadi-kp.html" class="card" aria-label="Nadi + KP">
-        <span aria-hidden="true">📚</span>
-        <h2>Nadi + KP</h2>
-        <div>Combined Ancient Techniques</div>
+        <div>Hand Analysis &amp; Signs</div>
       </a>
       <a href="./geo-vision.html" class="card" aria-label="Geo Vision">
         <span aria-hidden="true">🌐</span>

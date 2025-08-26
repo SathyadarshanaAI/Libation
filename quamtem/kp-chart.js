@@ -1,119 +1,116 @@
-// --- Enhanced KP Nakshatra/Sub Lord Logic (KP System Standard) ---
-const NAK_DEG = 360 / 27;
-const nakshatras = [
-  { name: "Ashwini", lord: "Ketu" },
-  { name: "Bharani", lord: "Venus" },
-  { name: "Krittika", lord: "Sun" },
-  { name: "Rohini", lord: "Moon" },
-  { name: "Mrigashira", lord: "Mars" },
-  { name: "Ardra", lord: "Rahu" },
-  { name: "Punarvasu", lord: "Jupiter" },
-  { name: "Pushya", lord: "Saturn" },
-  { name: "Ashlesha", lord: "Mercury" },
-  { name: "Magha", lord: "Ketu" },
-  { name: "Purva Phalguni", lord: "Venus" },
-  { name: "Uttara Phalguni", lord: "Sun" },
-  { name: "Hasta", lord: "Moon" },
-  { name: "Chitra", lord: "Mars" },
-  { name: "Swati", lord: "Rahu" },
-  { name: "Vishakha", lord: "Jupiter" },
-  { name: "Anuradha", lord: "Saturn" },
-  { name: "Jyeshtha", lord: "Mercury" },
-  { name: "Mula", lord: "Ketu" },
-  { name: "Purva Ashadha", lord: "Venus" },
-  { name: "Uttara Ashadha", lord: "Sun" },
-  { name: "Shravana", lord: "Moon" },
-  { name: "Dhanishta", lord: "Mars" },
-  { name: "Shatabhisha", lord: "Rahu" },
-  { name: "Purva Bhadrapada", lord: "Jupiter" },
-  { name: "Uttara Bhadrapada", lord: "Saturn" },
-  { name: "Revati", lord: "Mercury" }
-];
-const dashas = [
-  { lord: "Ketu", years: 7 },
-  { lord: "Venus", years: 20 },
-  { lord: "Sun", years: 6 },
-  { lord: "Moon", years: 10 },
-  { lord: "Mars", years: 7 },
-  { lord: "Rahu", years: 18 },
-  { lord: "Jupiter", years: 16 },
-  { lord: "Saturn", years: 19 },
-  { lord: "Mercury", years: 17 }
-];
-function mod(a, b) { return ((a % b) + b) % b; }
-function getNakshatraInfo(degree) {
-  const deg = mod(degree, 360);
-  const nakIdx = Math.floor(deg / NAK_DEG);
-  const nak = nakshatras[nakIdx];
-  const start = nakIdx * NAK_DEG;
-  const posInNak = deg - start;
-  // Sub lord sequence
-  const startIndex = dashas.findIndex(d => d.lord === nak.lord);
-  const dashaSeq = [...dashas.slice(startIndex), ...dashas.slice(0, startIndex)];
-  // Sub lord spans
-  const subArcs = dashaSeq.map(d => NAK_DEG * (d.years / 120));
-  let acc = 0, subLord = dashaSeq[dashaSeq.length - 1].lord;
-  for (let i = 0; i < subArcs.length; i++) {
-    acc += subArcs[i];
-    if (posInNak < acc) {
-      subLord = dashaSeq[i].lord;
-      break;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KP Chart Generator | Lebetion</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    body {background:#0e1320; color:#e2f0ff; font-family:sans-serif;}
+    main {max-width:440px; margin:30px auto; padding:24px; background:#181f2e; border-radius:15px; box-shadow:0 0 23px #182b40;}
+    h1 {color:#fff; text-align:center; text-shadow:0 0 5px #60a5fa;}
+    label {display:block; margin:11px 0 2px;}
+    input {width:99%; padding:7px 10px; border-radius:6px; border:1px solid #262f44; background:#111b2c; color:#e2f0ff;}
+    button {padding:10px 24px; border-radius:8px; border:0; background:linear-gradient(90deg,#60a5fa,#e6b2ff,#2df3c2); color:#101d1f; font-weight:bold; margin-top:18px;}
+    #map {height:140px; width:100%; border-radius:9px; margin:13px 0 17px 0;}
+    .row {display:flex; gap:10px;}
+    .row > div {flex:1;}
+    #astroChart {display:block; margin:17px auto 0 auto; background:#1c2537; border-radius:50%;}
+    .status {color:#2df3c2; min-height:19px; margin-top:7px;}
+  </style>
+</head>
+<body>
+<main>
+  <h1>KP Chart Generator</h1>
+  <form id="kpForm">
+    <label>Name <input type="text" id="name" required></label>
+    <div class="row">
+      <div>
+        <label>Date of Birth <input type="date" id="dob" required></label>
+      </div>
+      <div>
+        <label>Time of Birth <input type="time" id="tob" required></label>
+      </div>
+    </div>
+    <label>Place of Birth <input type="text" id="pob" placeholder="e.g. Colombo"></label>
+    <div class="row">
+      <div>
+        <label>Latitude <input type="number" id="lat" step="0.0001" required placeholder="Click map or enter"></label>
+      </div>
+      <div>
+        <label>Longitude <input type="number" id="lon" step="0.0001" required placeholder="Click map or enter"></label>
+      </div>
+    </div>
+    <label>Time Zone <input type="text" id="timezone" required placeholder="+05:30"></label>
+    <button type="submit">Generate Chart</button>
+    <div class="status" id="status"></div>
+  </form>
+  <div id="map"></div>
+
+  <canvas id="astroChart" width="300" height="300"></canvas>
+</main>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  // --- Street map JS (Leaflet) ---
+  let marker = null;
+  const map = L.map('map', {
+    zoomControl: false,
+    attributionControl: false,
+    dragging: true,
+    scrollWheelZoom: false, doubleClickZoom: false,
+    boxZoom: false, keyboard: false, tap: false
+  }).setView([7.1, 79.9], 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+  map.on('click', function(e) {
+    if (marker) map.removeLayer(marker);
+    marker = L.marker(e.latlng).addTo(map);
+    document.getElementById('lat').value = e.latlng.lat.toFixed(4);
+    document.getElementById('lon').value = e.latlng.lng.toFixed(4);
+  });
+
+  // --- KP Chart Wheel (simple demo) ---
+  function drawWheel() {
+    const c = document.getElementById('astroChart');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0,0,300,300);
+    // Draw outer circle
+    ctx.strokeStyle = "#60a5fa";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(150,150,110,0,2*Math.PI); ctx.stroke();
+    // Draw 12 sectors
+    for(let i=0;i<12;i++){
+      let angle = (i*30-90)*Math.PI/180;
+      ctx.beginPath();
+      ctx.moveTo(150,150);
+      ctx.lineTo(150+110*Math.cos(angle),150+110*Math.sin(angle));
+      ctx.strokeStyle="#2df3c2";
+      ctx.lineWidth=1.5;
+      ctx.stroke();
+    }
+    // Draw sign labels
+    const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+    for(let i=0;i<12;i++){
+      let angle = (i*30+15-90)*Math.PI/180;
+      ctx.save();
+      ctx.translate(150+90*Math.cos(angle),150+90*Math.sin(angle));
+      ctx.fillStyle="#fff";
+      ctx.font="bold 13px sans-serif";
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.fillText(SIGNS[i],0,0);
+      ctx.restore();
     }
   }
-  // Pada
-  const pada = Math.floor(posInNak / (NAK_DEG / 4)) + 1;
-  return {
-    nakshatra: nak.name,
-    nakLord: nak.lord,
-    pada,
-    subLord
+  drawWheel();
+
+  // --- Form submit demo (no API, just wheel redraw + message) ---
+  document.getElementById('kpForm').onsubmit = function(e){
+    e.preventDefault();
+    drawWheel();
+    document.getElementById('status').textContent = '✓ Chart generated (demo)';
   };
-}
-
-// Degree formatting (DMS)
-function dms(deg){
-  deg = mod(deg, 360);
-  const d = Math.floor(deg);
-  const mFloat = (deg-d)*60;
-  const m = Math.floor(mFloat);
-  const s = Math.round((mFloat-m)*60);
-  return `${d}°${String(m).padStart(2,'0')}′${String(s).padStart(2,'0')}″`;
-}
-
-// --- Example: Table Rendering ---
-function renderKPTable(planets) {
-  let html = `<table border="1" cellpadding="4"><thead>
-    <tr><th>Planet</th><th>Degree</th><th>Nakshatra</th><th>Pada</th><th>Star Lord</th><th>Sub-Lord</th></tr>
-    </thead><tbody>`;
-  for (const p of planets) {
-    const nak = getNakshatraInfo(p.degree);
-    html += `<tr>
-      <td>${p.name}</td>
-      <td>${dms(p.degree)}</td>
-      <td>${nak.nakshatra}</td>
-      <td>${nak.pada}</td>
-      <td>${nak.nakLord}</td>
-      <td>${nak.subLord}</td>
-    </tr>`;
-  }
-  html += `</tbody></table>`;
-  document.getElementById('planetTable').innerHTML = html;
-}
-
-// --- Usage Example ---
-const demoPlanets = [
-  { name: "Sun", degree: 123.456 },
-  { name: "Moon", degree: 200.123 },
-  { name: "Mercury", degree: 85.234 },
-  { name: "Venus", degree: 154.567 },
-  { name: "Mars", degree: 210.987 },
-  { name: "Jupiter", degree: 275.654 },
-  { name: "Saturn", degree: 305.432 },
-  { name: "Rahu", degree: 45.876 },
-  { name: "Ketu", degree: 225.876 }
-];
-
-// Page load: show demo table
-window.onload = function() {
-  renderKPTable(demoPlanets);
-};
+</script>
+</body>
+</html>

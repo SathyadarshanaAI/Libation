@@ -166,7 +166,7 @@
     const NAKS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
     const DASHAS = [
       {lord:'Ketu', years:7}, {lord:'Venus', years:20}, {lord:'Sun', years:6}, {lord:'Moon', years:10},
-      {lord:'Mars', years:7}, {Rahu', years:18}, {lord:'Jupiter', years:16}, {lord:'Saturn', years:19}, {lord:'Mercury', years:17}
+      {lord:'Mars', years:7}, {lord:'Rahu', years:18}, {lord:'Jupiter', years:16}, {lord:'Saturn', years:19}, {lord:'Mercury', years:17}
     ];
     const NAK_LORD = (()=>{const list=[];let idx=0;for(let i=0;i<27;i++){list.push(DASHAS[idx%9].lord);idx++;}return list;})();
     const mod = (a,b)=>((a%b)+b)%b;
@@ -181,7 +181,7 @@
     }
     function signOf(deg){return SIGNS[Math.floor(mod(deg,360)/30)]}
     function nakIndex(deg){return Math.floor(mod(deg,360)/DEG_PER_NAK)}
-    function padaOf(deg){const within=mod(deg,DEG_PER_NAK);return Math.floor(within/DEG_PER_PADA)+1;}
+    function padaOf(deg){const within=mod(deg,360)%DEG_PER_NAK;return Math.floor(within/DEG_PER_PADA)+1;}
     function starLordOf(deg){return NAK_LORD[nakIndex(deg)]}
     function subLordOf(deg){
       const nIdx=nakIndex(deg);const startLord=NAK_LORD[nIdx];

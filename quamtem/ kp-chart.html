@@ -1,120 +1,226 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KP Chart Generator</title>
+  <title>KP Chart Generator — Neon Map‑First</title>  <!-- Leaflet CSS/JS for Street Map -->  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>  <style>
+    :root{
+      /* THEME */
+      --bg:#070c16;--bg2:#0d1626;--line:#1b2a45;--txt:#e7f3ff;--muted:#9cc7ff;
+      --neon:#60a5fa;--neon2:#2df3c2;--neon3:#e6b2ff;--radius:14px;
+      --shadow:0 8px 22px rgba(0,0,0,.35), 0 0 24px #0e2138 inset;
+    }
+    body{margin:0;background:
+      radial-gradient(1200px 800px at 20% 0%, #0c1430 0%, var(--bg) 48%),
+      radial-gradient(900px 600px at 120% 40%, #0b1a2c 0%, var(--bg) 62%),
+      var(--bg);
+      color:var(--txt);font-family:system-ui,Segoe UI,Arial}
+    .wrap{max-width:1100px;margin:18px auto;padding:12px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+    .btn,.btn-ghost{appearance:none;cursor:pointer;border:0;border-radius:12px;padding:10px 18px;font-weight:800;letter-spacing:.02em}
+    .btn{color:#07101b;background:linear-gradient(90deg,var(--neon),var(--neon3),var(--neon2));
+      box-shadow:0 8px 18px #07101b,0 0 10px 1px #2df3c244,0 0 24px #60a5fa22 inset}
+    .btn:hover{filter:brightness(1.12) drop-shadow(0 0 6px var(--neon3))}
+    .btn-ghost{background:#0b1220;color:#cdeafe;border:1px solid var(--line)}
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    .card{background:linear-gradient(180deg,#0c1628 0%, var(--bg2) 100%);
+      border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}
+    h1,h2{margin:8px 0 12px}
+    label{display:block;margin:10px 0 6px;color:var(--muted);font-weight:600}
+    input,select,textarea{width:100%;padding:10px 12px;font-size:15.5px;border-radius:12px;border:1px solid var(--line);outline:none;background:#0b1426;color:var(--txt);transition:box-shadow .2s,border-color .2s}
+    input:focus,select:focus,textarea:focus{border-color:var(--neon2);box-shadow:0 0 0 3px #2df3c233,0 0 12px 2px #2df3c233 inset}
 
-  <style>
-    body { margin:0; background:#0f172a; color:#e0f2fe; font-family:system-ui,Segoe UI,Arial }
-    .wrap { max-width:1100px; margin:20px auto; padding:12px }
-    h2 { margin:6px 0 12px }
-    .card { background:#0b1220; border:1px solid #1e293b; border-radius:12px; padding:14px; margin-bottom:16px }
-    label { display:block; margin:8px 0 4px; color:#93c5fd }
-    input,button { width:100%; padding:10px; border-radius:10px; border:1px solid #1e293b; background:#091426; color:#cdeafe }
-    button { cursor:pointer; margin-top:8px }
-    #map { height:300px; border-radius:12px; margin-top:10px }
-    table { width:100%; border-collapse:collapse; margin-top:12px }
-    th,td { border-bottom:1px solid #223149; padding:6px 10px; text-align:left }
-    th { background:#121b2a; color:#bfe1ff }
-    #wheel svg { width:100%; height:auto; max-width:520px; display:block; margin:auto }
-  </style>
-</head>
+    #map{height:300px;border-radius:14px;border:1px solid var(--line);box-shadow:0 0 18px #0d2237}
+
+    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:8px 10px;border-bottom:1px solid #203657}
+    th{background:#111b2e;color:#bfe1ff;font-weight:700}
+
+    #wheel svg{width:100%;height:auto;max-width:540px;display:block;margin:auto}
+    #wheel text{fill:#bfe1ff}
+    .muted{color:var(--muted);font-size:14px}
+  </style></head>
 <body>
-  <div class="wrap">
-
-    <!-- Map + Inputs -->
-    <div class="card">
-      <h2>Birth Details</h2>
-      <label>Name</label>
-      <input id="name" placeholder="Your name">
-
-      <label>Date & Time</label>
-      <input id="datetime" type="datetime-local">
-
-      <label>Place (click on map or enter coords)</label>
-      <div class="row">
-        <input id="lat" placeholder="Latitude">
-        <input id="lon" placeholder="Longitude">
-      </div>
-      <label>Time Zone <button id="btnAutoTz" type="button">Auto Detect</button></label>
-      <input id="timezone" placeholder="+05:30">
-
-      <div id="map"></div>
+<div class="wrap">
+  <div class="topbar">
+    <div style="display:flex;gap:8px;align-items:center">
+      <a class="btn-ghost" href="./index.html">← Start</a>
+      <button id="themeToggle" class="btn-ghost">Dim</button>
     </div>
-
-    <!-- Wheel + Table -->
+    <button id="btnReset" class="btn-ghost">✦ Reset saved</button>
+  </div>  <!-- 1) MAP + INPUTS (MAP FIRST) -->  <div class="card">
+    <h2>Birth Details</h2>
+    <div class="grid">
+      <div>
+        <label>Name</label>
+        <input id="name" placeholder="Your name"/>
+        <label>Date of Birth</label>
+        <input id="dob" type="date"/>
+        <label>Time of Birth</label>
+        <input id="tob" type="time"/>
+        <label>Place of Birth (type or use the map)</label>
+        <input id="pob" placeholder="e.g. Kandy or 7.2862, 80.6316"/>
+        <label>Time Zone <button id="detectTzBtn" type="button" class="btn-ghost" style="float:right;margin-top:-2px">Auto Detect</button></label>
+        <input id="timezone" placeholder="+05:30"/>
+        <label>Question (optional)</label>
+        <input id="question" placeholder="e.g. Career, marriage…"/>
+        <button id="genBtn" class="btn" style="margin-top:10px">Generate Chart</button>
+        <div id="status" class="muted" style="margin-top:8px">Tip: tap the map or type the place.</div>
+      </div>
+      <div>
+        <label>Pick on Map</label>
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>  <!-- 2) WHEEL + TABLE -->  <div class="grid">
     <div class="card">
       <h2>KP Wheel</h2>
       <div id="wheel"></div>
+    </div>
+    <div class="card">
       <h2>Planet Table</h2>
       <table>
         <thead>
-          <tr><th>Planet</th><th>Degree</th><th>Sign</th><th>Nakshatra</th><th>Pada</th><th>Star Lord</th><th>Sub-Lord</th></tr>
+          <tr>
+            <th>Planet</th><th>Degree</th><th>Sign</th><th>Nakshatra</th><th>Pada</th><th>Star Lord</th><th>Sub‑Lord</th>
+          </tr>
         </thead>
         <tbody id="tbl"></tbody>
       </table>
+      <h3 style="margin:12px 0 6px">JSON Preview</h3>
+      <textarea id="jsonPreview" rows="7" readonly style="width:100%;background:#0b1426;color:#bfe1ff;border:1px solid var(--line);border-radius:12px"></textarea>
     </div>
+  </div>  <div class="muted" style="margin:10px 2px">Powered by OpenStreetMap • Demo planetary data (wire your API/library for real positions)</div>
+</div><script>
+  // ===== Theme toggle (dim / bright) =====
+  const toggle = document.getElementById('themeToggle');
+  let dim=false; toggle.onclick=()=>{dim=!dim;document.documentElement.style.setProperty('--bg',dim?'#0a0f1c':'#070c16');document.documentElement.style.setProperty('--bg2',dim?'#0f1a2a':'#0d1626');document.documentElement.style.setProperty('--line',dim?'#1a2a46':'#1b2a45');toggle.textContent=dim?'Bright':'Dim'};
 
-  </div>
+  // ===== Save/Load helpers =====
+  const $ = id => document.getElementById(id);
+  function loadSaved(){
+    $('name').value = localStorage.getItem('kp_name')||'';
+    $('dob').value = localStorage.getItem('kp_dob')||'';
+    $('tob').value = localStorage.getItem('kp_tob')||'';
+    $('pob').value = localStorage.getItem('kp_pob')||'';
+    $('timezone').value = localStorage.getItem('kp_tz')||'';
+  }
+  function saveAll(){
+    localStorage.setItem('kp_name',$('name').value.trim());
+    localStorage.setItem('kp_dob',$('dob').value);
+    localStorage.setItem('kp_tob',$('tob').value);
+    localStorage.setItem('kp_pob',$('pob').value);
+    localStorage.setItem('kp_tz',$('timezone').value.trim());
+  }
+  $('btnReset').onclick=()=>{['kp_name','kp_dob','kp_tob','kp_pob','kp_tz'].forEach(k=>localStorage.removeItem(k));location.reload();};
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  loadSaved();
 
-  <script>
-    // ===== Map Init =====
-    const map = L.map('map',{ zoomControl:true });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      { maxZoom:19, attribution:'© OpenStreetMap'}).addTo(map);
-    map.setView([7.8731,80.7718],7); // Sri Lanka default
-    let marker = L.marker([7.8731,80.7718],{draggable:true}).addTo(map);
+  // ===== Timezone Auto‑Detect =====
+  $('detectTzBtn').onclick=()=>{
+    try{
+      const off=-new Date().getTimezoneOffset();const s=off>=0?'+':'-';const a=Math.abs(off);const h=Math.floor(a/60),m=a%60;
+      $('timezone').value=`${s}${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    }catch{ $('timezone').value='+05:30'; }
+  };
+  if(!$('timezone').value) $('detectTzBtn').click();
 
-    function updateInputs(lat,lon){
-      document.getElementById('lat').value = lat.toFixed(6);
-      document.getElementById('lon').value = lon.toFixed(6);
+  // ===== Map (Sri Lanka default) =====
+  const map=L.map('map',{zoomControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+  const SL=[7.8731,80.7718]; map.setView(SL, $('pob').value? 11:7);
+  let marker=L.marker(SL,{draggable:true}).addTo(map);
+
+  function parseCoords(text){
+    if(!text) return null; let m=text.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/); if(m) return {lat:+m[1],lon:+m[2]};
+    m=text.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/); if(m) return {lat:+m[1],lon:+m[2]}; return null;
+  }
+  function centerIfCoords(){ const c=parseCoords($('pob').value.trim()); if(c){ marker.setLatLng([c.lat,c.lon]); map.setView([c.lat,c.lon], 12); } }
+  centerIfCoords();
+
+  map.on('click',e=>{ marker.setLatLng(e.latlng); $('pob').value=`${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`; saveAll(); });
+  marker.on('dragend',()=>{ const p=marker.getLatLng(); $('pob').value=`${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`; saveAll(); });
+  $('pob').addEventListener('change',()=>{ centerIfCoords(); saveAll(); });
+  ;['name','dob','tob','timezone','question'].forEach(id=> $(id).addEventListener('change', saveAll));
+
+  // ===== KP helpers (signs, nakshatras, sub‑lord split) =====
+  const SIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const NAKS=['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+  const DASHAS=[{lord:'Ketu',years:7},{lord:'Venus',years:20},{lord:'Sun',years:6},{lord:'Moon',years:10},{lord:'Mars',years:7},{lord:'Rahu',years:18},{lord:'Jupiter',years:16},{lord:'Saturn',years:19},{lord:'Mercury',years:17}];
+  const NAK_LORD=Array.from({length:27},(_,i)=>DASHAS[i%9].lord);
+  const mod=(a,b)=>((a%b)+b)%b; const DEG_PER_NAK=360/27, DEG_PER_PADA=DEG_PER_NAK/4;
+  const dms=deg=>{deg=mod(deg,360);const d=Math.floor(deg);const mF=(deg-d)*60;const m=Math.floor(mF);const s=Math.round((mF-m)*60);return `${d}° ${String(m).padStart(2,'0')}′ ${String(s).padStart(2,'0')}″`};
+  const signOf=deg=> SIGNS[Math.floor(mod(deg,360)/30)];
+  const nakIndex=deg=> Math.floor(mod(deg,360)/DEG_PER_NAK);
+  const padaOf=deg=>{const within=mod(deg,DEG_PER_NAK);return Math.floor(within/DEG_PER_PADA)+1};
+  const starLordOf=deg=> NAK_LORD[nakIndex(deg)];
+  function subLordOf(deg){
+    const nIdx=nakIndex(deg); const startLord=NAK_LORD[nIdx];
+    const startIdx=DASHAS.findIndex(d=>d.lord===startLord);
+    const seq=DASHAS.slice(startIdx).concat(DASHAS.slice(0,startIdx));
+    const arc=DEG_PER_NAK; const subArcs=seq.map(d=>arc*(d.years/120));
+    const within=mod(deg,DEG_PER_NAK); let acc=0; for(let i=0;i<subArcs.length;i++){acc+=subArcs[i]; if(within<acc) return seq[i].lord;} return seq[seq.length-1].lord;
+  }
+
+  // ===== Demo planets (replace with API/library for real) =====
+  function demoPlanets(){
+    return [
+      {name:'Sun',degree:123.456},{name:'Moon',degree:200.123},{name:'Mercury',degree:305.432},
+      {name:'Venus',degree:271.111},{name:'Mars',degree:18.876},{name:'Jupiter',degree:84.333},
+      {name:'Saturn',degree:342.250},{name:'Rahu',degree:45.876},{name:'Ketu',degree:225.876}
+    ];
+  }
+
+  // ===== Render Table =====
+  function renderTable(planets){
+    const tbody=$('tbl'); tbody.innerHTML='';
+    planets.forEach(p=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><b>${p.name}</b></td>
+        <td>${dms(p.degree)}</td>
+        <td>${signOf(p.degree)}</td>
+        <td>${NAKS[nakIndex(p.degree)]}</td>
+        <td>${padaOf(p.degree)}</td>
+        <td>${starLordOf(p.degree)}</td>
+        <td><b style="color:var(--neon2)">${subLordOf(p.degree)}</b></td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ===== Render Wheel =====
+  function renderWheel(planets){
+    const W=560,H=560,Cx=W/2,Cy=H/2,R=205; let sectors='',labels='',dots='';
+    for(let i=0;i<12;i++){
+      const a1=(i*30-90)*Math.PI/180,a2=((i+1)*30-90)*Math.PI/180;
+      const x1=Cx+R*Math.cos(a1),y1=Cy+R*Math.sin(a1),x2=Cx+R*Math.cos(a2),y2=Cy+R*Math.sin(a2);
+      sectors+=`<path d="M${Cx},${Cy} L${x1},${y1} A${R},${R} 0 0,1 ${x2},${y2} Z" fill="none" stroke="#1a2c44" stroke-width="2"/>`;
     }
-    map.on('click', e=>{ marker.setLatLng(e.latlng); updateInputs(e.latlng.lat,e.latlng.lng); });
-    marker.on('dragend', ()=>{ let p=marker.getLatLng(); updateInputs(p.lat,p.lng); });
-
-    // ===== Auto Detect Timezone =====
-    document.getElementById('btnAutoTz').onclick = ()=>{
-      let offset = -new Date().getTimezoneOffset();
-      let sign = offset>=0?'+':'-'; let abs=Math.abs(offset);
-      let hr=Math.floor(abs/60), mn=abs%60;
-      document.getElementById('timezone').value = `${sign}${String(hr).padStart(2,'0')}:${String(mn).padStart(2,'0')}`;
-    };
-
-    // ===== Demo Planets =====
-    const SIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-    const demoPlanets=[{name:'Sun',degree:123.4},{name:'Moon',degree:200.1},{name:'Mars',degree:18.8}];
-
-    function renderTable(planets){
-      const tbody=document.getElementById('tbl'); tbody.innerHTML='';
-      planets.forEach(p=>{
-        let tr=document.createElement('tr');
-        tr.innerHTML=`<td>${p.name}</td><td>${p.degree.toFixed(2)}°</td><td>${SIGNS[Math.floor(p.degree/30)]}</td>
-                      <td>-</td><td>-</td><td>-</td><td>-</td>`;
-        tbody.appendChild(tr);
-      });
+    for(let i=0;i<12;i++){
+      const a=((i*30+15)-90)*Math.PI/180; const x=Cx+(R-16)*Math.cos(a), y=Cy+(R-16)*Math.sin(a);
+      labels+=`<text x="${x}" y="${y+4}" font-size="11" text-anchor="middle">${SIGNS[i]}</text>`;
     }
-    function renderWheel(planets){
-      const W=300,H=300,Cx=W/2,Cy=H/2,R=120;
-      let svg=`<svg viewBox=\"0 0 ${W} ${H}\">`;
-      for(let i=0;i<12;i++){ // sectors
-        let a1=(i*30-90)*Math.PI/180, a2=((i+1)*30-90)*Math.PI/180;
-        let x1=Cx+R*Math.cos(a1), y1=Cy+R*Math.sin(a1), x2=Cx+R*Math.cos(a2), y2=Cy+R*Math.sin(a2);
-        svg+=`<path d=\"M${Cx},${Cy} L${x1},${y1} A${R},${R} 0 0,1 ${x2},${y2} Z\" stroke=\"#1a2c44\" fill=\"none\"/>`;
-      }
-      planets.forEach(p=>{
-        let a=(p.degree-90)*Math.PI/180, x=Cx+(R-20)*Math.cos(a), y=Cy+(R-20)*Math.sin(a);
-        svg+=`<circle cx=\"${x}\" cy=\"${y}\" r=\"6\" fill=\"#60a5fa\"/>`;
-      });
-      svg+=`</svg>`; document.getElementById('wheel').innerHTML=svg;
-    }
-    renderTable(demoPlanets); renderWheel(demoPlanets);
-  </script>
-</body>
+    planets.forEach(p=>{
+      const a=(p.degree-90)*Math.PI/180; const r=R-34; const x=Cx+r*Math.cos(a), y=Cy+r*Math.sin(a);
+      const rk = (p.name==='Rahu'||p.name==='Ketu');
+      dots+=`<g><circle cx="${x}" cy="${y}" r="8" class="${rk?'planet-dot rk':'planet-dot'}" fill="#0e1626" stroke="${rk?'#e6b2ff':'#60a5fa'}" stroke-width="2"/>`+
+             `<text x="${x}" y="${y+3}" font-size="9.5" text-anchor="middle" fill="#cdeafe">${p.name[0]}</text></g>`;
+    });
+    $('wheel').innerHTML=`<svg viewBox="0 0 ${W} ${H}"><circle cx="${Cx}" cy="${Cy}" r="${R+24}" fill="rgba(7,18,34,0.96)"/>${sectors}${labels}${dots}</svg>`;
+  }
+
+  // ===== Generate (demo) =====
+  function generate(){
+    $('status').textContent='✓ Chart generated (demo data). Hook your API for real positions.';
+    const planets = demoPlanets();
+    renderTable(planets); renderWheel(planets);
+    $('jsonPreview').value = JSON.stringify({planets}, null, 2);
+  }
+  $('genBtn').onclick = ()=>{ saveAll(); generate(); };
+
+  // First paint (so page isn’t empty)
+  generate();
+</script></body>
 </html>

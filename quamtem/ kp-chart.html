@@ -382,7 +382,62 @@ onReady(function(){
     document.getElementById('resultMsg').textContent = '✓ Chart generated (demo data)';
   };
 });
-</script><script>
+  </script><script>
+function onReady(fn){if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',fn,{once:true});}else{fn();}}
+onReady(function(){
+  // Timezone Auto Detect
+  document.getElementById('detectTzBtn').onclick = function() {
+    try {
+      let offset = -new Date().getTimezoneOffset(),
+        sign = offset>=0');
+      document.getElementById('timezone').value = `${sign}${hh}:${mm}`;
+    }catch{ document.getElementById('timezone').value = '+05:30'; }
+  };
+
+  // DEMO PLANETS (offline fallback, always works)
+  const DEMO_PLANETS = [
+    { name:'  degree:154.567 },
+    { name:'Mars',   degree:210.987 },
+    { name:'Saturn', degree:305.432 },
+    { name:'Rahu',   degree:45.876  },
+    { name:'Ketu',   degree:225.876 }
+  ];
+
+  function renderTable(planets){
+    let html = '<table><tr>< html += `<tr><td>${p.name}</td><td>${p.degree.toFixed(3)}</td></tr>`; }
+    html+='</table>';
+    document.getElementById('planetTable').innerHTML = html;
+  }
+
+  function drawChart(planets){
+    const c = document.getElementById ctx.strokeStyle='#ffd700'; ctx.lineWidth=4; ctx.stroke();
+    // 12 houses
+    for(let i=0;i<12;i++){
+      const a = (i*30-90)*Math.PI/180;
+      ctx.beginPath(); ctx.moveTo(180,180);
+      ctx.lineTo(180+150*Math.cos(a),180+150*Math.sin(a));
+      ctx.strokeStyle='#aaa'; ctx.lineWidth=1; ctx.stroke();
+    }
+    planets.forEach(p=>{
+      const a = ((p.degree % 360) - 90) * Math.PI / 180;
+      const x = 180 + 120 * Math.cos(a);
+      const y = 180 + 120 * Math.sin(a);
+      ctx.beginPath(); ctx.arc(x,y,10,0,2*Math.PI);
+      ctx.fillStyle = '#ffd700'; ctx.fill();
+      ctx.fillStyle = "#000"; ctx.font = "bold 12px Arial";
+      ctx.fillText(p.name[0], x-5, y+5);
+    });
+  }
+
+  document.getElementByIdkpForm').onsubmit = function(e){
+    e.preventDefault();
+    document.getElementById('loading').style.display='block';
+    document.getElementById('resultMsg').textContent = '';
+    renderTable(DEMO_PLANETS);
+    drawChart(DEMO_PLANETS);
+    document.getElementById('loading  document.getElementById('kpForm').dispatchEvent(new Event('submit'));
+});
+</script>
 function onReady(fn){if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',fn,{once:true});}else{fn();}}
 
 on ---

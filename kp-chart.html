@@ -181,5 +181,16 @@
   renderTable(DEMO_PLANETS); drawChart(DEMO_PLANETS); document.getElementById('status').textContent = 'Preview (demo)';
 })();
 </script>
-</body>
+</body><script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(rs => {
+    rs.forEach(r => r.unregister());
+    // SW controlled cache clear attempt
+    if (caches && caches.keys) {
+      caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+    }
+    console.log('SW + caches cleared (one-off).');
+  });
+}
+</script>
 </html>

@@ -3,75 +3,264 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced KP Edition</title>
+  <title>KP Rishi Astrology - AI Report</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; background: #0f172a; color: #e0f2fe; margin:0; }
-    main { max-width: 540px; margin: 40px auto; border: 1px solid #38bdf8; padding: 24px;
-      border-radius: 8px; background: rgba(30,41,59,0.94); }
+    main { max-width: 580px; margin: 40px auto; border: 1px solid #38bdf8; padding: 28px;
+      border-radius: 9px; background: rgba(30,41,59,0.95); }
     h1 { color: #38bdf8; text-align:center; }
     label { margin-top: 12px; display:block; color:#bae6fd; }
     input, select, textarea, button { display: block; margin-bottom: 15px; width: 100%; padding: 8px; font-size: 15px; border-radius:5px; }
-    button { background:#38bdf8; color:#0f172a; font-weight:bold; border:none; cursor:pointer; }
+    button { background:#38bdf8; color: #0f172a; font-weight:bold; border:none; cursor:pointer; }
     button:hover { background:#0ea5e9; color:#fff; }
     #astroChart { display: block; margin: 24px auto; background: #fff; border-radius: 50%; border: 1px solid #bbb;}
-    .ai-prediction { background: #112; padding:12px; margin-top:15px; border-radius:8px; }
-    .tariff { text-align:center; margin-top:1em; color:#7dd3fc; font-size:0.95em; }
-    .support-btn {
-      position: fixed; bottom: 20px; right: 20px;
-      background: #38bdf8; color: #0f172a;
-      padding: 0.7rem 1rem; border-radius: 2em;
-      font-weight: bold; cursor: pointer; box-shadow: 0 0 10px #38bdf8;
-    }
-    .support-btn:hover { background:#0ea5e9; color:#fff; }
+    .ai-prediction { background: #112; padding:13px; margin-top:16px; border-radius:9px; }
+    .tariff { text-align:center; margin-top:1.7em; color:#7dd3fc; font-size:1.06em; border: 1.5px solid #38bdf8; border-radius:8px; padding:12px; background:rgba(16,23,40,0.8);}
+    .lang-btns { display:flex; gap:10px; justify-content:right; margin-bottom:12px;}
+    .lang-btns button { width:auto; padding:5px 14px; border-radius:6px; font-size:0.95em; background:#1e293b; color:#bae6fd; border:1px solid #38bdf8;}
+    .lang-btns button.active, .lang-btns button:hover { background:#38bdf8; color:#112;}
+    .form-row { display:flex; gap:10px;}
+    .form-row > div { flex:1;}
   </style>
 </head>
 <body>
 <main id="report">
-  <h1>Advanced KP Edition</h1>
-  <p style="text-align:center; color:#bae6fd;">AI-powered KP Report with planetary charts & insights.</p>
+  <div class="lang-btns">
+    <button type="button" class="langbtn active" data-lang="en">English</button>
+    <button type="button" class="langbtn" data-lang="si">සිංහල</button>
+    <button type="button" class="langbtn" data-lang="hi">हिन्दी</button>
+    <button type="button" class="langbtn" data-lang="ta">தமிழ்</button>
+    <button type="button" class="langbtn" data-lang="zh">中文</button>
+  </div>
+  <h1 id="mainTitle">KP Rishi Astrology - AI Report</h1>
   <form id="kpForm" autocomplete="off">
-    <label>Full Name</label>
-    <input type="text" id="name" required>
-    <label>Date of Birth</label>
-    <input type="date" id="dob" required>
-    <label>Time of Birth</label>
-    <input type="time" id="tob" required>
-    <label>Birth Place</label>
-    <input type="text" id="pob" placeholder="City, Country" required>
-    <label>Gender</label>
-    <select id="gender" required>
-      <option value="">Select...</option>
-      <option>Male</option>
-      <option>Female</option>
-      <option>Other</option>
-    </select>
-    <label>Email (optional)</label>
+    <label id="lbl_nic">National ID Number</label>
+    <input type="text" id="nic" placeholder="e.g. 199012301234" required>
+    <div class="form-row">
+      <div>
+        <label id="lbl_name">Full Name</label>
+        <input type="text" id="name" required>
+      </div>
+      <div>
+        <label id="lbl_gender">Gender</label>
+        <select id="gender" required>
+          <option value="">Select...</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label id="lbl_dob">Date of Birth</label>
+        <input type="date" id="dob" required>
+      </div>
+      <div>
+        <label id="lbl_tob">Time of Birth</label>
+        <input type="time" id="tob" required>
+      </div>
+    </div>
+    <label id="lbl_pob">Place of Birth (City, Country)</label>
+    <input type="text" id="pob" placeholder="e.g. Galle, Sri Lanka" required>
+    <div class="form-row">
+      <div>
+        <label id="lbl_lat">Latitude</label>
+        <input type="text" id="lat" readonly>
+      </div>
+      <div>
+        <label id="lbl_lon">Longitude</label>
+        <input type="text" id="lon" readonly>
+      </div>
+      <div>
+        <label id="lbl_tz">Time Zone</label>
+        <input type="text" id="timezone" readonly>
+      </div>
+    </div>
+    <button type="button" id="mapBtn">Fetch Coordinates & Timezone</button>
+    <label id="lbl_email">Email (optional)</label>
     <input type="email" id="email" placeholder="Email">
-    <label>Your Main Question</label>
+    <label id="lbl_q">Your Main Question</label>
     <textarea id="userQ" placeholder="Eg: When will I get married?" rows="2"></textarea>
-    <label><input type="checkbox" id="consent" required> I consent to share my birth data for report generation</label>
+    <label><input type="checkbox" id="consent" required> <span id="lbl_consent">I consent to share my birth data for report generation</span></label>
     <button type="submit" id="downloadBtn">Download Advanced KP PDF</button>
   </form>
   <div id="resultMsg" style="text-align:center; color:#fb7185;"></div>
   <canvas id="astroChart" width="400" height="400"></canvas>
   <div id="aiPrediction" class="ai-prediction" style="display:none;"></div>
-  <div class="tariff"><strong>Tariff:</strong> Premium reports $5 per user (one-time).</div>
+  <div class="tariff" id="tariffBox">
+    <b>Tariff:</b><br>
+    <b>1. Standard</b> – Brief Life Story: <span style="color:#38bdf8;">$5</span><br>
+    <b>2. Premium</b> – Detailed Life Story + Daily Predictions for 1 Year + AI Guidance: <span style="color:#38bdf8;">$30</span>
+  </div>
 </main>
-
-<!-- AI Buddhi Support Button -->
-<div class="support-btn" onclick="window.location.href='/ai-buddhi.html';">💬 AI Buddhi</div>
-
 <script>
-// --- Geocoding (OpenStreetMap) ---
-async function getLatLong(place) {
+// --- Multilanguage dictionary ---
+const dict = {
+  en: {
+    mainTitle: "KP Rishi Astrology - AI Report",
+    lbl_nic: "National ID Number",
+    lbl_name: "Full Name",
+    lbl_gender: "Gender",
+    lbl_dob: "Date of Birth",
+    lbl_tob: "Time of Birth",
+    lbl_pob: "Place of Birth (City, Country)",
+    lbl_lat: "Latitude",
+    lbl_lon: "Longitude",
+    lbl_tz: "Time Zone",
+    lbl_email: "Email (optional)",
+    lbl_q: "Your Main Question",
+    lbl_consent: "I consent to share my birth data for report generation",
+    downloadBtn: "Download Advanced KP PDF",
+    mapBtn: "Fetch Coordinates & Timezone",
+    tariff: `<b>Tariff:</b><br>
+      <b>1. Standard</b> – Brief Life Story: <span style="color:#38bdf8;">$5</span><br>
+      <b>2. Premium</b> – Detailed Life Story + Daily Predictions for 1 Year + AI Guidance: <span style="color:#38bdf8;">$30</span>`
+  },
+  si: {
+    mainTitle: "KP රිෂි ජාතික AI වාර්තාව",
+    lbl_nic: "ජාතික හැඳුනුම්පත් අංකය",
+    lbl_name: "සම්පූර්ණ නම",
+    lbl_gender: "ලිංගය",
+    lbl_dob: "උපන් දිනය",
+    lbl_tob: "උපන් වේලාව",
+    lbl_pob: "උපන් ස්ථානය (නගරය, රට)",
+    lbl_lat: "අක්ෂාංශය",
+    lbl_lon: "දේශාංශය",
+    lbl_tz: "වේලා කලාපය",
+    lbl_email: "ඊමේල් (විකල්ප)",
+    lbl_q: "ඔබේ ප්‍රධාන ප්‍රශ්නය",
+    lbl_consent: "වාර්තාව සඳහා උපන් දත්ත භාවිතයට එකඟවෙමි",
+    downloadBtn: "උසස් KP PDF එක බාගන්න",
+    mapBtn: "අක්ෂාංශ, දේශාංශ, වේලා කලාපය ලබාගන්න",
+    tariff: `<b>ගාස්තු:</b><br>
+      <b>1. සාමාන්‍ය</b> – කෙටි ජීවිත කතාව: <span style="color:#38bdf8;">$5</span><br>
+      <b>2. ශූක්ෂම</b> – විස්තරාත්මක ජීවිත කතාව + අවුරුදු 1ක් සඳහා දිනපතා පලාපල + AI උපදෙස්: <span style="color:#38bdf8;">$30</span>`
+  },
+  hi: {
+    mainTitle: "KP ऋषि ज्योतिष AI रिपोर्ट",
+    lbl_nic: "राष्ट्रीय पहचान संख्या",
+    lbl_name: "पूरा नाम",
+    lbl_gender: "लिंग",
+    lbl_dob: "जन्म तिथि",
+    lbl_tob: "जन्म समय",
+    lbl_pob: "जन्म स्थान (शहर, देश)",
+    lbl_lat: "अक्षांश",
+    lbl_lon: "देशांतर",
+    lbl_tz: "समय क्षेत्र",
+    lbl_email: "ईमेल (वैकल्पिक)",
+    lbl_q: "आपका मुख्य प्रश्न",
+    lbl_consent: "रिपोर्ट निर्माण के लिए अपने जन्म डेटा साझा करने के लिए सहमत हूँ",
+    downloadBtn: "उन्नत KP PDF डाउनलोड करें",
+    mapBtn: "अक्षांश, देशांतर, समय क्षेत्र प्राप्त करें",
+    tariff: `<b>शुल्क:</b><br>
+      <b>1. सामान्य</b> – संक्षिप्त जीवन कथा: <span style="color:#38bdf8;">$5</span><br>
+      <b>2. प्रीमियम</b> – विस्तृत जीवन कथा + 1 वर्ष के लिए दैनिक भविष्यवाणी + AI मार्गदर्शन: <span style="color:#38bdf8;">$30</span>`
+  },
+  ta: {
+    mainTitle: "KP ரிஷி ஜோதிட AI அறிக்கை",
+    lbl_nic: "தேசிய அடையாள எண்",
+    lbl_name: "முழு பெயர்",
+    lbl_gender: "பாலினம்",
+    lbl_dob: "பிறந்த தேதி",
+    lbl_tob: "பிறந்த நேரம்",
+    lbl_pob: "பிறந்த இடம் (நகரம், நாடு)",
+    lbl_lat: "அட்சரேகை",
+    lbl_lon: "நெடிழரேகை",
+    lbl_tz: "நேர மண்டலம்",
+    lbl_email: "மின்னஞ்சல் (விருப்பமானது)",
+    lbl_q: "உங்கள் முக்கியமான கேள்வி",
+    lbl_consent: "அறிக்கை உருவாக்கத்திற்காக என் பிறப்பு தரவை பகிர ஒப்புக்கொள்கிறேன்",
+    downloadBtn: "மேம்பட்ட KP PDF பதிவிறக்கவும்",
+    mapBtn: "அட்சரேகை, நெடிழரேகை, நேர மண்டலம் பெறவும்",
+    tariff: `<b>கட்டணம்:</b><br>
+      <b>1. சாதாரணம்</b> – சுருக்கமான வாழ்க்கை கதை: <span style="color:#38bdf8;">$5</span><br>
+      <b>2. மேம்பட்டது</b> – விரிவான வாழ்க்கை கதை + 1 ஆண்டிற்கு தினசரி கணிப்புகள் + AI வழிகாட்டுதல்: <span style="color:#38bdf8;">$30</span>`
+  },
+  zh: {
+    mainTitle: "KP Rishi 占星 AI 报告",
+    lbl_nic: "身份证号",
+    lbl_name: "全名",
+    lbl_gender: "性别",
+    lbl_dob: "出生日期",
+    lbl_tob: "出生时间",
+    lbl_pob: "出生地（城市，国家）",
+    lbl_lat: "纬度",
+    lbl_lon: "经度",
+    lbl_tz: "时区",
+    lbl_email: "邮箱（可选）",
+    lbl_q: "您的主要问题",
+    lbl_consent: "我同意分享我的出生数据以生成报告",
+    downloadBtn: "下载高级 KP PDF",
+    mapBtn: "获取经纬度和时区",
+    tariff: `<b>资费：</b><br>
+      <b>1. 标准</b> – 简短人生故事: <span style="color:#38bdf8;">$5</span><br>
+      <b>2. 高级</b> – 详细人生故事 + 1 年每日预测 + AI 指导: <span style="color:#38bdf8;">$30</span>`
+  }
+};
+
+let currLang = "en";
+function setLang(lang) {
+  currLang = lang;
+  let d = dict[lang];
+  document.getElementById('mainTitle').innerHTML = d.mainTitle;
+  document.getElementById('lbl_nic').textContent = d.lbl_nic;
+  document.getElementById('lbl_name').textContent = d.lbl_name;
+  document.getElementById('lbl_gender').textContent = d.lbl_gender;
+  document.getElementById('lbl_dob').textContent = d.lbl_dob;
+  document.getElementById('lbl_tob').textContent = d.lbl_tob;
+  document.getElementById('lbl_pob').textContent = d.lbl_pob;
+  document.getElementById('lbl_lat').textContent = d.lbl_lat;
+  document.getElementById('lbl_lon').textContent = d.lbl_lon;
+  document.getElementById('lbl_tz').textContent = d.lbl_tz;
+  document.getElementById('lbl_email').textContent = d.lbl_email;
+  document.getElementById('lbl_q').textContent = d.lbl_q;
+  document.getElementById('lbl_consent').textContent = d.lbl_consent;
+  document.getElementById('downloadBtn').textContent = d.downloadBtn;
+  document.getElementById('mapBtn').textContent = d.mapBtn;
+  document.getElementById('tariffBox').innerHTML = d.tariff;
+  document.querySelectorAll('.langbtn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector('.langbtn[data-lang="'+lang+'"]').classList.add('active');
+}
+document.querySelectorAll('.langbtn').forEach(btn => btn.onclick = () => setLang(btn.dataset.lang));
+setLang('en');
+
+// --- Geocoding + Timezone (OpenStreetMap + TimeZoneDB demo [API KEY required, free limited]) ---
+async function getLatLongAndTimezone(place) {
+  // 1. Geocode
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`;
   try {
     const res = await fetch(url); const data = await res.json();
-    if (data && data.length > 0) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    if (data && data.length > 0) {
+      const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+      // 2. Timezone (TimeZoneDB, GeoNames, or Google TimeZone API)
+      // --- DEMO with TimeZoneDB (get your API key from https://timezonedb.com/api)
+      const tzkey = "YOUR_TIMEZONEDB_API_KEY"; // <-- ADD your API Key
+      let tz = "";
+      try {
+        const tzr = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=${tzkey}&format=json&by=position&lat=${lat}&lng=${lon}`);
+        const tzd = await tzr.json();
+        if (tzd && tzd.status=="OK") tz = tzd.zoneName;
+      } catch(e) {}
+      return { lat, lon, tz: tz || "Unknown" };
+    }
   } catch (e) {}
-  return { lat: 6.9271, lon: 79.8612 }; // fallback (Colombo)
+  return { lat: "", lon: "", tz: "" };
 }
+
+document.getElementById('mapBtn').addEventListener('click', async e => {
+  e.preventDefault();
+  const place = document.getElementById('pob').value;
+  if (!place) return;
+  document.getElementById('lat').value = "...";
+  document.getElementById('lon').value = "...";
+  document.getElementById('timezone').value = "...";
+  const result = await getLatLongAndTimezone(place);
+  document.getElementById('lat').value = result.lat;
+  document.getElementById('lon').value = result.lon;
+  document.getElementById('timezone').value = result.tz;
+});
 
 // --- Planetary Positions (NASA Horizons) ---
 const planetList = [
@@ -105,12 +294,6 @@ async function getAllPlanets(dateStr,timeStr,lat,lon){
   return arr;
 }
 
-// --- Zodiac Sign ---
-function getZodiacSign(deg){
-  const s=["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
-  return s[Math.floor((deg%360)/30)];
-}
-
 // --- Draw Chart ---
 function drawAstroChart(planets){
   const c=document.getElementById('astroChart'),x=c.getContext('2d');
@@ -121,19 +304,107 @@ function drawAstroChart(planets){
     x.beginPath();x.arc(px,py,10,0,2*Math.PI);x.fillStyle=p.color;x.fill();x.fillStyle="#222";x.font="bold 12px Arial";x.fillText(p.name,px-12,py-15);});
 }
 
+// --- AI astrology report generation ---
+async function getAIReport(data, lang, mainQ, planets, tariff) {
+  // --- AI prompt engineering ---
+  let planetTxt = planets.map(p => `${p.name}: ${p.degree.toFixed(2)}°`).join(", ");
+  let prompt = `
+KP astrology life report, 100% detailed, in ${lang}.
+Birth info: National ID: ${data.nic}, Name: ${data.name}, Gender: ${data.gender}, DOB: ${data.dob}, TOB: ${data.tob}, Place: ${data.pob}, Lat: ${data.lat}, Lon: ${data.lon}, Timezone: ${data.tz}.
+Main Question: ${mainQ}
+Planets: ${planetTxt}.
+Tariff: ${tariff}.
+Give a life-story from birth to death, analyzing all major Dasha, Bhukti and Antara periods, year by year.
+Discuss key events (education, career, love, marriage, children, diseases, wealth, property, longevity, death), with KP reasoning for good/bad outcomes.
+Timeline: split life into Dasha/Bhukti/Antara periods (as small as possible).
+If Premium, add daily predictions for 1 year and AI guidance too.
+Use narrative, with a table of events. End with a positive note. Language: ${lang}.
+`;
+  // --- OpenAI API call (DEMO: replace with your own key/backend/proxy!) ---
+  const apiKey = "YOUR_OPENAI_API_KEY"; // <-- ADD your key/proxy!
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":`Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model:"gpt-3.5-turbo",
+        messages:[{role:"user",content:prompt}],
+        temperature:0.7,
+        max_tokens: 1500
+      })
+    });
+    const data = await res.json();
+    if(data.choices && data.choices[0]) return data.choices[0].message.content.trim();
+    return "AI service unavailable right now.";
+  } catch(e){
+    return "AI astrology analysis unavailable (demo mode).";
+  }
+}
+
+// --- PDF Export ---
+async function exportPDF(user, planets, aiText) {
+  const doc = new window.jspdf.jsPDF();
+  doc.setFont("helvetica","bold"); doc.setFontSize(20);
+  doc.text(dict[currLang].mainTitle, 14, 18);
+  doc.setFontSize(12); doc.setFont("helvetica","normal");
+  doc.text(`${dict[currLang].lbl_nic}: ${user.nic}`,14,30);
+  doc.text(`${dict[currLang].lbl_name}: ${user.name}`,14,38);
+  doc.text(`${dict[currLang].lbl_gender}: ${user.gender}`,14,46);
+  doc.text(`${dict[currLang].lbl_dob}: ${user.dob}  ${dict[currLang].lbl_tob}: ${user.tob}`,14,54);
+  doc.text(`${dict[currLang].lbl_pob}: ${user.pob}`,14,62);
+  doc.text(`${dict[currLang].lbl_lat}: ${user.lat}  ${dict[currLang].lbl_lon}: ${user.lon}  ${dict[currLang].lbl_tz}: ${user.tz}`,14,70);
+  doc.text(`${dict[currLang].lbl_q}: ${user.userQ}`,14,78);
+  doc.setFontSize(11);
+  let y=86; doc.text("Planets:",14,y);
+  planets.forEach(p=>{y+=6; doc.text(`${p.name}: ${p.degree.toFixed(2)}°`,18,y);});
+  y+=9; doc.setFontSize(13); doc.setFont("helvetica","bold"); doc.text("AI Life Story:",14,y);
+  doc.setFont("helvetica","normal"); doc.setFontSize(11);
+  let aiLines = aiText.match(/.{1,88}/g) || [aiText];
+  aiLines.forEach(l=>{y+=6; doc.text(l,14,y); if(y>280){doc.addPage();y=20;}});
+  // Chart as image:
+  y+=7;
+  try{
+    let canvas = document.getElementById('astroChart');
+    let img = canvas.toDataURL("image/jpeg",1.0);
+    doc.addPage();
+    doc.setFontSize(16); doc.text("KP Chart",14,20);
+    doc.addImage(img,"JPEG",30,30,150,150);
+  }catch{}
+  doc.save("KP_AI_Chart_Report.pdf");
+}
+
 // --- Form Event ---
 document.getElementById('kpForm').addEventListener('submit',async e=>{
   e.preventDefault();
+  const nic=document.getElementById('nic').value.trim();
   const name=document.getElementById('name').value.trim();
+  const gender=document.getElementById('gender').value;
   const dob=document.getElementById('dob').value;
   const tob=document.getElementById('tob').value;
   const pob=document.getElementById('pob').value.trim();
-  const coords=await getLatLong(pob);
-  const planets=await getAllPlanets(dob,tob,coords.lat,coords.lon);
+  const lat=document.getElementById('lat').value.trim();
+  const lon=document.getElementById('lon').value.trim();
+  const tz=document.getElementById('timezone').value.trim();
+  const userQ=document.getElementById('userQ').value.trim();
+  document.getElementById('resultMsg').textContent='Loading...';
+  if(!lat || !lon || !tz || lat=="..." || lon=="..." || tz=="...") {
+    document.getElementById('resultMsg').textContent='Please fetch coordinates & timezone first!';
+    return;
+  }
+  const planets=await getAllPlanets(dob,tob,lat,lon);
   if(planets.length===0){document.getElementById('resultMsg').textContent='Planetary data unavailable';return;}
   drawAstroChart(planets);
-  document.getElementById('resultMsg').style.color="green";
-  document.getElementById('resultMsg').textContent='Report generated! (Download will start)';
+  document.getElementById('resultMsg').textContent='AI analysis running...';
+  const tariff = document.getElementById('tariffBox').innerText;
+  const aiText = await getAIReport({nic,name,gender,dob,tob,pob,lat,lon,tz,userQ},currLang,userQ,planets,tariff);
+  document.getElementById('aiPrediction').style.display='block';
+  document.getElementById('aiPrediction').textContent=aiText;
+  document.getElementById('resultMsg').textContent='Download started...';
+  await exportPDF({nic,name,gender,dob,tob,pob,lat,lon,tz,userQ},planets,aiText);
+  document.getElementById('resultMsg').textContent='Done! (Full detail for paid users)';
 });
 drawAstroChart([]);
 </script>

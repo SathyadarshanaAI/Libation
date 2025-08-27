@@ -222,5 +222,112 @@
 
   // First paint (so page isn’t empty)
   generate();
-</script></body>
+</script></body><!-- ============ MAP + THEME PATCH (drop-in) ============ -->
+<script>
+(function(){
+  // ---------- 0) THEME (neon dark) ----------
+  const css = `
+  :root{--bg:#061120;--panel:#0b172b;--line:#1c2f52;--txt:#e7f3ff;--muted:#9cc7ff;--neon:#60a5fa;--neon2:#2df3c2;--neon3:#e6b2ff}
+  body{background:radial-gradient(1100px 700px at 20% -10%,#0c1a38 0,var(--bg) 55%),linear-gradient(180deg,#07142a,var(--bg) 60%);color:var(--txt)}
+  .card{background:linear-gradient(180deg,#0d1d36 0%,var(--panel) 100%);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.35),inset 0 0 20px #0e213833;padding:16px}
+  label{display:block;margin:10px 0 6px;color:var(--muted);font-weight:600}
+  input,select,textarea{width:100%;padding:11px 12px;font-size:15.5px;border-radius:12px;border:1px solid var(--line);background:#0a1830;color:var(--txt);outline:0;transition:box-shadow .2s,border-color .2s,background .2s}
+  input:focus,select:focus,textarea:focus{border-color:var(--neon2);box-shadow:0 0 0 3px #2df3c233,inset 0 0 12px #2df3c222;background:#0b1e3a}
+  .btn{appearance:none;cursor:pointer;border:0;border-radius:12px;padding:10px 18px;font-weight:800;letter-spacing:.02em;color:#07101b;text-shadow:0 0 2px #fff8;background:linear-gradient(90deg,var(--neon),var(--neon3),var(--neon2));box-shadow:0 8px 18px #02070e,0 0 10px 1px #2df3c244,inset 0 0 20px #60a5fa22;transition:filter .18s,transform .05s}
+  .btn:hover{filter:brightness(1.12) drop-shadow(0 0 6px var(--neon3))} .btn:active{transform:translateY(1px)}
+  #map{height:300px;border-radius:14px;border:1px solid var(--line);box-shadow:0 0 18px #0d2237;margin-top:8px}
+  table{width:100%;border-collapse:collapse;margin-top:12px} th,td{padding:8px 10px;border-bottom:1px solid #1e3358} th{background:#0f1e37;color:#bfe1ff;font-weight:700}
+  #wheel svg{width:100%;height:auto;max-width:540px;display:block;margin:auto}
+  `;
+  const styleEl = document.createElement('style'); styleEl.textContent = css; document.head.appendChild(styleEl);
+
+  // ---------- 1) Find inputs (robust to different ids) ----------
+  const find = (sels)=> sels.map(s=>document.querySelector(s)).find(Boolean);
+  const placeInput = find(['#pob','input[placeholder*="Colombo" i]','input[name*="place" i]','input[id*="place" i]']);
+  const tzInput    = find(['#timezone','input[name*="zone" i]','input[id*="zone" i]','input[placeholder*="+05:30" i]']);
+  const tzBtn      = find(['#detectTzBtn','button:contains(Auto Detect)']); // contains won't work in css, keep id best.
+
+  // ---------- 2) Inject Leaflet CSS/JS if not present ----------
+  function addLeaflet(){
+    return new Promise((resolve)=>{
+      if (window.L){ resolve(); return; }
+      const lcss = document.createElement('link');
+      lcss.rel='stylesheet'; lcss.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(lcss);
+      const ls = document.createElement('script');
+      ls.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      ls.onload=()=>resolve(); document.body.appendChild(ls);
+    });
+  }
+
+  // ---------- 3) Create/insert the map container ----------
+  function ensureMapContainer(){
+    let holder = document.getElementById('map');
+    if (holder) return holder;
+    holder = document.createElement('div'); holder.id='map';
+    // prefer to put right after timezone input; else before Generate button; else top of form
+    const tzEl = tzInput;
+    if (tzEl && tzEl.parentElement){ tzEl.parentElement.insertAdjacentElement('afterend', holder); }
+    else{
+      const genBtn = Array.from(document.querySelectorAll('button')).find(b=>/generate/i.test(b.textContent||''));
+      if(genBtn) genBtn.insertAdjacentElement('beforebegin', holder);
+      else document.body.insertBefore(holder, document.body.firstChild);
+    }
+    // Add a visible label above the map (optional)
+    const lab = document.createElement('label'); lab.textContent='Pick on Map';
+    holder.insertAdjacentElement('beforebegin', lab);
+    return holder;
+  }
+
+  // ---------- 4) Auto Detect TZ ----------
+  function autoTzFill(){
+    if (!tzInput) return;
+    try{
+      const off=-new Date().getTimezoneOffset(); const s = off>=0?'+':'-';
+      const a=Math.abs(off), h=Math.floor(a/60), m=a%60;
+      tzInput.value = `${s}${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    }catch{ tzInput.value = '+05:30'; }
+  }
+
+  // ---------- 5) Add neon class to buttons ----------
+  Array.from(document.querySelectorAll('button')).forEach(b=>{
+    if(!b.classList.contains('btn')) b.classList.add('btn');
+  });
+
+  // ---------- 6) Map init + wire to Place input ----------
+  function parseCoords(t){
+    if(!t) return null;
+    let m=t.match(/(-?\\d+(?:\\.\\d+)?)\\s*,\\s*(-?\\d+(?:\\.\\d+)?)/); if(m) return {lat:+m[1],lon:+m[2]};
+    m=t.match(/@(-?\\d+(?:\\.\\d+)?),\\s*(-?\\d+(?:\\.\\d+)?)/);      if(m) return {lat:+m[1],lon:+m[2]};
+    return null;
+  }
+  function centerFromField(map, marker){
+    if(!placeInput) return;
+    const c = parseCoords(placeInput.value.trim());
+    if(c){ marker.setLatLng([c.lat,c.lon]); map.setView([c.lat,c.lon], 12); }
+  }
+
+  addLeaflet().then(()=>{
+    const holder = ensureMapContainer();
+    const map = L.map(holder,{zoomControl:true});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+    const SL=[7.8731,80.7718];
+    map.setView(SL,7);
+    const marker = L.marker(SL,{draggable:true}).addTo(map);
+
+    // click/drag -> fill place
+    function fillPlace(lat,lon){ if(placeInput) placeInput.value = `${lat.toFixed(6)}, ${lon.toFixed(6)}`; }
+    map.on('click', e=>{ marker.setLatLng(e.latlng); fillPlace(e.latlng.lat,e.latlng.lng); });
+    marker.on('dragend', ()=>{ const p=marker.getLatLng(); fillPlace(p.lat,p.lng); });
+
+    // if user typed lat,lon earlier -> center map
+    centerFromField(map, marker);
+    placeInput && placeInput.addEventListener('change', ()=>centerFromField(map, marker));
+  });
+
+  // fill TZ once (and style the button)
+  autoTzFill();
+})();
+</script>
+<!-- ============ /MAP + THEME PATCH ============ -->
 </html>

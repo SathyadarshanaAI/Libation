@@ -174,5 +174,13 @@
     <br>All Rights Reserved — High Copyright Protection Enabled
   </footer>
 
-</body>
+</body><script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+    caches?.keys?.().then(keys => keys.forEach(k => caches.delete(k)));
+    console.log('SW + caches cleared');
+  });
+}
+</script>
 </html>

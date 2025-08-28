@@ -2,335 +2,156 @@
 <html lang="si">
 <head>
   <meta charset="UTF-8">
-  <title>Palmistry AI – Lebetion | Sathyadarshana</title>
+  <title>Palmistry AI – Lebetion</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Palmistry AI powered by Buddhi AI – Reveal your destiny the modern way!">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="description" content="Palmistry AI – Modern Single Page Demo">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --main-bg: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      --card-glass: rgba(30,41,59,0.86);
-      --accent1: #38bdf8;
-      --accent2: #16f0a7;
-      --accent3: #fbc02d;
-      --accent4: #f43f5e;
-      --btn-gradient: linear-gradient(90deg, #16f0a7, #38bdf8);
-      --btn-hover: linear-gradient(90deg, #38bdf8, #16f0a7);
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 20% 20%, #131a2c, #06090d 90%);
+      color: #e0f2fe;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
     }
-    html, body { margin:0; padding:0; min-height:100vh; background:var(--main-bg); }
-    body { font-family: 'Inter', 'Roboto', sans-serif; color: #e0f2fe; }
-    nav {
+    .topbar {
+      width: 100vw;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      background: rgba(16,21,35,0.88);
+      box-shadow: 0 2px 18px #16f0a72b;
       position: sticky;
       top: 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(2,6,23,0.92);
-      backdrop-filter: blur(6px);
-      padding: 1rem 2vw;
-      z-index: 99;
-      box-shadow: 0 2px 18px #16f0a733;
+      z-index: 10;
+      padding: 0.7em 1.2em;
+      gap: 0.5em;
     }
-    nav .logo { font-size: 1.4em; font-weight: bold; color: var(--accent2); letter-spacing: 0.05em; }
-    nav .nav-links { display: flex; gap: 1.2rem; }
-    nav a {
-      color: #e0f2fe;
-      text-decoration: none;
-      padding: 0.55rem 1.1rem;
-      background: var(--btn-gradient);
-      border-radius: 6px;
-      transition: 0.20s;
-      font-weight: 600;
-      font-size:1em;
-    }
-    nav a.active, nav a:hover {
-      background: var(--btn-hover);
-      color: #0f172a;
-      transform: scale(1.06);
-    }
-    .top-actions {
-      display: flex; gap:7px;
-    }
-    .top-actions button {
-      background: #222;
-      color: #38bdf8;
+    .topbar button {
+      background: linear-gradient(90deg, #16f0a7, #38bdf8);
       border: none;
-      border-radius: 7px;
-      padding: 7px 18px;
-      font-size: 1em;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.18s;
-      border: 1.8px solid #38bdf8;
-    }
-    .top-actions button:hover {
-      background: #38bdf8;
+      border-radius: 8px;
       color: #18181b;
-      border-color: #16f0a7;
+      font-weight: 700;
+      font-size: 1em;
+      padding: 0.55em 1.2em;
+      margin-left: 0.2em;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #16f0a733;
+      transition: background .16s, color .16s, transform .10s;
+      outline: none;
     }
-    .container {
-      max-width: 750px;
-      margin: 2.5rem auto 0 auto;
-      background: var(--card-glass);
-      border-radius: 1.4rem;
-      box-shadow: 0 0 38px #16f0a73a;
-      padding: 2.8rem 1.5rem 2.7rem 1.5rem;
+    .topbar button:hover {
+      background: linear-gradient(90deg, #38bdf8, #16f0a7);
+      color: #fff;
+      transform: scale(1.07);
+    }
+    .main-card {
+      background: rgba(22,28,44,0.9);
+      border-radius: 1.3em;
+      margin-top: 3.5em;
+      box-shadow: 0 0 32px #38bdf855;
+      padding: 2.2em 1.5em 2.8em 1.5em;
+      width: 95vw;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 430px;
       position: relative;
-      overflow: hidden;
-      animation: fadeInCard .8s;
     }
-    @keyframes fadeInCard { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
-    h1 {
-      color: var(--accent2);
-      font-size: 2.25rem;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.25em;
-      text-shadow: 0 0 12px #16f0a788;
-    }
-    .badge-premium {
-      display: inline-block;
-      margin-bottom: 1.3em;
-      background: #151b30;
-      color: var(--accent3);
-      border-radius: 10px;
-      padding: 0.26em 1.25em;
-      font-weight: bold;
-      letter-spacing: 0.035em;
-      font-size: 1.09em;
-      box-shadow: 0 0 14px #fbc02d33;
-      user-select: none;
+    .main-card h1 {
+      font-size: 1.45em;
+      letter-spacing: 0.03em;
+      margin-bottom: 1.6em;
+      color: #16f0a7;
+      text-shadow: 0 0 10px #16f0a755;
     }
     .palmistry-area {
       position:relative;
-      width:340px;
-      height:440px;
-      margin:1.7em auto 1.7em auto;
-      border-radius: 20px;
-      background: #222c;
+      width: 280px;
+      height: 360px;
+      background: #1a2233;
+      border-radius: 18px;
       box-shadow: 0 0 24px #16f0a74a;
       overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      margin-bottom: 1.2em;
+      margin-top: 0.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .overlay-img {
       position: absolute;
       left: 0; top: 0; width: 100%; height: 100%;
-      opacity: 0.44;
+      opacity: 0.41;
       pointer-events: none;
       user-select: none;
       z-index: 2;
       transition: opacity 0.22s;
     }
-    #handPreview {
-      position:absolute;
-      left:0; top:0; width:100%; height:100%;
-      object-fit:cover;
-      z-index:1;
-      display:none;
-    }
-    .instructions {
+    .placeholder-text {
+      position: absolute;
+      left: 0; top: 50%; width: 100%;
+      transform: translateY(-50%);
+      color: #bae6fd;
       text-align: center;
-      font-size: 1.13em;
-      color: #fde68a;
-      margin-bottom: 1.8em;
-      margin-top: 0.2em;
-    }
-    .legend {
-      display: flex; flex-wrap: wrap; gap: 13px; justify-content: center; margin: 19px 0 1.5em 0;
-    }
-    .legend span { font-size: 0.99em; display: flex; align-items: center;}
-    .legend .dot { display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 8px; }
-    input[type="file"] {
-      width: 93%;
-      margin: 0.4rem auto 1.1rem auto;
-      padding: 0.7rem;
-      border-radius: 0.5rem;
-      border: none;
-      font-size: 1.08rem;
-      background: #1e293b;
-      color: #e0f2fe;
-      display: block;
-      transition: 0.18s;
-    }
-    input[type="file"]:focus {
-      border: 2px solid #38bdf8;
-      background: #0f172a;
-      outline: none;
-    }
-    .main-actions {
-      display:flex;justify-content:center;gap:13px;margin-top:1.1em;margin-bottom:0.8em;
-    }
-    .main-actions button {
-      padding: 0.8em 1.4em;
-      background: var(--btn-gradient);
-      color: #18181b;
-      border-radius: 7px;
       font-size: 1.08em;
-      border: none;
-      font-weight: bold;
-      box-shadow: 0 0 18px #16f0a720;
-      cursor: pointer;
-      transition: background 0.20s, color 0.17s, transform .13s;
+      opacity: 0.8;
+      z-index: 1;
+      pointer-events: none;
     }
-    .main-actions button:hover {
-      background: var(--btn-hover);
-      color: #fff;
-      transform: scale(1.055);
+    .footer {
+      margin-top: 3em;
+      color: #16f0a7;
+      font-size: 1.01em;
+      text-align: center;
+      letter-spacing: .01em;
+      opacity: 0.92;
     }
-    #voiceStatus { color: #f472b6; font-size: 1.05em; margin-top: 10px; text-align: center;}
-    .output-box {
-      margin-top: 2rem;
-      padding: 1.25rem 1.1rem;
-      background: rgba(22,78,99,0.94);
-      border-radius: 1rem;
-      box-shadow: 0 0 21px #38bdf855;
-      color:var(--accent3);
-      font-size:1.13em;
-      display:none;
-      animation: fadeIn .7s;
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .copyright-label {
-      display:inline-block;
-      background:linear-gradient(90deg,#f43f5e 30%,#f59e42 70%);
-      color:#fff;
-      font-weight:bold;
-      border-radius:8px;
-      padding:5px 18px;
-      font-size:1.09em;
-      margin:28px auto 0 auto;
-      box-shadow:0 2px 8px #0005;
-      letter-spacing:1.2px;
-      border:2px solid #fff3;
-      text-align:center;
-    }
-    footer {
-      margin-top:2.2em;
-      color:var(--accent2);
-      font-weight:bold;
-      letter-spacing:.01em;
-      text-align:center;
-      font-size: 1.04em;
-    }
-    @media (max-width: 600px) {
-      .container { padding: 1.14rem 0.3rem 1.3rem 0.3rem;}
-      .palmistry-area {width:98vw;max-width:99vw;height:57vw;min-height:280px;}
-      h1 { font-size:1.17rem;}
-      .output-box{font-size:1em;}
+    @media (max-width: 500px) {
+      .main-card {
+        padding: 1em 0.18em 2em 0.18em;
+        min-height: 340px;
+        margin-top: 2.4em;
+      }
+      .palmistry-area { width: 95vw; max-width: 98vw; height: 55vw; min-height: 200px;}
+      .main-card h1 { font-size: 1.09em; }
     }
   </style>
 </head>
 <body>
-  <nav>
-    <div class="logo">🪐 Lebetion</div>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="astrology-hub.html">Hub</a>
-      <a href="palmistry.html" class="active">Palmistry</a>
-      <a href="numerology.html">Numerology</a>
-      <a href="geovision.html">GeoVision</a>
-    </div>
-    <div class="top-actions">
-      <button onclick="goHome()">🏠 Home</button>
-      <button onclick="translatePage()">🌐 Translate</button>
-    </div>
-  </nav>
-
-  <div class="container">
-    <div class="badge-premium">Ceed Rushi Enhanced | Buddhi AI Ready | Universal Wisdom</div>
-    <h1>අතේ රේඛා විශ්ලේෂණය Palmistry AI</h1>
+  <div class="topbar">
+    <button onclick="goHome()">🏠 Home</button>
+    <button onclick="translatePage()">🌐 Language</button>
+  </div>
+  <div class="main-card">
+    <h1>Palmistry AI Overlay Demo</h1>
     <div class="palmistry-area">
       <!-- Overlay template (ghost hand) -->
       <img src="https://i.ibb.co/1K7K0gF/palm-overlay-demo.png" alt="Ghost Hand Overlay" class="overlay-img" />
-      <!-- User hand image preview (upload/preview) -->
-      <img id="handPreview" src="" alt="Your Hand" style="display:none;" />
-    </div>
-    <div class="instructions">
-      <span>🖐️ ඔබේ අත overlay එකට සමානව තබා, ඇඟිලි විහිදෙන්න.<br>
-      මැණික් කටුවත් (wrist) පේන්න ඕන.<br>
-      <b>Perfect fit!</b> වුනොත්, "Scan" ඔබන්න.</span>
-    </div>
-    <input type="file" accept="image/*" id="handImg" aria-label="Palm image upload" onchange="previewHand(event)">
-    <div class="main-actions">
-      <button onclick="speakSinhala()">🔊 වාචික විස්තර</button>
-      <button onclick="analyzePalm()">Scan</button>
-    </div>
-    <div id="voiceStatus"></div>
-    <div class="legend">
-      <span><span class="dot" style="background:#e11d48"></span>හෘද රේඛාව</span>
-      <span><span class="dot" style="background:#2563eb"></span>චිත්ත රේඛාව</span>
-      <span><span class="dot" style="background:#22c55e"></span>ජීවන රේඛාව</span>
-      <span><span class="dot" style="background:#a21caf"></span>ඉරනමි රේඛාව</span>
-      <span><span class="dot" style="background:#f59e42"></span>සුර්‍ය රේඛාව</span>
-      <span><span class="dot" style="background:#14b8a6"></span>මණිඛණ්ඩ රේඛා</span>
-      <span><span class="dot" style="background:#f472b6"></span>අනු රේඛා</span>
-    </div>
-    <div class="output-box" id="outputBox"></div>
-    <div class="copyright-label">
-      🛡️ HIGH COPYRIGHT – Lebetion × Sathyadarshana × Ceed Rushi | All Rights Reserved 2025
+      <div class="placeholder-text">🖐️ Place your palm here to match the guide</div>
     </div>
   </div>
-
-  <footer>
-    Sathyadarshana is the light of the entire human race.<br>
-    It serves all, without distinctions of race, religion, caste, tribe, or social status.<br>
-    <span style="color:#fbc02d;">
-      Let’s build a future world filled with compassion, kindness, and loving-friendliness.<br>
-      I have no language, no special identity—Sathyadarshana is for the whole world.<br>
-      That’s why English, the world’s most-used language, is our language of unity.
-    </span>
-    <br>
-    <span style="color:#16f0a7;font-size:.88em;">© 2025 Sathyadarshana × Ceed Rushi | Palmistry SaaS | All Rights Reserved</span>
-  </footer>
-
+  <div class="footer">
+    <div style="font-size:.98em; color:#fbc02d; margin-bottom:8px;">
+      🛡️ HIGH COPYRIGHT – Lebetion | Sathyadarshana 2025
+    </div>
+    Palmistry overlay UI – Demo<br>
+    <span style="color:#bae6fd;">Modern, minimal, SaaS-ready</span>
+  </div>
   <script>
-    // Palm image upload preview
-    function previewHand(event) {
-      const img = document.getElementById('handPreview');
-      img.src = URL.createObjectURL(event.target.files[0]);
-      img.style.display = 'block';
-    }
-    // Sinhala voice synthesis (browser TTS)
-    function speakSinhala() {
-      const txt = `ඔබේ අත overlay රේඛා අනුව සමානව තබන්න. ඇඟිලි විහිදෙන්න. මැණික් කටුවත් පෙනේවි. Perfect fit වුනොත්, Scan ඔබන්න. Lebetion Palmistry සේවාවේ AI බුද්ධියෙන් ඔබට වාචික විස්තර සහ සවිස්තර විශ්ලේෂණය ලබාදෙයි.`;
-      const utt = new SpeechSynthesisUtterance(txt);
-      utt.lang = 'si-LK';
-      utt.rate = 0.95;
-      utt.pitch = 1.13;
-      window.speechSynthesis.speak(utt);
-      document.getElementById('voiceStatus').innerText = "🔉 වාචික විස්තර play වෙමින්...";
-      utt.onend = ()=>{document.getElementById('voiceStatus').innerText = "";};
-    }
-    function analyzePalm() {
-      const fileInput = document.getElementById('handImg');
-      const outputBox = document.getElementById('outputBox');
-      if (!fileInput.files.length) {
-        outputBox.style.display = "block";
-        outputBox.style.color = "#f43f5e";
-        outputBox.innerHTML = "කරුණාකර පළමුව ඔබේ අතේ රූපයක් Upload කරන්න!";
-        return;
-      }
-      outputBox.style.display = "block";
-      outputBox.style.color = "#fbc02d";
-      outputBox.innerHTML = "🔒 Palmistry AI විශ්ලේෂණය ඉක්මනින්! ඔබේ රූපය ආරක්ෂිතයි, කිසිවෙකුට භාවිතා නොකෙරේ.<br><br><span style='color:#bae6fd;font-size:.93em;'>(Buddhi AI + Ceed Rushi Palmistry module integration in progress...)</span>";
-    }
-    // Home button action
     function goHome() {
-      window.location.href = 'index.html'; // Change to your real home page if different
+      window.location.href = '/'; // Change this to your actual home page if needed
     }
-    // Translate button action (for demo: just alert, or integrate real translation)
     function translatePage() {
-      alert('Translate feature coming soon!\nපරිවර්තන පහසුකම ඉතා ඉක්මනින්...');
-      // Integrate Google Translate widget or other translation logic as needed
+      alert('Language/Translate feature coming soon!');
+      // Google Translate or similar integration goes here
     }
-    // Copy protect
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('keydown', e => {
-      if (e.ctrlKey && ['c','u','s'].includes(e.key.toLowerCase())) e.preventDefault();
-    });
   </script>
 </body>
 </html>
